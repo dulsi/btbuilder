@@ -61,6 +61,7 @@ class BTMonster
   const BTDice &getRangedDamage() const;
   IShort getRangedExtra() const;
   const char *getRangedMessage() const;
+  IShort getRangedSpell() const;
   IShort getRangedType() const;
   IShort getRateAttacks() const;
   IShort getStartDistance() const;

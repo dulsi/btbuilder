@@ -9,7 +9,7 @@ CXXFLAGS = -g -frtti -DSDLLIB -I$(IDENTICALINC_DIR) $(SDL_CFLAGS) -I.
 LIBS = -L$(IDENTICALLIB_DIR) -lidentical-sdl -ldl $(SDL_LDFLAGS)
 
 BTBUILDER_OBJ = file.o dice.o monster.o spell.o item.o map.o main.o \
-	btconst.o
+	btconst.o game.o
 BTBUILDER_EXE = btbuilder
 
 all: $(BTBUILDER_EXE)
@@ -20,8 +20,8 @@ $(BTBUILDER_EXE): $(BTBUILDER_OBJ)
 %.o: %.C
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-#clean:
-#	rm -f $(BTBUILDER_OBJ) $(BTBUILDER_EXE)
+clean:
+	rm -f $(BTBUILDER_OBJ) $(BTBUILDER_EXE)
 
 # dependencies
 file.o: file.h

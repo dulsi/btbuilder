@@ -108,3 +108,134 @@ char *itemTypes[] =
  "thrown weapon"
 };
 
+char *classTypes[] =
+{
+ "Warrior",
+ "Paladin",
+ "Rogue",
+ "Bard",
+ "Hunter",
+ "Monk",
+ "Conjurer",
+ "Magician",
+ "Sorcerer",
+ "Wizard",
+ "Archmage",
+ "Monster",
+ "Illusion"
+};
+
+char *raceTypes[] =
+{
+ "Human",
+ "Elf",
+ "Dwarf",
+ "Hobbit",
+ "Half-Elf",
+ "Half-Orc",
+ "Gnome"
+};
+
+char *conditionalCommands[] =
+{
+ "anyone is carrying $I",
+ "everyone is carrying $I",
+ "last input = \"$$\"",
+ "answer to \"$$\" is yes",
+ "local flag $F is set",
+ "local flag $F is clear",
+ "group is facing $D",
+ "monster named $A is in party",
+ "class $C is in party",
+ "it is daytime",
+ "counter > $#",
+ "counter = $#",
+ "party won last combat",
+ "global flag $F is set",
+ "global flag $F is clear",
+ "random percent <= $G",
+ "race $R is in party",
+ "can take $# gold from party"
+};
+
+char *specialCommands[] =
+{
+ "nothing",
+ "stop",
+ "spin party",
+ "darkness zone",
+ "silence zone",
+ "anti-magic zone",
+ "get input",
+ "set local flag $F",
+ "clear local flag $F",
+ "take $I",
+ "give $I",
+ "sell $I for $# gold",
+ "cast $X for $# gold",
+ "print \"$$\"",
+ "regenerate $# spell points",
+ "take $# spell points",
+ "heal $# hit points",
+ "damage $# hit points and $T",
+ "regenerate $# bard songs",
+ "take $# bard songs",
+ "move back one space",
+ "move one square forward",
+ "teleport to $L dir:$D in $N",
+ "exit to guild",
+ "exit to review",
+ "exit to garths",
+ "trap flag",
+ "draw picture $P",
+ "clear special at $L",
+ "make $S at $L",
+ "print \"$$\" under picture",
+ "have $M join party",
+ "have monsters leave party",
+ "turn monsters hostile",
+ "play sound $!",
+ "set counter to $#",
+ "add $# to counter",
+ "set encounter: $M",
+ "set encounter: $G $M",
+ "begin combat",
+ "chest holding $I,trap $T,damage $#,message $$",
+ "set global flag $F",
+ "clear global flag $F",
+ "give party $# gold",
+ "give party $# experience",
+ "press any key",
+ "have monster named $A leave party",
+ "turn monster named $A hostile",
+ "turn party to face $D",
+ "clear this special",
+ "change this special to $S",
+ "force a random encounter",
+ "clear text window",
+ "take $# gold from party",
+ "display $$ as full screen picture",
+ "do special $S in $# minutes",
+ "cancel timed special",
+ "goto line number $J",
+ "subtract $# from counter",
+ "relative teleport by $L dir: $D in $N",
+ "tele-activate to $L dir: $D in $N"
+};
+
+char *directions[] =
+{
+ "north",
+ "east",
+ "south",
+ "west"
+};
+
+char *mapTypes[] =
+{
+ "Dungeon 1",
+ "Dungeon 2",
+ "City",
+ "Wilderness"
+};
+

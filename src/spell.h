@@ -9,6 +9,7 @@
 
 #include <istdlib.h>
 #include <file.h>
+#include "factory.h"
 #include "dice.h"
 
 /*
@@ -40,12 +41,14 @@ class BTSpell
 
   const char *getName() const;
   IShort getArea() const;
+  IShort getCaster() const;
   const char *getCode() const;
   const BTDice &getDice() const;
   IShort getDuration() const;
   const char *getEffect() const;
   IShort getEffectiveRange() const;
   IShort getExtra() const;
+  IShort getLevel() const;
   IShort getRange() const;
   IShort getSp() const;
   IShort getType() const;
@@ -64,6 +67,12 @@ class BTSpell
   IShort duration;
   IShort extra;
   char effect[22];
+};
+
+class BTSpellListCompare : public BTSortCompare<BTSpell>
+{
+ public:
+  int Compare(const BTSpell &a, const BTSpell &b) const;
 };
 
 #endif

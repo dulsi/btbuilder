@@ -44,6 +44,7 @@ class BTItem
   const char *getEffect() const;
   IShort getHitPlus() const;
   IShort getPrice() const;
+  IShort getSpellCast() const;
   IShort getTimesUsable() const;
   IShort getType() const;
   IShort getXSpecial() const;

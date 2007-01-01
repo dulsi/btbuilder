@@ -14,6 +14,7 @@ BTSpell::BTSpell(BinaryReadFile &f)
  f.readUByteArray(29, (IUByte *)name);
  f.readUByteArray(5, (IUByte *)code);
  f.readShort(caster);
+ caster += 6;
  f.readShort(level);
  f.readShort(sp);
  f.readShort(range);
@@ -39,6 +40,11 @@ const char *BTSpell::getName() const
 IShort BTSpell::getArea() const
 {
  return area;
+}
+
+IShort BTSpell::getCaster() const
+{
+ return caster;
 }
 
 const char *BTSpell::getCode() const
@@ -71,6 +77,11 @@ IShort BTSpell::getExtra() const
  return extra;
 }
 
+IShort BTSpell::getLevel() const
+{
+ return level;
+}
+
 IShort BTSpell::getRange() const
 {
  return range;
@@ -84,5 +95,15 @@ IShort BTSpell::getSp() const
 IShort BTSpell::getType() const
 {
  return type;
+}
+
+int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
+{
+ int ans = a.getCaster() - b.getCaster();
+ if (0 == ans)
+ {
+  ans = a.getLevel() - b.getLevel();
+ }
+ return ans;
 }
 

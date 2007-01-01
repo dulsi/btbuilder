@@ -72,6 +72,11 @@ IShort BTItem::getPrice() const
  return price;
 }
 
+IShort BTItem::getSpellCast() const
+{
+ return spellCast;
+}
+
 IShort BTItem::getTimesUsable() const
 {
  return timesUsable;

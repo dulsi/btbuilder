@@ -139,6 +139,11 @@ const char *BTMonster::getRangedMessage() const
  return rangedMessage;
 }
 
+IShort BTMonster::getRangedSpell() const
+{
+ return rangedSpell;
+}
+
 IShort BTMonster::getRangedType() const
 {
  return rangedType;
