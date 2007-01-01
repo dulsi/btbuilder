@@ -30,6 +30,42 @@ IUByte sideWalls[4] =
  /*00*/ ' ', /*01*/0xB3, /*10*/0xD8, /*11*/0xBA
 };
 
+IUByte cornerWallsUTF8[16][4] =
+{
+ {/*0000*/ ' ', 0x00, 0x00, 0x00},
+ {/*0001*/ ' ', 0x00, 0x00, 0x00},
+ {/*0010*/ ' ', 0x00, 0x00, 0x00},
+ {/*0011*/0xE2, 0x94, 0x94, 0x00},
+ {/*0100*/ ' ', 0x00, 0x00, 0x00},
+ {/*0101*/0xE2, 0x94, 0x82, 0x00},
+ {/*0110*/0xE2, 0x94, 0x8C, 0x00},
+ {/*0111*/0xE2, 0x94, 0x9C, 0x00},
+ {/*1000*/ ' ', 0x00, 0x00, 0x00},
+ {/*1001*/0xE2, 0x94, 0x98, 0x00},
+ {/*1010*/0xE2, 0x94, 0x80, 0x00},
+ {/*1011*/0xE2, 0x94, 0xB4, 0x00},
+ {/*1100*/0xE2, 0x94, 0x90, 0x00},
+ {/*1101*/0xE2, 0x94, 0xA4, 0x00},
+ {/*1110*/0xE2, 0x94, 0xAC, 0x00},
+ {/*1111*/0xE2, 0x94, 0xBC, 0x00}
+};
+
+IUByte upperWallsUTF8[4][4] =
+{
+ {/*00*/ ' ', 0x00, 0x00, 0x00},
+ {/*01*/0xE2, 0x94, 0x80, 0x00},
+ {/*10*/0xE2, 0x95, 0xAB, 0x00},
+ {/*11*/0xE2, 0x95, 0x90, 0x00}
+};
+
+IUByte sideWallsUTF8[4][4] =
+{
+ {/*00*/ ' ', 0x00, 0x00, 0x00},
+ {/*01*/0xE2, 0x94, 0x82, 0x00},
+ {/*10*/0xE2, 0x95, 0xAA, 0x00},
+ {/*11*/0xE2, 0x95, 0x91, 0x00}
+};
+
 int main(int argc, char *argv[])
 {
  char opt;
@@ -38,13 +74,15 @@ int main(int argc, char *argv[])
   {"monster", 1, 0, 'm'},
   {"item", 1, 0, 'i'},
   {"spell", 1, 0, 's'},
+  {"ascii", 0, 0, 'a'},
   {0, 0, 0, 0}
  };
 
+ bool utf8 = true;
  monFile = strdup("default.mon");
  itmFile = strdup("default.itm");
  splFile = strdup("default.spl");
- while ((opt = getopt_long(argc,argv,"m:i:s:", long_options, NULL)) != EOF)
+ while ((opt = getopt_long(argc,argv,"m:i:s:a", long_options, NULL)) != EOF)
  {
   switch (opt)
   {
@@ -68,6 +106,9 @@ int main(int argc, char *argv[])
      free(splFile);
      splFile = strdup(optarg);
     }
+    break;
+   case 'a':
+    utf8 = false;
     break;
    default:
     break;
@@ -226,7 +267,10 @@ int main(int argc, char *argv[])
       {
        index += 1 << BTDIRECTION_SOUTH;
       }
-      printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
+      if (utf8)
+       printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
+      else
+       printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
      }
      index = 0;
      if ((y > 0) && (gameMap.getSquare(y - 1, 21).getWall(BTDIRECTION_EAST) > 0))
@@ -241,17 +285,27 @@ int main(int argc, char *argv[])
      {
       index += 1 << BTDIRECTION_SOUTH;
      }
-     printf("%c \n", cornerWalls[index]);
+     if (utf8)
+      printf("%s \n", cornerWallsUTF8[index]);
+     else
+      printf("%c \n", cornerWalls[index]);
      printf(" ");
      for (x = 0; x < 22; x++)
      {
       index = gameMap.getSquare(y, x).getSpecial();
-      printf("%c%c", sideWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST)],
-        (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
+      if (utf8)
+       printf("%s%c", sideWallsUTF8[gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST)],
+         (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
+      else
+       printf("%c%c", sideWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST)],
+         (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
      }
-     printf("%c \n", sideWalls[gameMap.getSquare(y, 21).getWall(BTDIRECTION_EAST)]);
+     if (utf8)
+      printf("%s \n", sideWallsUTF8[gameMap.getSquare(y, 21).getWall(BTDIRECTION_EAST)]);
+     else
+      printf("%c \n", sideWalls[gameMap.getSquare(y, 21).getWall(BTDIRECTION_EAST)]);
     }
-     printf(" ");
+    printf(" ");
     for (x = 0; x < 22; x++)
     {
      index = 0;
@@ -267,7 +321,10 @@ int main(int argc, char *argv[])
      {
       index += 1 << BTDIRECTION_EAST;
      }
-     printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(21, x).getWall(BTDIRECTION_SOUTH)]);
+     if (utf8)
+      printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(21, x).getWall(BTDIRECTION_SOUTH)]);
+     else
+      printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(21, x).getWall(BTDIRECTION_SOUTH)]);
     }
     index = 0;
     if (gameMap.getSquare(21, 21).getWall(BTDIRECTION_EAST) > 0)
@@ -278,7 +335,10 @@ int main(int argc, char *argv[])
     {
      index += 1 << BTDIRECTION_WEST;
     }
-    printf("%c \n", cornerWalls[index]);
+    if (utf8)
+     printf("%s \n", cornerWallsUTF8[index]);
+    else
+     printf("%c \n", cornerWalls[index]);
     printf("\nDefined special squares:\n\n\n");
     for (int i = 0; i < 30; i++)
     {

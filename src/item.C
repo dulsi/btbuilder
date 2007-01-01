@@ -92,3 +92,24 @@ IShort BTItem::getXSpecial() const
  return xSpecial;
 }
 
+void BTItem::write(BinaryWriteFile &f)
+{
+ IUByte unknown = 0x00;
+
+ f.writeUByteArray(25, (IUByte *)name);
+ f.writeUByte(unknown);
+ f.writeShort(timesUsable);
+ damage.write(f);
+ f.writeUByte(unknown);
+ f.writeShort(armorPlus);
+ f.writeShort(hitPlus);
+ f.writeShort(xSpecial);
+ f.writeShort(chanceXSpecial);
+ f.writeShort(type);
+ f.writeShort(spellCast);
+ f.writeShort(classAllowed);
+ f.writeShort(price);
+ f.writeUByteArray(24, (IUByte *)cause);
+ f.writeUByteArray(24, (IUByte *)effect);
+}
+

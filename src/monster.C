@@ -164,3 +164,39 @@ IBool BTMonster::isIllusion() const
  return illusion;
 }
 
+void BTMonster::write(BinaryWriteFile &f)
+{
+ IUByte unknown;
+ IShort value;
+
+ f.writeUByteArray(14, (IUByte *)name);
+ value = startDistance * 16;
+ f.writeShort(value);
+ f.writeShort(move);
+ f.writeShort(rateAttacks);
+ f.writeShort(illusion);
+ f.writeShort(picture);
+ f.writeShortArray(4, combatAction);
+ f.writeShort(meleeExtra);
+ f.writeShort(ac);
+ f.writeShort(maxAppearing);
+ hp.write(f);
+ meleeDamage.write(f);
+ f.writeUByteArray(14, (IUByte *)meleeMessage);
+ f.writeShort(magicResistance);
+ rangedDamage.write(f);
+ f.writeUByte(unknown);
+ f.writeShort(rangedExtra);
+ f.writeShort(range);
+ f.writeUByteArray(14, (IUByte *)rangedMessage);
+ value = rangedType;
+ if (rangedType == MONSTER_RANGEDTYPEMAGIC)
+ {
+  value += rangedSpell;
+ }
+ f.writeShort(value);
+ f.writeShort(level);
+ gold.write(f);
+ f.writeUByte(unknown);
+}
+

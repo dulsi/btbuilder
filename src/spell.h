@@ -52,6 +52,7 @@ class BTSpell
   IShort getRange() const;
   IShort getSp() const;
   IShort getType() const;
+  void write(BinaryWriteFile &f);
 
  private:
   char name[29];

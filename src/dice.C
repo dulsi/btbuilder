@@ -60,3 +60,18 @@ void BTDice::setType(IShort val)
  // Error tried to set an invalid type
 }
 
+void BTDice::write(BinaryWriteFile &f)
+{
+ IUByte b;
+
+ for (b = 0; b < DICE_VALIDTYPES; b++)
+ {
+  if (type == validType[b])
+  {
+   break;
+  }
+ }
+ b = (b << 5) + number;
+ f.writeUByte(b);
+}
+

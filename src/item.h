@@ -48,6 +48,7 @@ class BTItem
   IShort getTimesUsable() const;
   IShort getType() const;
   IShort getXSpecial() const;
+  void write(BinaryWriteFile &f);
 
  private:
   char name[25];

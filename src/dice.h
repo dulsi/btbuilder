@@ -29,6 +29,7 @@ class BTDice
   void read(BinaryReadFile &f);
   void setNumber(IShort val);
   void setType(IShort val);
+  void write(BinaryWriteFile &f);
 
  private:
   IShort number;

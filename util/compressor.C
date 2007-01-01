@@ -190,7 +190,7 @@ BTCompressorWriteFile::~BTCompressorWriteFile()
 
 void BTCompressorWriteFile::close()
 {
- file.close;
+ file.close();
 }
 
 void BTCompressorWriteFile::open(const char *filename)

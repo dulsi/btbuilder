@@ -57,7 +57,8 @@ BTMap *BTGame::loadMap(const char *filename)
  {
   delete levelMap;
  }
- levelMap = new BTMap(filename);
+ BinaryReadFile levelFile(filename);
+ levelMap = new BTMap(levelFile);
  return levelMap;
 }
 

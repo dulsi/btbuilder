@@ -8,7 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include <istdlib.h>
-#include <vector.h>
+#include <vector>
 
 class BTArrayBoundsException
 {
@@ -21,11 +21,12 @@ class BTFactory
   BTFactory(const char *filename);
   ~BTFactory();
 
+  void save(const char *filename);
   IShort size();
   item &operator[](IShort num);
 
  private:
-  vector<item *> items;
+  std::vector<item*> items;
 };
 
 template<class item>
@@ -47,7 +48,7 @@ class BTSortedFactory
  private:
   BTFactory<item> *factory;
   const BTSortCompare<item> *compare;
-  vector<IUShort> sortedItems;
+  std::vector<IUShort> sortedItems;
 };
 
 template <class item>
@@ -68,9 +69,25 @@ BTFactory<item>::BTFactory(const char *filename)
 template <class item>
 BTFactory<item>::~BTFactory()
 {
- for (vector<item *>::iterator itr(items.begin()); itr != items.end(); itr++)
+// Not sure why gcc doesn't accept this
+// for (std::vector<item*>::iterator itr(items.begin()); itr != items.end(); itr++)
+//  delete *itr;
+ for (size_t i = 0; i < items.size(); i++)
  {
-  delete *itr;
+  delete items[i];
+ }
+}
+
+template <class item>
+void BTFactory<item>::save(const char *filename)
+{
+ BinaryReadFile f(filename);
+// Not sure why gcc doesn't accept this
+// for (std::vector<item_ptr>::iterator itr(items.begin()); itr != items.end(); itr++)
+//  itr->write(f);
+ for (size_t i; i < items.size(); i++)
+ {
+  items[i]->write(f);
  }
 }
 

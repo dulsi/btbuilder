@@ -66,6 +66,7 @@ class BTMonster
   IShort getRateAttacks() const;
   IShort getStartDistance() const;
   IBool isIllusion() const;
+  void write(BinaryWriteFile &f);
 
  private:
   char name[14];

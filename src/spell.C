@@ -97,6 +97,28 @@ IShort BTSpell::getType() const
  return type;
 }
 
+void BTSpell::write(BinaryWriteFile &f)
+{
+ IUByte unknown = 0x00;
+ IShort casterReal;
+
+ f.writeUByteArray(29, (IUByte *)name);
+ f.writeUByteArray(5, (IUByte *)code);
+ casterReal = caster - 6;
+ f.writeShort(casterReal);
+ f.writeShort(level);
+ f.writeShort(sp);
+ f.writeShort(range);
+ f.writeShort(effectiveRange);
+ f.writeShort(type);
+ f.writeShort(area);
+ dice.write(f);
+ f.writeUByte(unknown);
+ f.writeShort(duration);
+ f.writeShort(extra);
+ f.writeUByteArray(22, (IUByte *)effect);
+}
+
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
 {
  int ans = a.getCaster() - b.getCaster();

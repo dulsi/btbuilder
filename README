@@ -9,7 +9,7 @@ Modify the Makefile so that the paths to the graphics library is
 correct and type make.
 
 Currently the program can only read the BTCS files and print out some
-information on monsters, spells and items.
+information on monsters, spells, items and maps.
 
 The program is made available under the GPL.
 
