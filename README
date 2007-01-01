@@ -1,0 +1,17 @@
+                                  BT BUILDER
+
+                  http://www.identicalsoftware.com/btbuilder/
+
+Bt Builder is the beginnings of an open source Bard's Tale Construction
+Set.  It is extremely early in development.  To build it you will need
+the source code, the Identical Software Graphics Library and SDL.
+Modify the Makefile so that the paths to the graphics library is
+correct and type make.
+
+Currently the program can only read the BTCS files and print out some
+information on monsters, spells and items.
+
+The program is made available under the GPL.
+
+Questions or comments can be sent to dulsi@identicalsoftware.com
+

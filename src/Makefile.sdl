@@ -1,0 +1,28 @@
+IDENTICALINC_DIR=/proj/identical/src/include
+IDENTICALLIB_DIR=/proj/identical/lib
+
+SDL_CFLAGS := $(shell sdl-config --cflags)
+SDL_LDFLAGS := $(shell sdl-config --libs)
+
+CXX = g++
+CXXFLAGS = -g -frtti -DSDLLIB -I$(IDENTICALINC_DIR) $(SDL_CFLAGS) -I.
+LIBS = -L$(IDENTICALLIB_DIR) -lidentical-sdl -ldl $(SDL_LDFLAGS)
+
+BTBUILDER_OBJ = file.o dice.o monster.o spell.o item.o map.o main.o \
+	btconst.o
+BTBUILDER_EXE = btbuilder
+
+all: $(BTBUILDER_EXE)
+
+$(BTBUILDER_EXE): $(BTBUILDER_OBJ)
+	$(CXX) -Wl,-E -o $(BTBUILDER_EXE) $(BTBUILDER_OBJ) $(LIBS)
+
+%.o: %.C
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+#clean:
+#	rm -f $(BTBUILDER_OBJ) $(BTBUILDER_EXE)
+
+# dependencies
+file.o: file.h
+

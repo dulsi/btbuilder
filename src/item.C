@@ -1,0 +1,89 @@
+/*-------------------------------------------------------------------------*\
+  <item.C> -- Item implementation file
+
+  Date      Programmer  Description
+  11/09/00  Dennis      Created.
+\*-------------------------------------------------------------------------*/
+
+#include "item.h"
+
+BTItem::BTItem(BinaryReadFile &f)
+{
+ IUByte unknown;
+
+ f.readUByteArray(25, (IUByte *)name);
+ f.readUByte(unknown);
+ f.readShort(timesUsable);
+ damage.read(f);
+ f.readUByte(unknown);
+ f.readShort(armorPlus);
+ f.readShort(hitPlus);
+ f.readShort(xSpecial);
+ f.readShort(chanceXSpecial);
+ f.readShort(type);
+ f.readShort(spellCast);
+ f.readShort(classAllowed);
+ f.readShort(price);
+ f.readUByteArray(24, (IUByte *)cause);
+ f.readUByteArray(24, (IUByte *)effect);
+}
+
+BTItem::BTItem()
+{
+}
+
+const char *BTItem::getName() const
+{
+ return name;
+}
+
+IShort BTItem::getArmorPlus() const
+{
+ return armorPlus;
+}
+
+const char *BTItem::getCause() const
+{
+ return cause;
+}
+
+IShort BTItem::getChanceXSpecial() const
+{
+ return chanceXSpecial;
+}
+
+const BTDice &BTItem::getDamage() const
+{
+ return damage;
+}
+
+const char *BTItem::getEffect() const
+{
+ return effect;
+}
+
+IShort BTItem::getHitPlus() const
+{
+ return hitPlus;
+}
+
+IShort BTItem::getPrice() const
+{
+ return price;
+}
+
+IShort BTItem::getTimesUsable() const
+{
+ return timesUsable;
+}
+
+IShort BTItem::getType() const
+{
+ return type;
+}
+
+IShort BTItem::getXSpecial() const
+{
+ return xSpecial;
+}
+
