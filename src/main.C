@@ -134,22 +134,30 @@ int main(int argc, char *argv[])
       mon.getMagicResistance());
     printf("Starting distance (*10'): %d   Moves per round: %d\n",
       mon.getStartDistance(), mon.getMove());
-    printf("Hit points: %dd%d   Combat options: \n", mon.getHp().getNumber(),
+    printf("Hit points: %dd%d   Combat options: ", mon.getHp().getNumber(),
       mon.getHp().getType());
-    printf("Rate of attacks: %d   Damage Dice: %dd%d\n",
+    IShort combatAction = mon.getCombatAction(0);
+    for (int a = 1; a < 4; ++a)
+     if (combatAction != mon.getCombatAction(a))
+      combatAction = -1;
+    if (-1 == combatAction)
+     printf("Multiple\n");
+    else
+     printf("%s\n", combatActions[combatAction]);
+    printf("Rate of attacks: %d   Damage dice: %dd%d\n",
       mon.getRateAttacks(), mon.getMeleeDamage().getNumber(),
       mon.getMeleeDamage().getType());
     printf("Extra damage: %s\n", extraDamage[mon.getMeleeExtra()]);
-    printf("Attack message: %s\n", mon.getMeleeMessage());
+    printf("Attack message: <monster> %s <opponent>\n", mon.getMeleeMessage());
     printf("Extra ranged attack information -\n");
     printf("   Type: %s", rangedTypes[mon.getRangedType()]);
     switch (mon.getRangedType())
     {
      case BTRANGEDTYPE_MAGIC:
-      printf(" : %s", splList[mon.getRangedSpell()].getCode());
+      printf(": %s", splList[mon.getRangedSpell()].getCode());
      case BTRANGEDTYPE_FOE:
      case BTRANGEDTYPE_GROUP:
-      printf("   Message: %s\n", mon.getRangedMessage());
+      printf("   Message: <monster> %s <opponent>\n", mon.getRangedMessage());
       printf("   Damage: %dd%d   Extra damage: %s   Range: %d",
         mon.getRangedDamage().getNumber(),  mon.getRangedDamage().getType(),
         extraDamage[mon.getRangedExtra()], mon.getRange());
@@ -158,7 +166,7 @@ int main(int argc, char *argv[])
       break;
     }
     printf("\n");
-    printf("Upper limit appearing: %d  Gold: %dd%d   Picture: %d\n",
+    printf("Upper limit appearing: %d  Gold: %dd%d   Picture number: %d\n",
       mon.getMaxAppearing(), mon.getGold().getNumber(),
       mon.getGold().getType(), mon.getPicture());
     printf("\n");
@@ -207,7 +215,21 @@ int main(int argc, char *argv[])
     printf("\nTarget: %s\n", areaEffect[mon.getArea()]);
     printf("Dice: %dd%d   Duration: %s\n", mon.getDice().getNumber(),
       mon.getDice().getType(), durations[mon.getDuration()]);
-    printf("Effect: %s\n", mon.getEffect());
+    switch (mon.getType())
+    {
+     case BTSPELLTYPE_SCRYSIGHT:
+     case BTSPELLTYPE_DOORDETECT:
+     case BTSPELLTYPE_SUMMONILLUSION:
+     case BTSPELLTYPE_SUMMONMONSTER:
+     case BTSPELLTYPE_LIGHT:
+     case BTSPELLTYPE_TRAPDESTROY:
+//     case BTSPELLTYPE_HITBONUS:
+      printf("Effect: %s\n", mon.getEffect());
+      break;
+     default:
+      printf("Effect: %s <target>\n", mon.getEffect());
+      break;
+    }
     printf("\n");
    }
   }
@@ -216,20 +238,24 @@ int main(int argc, char *argv[])
    for (i = 0; i < itmList.size(); i++)
    {
     BTItem &mon(itmList[i]);
-    printf("Item: %s\n", mon.getName());
+    printf("Name: %s\n", mon.getName());
     printf("Type: %s\n", itemTypes[mon.getType()]);
-    printf("Price: %d   User class: \n", mon.getPrice());
+    printf("Price: %d   User class: Multiple\n", mon.getPrice());
     printf("Armor bonus: %d   Hit bonus: %d\n", mon.getArmorPlus(),
       mon.getHitPlus());
     printf("Damage dice: %dd%d\n", mon.getDamage().getNumber(),
       mon.getDamage().getType());
     printf("Extra special damage: %s   Special damage likelihood: %d%%\n",
       extraDamage[mon.getXSpecial()], mon.getChanceXSpecial());
-    printf("Times useable: %d   Spell cast: %s\n", mon.getTimesUsable(),
+    if (BTTIMESUSABLE_UNLIMITED == mon.getTimesUsable())
+     printf("Times useable: (unlimited)");
+    else
+     printf("Times useable: %d", mon.getTimesUsable());
+    printf("   Spell cast: %s\n",
       ((mon.getSpellCast() == -1) ? "(none)" :
       splList[mon.getSpellCast()].getName()));
-    printf("Cause: %s\n", mon.getCause());
-    printf("Effect: %s\n", mon.getEffect());
+    printf("Cause: <member> %s <opponent>\n", mon.getCause());
+    printf("Effect: %s <damage>\n", mon.getEffect());
     printf("\n");
    }
   }

@@ -8,8 +8,12 @@
 \*-------------------------------------------------------------------------*/
 
 #define BT_SPELLTYPES 32
+#define BTSPELLTYPE_SCRYSIGHT      21
+#define BTSPELLTYPE_LIGHT          22
 #define BTSPELLTYPE_ARMORBONUS     23
 #define BTSPELLTYPE_HITBONUS       24
+#define BTSPELLTYPE_TRAPDESTROY    25
+#define BTSPELLTYPE_DOORDETECT     26
 #define BTSPELLTYPE_SUMMONILLUSION 19
 #define BTSPELLTYPE_SUMMONMONSTER  18
 #define BTSPELLTYPE_REGENBARD      29
@@ -33,8 +37,13 @@ extern char *extraDamage[];
 #define BTRANGEDTYPE_MAGIC 3
 extern char *rangedTypes[];
 
+#define BT_COMBATACTIONS 13
+extern char *combatActions[];
+
 #define BT_ITEMTYPES 13
 extern char *itemTypes[];
+
+#define BTTIMESUSABLE_UNLIMITED 255
 
 #define BT_CLASSTYPES 13
 extern char *classTypes[];

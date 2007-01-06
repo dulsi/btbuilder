@@ -38,7 +38,7 @@ char *spellTypes[] =
  "Secret Door Detection",
  "Phase Door",
  "Dispel Magic",
- "Regenerate Bard Song",
+ "Regenerate Bard Songs",
  "Damage By Level"
 };
 
@@ -89,6 +89,16 @@ char *rangedTypes[] =
  "Physical: 1 Foe",
  "Physical: Group",
  "Magic"
+};
+
+char *combatActions[] =
+{
+ "Attack",
+ "Move and Attack",
+ "Dependent attack",
+ "Special attack",
+ "Random",
+ "Nothing"
 };
 
 char *itemTypes[] =
