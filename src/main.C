@@ -6,7 +6,11 @@
 #include "map.h"
 #include "factory.h"
 #include "game.h"
+#include "psuedo3d.h"
+#include "ikbbuffer.h"
 #include <getopt.h>
+#include <SDL.h>
+#include <iostream>
 
 char *monFile = NULL;
 char *itmFile = NULL;
@@ -65,6 +69,110 @@ IUByte sideWallsUTF8[4][4] =
  {/*10*/0xE2, 0x95, 0xAA, 0x00},
  {/*11*/0xE2, 0x95, 0x91, 0x00}
 };
+
+class BTMapTest : public Psuedo3DMap
+{
+ public:
+  int getWallType(int x, int y, int direction)
+  {
+   if (x < 0)
+    x += 22;
+   x = x % 22;
+   if (y < 0)
+    y += 22;
+   y = y % 22;
+   if (m->getSquare(y, x).getWall(direction))
+    return 1;
+   else
+    return 0;
+  }
+
+  BTMap *m;
+};
+
+void testDisplay(BTMap *map)
+{
+ if (SDL_Init(SDL_INIT_VIDEO) < 0)
+ {
+  printf("Failed - SDL_Init\n");
+  exit(0);
+ }
+ SDL_Surface *ISDLScreen = SDL_SetVideoMode(320, 200, 32,
+   SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
+ if (ISDLScreen == NULL)
+ {
+  printf("Failed - SDL_SetVideoMode\n");
+  exit(0);
+ }
+ IKeybufferStart();
+ Psuedo3DConfig pc;
+ pc.width = 112;
+ pc.height = 88;
+ pc.background = "dungeon_horizon.png";
+ pc.walls[0][WALL_FRONT1] = "dungeon_front1.png";
+ pc.walls[0][WALL_FRONT2] = "dungeon_front2.png";
+ pc.walls[0][WALL_FRONT3] = "dungeon_front3.png";
+ pc.walls[0][WALL_FRONT4] = "dungeon_front4.png";
+ pc.walls[0][WALL_EDGE_LEFT1] = "dungeon_left1.png";
+ pc.walls[0][WALL_EDGE_RIGHT1] = "dungeon_right1.png";
+ pc.walls[0][WALL_EDGE_LEFT2] = "dungeon_left2.png";
+ pc.walls[0][WALL_EDGE_RIGHT2] = "dungeon_right2.png";
+ pc.walls[0][WALL_EDGE_LEFT3_2] = "dungeon_left3_2.png";
+ pc.walls[0][WALL_EDGE_LEFT3_1] = "dungeon_left3_1.png";
+ pc.walls[0][WALL_EDGE_RIGHT3_1] = "dungeon_right3_1.png";
+ pc.walls[0][WALL_EDGE_RIGHT3_2] = "dungeon_right3_2.png";
+ pc.walls[0][WALL_EDGE_LEFT4_3] = "dungeon_left4_3.png";
+ pc.walls[0][WALL_EDGE_LEFT4_2] = "dungeon_left4_2.png";
+ pc.walls[0][WALL_EDGE_LEFT4_1] = "dungeon_left4_1.png";
+ pc.walls[0][WALL_EDGE_RIGHT4_1] = "dungeon_right4_1.png";
+ pc.walls[0][WALL_EDGE_RIGHT4_2] = "dungeon_right4_2.png";
+ pc.walls[0][WALL_EDGE_RIGHT4_3] = "dungeon_right4_3.png";
+ pc.walls[0][WALL_EDGE_LEFT5_2] = "dungeon_left5_2.png";
+ pc.walls[0][WALL_EDGE_LEFT5_1] = "dungeon_left5_1.png";
+ pc.walls[0][WALL_EDGE_RIGHT5_1] = "dungeon_right5_1.png";
+ pc.walls[0][WALL_EDGE_RIGHT5_2] = "dungeon_right5_2.png";
+ Psuedo3D p;
+ p.setConfig(&pc);
+ BTMapTest m;
+ m.m = map;
+ int x = 0, y = 0, direction = 0;
+ unsigned char key = ' ';
+ while ('q' != key)
+ {
+  p.draw(&m, x, y, direction);
+  SDL_Rect src;
+  src.x = 0;
+  src.y = 0;
+  src.w = 112;
+  src.h = 88;
+  SDL_BlitSurface(p.getDisplay(), &src, ISDLScreen, &src);
+  SDL_UpdateRect(ISDLScreen, 0, 0, 0, 0);
+  key = IKeybufferGet();
+  switch (key)
+  {
+   case 0xBD: // up
+    x += Psuedo3D::changeXY[direction][0] + 22;
+    x = x % 22;
+    y += Psuedo3D::changeXY[direction][1] + 22;
+    y = y % 22;
+    break;
+   case 0xBF: // left
+    direction += 3;
+    direction = direction % 4;
+    break;
+   case 0xC3: // down
+    x += Psuedo3D::changeXY[(direction + 2) % 4][0] + 22;
+    x = x % 22;
+    y += Psuedo3D::changeXY[(direction + 2) % 4][1] + 22;
+    y = y % 22;
+    break;
+   case 0xC1: // right
+    direction += 1;
+    direction = direction % 4;
+    break;
+  }
+ }
+}
 
 int main(int argc, char *argv[])
 {
@@ -376,6 +484,15 @@ int main(int argc, char *argv[])
       printf("\n");
      }
     }
+   }
+  }
+  else if (strcmp(argv[argx], "test") == 0)
+  {
+   argx++;
+   if (argx < argc)
+   {
+    BTMap *gameMap = game.loadMap(argv[argx]);
+    testDisplay(gameMap);
    }
   }
  }
