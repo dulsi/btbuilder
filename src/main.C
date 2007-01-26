@@ -81,7 +81,10 @@ class BTMapTest : public Psuedo3DMap
    if (y < 0)
     y += 22;
    y = y % 22;
-   if (m->getSquare(y, x).getWall(direction))
+   IShort w = m->getSquare(y, x).getWall(direction);
+   if (w == 2)
+    return 2;
+   else if (w)
     return 1;
    else
     return 0;
@@ -105,34 +108,10 @@ void testDisplay(BTMap *map)
   exit(0);
  }
  IKeybufferStart();
- Psuedo3DConfig pc;
- pc.width = 112;
- pc.height = 88;
- pc.background = "dungeon_horizon.png";
- pc.walls[0][WALL_FRONT1] = "dungeon_front1.png";
- pc.walls[0][WALL_FRONT2] = "dungeon_front2.png";
- pc.walls[0][WALL_FRONT3] = "dungeon_front3.png";
- pc.walls[0][WALL_FRONT4] = "dungeon_front4.png";
- pc.walls[0][WALL_EDGE_LEFT1] = "dungeon_left1.png";
- pc.walls[0][WALL_EDGE_RIGHT1] = "dungeon_right1.png";
- pc.walls[0][WALL_EDGE_LEFT2] = "dungeon_left2.png";
- pc.walls[0][WALL_EDGE_RIGHT2] = "dungeon_right2.png";
- pc.walls[0][WALL_EDGE_LEFT3_2] = "dungeon_left3_2.png";
- pc.walls[0][WALL_EDGE_LEFT3_1] = "dungeon_left3_1.png";
- pc.walls[0][WALL_EDGE_RIGHT3_1] = "dungeon_right3_1.png";
- pc.walls[0][WALL_EDGE_RIGHT3_2] = "dungeon_right3_2.png";
- pc.walls[0][WALL_EDGE_LEFT4_3] = "dungeon_left4_3.png";
- pc.walls[0][WALL_EDGE_LEFT4_2] = "dungeon_left4_2.png";
- pc.walls[0][WALL_EDGE_LEFT4_1] = "dungeon_left4_1.png";
- pc.walls[0][WALL_EDGE_RIGHT4_1] = "dungeon_right4_1.png";
- pc.walls[0][WALL_EDGE_RIGHT4_2] = "dungeon_right4_2.png";
- pc.walls[0][WALL_EDGE_RIGHT4_3] = "dungeon_right4_3.png";
- pc.walls[0][WALL_EDGE_LEFT5_2] = "dungeon_left5_2.png";
- pc.walls[0][WALL_EDGE_LEFT5_1] = "dungeon_left5_1.png";
- pc.walls[0][WALL_EDGE_RIGHT5_1] = "dungeon_right5_1.png";
- pc.walls[0][WALL_EDGE_RIGHT5_2] = "dungeon_right5_2.png";
+ std::vector<Psuedo3DConfig*> aryConfig;
+ Psuedo3DConfig::readXML("walls.xml", aryConfig);
  Psuedo3D p;
- p.setConfig(&pc);
+ p.setConfig(aryConfig[0]);
  BTMapTest m;
  m.m = map;
  int x = 0, y = 0, direction = 0;

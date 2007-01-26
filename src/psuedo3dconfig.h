@@ -7,8 +7,10 @@
   01/15/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#define WALL_TYPES 1
-#define WALL_DIRECTIONS 22
+#include <vector>
+
+#define WALL_TYPES 2
+#define WALL_DIRECTIONS 24
 
 #define WALL_FRONT1 0
 #define WALL_FRONT2 1
@@ -28,10 +30,12 @@
 #define WALL_EDGE_RIGHT4_1 15
 #define WALL_EDGE_RIGHT4_2 16
 #define WALL_EDGE_RIGHT4_3 17
-#define WALL_EDGE_LEFT5_2 18
-#define WALL_EDGE_LEFT5_1 19
-#define WALL_EDGE_RIGHT5_1 20
-#define WALL_EDGE_RIGHT5_2 21
+#define WALL_EDGE_LEFT5_3 18
+#define WALL_EDGE_LEFT5_2 19
+#define WALL_EDGE_LEFT5_1 20
+#define WALL_EDGE_RIGHT5_1 21
+#define WALL_EDGE_RIGHT5_2 22
+#define WALL_EDGE_RIGHT5_3 23
 
 class Psuedo3DConfig
 {
@@ -46,6 +50,8 @@ class Psuedo3DConfig
   }
 
   ~Psuedo3DConfig() {}
+
+  static void readXML(char *filename, std::vector<Psuedo3DConfig*> &cfg);
 
   int height, width;
   char *background;

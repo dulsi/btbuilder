@@ -53,7 +53,7 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
  src.h = config->height;
  src.w = config->width;
  SDL_BlitSurface(background, &src, display, &dest);
- drawEdge(map, x + (changeXY[direction][0] * 4), y + (changeXY[direction][1] * 4), direction, WALL_EDGE_LEFT5_1, 1);
+ drawEdge(map, x + (changeXY[direction][0] * 4), y + (changeXY[direction][1] * 4), direction, WALL_EDGE_LEFT5_1, 2);
  drawFront(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_FRONT4, 3);
  drawEdge(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_EDGE_LEFT4_1, 2);
  drawFront(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_FRONT3, 2);
