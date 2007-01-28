@@ -7,9 +7,8 @@
   01/15/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include <vector>
+#include "xmlserializer.h"
 
-#define WALL_TYPES 2
 #define WALL_DIRECTIONS 24
 
 #define WALL_FRONT1 0
@@ -37,25 +36,51 @@
 #define WALL_EDGE_RIGHT5_2 22
 #define WALL_EDGE_RIGHT5_3 23
 
-class Psuedo3DConfig
+class Psuedo3DWallType : public XMLObject
+{
+ public:
+  Psuedo3DWallType()
+  {
+   for (int i = 0; i < WALL_DIRECTIONS; ++i)
+    walls[i] = 0;
+  }
+
+  ~Psuedo3DWallType()
+  {
+   for (int i = 0; i < WALL_DIRECTIONS; ++i)
+     if (walls[i])
+      delete [] walls[i];
+  }
+
+  virtual void serialize(XMLSerializer* s);
+
+  static XMLObject *create() { return new Psuedo3DWallType; }
+
+  char *walls[WALL_DIRECTIONS];
+};
+
+class Psuedo3DConfig : public XMLObject
 {
  public:
   Psuedo3DConfig()
+   : height(0), width(0), background(0)
   {
-   height = width = 0;
-   background = 0;
-   for (int i = 0; i < WALL_TYPES; ++i)
-    for (int j = 0; j < WALL_DIRECTIONS; ++j)
-     walls[i][j] = 0;
   }
 
-  ~Psuedo3DConfig() {}
+  ~Psuedo3DConfig()
+  {
+   if (background)
+    delete [] background;
+  }
 
-  static void readXML(char *filename, std::vector<Psuedo3DConfig*> &cfg);
+  virtual void serialize(XMLSerializer* s);
+
+  static XMLObject *create() { return new Psuedo3DConfig; }
+  static void readXML(char *filename, XMLVector<Psuedo3DConfig*> &cfg);
 
   int height, width;
   char *background;
-  char *walls[WALL_TYPES][WALL_DIRECTIONS];
+  XMLVector<Psuedo3DWallType*> wallType;
 };
 
 #endif

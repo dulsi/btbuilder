@@ -7,6 +7,7 @@
 #include "factory.h"
 #include "game.h"
 #include "psuedo3d.h"
+#include "job.h"
 #include "ikbbuffer.h"
 #include <getopt.h>
 #include <SDL.h>
@@ -108,7 +109,7 @@ void testDisplay(BTMap *map)
   exit(0);
  }
  IKeybufferStart();
- std::vector<Psuedo3DConfig*> aryConfig;
+ XMLVector<Psuedo3DConfig*> aryConfig;
  Psuedo3DConfig::readXML("walls.xml", aryConfig);
  Psuedo3D p;
  p.setConfig(aryConfig[0]);

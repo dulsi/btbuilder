@@ -27,10 +27,12 @@ class Psuedo3D
   void drawFront(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
 
  public:
+  typedef SDL_Surface *SDL_Surface_ptr;
+  typedef SDL_Surface **SDL_Surface_ary;
   Psuedo3DConfig *config;
   SDL_Surface *display;
   SDL_Surface *background;
-  SDL_Surface *walls[WALL_TYPES][WALL_DIRECTIONS];
+  SDL_Surface ***walls;
 
   static int changeXY[4][2];
 };

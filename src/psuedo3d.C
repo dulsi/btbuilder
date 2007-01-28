@@ -11,11 +11,8 @@
 int Psuedo3D::changeXY[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} };
 
 Psuedo3D::Psuedo3D()
- : config(NULL), display(NULL), background(NULL)
+ : config(NULL), display(NULL), background(NULL), walls(NULL)
 {
- for (int i = 0; i < WALL_TYPES; ++i)
-  for (int j = 0; j < WALL_DIRECTIONS; ++j)
-   walls[i][j] = NULL;
 }
 
 Psuedo3D::~Psuedo3D()
@@ -26,16 +23,23 @@ Psuedo3D::~Psuedo3D()
 
 void Psuedo3D::clear()
 {
- for (int i = 0; i < WALL_TYPES; ++i)
+ if (walls)
  {
-  for (int j = 0; j < WALL_DIRECTIONS; ++j)
+  for (int i = 0; i < config->wallType.size(); ++i)
   {
-   if (walls[i][j])
+   for (int j = 0; j < WALL_DIRECTIONS; ++j)
    {
-    SDL_FreeSurface(walls[i][j]);
-    walls[i][j] = NULL;
+    if (walls[i][j])
+    {
+     SDL_FreeSurface(walls[i][j]);
+     walls[i][j] = NULL;
+    }
    }
+   delete [] walls[i];
+   walls[i] = NULL;
   }
+  delete [] walls;
+  walls = NULL;
  }
  if (background)
  {
@@ -77,10 +81,16 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
  }
  config = configNew;
  background = IMG_Load(config->background);
- for (int i = 0; i < WALL_TYPES; ++i)
+ walls = new SDL_Surface_ary[config->wallType.size()];
+ for (int i = 0; i < config->wallType.size(); ++i)
+ {
+  walls[i] = new SDL_Surface_ptr[WALL_DIRECTIONS];
   for (int j = 0; j < WALL_DIRECTIONS; ++j)
-   if (config->walls[i][j])
-    walls[i][j] = IMG_Load(config->walls[i][j]);
+   if (config->wallType[i]->walls[j])
+    walls[i][j] = IMG_Load(config->wallType[i]->walls[j]);
+   else
+    walls[i][j] = NULL;
+ }
  if (!display)
  {
   Uint32 rmask, gmask, bmask, amask;
