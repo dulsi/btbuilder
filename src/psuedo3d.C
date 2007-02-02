@@ -80,14 +80,15 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
   }
  }
  config = configNew;
- background = IMG_Load(config->background);
+ std::string imagePath("image/");
+ background = IMG_Load((imagePath + config->background).c_str());
  walls = new SDL_Surface_ary[config->wallType.size()];
  for (int i = 0; i < config->wallType.size(); ++i)
  {
   walls[i] = new SDL_Surface_ptr[WALL_DIRECTIONS];
   for (int j = 0; j < WALL_DIRECTIONS; ++j)
    if (config->wallType[i]->walls[j])
-    walls[i][j] = IMG_Load(config->wallType[i]->walls[j]);
+    walls[i][j] = IMG_Load((imagePath + config->wallType[i]->walls[j]).c_str());
    else
     walls[i][j] = NULL;
  }

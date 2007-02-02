@@ -110,7 +110,7 @@ void testDisplay(BTMap *map)
  }
  IKeybufferStart();
  XMLVector<Psuedo3DConfig*> aryConfig;
- Psuedo3DConfig::readXML("walls.xml", aryConfig);
+ Psuedo3DConfig::readXML("data/wall.xml", aryConfig);
  Psuedo3D p;
  p.setConfig(aryConfig[0]);
  BTMapTest m;

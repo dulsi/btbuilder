@@ -5,12 +5,13 @@ SDL_CFLAGS := $(shell sdl-config --cflags)
 SDL_LDFLAGS := $(shell sdl-config --libs)
 
 CXX = g++
-CXXFLAGS = -g -frtti -DSDLLIB -I$(IDENTICALINC_DIR) $(SDL_CFLAGS) -I.
+CXXFLAGS = -g -frtti -DSDLLIB -I$(IDENTICALINC_DIR) $(SDL_CFLAGS) -Isrc/
 LIBS = -L$(IDENTICALLIB_DIR) -lidentical-sdl -ldl $(SDL_LDFLAGS) -lSDL_image \
 	-lexpat
 
-BTBUILDER_OBJ = file.o dice.o monster.o spell.o item.o map.o main.o \
-	btconst.o game.o psuedo3d.o psuedo3dconfig.o job.o expatcpp.o xmlserializer.o
+BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
+	src/map.o src/main.o src/btconst.o src/game.o src/psuedo3d.o \
+	src/psuedo3dconfig.o src/job.o src/expatcpp.o src/xmlserializer.o
 BTBUILDER_EXE = btbuilder
 
 all: $(BTBUILDER_EXE)
