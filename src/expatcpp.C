@@ -21,10 +21,12 @@ ExpatXMLParser::ExpatXMLParser()
  XML_SetCharacterDataHandler(p, characterData);
 }
 
-void ExpatXMLParser::parse(char *filename)
+void ExpatXMLParser::parse(const char *filename)
 {
  char *buffer = new char[XMLBUFFER];
  int fd = open(filename, O_RDONLY);
+ if (-1 == fd)
+  return; // Throw exception
  while (true)
  {
   size_t num = read(fd, buffer, XMLBUFFER);

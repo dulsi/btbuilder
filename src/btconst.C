@@ -118,34 +118,6 @@ char *itemTypes[] =
  "thrown weapon"
 };
 
-char *classTypes[] =
-{
- "Warrior",
- "Paladin",
- "Rogue",
- "Bard",
- "Hunter",
- "Monk",
- "Conjurer",
- "Magician",
- "Sorcerer",
- "Wizard",
- "Archmage",
- "Monster",
- "Illusion"
-};
-
-char *raceTypes[] =
-{
- "Human",
- "Elf",
- "Dwarf",
- "Hobbit",
- "Half-Elf",
- "Half-Orc",
- "Gnome"
-};
-
 char *conditionalCommands[] =
 {
  "anyone is carrying $I",

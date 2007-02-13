@@ -1,0 +1,23 @@
+<data>
+	<race>
+		<name>Human</name>
+	</race>
+	<race>
+		<name>Elf</name>
+	</race>
+	<race>
+		<name>Dwarf</name>
+	</race>
+	<race>
+		<name>Hobbit</name>
+	</race>
+	<race>
+		<name>Half-Elf</name>
+	</race>
+	<race>
+		<name>Half-Orc</name>
+	</race>
+	<race>
+		<name>Gnome</name>
+	</job>
+</data>

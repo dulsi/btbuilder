@@ -13,6 +13,8 @@ BTGame *BTGame::game = NULL;
 BTGame::BTGame(const char *itmFile, const char *monFile, const char *splFile)
  : itemList(itmFile), monsterList(monFile), spellList(splFile), levelMap(NULL)
 {
+ BTJob::readXML("data/job.xml", jobList);
+ BTRace::readXML("data/race.xml", raceList);
  if (NULL == game)
  {
   game = this;
@@ -36,9 +38,19 @@ BTFactory<BTItem> &BTGame::getItemList()
  return itemList;
 }
 
+XMLVector<BTJob*> &BTGame::getJobList()
+{
+ return jobList;
+}
+
 BTFactory<BTMonster> &BTGame::getMonsterList()
 {
  return monsterList;
+}
+
+XMLVector<BTRace*> &BTGame::getRaceList()
+{
+ return raceList;
 }
 
 BTFactory<BTSpell> &BTGame::getSpellList()

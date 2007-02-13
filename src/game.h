@@ -11,7 +11,9 @@
 #include <file.h>
 #include "factory.h"
 #include "item.h"
+#include "job.h"
 #include "monster.h"
+#include "race.h"
 #include "spell.h"
 #include "map.h"
 
@@ -22,7 +24,9 @@ class BTGame
   ~BTGame();
 
   BTFactory<BTItem> &getItemList();
+  XMLVector<BTJob*> &getJobList();
   BTFactory<BTMonster> &getMonsterList();
+  XMLVector<BTRace*> &getRaceList();
   BTFactory<BTSpell> &getSpellList();
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
@@ -31,7 +35,9 @@ class BTGame
 
  private:
   BTFactory<BTItem> itemList;
+  XMLVector<BTJob*> jobList;
   BTFactory<BTMonster> monsterList;
+  XMLVector<BTRace*> raceList;
   BTFactory<BTSpell> spellList;
   BTMap *levelMap;
 

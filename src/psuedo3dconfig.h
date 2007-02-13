@@ -76,7 +76,7 @@ class Psuedo3DConfig : public XMLObject
   virtual void serialize(XMLSerializer* s);
 
   static XMLObject *create() { return new Psuedo3DConfig; }
-  static void readXML(char *filename, XMLVector<Psuedo3DConfig*> &cfg);
+  static void readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg);
 
   int height, width;
   char *background;

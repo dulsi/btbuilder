@@ -26,7 +26,7 @@ class BTJob : public XMLObject
   virtual void serialize(XMLSerializer* s);
 
   static XMLObject *create() { return new BTJob; }
-  static void readXML(char *filename, XMLVector<BTJob*> &job);
+  static void readXML(const char *filename, XMLVector<BTJob*> &job);
 
   char *name;
   char *abbrev;

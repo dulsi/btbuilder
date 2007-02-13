@@ -18,7 +18,7 @@ void BTJob::serialize(XMLSerializer* s)
  s->add("hp", &hp);
 }
 
-void BTJob::readXML(char *filename, XMLVector<BTJob*> &job)
+void BTJob::readXML(const char *filename, XMLVector<BTJob*> &job)
 {
  XMLSerializer parser;
  parser.add("job", &BTJob::create, &job);

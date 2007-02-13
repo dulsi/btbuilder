@@ -79,10 +79,10 @@ void BTSpecialCommand::print(FILE *f) const
     fprintf(f, "%s", extraDamage[number[count++]]);
     break;
    case 'C':
-    fprintf(f, "%s", classTypes[number[count++]]);
+    fprintf(f, "%s", BTGame::getGame()->getJobList()[number[count++]]->name);
     break;
    case 'R':
-    fprintf(f, "%s", raceTypes[number[count++]]);
+    fprintf(f, "%s", BTGame::getGame()->getRaceList()[number[count++]]->name);
     break;
    case 'D':
     fprintf(f, "%s", directions[number[count++]]);
@@ -154,10 +154,10 @@ void BTSpecialConditional::print(FILE *f) const
      fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number].getName());
      break;
     case 'C':
-     fprintf(f, "%s", classTypes[number]);
+     fprintf(f, "%s", BTGame::getGame()->getJobList()[number]->name);
      break;
     case 'R':
-     fprintf(f, "%s", raceTypes[number]);
+     fprintf(f, "%s", BTGame::getGame()->getRaceList()[number]->name);
      break;
     case 'D':
      fprintf(f, "%s", directions[number]);

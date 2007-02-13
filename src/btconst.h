@@ -45,12 +45,6 @@ extern char *itemTypes[];
 
 #define BTTIMESUSABLE_UNLIMITED 255
 
-#define BT_CLASSTYPES 13
-extern char *classTypes[];
-
-#define BT_RACETYPES 7
-extern char *raceTypes[];
-
 #define BT_CONDITIONALCOMMANDS 18
 extern char *conditionalCommands[];
 

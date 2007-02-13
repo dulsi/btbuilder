@@ -28,7 +28,7 @@ void Psuedo3DConfig::serialize(XMLSerializer* s)
  s->add("walltype", &Psuedo3DWallType::create, &wallType);
 }
 
-void Psuedo3DConfig::readXML(char *filename, XMLVector<Psuedo3DConfig*> &cfg)
+void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg)
 {
  XMLSerializer parser;
  parser.add("psuedo3d", &Psuedo3DConfig::create, &cfg);

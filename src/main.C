@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
      if (caster != mon.getCaster())
      {
       caster = mon.getCaster();
-      printf("Class:  %s\n", classTypes[caster]);
+      printf("Class:  %s\n", BTGame::getGame()->getJobList()[caster]->name);
      }
      level = mon.getLevel();
      printf("Level: %d\n\n", level);
