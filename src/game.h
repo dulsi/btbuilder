@@ -9,6 +9,7 @@
 
 #include <istdlib.h>
 #include <file.h>
+#include "display.h"
 #include "factory.h"
 #include "item.h"
 #include "job.h"
@@ -17,7 +18,7 @@
 #include "spell.h"
 #include "map.h"
 
-class BTGame
+class BTGame : public Psuedo3DMap
 {
  public:
   BTGame(const char *itmFile, const char *monFile, const char *splFile);
@@ -31,6 +32,16 @@ class BTGame
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
 
+  int getFacing();
+  int getX();
+  int getY();
+  int getWallType(int x, int y, int direction);
+
+  void moveForward(BTDisplay &d);
+  void turnLeft(BTDisplay &d);
+  void turnRight(BTDisplay &d);
+  void turnAround(BTDisplay &d);
+
   static BTGame *getGame();
 
  private:
@@ -40,6 +51,7 @@ class BTGame
   XMLVector<BTRace*> raceList;
   BTFactory<BTSpell> spellList;
   BTMap *levelMap;
+  int xPos, yPos, facing;
 
   static BTGame *game;
 };

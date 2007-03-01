@@ -71,84 +71,29 @@ IUByte sideWallsUTF8[4][4] =
  {/*11*/0xE2, 0x95, 0x91, 0x00}
 };
 
-class BTMapTest : public Psuedo3DMap
-{
- public:
-  int getWallType(int x, int y, int direction)
-  {
-   if (x < 0)
-    x += 22;
-   x = x % 22;
-   if (y < 0)
-    y += 22;
-   y = y % 22;
-   IShort w = m->getSquare(y, x).getWall(direction);
-   if (w == 2)
-    return 2;
-   else if (w)
-    return 1;
-   else
-    return 0;
-  }
-
-  BTMap *m;
-};
-
 void testDisplay(BTMap *map)
 {
- if (SDL_Init(SDL_INIT_VIDEO) < 0)
- {
-  printf("Failed - SDL_Init\n");
-  exit(0);
- }
- SDL_Surface *ISDLScreen = SDL_SetVideoMode(320, 200, 32,
-   SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
- if (ISDLScreen == NULL)
- {
-  printf("Failed - SDL_SetVideoMode\n");
-  exit(0);
- }
+ BTDisplay display;
  IKeybufferStart();
- XMLVector<Psuedo3DConfig*> aryConfig;
- Psuedo3DConfig::readXML("data/wall.xml", aryConfig);
- Psuedo3D p;
- p.setConfig(aryConfig[0]);
- BTMapTest m;
- m.m = map;
- int x = 0, y = 0, direction = 0;
+ display.setWallGraphics(0);
  unsigned char key = ' ';
+ display.drawView();
  while ('q' != key)
  {
-  p.draw(&m, x, y, direction);
-  SDL_Rect src;
-  src.x = 0;
-  src.y = 0;
-  src.w = 112;
-  src.h = 88;
-  SDL_BlitSurface(p.getDisplay(), &src, ISDLScreen, &src);
-  SDL_UpdateRect(ISDLScreen, 0, 0, 0, 0);
   key = IKeybufferGet();
   switch (key)
   {
    case 0xBD: // up
-    x += Psuedo3D::changeXY[direction][0] + 22;
-    x = x % 22;
-    y += Psuedo3D::changeXY[direction][1] + 22;
-    y = y % 22;
+    BTGame::getGame()->moveForward(display);
     break;
    case 0xBF: // left
-    direction += 3;
-    direction = direction % 4;
+    BTGame::getGame()->turnLeft(display);
     break;
    case 0xC3: // down
-    x += Psuedo3D::changeXY[(direction + 2) % 4][0] + 22;
-    x = x % 22;
-    y += Psuedo3D::changeXY[(direction + 2) % 4][1] + 22;
-    y = y % 22;
+    BTGame::getGame()->turnAround(display);
     break;
    case 0xC1: // right
-    direction += 1;
-    direction = direction % 4;
+    BTGame::getGame()->turnRight(display);
     break;
   }
  }

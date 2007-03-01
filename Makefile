@@ -12,7 +12,7 @@ LIBS = -L$(IDENTICALLIB_DIR) -lidentical-sdl $(SDL_LDFLAGS) -lSDL_image \
 BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/map.o src/main.o src/btconst.o src/game.o src/psuedo3d.o \
 	src/psuedo3dconfig.o src/job.o src/expatcpp.o src/xmlserializer.o \
-	src/race.o
+	src/race.o src/display.o
 BTBUILDER_EXE = btbuilder
 
 all: $(BTBUILDER_EXE)
