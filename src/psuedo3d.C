@@ -10,8 +10,8 @@
 
 int Psuedo3D::changeXY[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} };
 
-Psuedo3D::Psuedo3D()
- : config(NULL), display(NULL), background(NULL), walls(NULL)
+Psuedo3D::Psuedo3D(int xM, int yM)
+ : xMult(xM), yMult(yM), config(NULL), display(NULL), background(NULL), walls(NULL)
 {
 }
 
@@ -54,8 +54,8 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
  int type;
  SDL_Rect src, dest;
  src.x = src.y = dest.x = dest.y = 0;
- src.h = config->height;
- src.w = config->width;
+ src.h = config->height * yMult;
+ src.w = config->width * xMult;
  SDL_BlitSurface(background, &src, display, &dest);
  drawEdge(map, x + (changeXY[direction][0] * 4), y + (changeXY[direction][1] * 4), direction, WALL_EDGE_LEFT5_1, 2);
  drawFront(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_FRONT4, 3);
@@ -81,14 +81,30 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
  }
  config = configNew;
  std::string imagePath("image/");
- background = IMG_Load((imagePath + config->background).c_str());
+ SDL_Surface *img = IMG_Load((imagePath + config->background).c_str());
+ if ((xMult > 1) || (yMult > 1))
+ {
+  background = simpleZoomSurface(img, xMult, yMult);
+  SDL_FreeSurface(img);
+ }
+ else
+  background = img;
  walls = new SDL_Surface_ary[config->wallType.size()];
  for (int i = 0; i < config->wallType.size(); ++i)
  {
   walls[i] = new SDL_Surface_ptr[WALL_DIRECTIONS];
   for (int j = 0; j < WALL_DIRECTIONS; ++j)
    if (config->wallType[i]->walls[j])
-    walls[i][j] = IMG_Load((imagePath + config->wallType[i]->walls[j]).c_str());
+   {
+    img = IMG_Load((imagePath + config->wallType[i]->walls[j]).c_str());
+    if ((xMult > 1) || (yMult > 1))
+    {
+     walls[i][j] = simpleZoomSurface(img, xMult, yMult);
+     SDL_FreeSurface(img);
+    }
+    else
+     walls[i][j] = img;
+   }
    else
     walls[i][j] = NULL;
  }
@@ -107,7 +123,7 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
   amask = 0xff000000;
 #endif
 
-  display = SDL_CreateRGBSurface(SDL_SWSURFACE, config->width, config->height, 32, rmask, gmask, bmask, amask);
+  display = SDL_CreateRGBSurface(SDL_SWSURFACE, config->width * xMult, config->height * yMult, 32, rmask, gmask, bmask, amask);
   SDL_SetAlpha(display, 0, 0);
  }
 }
@@ -155,16 +171,16 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
   type = map->getWallType(x + (changeXY[(direction + 1) % 4][0] * i), y + (changeXY[(direction + 1) % 4][1] * i), direction);
   if ((type > 0) && (walls[type - 1][image]))
   {
-   int w = (config->width - walls[type - 1][image]->w) / 2;
+   int w = ((config->width * xMult) - walls[type - 1][image]->w) / 2;
    int xPos = w + (walls[type - 1][image]->w * i);
    if (xPos >= 0)
    {
     src.x = 0;
     dest.x = xPos;
-    if (xPos + walls[type - 1][image]->w <= config->width)
+    if (xPos + walls[type - 1][image]->w <= (config->width * xMult))
      src.w = walls[type - 1][image]->w;
     else
-     src.w = config->width - xPos;
+     src.w = (config->width * xMult) - xPos;
    }
    else
    {
@@ -178,4 +194,58 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
    SDL_BlitSurface(walls[type - 1][image], &src, display, &dest);
   }
  }
+}
+
+SDL_Surface *simpleZoomSurface(SDL_Surface *src, int xMult, int yMult)
+{
+ Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+ rmask = 0xff000000;
+ gmask = 0x00ff0000;
+ bmask = 0x0000ff00;
+ amask = 0x000000ff;
+#else
+ rmask = 0x000000ff;
+ gmask = 0x0000ff00;
+ bmask = 0x00ff0000;
+ amask = 0xff000000;
+#endif
+
+ SDL_Surface *src32 = src;
+ if (src->format->BitsPerPixel != 32)
+ {
+  src32 = SDL_CreateRGBSurface(SDL_SWSURFACE, src->w, src->h, 32, rmask, gmask, bmask, amask);
+  SDL_BlitSurface(src, NULL, src32, NULL);
+ }
+ SDL_Surface *dst = SDL_CreateRGBSurface(SDL_SWSURFACE, src->w * xMult, src->h * yMult, 32, src32->format->Rmask, src32->format->Gmask, src32->format->Bmask, src32->format->Amask);
+ SDL_LockSurface(src32);
+ char *srcPixelRow = (char *)src32->pixels;
+ char *dstPixelRow = (char *)dst->pixels;
+ for (int y = 0; y < src->h; y++)
+ {
+  if (xMult == 1)
+  {
+   memcpy(dstPixelRow, srcPixelRow, dst->pitch);
+  }
+  else
+  {
+   for (int x = 0; x < src->w; x++)
+   {
+    for (int xCopy = 0; xCopy < xMult; ++xCopy)
+    {
+     memcpy(dstPixelRow + ((x * xMult) + xCopy) * 4, srcPixelRow + (x * 4), 4);
+    }
+   }
+  }
+  for (int yCopy = 1; yCopy < yMult; yCopy++)
+  {
+   memcpy(dstPixelRow + (dst->pitch * yCopy), dstPixelRow, dst->pitch);
+  }
+  dstPixelRow += dst->pitch * yMult;
+  srcPixelRow += src32->pitch;
+ }
+ SDL_UnlockSurface(src32);
+ if (src != src32)
+  SDL_FreeSurface(src32);
+ return dst;
 }

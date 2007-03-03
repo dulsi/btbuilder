@@ -73,7 +73,7 @@ IUByte sideWallsUTF8[4][4] =
 
 void testDisplay(BTMap *map)
 {
- BTDisplay display;
+ BTDisplay display(3, 3);
  IKeybufferStart();
  display.setWallGraphics(0);
  unsigned char key = ' ';

@@ -14,7 +14,7 @@
 class Psuedo3D
 {
  public:
-  Psuedo3D();
+  Psuedo3D(int xM, int yM);
   ~Psuedo3D();
 
   void clear();
@@ -30,11 +30,14 @@ class Psuedo3D
   typedef SDL_Surface *SDL_Surface_ptr;
   typedef SDL_Surface **SDL_Surface_ary;
   Psuedo3DConfig *config;
+  int xMult, yMult;
   SDL_Surface *display;
   SDL_Surface *background;
   SDL_Surface ***walls;
 
   static int changeXY[4][2];
 };
+
+extern SDL_Surface *simpleZoomSurface(SDL_Surface *src, int xMult, int yMult);
 
 #endif
