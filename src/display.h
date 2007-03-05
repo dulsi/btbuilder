@@ -16,6 +16,7 @@ class BTDisplay
   BTDisplay(int xM, int yM);
   ~BTDisplay();
 
+  void drawFullScreen(const char *file, int delay);
   void drawView();
   void setWallGraphics(int type);
 

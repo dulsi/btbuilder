@@ -75,6 +75,7 @@ void testDisplay(BTMap *map)
 {
  BTDisplay display(3, 3);
  IKeybufferStart();
+// display.drawFullScreen("usrscr.lbm", 5000);
  display.setWallGraphics(0);
  unsigned char key = ' ';
  display.drawView();

@@ -7,6 +7,7 @@
 
 #include "display.h"
 #include "game.h"
+#include "ikbbuffer.h"
 #include <SDL_image.h>
 
 BTDisplay::BTDisplay(int xM, int yM)
@@ -39,6 +40,28 @@ BTDisplay::BTDisplay(int xM, int yM)
 BTDisplay::~BTDisplay()
 {
  SDL_Quit();
+}
+
+void BTDisplay::drawFullScreen(const char *file, int delay)
+{
+ SDL_Surface *img = IMG_Load(file);
+ // HACK: Bug in SDL's lbm loading code
+ if ((img->format->BitsPerPixel == 8) && (img->format->palette->ncolors < 256))
+  img->format->palette->ncolors = 256;
+ if ((xMult > 1) || (yMult > 1))
+ {
+  SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
+  SDL_FreeSurface(img);
+  img = img2;
+ }
+ SDL_BlitSurface(img, NULL, mainScreen, NULL);
+ SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+ SDL_FreeSurface(img);
+ if (delay)
+  SDL_Delay(delay);
+ else
+  IKeybufferGet();
+ SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
 }
 
 void BTDisplay::drawView()
