@@ -7,7 +7,7 @@ SDL_LDFLAGS := $(shell sdl-config --libs)
 CXX = g++
 CXXFLAGS = -g -DSDLLIB -I$(IDENTICALINC_DIR) $(SDL_CFLAGS) -Isrc/
 LIBS = -L$(IDENTICALLIB_DIR) -lidentical-sdl $(SDL_LDFLAGS) -lSDL_image \
-	-lexpat
+	-lexpat -lSDL_ttf
 
 BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/map.o src/main.o src/btconst.o src/game.o src/psuedo3d.o \

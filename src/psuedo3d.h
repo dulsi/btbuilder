@@ -21,6 +21,7 @@ class Psuedo3D
   void draw(Psuedo3DMap *map, int x, int y, int direction);
   SDL_Surface *getDisplay() { return display; }
   void setConfig(Psuedo3DConfig *configNew);
+  void setMultiplier(int xM, int yM) { xMult = xM; yMult = yM; }
 
  protected:
   void drawEdge(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);

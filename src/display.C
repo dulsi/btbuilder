@@ -18,7 +18,31 @@ BTDisplay::BTDisplay(int xM, int yM)
   printf("Failed - SDL_Init\n");
   exit(0);
  }
- mainScreen = SDL_SetVideoMode(320 * xM, 200 * yM, 32,
+ if ((xMult == 0) || (yMult == 0))
+ {
+  const SDL_VideoInfo *info = SDL_GetVideoInfo();
+  xMult = (info->current_w - 10) / 320; // Allow for window decoration
+  yMult = (info->current_h - 10) / 200; // Allow for window decoration
+  if (xMult > yMult)
+   xMult = yMult;
+  else
+   yMult = xMult;
+  p3d.setMultiplier(xMult, yMult);
+ }
+ label.x = 16 * xMult;
+ label.y = 103 * yMult;
+ label.w = 112 * xMult;
+ label.h = 13 * yMult;
+ text.x = 168 * xMult;
+ text.y = 8 * yMult;
+ text.w = 136 * xMult;
+ text.h = 94 * yMult;
+ if (TTF_Init() == -1)
+ {
+  printf("Failed - TTF_Init\n");
+  exit(0);
+ }
+ mainScreen = SDL_SetVideoMode(320 * xMult, 200 * yMult, 32,
    SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
  if (mainScreen == NULL)
  {
@@ -35,6 +59,13 @@ BTDisplay::BTDisplay(int xM, int yM)
   mainBackground = img;
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  Psuedo3DConfig::readXML("data/wall.xml", p3dConfig);
+ font = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 8 * ((xMult == yMult) ? yMult : 1));
+ white.r = 255;
+ white.g = 255;
+ white.b = 255;
+ black.r = 0;
+ black.g = 0;
+ black.g = 0;
 }
 
 BTDisplay::~BTDisplay()
@@ -62,6 +93,34 @@ void BTDisplay::drawFullScreen(const char *file, int delay)
  else
   IKeybufferGet();
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
+}
+
+void BTDisplay::drawLabel(const char *name)
+{
+ int w, h;
+ if (TTF_SizeUTF8(font, name, &w, &h) == -1)
+  return;
+ SDL_Surface *img = TTF_RenderUTF8_Solid(font, name, white);
+ if (xMult != yMult)
+ {
+  SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
+  SDL_FreeSurface(img);
+  img = img2;
+  w *= xMult;
+  h *= yMult;
+ }
+ SDL_Rect src, dst;
+ src.x = 0;
+ src.y = 0;
+ src.w = ((w > label.w) ? label.w : w);
+ src.h = ((h > label.h) ? label.h : h);
+ dst.x = ((w > label.w) ? label.x : label.x + (label.w / 2) - (w / 2));
+ dst.y = ((h > label.h) ? label.y : label.y + (label.h / 2) - (h / 2));
+ dst.w = src.w;
+ dst.h = src.h;
+ SDL_BlitSurface(img, &src, mainScreen, &dst);
+ SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+ SDL_FreeSurface(img);
 }
 
 void BTDisplay::drawView()

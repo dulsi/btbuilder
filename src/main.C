@@ -73,12 +73,13 @@ IUByte sideWallsUTF8[4][4] =
 
 void testDisplay(BTMap *map)
 {
- BTDisplay display(3, 3);
+ BTDisplay display;
  IKeybufferStart();
 // display.drawFullScreen("usrscr.lbm", 5000);
  display.setWallGraphics(0);
  unsigned char key = ' ';
  display.drawView();
+ display.drawLabel(map->getName());
  while ('q' != key)
  {
   key = IKeybufferGet();
