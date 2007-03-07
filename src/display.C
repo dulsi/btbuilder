@@ -11,7 +11,7 @@
 #include <SDL_image.h>
 
 BTDisplay::BTDisplay(int xM, int yM)
- : xMult(xM), yMult(yM), x3d(16), y3d(15), p3d(xM, yM), mainScreen(0)
+ : xMult(xM), yMult(yM), x3d(16), y3d(15), textPos(0), p3d(xM, yM), mainScreen(0)
 {
  if (SDL_Init(SDL_INIT_VIDEO) < 0)
  {
@@ -65,12 +65,17 @@ BTDisplay::BTDisplay(int xM, int yM)
  white.b = 255;
  black.r = 0;
  black.g = 0;
- black.g = 0;
+ black.b = 0;
 }
 
 BTDisplay::~BTDisplay()
 {
  SDL_Quit();
+}
+
+void BTDisplay::clearText()
+{
+ SDL_BlitSurface(mainBackground, &text, mainScreen, &text);
 }
 
 void BTDisplay::drawFullScreen(const char *file, int delay)
@@ -118,9 +123,104 @@ void BTDisplay::drawLabel(const char *name)
  dst.y = ((h > label.h) ? label.y : label.y + (label.h / 2) - (h / 2));
  dst.w = src.w;
  dst.h = src.h;
+ SDL_BlitSurface(mainBackground, &label, mainScreen, &label);
  SDL_BlitSurface(img, &src, mainScreen, &dst);
- SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+ SDL_UpdateRect(mainScreen, label.x, label.y, label.w, label.h);
  SDL_FreeSurface(img);
+}
+
+void BTDisplay::drawText(const char *words)
+{
+ int w, h;
+ char *tmp = new char[strlen(words)];
+ const char *partial = words;
+ while (partial)
+ {
+  if (TTF_SizeUTF8(font, partial, &w, &h) == -1)
+  {
+   delete [] tmp;
+   return;
+  }
+  if (xMult != yMult)
+  {
+   w *= xMult;
+   h *= yMult;
+  }
+  if (h + textPos > text.h)
+  {
+   SDL_Rect src, dst;
+   src.x = dst.x = text.x;
+   src.y = text.y + h;
+   src.w = dst.w = text.w;
+   src.h = dst.h = text.h - h;
+   dst.y = text.y;
+   SDL_BlitSurface(mainScreen, &src, mainScreen, &dst);
+   src.x = text.x;
+   src.y = text.y + text.h - h;
+   src.w = text.w;
+   src.h = h;
+   SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
+   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+   textPos -= h;
+  }
+  const char *end = NULL;
+  if (w > text.w)
+  {
+   const char *sp = partial;
+   for (end = partial; *end; ++end)
+   {
+    if (isspace(*end))
+    {
+     memcpy(tmp + (sp - partial), sp, end - sp);
+     tmp[end - partial] = 0;
+     TTF_SizeUTF8(font, tmp, &w, &h);
+     if (xMult != yMult)
+     {
+      w *= xMult;
+      h *= yMult;
+     }
+     if (w > text.w)
+     {
+      end = sp;
+      break;
+     }
+     sp = end;
+    }
+   }
+   if (!(*end))
+    end = sp;
+   if (end == partial)
+    end = NULL;
+   else
+   {
+    while (isspace(*end))
+     ++end;
+    if (!(*end))
+     end = NULL;
+   }
+  }
+  SDL_Surface *img = TTF_RenderUTF8_Solid(font, (end ? tmp : partial), black);
+  if (xMult != yMult)
+  {
+   SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
+   SDL_FreeSurface(img);
+   img = img2;
+  }
+  SDL_Rect src, dst;
+  src.x = 0;
+  src.y = 0;
+  src.w = ((img->w > text.w) ? text.w : w);
+  src.h = ((img->h > text.h) ? text.h : h);
+  dst.x = text.x;
+  dst.y = text.y + textPos;
+  dst.w = src.w;
+  dst.h = src.h;
+  textPos += src.h;
+  SDL_BlitSurface(img, &src, mainScreen, &dst);
+  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+  SDL_FreeSurface(img);
+  partial = end;
+ }
 }
 
 void BTDisplay::drawView()

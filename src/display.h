@@ -17,8 +17,10 @@ class BTDisplay
   BTDisplay(int xM = 0, int yM = 0);
   ~BTDisplay();
 
+  void clearText();
   void drawFullScreen(const char *file, int delay);
   void drawLabel(const char *name);
+  void drawText(const char *words);
   void drawView();
   void setWallGraphics(int type);
 
@@ -27,6 +29,7 @@ class BTDisplay
   int x3d, y3d;
   SDL_Rect label;
   SDL_Rect text;
+  int textPos;
   Psuedo3D p3d;
   XMLVector<Psuedo3DConfig*> p3dConfig;
   SDL_Surface *mainScreen;
