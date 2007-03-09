@@ -59,7 +59,7 @@ BTDisplay::BTDisplay(int xM, int yM)
   mainBackground = img;
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  Psuedo3DConfig::readXML("data/wall.xml", p3dConfig);
- font = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 8 * ((xMult == yMult) ? yMult : 1));
+ font = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));
  white.r = 255;
  white.g = 255;
  white.b = 255;
@@ -76,28 +76,56 @@ BTDisplay::~BTDisplay()
 void BTDisplay::clearText()
 {
  SDL_BlitSurface(mainBackground, &text, mainScreen, &text);
+ SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ textPos = 0;
 }
 
 void BTDisplay::drawFullScreen(const char *file, int delay)
 {
  SDL_Surface *img = IMG_Load(file);
- // HACK: Bug in SDL's lbm loading code
- if ((img->format->BitsPerPixel == 8) && (img->format->palette->ncolors < 256))
-  img->format->palette->ncolors = 256;
+ if (img)
+ {
+  // HACK: Bug in SDL's lbm loading code
+  if ((img->format->BitsPerPixel == 8) && (img->format->palette->ncolors < 256))
+   img->format->palette->ncolors = 256;
+  if ((xMult > 1) || (yMult > 1))
+  {
+   SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
+   SDL_FreeSurface(img);
+   img = img2;
+  }
+  SDL_BlitSurface(img, NULL, mainScreen, NULL);
+  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+  SDL_FreeSurface(img);
+  if (delay)
+   SDL_Delay(delay);
+  else
+   IKeybufferGet();
+  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
+ }
+}
+
+void BTDisplay::drawImage(const char *file)
+{
+ SDL_Surface *img = IMG_Load(file);
  if ((xMult > 1) || (yMult > 1))
  {
   SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
   SDL_FreeSurface(img);
   img = img2;
  }
- SDL_BlitSurface(img, NULL, mainScreen, NULL);
- SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+ SDL_Rect src, dst;
+ src.x = 0;
+ src.y = 0;
+ src.w = p3d.config->width * xMult;
+ src.h = p3d.config->height * yMult;
+ dst.x = x3d * xMult;
+ dst.y = y3d * yMult;
+ dst.w = p3d.config->width * xMult;
+ dst.h = p3d.config->height * yMult;
+ SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
  SDL_FreeSurface(img);
- if (delay)
-  SDL_Delay(delay);
- else
-  IKeybufferGet();
- SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
+ SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 
 void BTDisplay::drawLabel(const char *name)
@@ -132,6 +160,34 @@ void BTDisplay::drawLabel(const char *name)
 void BTDisplay::drawText(const char *words)
 {
  int w, h;
+ if (0 == *words)
+ {
+  h = TTF_FontHeight(font);
+  if (xMult != yMult)
+  {
+   h *= yMult;
+  }
+  if (textPos + h > text.h)
+  {
+   SDL_Rect src, dst;
+   src.x = dst.x = text.x;
+   src.y = text.y + h;
+   src.w = dst.w = text.w;
+   src.h = dst.h = text.h - h;
+   dst.y = text.y;
+   SDL_BlitSurface(mainScreen, &src, mainScreen, &dst);
+   src.x = text.x;
+   src.y = text.y + text.h - h;
+   src.w = text.w;
+   src.h = h;
+   SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
+   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+   textPos -= h;
+  }
+  else
+   textPos += h;
+  return;
+ }
  char *tmp = new char[strlen(words)];
  const char *partial = words;
  while (partial)
@@ -193,6 +249,7 @@ void BTDisplay::drawText(const char *words)
     end = NULL;
    else
    {
+    tmp[end - partial] = 0;
     while (isspace(*end))
      ++end;
     if (!(*end))

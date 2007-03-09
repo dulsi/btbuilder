@@ -37,6 +37,7 @@ class BTGame : public Psuedo3DMap
   int getY();
   int getWallType(int x, int y, int direction);
 
+  void run(BTDisplay &d);
   void moveForward(BTDisplay &d);
   void turnLeft(BTDisplay &d);
   void turnRight(BTDisplay &d);

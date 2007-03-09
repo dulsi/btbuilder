@@ -8,6 +8,7 @@
 #include "btconst.h"
 #include "map.h"
 #include "game.h"
+#include "ikbbuffer.h"
 
 BTMapSquare::BTMapSquare()
  : wallInfo(0), special(-1)
@@ -112,6 +113,94 @@ void BTSpecialCommand::read(BinaryReadFile &f)
  f.readShortArray(3, (IShort *)number);
 }
 
+void BTSpecialCommand::run(BTDisplay &d) const
+{
+ switch (type)
+ {
+  case BTSPECIALCOMMAND_STOP:
+   throw BTSpecialStop();
+   break;
+  case BTSPECIALCOMMAND_PRINT:
+   d.drawText(text);
+   break;
+  case BTSPECIALCOMMAND_FORWARDONE:
+   throw BTSpecialForward();
+   break;
+  case BTSPECIALCOMMAND_GUILD:
+   adventurerGuild(d);
+   break;
+  case BTSPECIALCOMMAND_PRINTLABEL:
+   d.drawLabel(text);
+   break;
+  default:
+   break;
+ }
+}
+
+#define GUILDSTATE_MAIN 0
+#define GUILDSTATE_QUIT 1
+
+void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
+{
+ int state = GUILDSTATE_MAIN;
+ unsigned char key = ' ';
+
+ d.drawLabel("The Guild");
+ while (true)
+ {
+  switch (state)
+  {
+   case GUILDSTATE_MAIN:
+    d.clearText();
+    d.drawText("Thou art in the Guild of Adventurers.");
+    d.drawText("Add member");
+    d.drawText("Remove member");
+    d.drawText("Create a member");
+    d.drawText("Save party");
+    d.drawText("Quit game");
+    d.drawText("Exit the guild");
+    d.drawText("Disk options");
+    while (state == GUILDSTATE_MAIN)
+    {
+     key = IKeybufferGet();
+     switch (key)
+     {
+      case 'Q':
+      case 'q':
+       state = GUILDSTATE_QUIT;
+       break;
+      case 'E':
+      case 'e':
+       throw BTSpecialFlipGoForward();
+       break;
+      default:
+       break;
+     };
+    }
+    break;
+   case GUILDSTATE_QUIT:
+    d.clearText();
+    d.drawText("");
+    d.drawText("Quit the game?");
+    d.drawText("Yes, or");
+    d.drawText("No");
+    while (state == GUILDSTATE_QUIT)
+    {
+     key = IKeybufferGet();
+     if (('N' == key) || ('n' == key))
+      state = GUILDSTATE_MAIN;
+     else if (('Y' == key) || ('y' == key))
+      throw BTSpecialQuit();
+    }
+    break;
+   default:
+    break;
+  }
+ }
+}
+
+BTSpecialCommand BTSpecialCommand::Guild(BTSPECIALCOMMAND_GUILD);
+
 BTSpecialConditional::BTSpecialConditional()
 {
  type = -1;
@@ -195,6 +284,15 @@ void BTSpecialConditional::read(BinaryReadFile &f)
  elseClause.read(f);
 }
 
+void BTSpecialConditional::run(BTDisplay &d) const
+{
+ if (-1 == type)
+  thenClause.run(d);
+ else
+ {
+ }
+}
+
 void BTSpecialConditional::setType(IShort val)
 {
  type = val;
@@ -203,11 +301,6 @@ void BTSpecialConditional::setType(IShort val)
 BTSpecial::BTSpecial()
 {
  name[0] = 0;
-}
-
-const char *BTSpecial::getName() const
-{
- return name;
 }
 
 BTSpecial::BTSpecial(BinaryReadFile &f)
@@ -228,6 +321,11 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
  }
 }
 
+const char *BTSpecial::getName() const
+{
+ return name;
+}
+
 void BTSpecial::print(FILE *f) const
 {
  int i, last;
@@ -244,6 +342,29 @@ void BTSpecial::print(FILE *f) const
  {
   fprintf(f, "%2d. ",i + 1);
   operation[i].print(f);
+ }
+}
+
+void BTSpecial::run(BTDisplay &d) const
+{
+ try
+ {
+  int i = 0;
+  while (i < 20)
+  {
+   try
+   {
+    operation[i].run(d);
+    ++i;
+   }
+   catch (const BTSpecialGoto &g)
+   {
+    i = g.line;
+   }
+  }
+ }
+ catch (const BTSpecialStop &)
+ {
  }
 }
 
@@ -332,4 +453,3 @@ IShort BTMap::getType() const
 {
  return type;
 }
-

@@ -9,6 +9,7 @@
 
 #include <istdlib.h>
 #include <file.h>
+#include "display.h"
 
 /*
 [map]
@@ -66,14 +67,58 @@ class BTMapSquare
   IShort special;
 };
 
+class BTSpecialBack
+{
+ public:
+  BTSpecialBack() {}
+};
+
+class BTSpecialFlipGoForward
+{
+ public:
+  BTSpecialFlipGoForward() {}
+};
+
+class BTSpecialForward
+{
+ public:
+  BTSpecialForward() {}
+};
+
+class BTSpecialGoto
+{
+ public:
+  BTSpecialGoto(int l) : line(l) {}
+
+  int line;
+};
+
+class BTSpecialQuit
+{
+ public:
+  BTSpecialQuit() {}
+};
+
+class BTSpecialStop
+{
+ public:
+  BTSpecialStop() {}
+};
+
 class BTSpecialCommand
 {
  public:
   BTSpecialCommand();
+  BTSpecialCommand(IShort t) : type(t) {}
 
   IShort getType() const;
   void print(FILE *f) const;
   void read(BinaryReadFile &f);
+  void run(BTDisplay &d) const;
+
+  void adventurerGuild(BTDisplay &d) const;
+
+  static BTSpecialCommand Guild;
 
  private:
   IShort type;
@@ -90,6 +135,7 @@ class BTSpecialConditional
   IBool isNothing() const;
   void print(FILE *f) const;
   void read(BinaryReadFile &f);
+  void run(BTDisplay &d) const;
   void setType(IShort val);
 
  private:
@@ -108,6 +154,7 @@ class BTSpecial
 
   const char *getName() const;
   void print(FILE *f) const;
+  void run(BTDisplay &d) const;
 
  private:
   char name[25];

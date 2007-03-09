@@ -19,6 +19,7 @@ class BTDisplay
 
   void clearText();
   void drawFullScreen(const char *file, int delay);
+  void drawImage(const char *file);
   void drawLabel(const char *name);
   void drawText(const char *words);
   void drawView();

@@ -75,30 +75,7 @@ void testDisplay(BTMap *map)
 {
  BTDisplay display;
  IKeybufferStart();
-// display.drawFullScreen("usrscr.lbm", 5000);
- display.setWallGraphics(0);
- unsigned char key = ' ';
- display.drawView();
- display.drawLabel(map->getName());
- while ('q' != key)
- {
-  key = IKeybufferGet();
-  switch (key)
-  {
-   case 0xBD: // up
-    BTGame::getGame()->moveForward(display);
-    break;
-   case 0xBF: // left
-    BTGame::getGame()->turnLeft(display);
-    break;
-   case 0xC3: // down
-    BTGame::getGame()->turnAround(display);
-    break;
-   case 0xC1: // right
-    BTGame::getGame()->turnRight(display);
-    break;
-  }
- }
+ BTGame::getGame()->run(display);
 }
 
 int main(int argc, char *argv[])

@@ -7,11 +7,12 @@
 
 #include "btconst.h"
 #include "game.h"
+#include "ikbbuffer.h"
 
 BTGame *BTGame::game = NULL;
 
 BTGame::BTGame(const char *itmFile, const char *monFile, const char *splFile)
- : itemList(itmFile), monsterList(monFile), spellList(splFile), levelMap(NULL), xPos(0), yPos(0), facing(BTDIRECTION_NORTH)
+ : itemList(itmFile), monsterList(monFile), spellList(splFile), levelMap(NULL), xPos(4), yPos(9), facing(BTDIRECTION_EAST)
 {
  BTJob::readXML("data/job.xml", jobList);
  BTRace::readXML("data/race.xml", raceList);
@@ -106,34 +107,117 @@ int BTGame::getWallType(int x, int y, int direction)
   return 0;
 }
 
+void BTGame::run(BTDisplay &d)
+{
+ try
+ {
+  d.drawFullScreen("usrscr.lbm", 5000);
+  d.setWallGraphics(0);
+  unsigned char key = ' ';
+  try
+  {
+   BTSpecialCommand::Guild.run(d);
+  }
+  catch (const BTSpecialFlipGoForward &)
+  {
+   turnAround(d);
+   moveForward(d);
+  }
+  while (true)
+  {
+   d.drawView();
+   d.drawLabel(levelMap->getName());
+   key = IKeybufferGet();
+   switch (key)
+   {
+    case 0xBD: // up
+     moveForward(d);
+     break;
+    case 0xBF: // left
+     turnLeft(d);
+     break;
+    case 0xC3: // down
+     turnAround(d);
+     break;
+    case 0xC1: // right
+     turnRight(d);
+     break;
+    case 'q':
+     d.clearText();
+     d.drawText("Your game will not be saved. Do you want to quit?");
+     d.drawText("Yes, or");
+     d.drawText("No");
+     while (true)
+     {
+      unsigned char response = IKeybufferGet();
+      if (('y' == response) || ('Y' == response))
+       throw BTSpecialQuit();
+      else if (('n' == response) || ('N' == response))
+      {
+       d.clearText();
+       break;
+      }
+     }
+     break;
+    default:
+     break;
+   }
+  }
+ }
+ catch (const BTSpecialQuit &)
+ {
+ }
+}
+
 void BTGame::moveForward(BTDisplay &d)
 {
- xPos += Psuedo3D::changeXY[facing][0] + 22;
- xPos = xPos % 22;
- yPos += Psuedo3D::changeXY[facing][1] + 22;
- yPos = yPos % 22;
- d.drawView();
+ const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
+ if (current.getWall(facing) != 1)
+ {
+  xPos += Psuedo3D::changeXY[facing][0] + 22;
+  xPos = xPos % 22;
+  yPos += Psuedo3D::changeXY[facing][1] + 22;
+  yPos = yPos % 22;
+  const BTMapSquare& next = levelMap->getSquare(yPos, xPos);
+  IShort s = next.getSpecial();
+  d.drawView();
+  try
+  {
+   if (s >= 0)
+    levelMap->getSpecial(s)->run(d);
+  }
+/*  catch (const BTSpecialBack &)
+  {
+   moveBackward(d);
+  }*/
+  catch (const BTSpecialFlipGoForward &)
+  {
+   turnAround(d);
+   moveForward(d);
+  }
+  catch (const BTSpecialForward &)
+  {
+   moveForward(d);
+  }
+ }
 }
 
 void BTGame::turnLeft(BTDisplay &d)
 {
  facing += 3;
  facing = facing % 4;
- d.drawView();
 }
 
 void BTGame::turnRight(BTDisplay &d)
 {
  facing += 1;
  facing = facing % 4;
- d.drawView();
 }
 
 void BTGame::turnAround(BTDisplay &d)
 {
  facing += 2;
  facing = facing % 4;
- d.drawView();
 }
 
 BTGame *BTGame::getGame()
