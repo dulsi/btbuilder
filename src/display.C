@@ -11,7 +11,7 @@
 #include <SDL_image.h>
 
 BTDisplay::BTDisplay(int xM, int yM)
- : xMult(xM), yMult(yM), x3d(16), y3d(15), textPos(0), p3d(xM, yM), mainScreen(0)
+ : xMult(xM), yMult(yM), x3d(16), y3d(15), textPos(0), p3d(xM, yM), mainScreen(0), ttffont(0), sfont(&simple8x8)
 {
  if (SDL_Init(SDL_INIT_VIDEO) < 0)
  {
@@ -36,7 +36,7 @@ BTDisplay::BTDisplay(int xM, int yM)
  text.x = 168 * xMult;
  text.y = 8 * yMult;
  text.w = 136 * xMult;
- text.h = 94 * yMult;
+ text.h = 96 * yMult;
  if (TTF_Init() == -1)
  {
   printf("Failed - TTF_Init\n");
@@ -59,7 +59,7 @@ BTDisplay::BTDisplay(int xM, int yM)
   mainBackground = img;
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  Psuedo3DConfig::readXML("data/wall.xml", p3dConfig);
- font = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));
+// ttffont = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));
  white.r = 255;
  white.g = 255;
  white.b = 255;
@@ -131,10 +131,22 @@ void BTDisplay::drawImage(const char *file)
 void BTDisplay::drawLabel(const char *name)
 {
  int w, h;
- if (TTF_SizeUTF8(font, name, &w, &h) == -1)
-  return;
- SDL_Surface *img = TTF_RenderUTF8_Solid(font, name, white);
- if (xMult != yMult)
+ if (ttffont)
+ {
+  if (TTF_SizeUTF8(ttffont, name, &w, &h) == -1)
+   return;
+ }
+ else
+ {
+  h = sfont->h;
+  w = strlen(name) * sfont->w;
+ }
+ SDL_Surface *img;
+ if (ttffont)
+  img = TTF_RenderUTF8_Solid(ttffont, name, white);
+ else
+  img = simpleRender_Solid(sfont, name, white);
+ if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
  {
   SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
   SDL_FreeSurface(img);
@@ -162,8 +174,11 @@ void BTDisplay::drawText(const char *words)
  int w, h;
  if (0 == *words)
  {
-  h = TTF_FontHeight(font);
-  if (xMult != yMult)
+  if (ttffont)
+   h = TTF_FontHeight(ttffont);
+  else
+   h = sfont->h;
+  if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
   {
    h *= yMult;
   }
@@ -192,12 +207,20 @@ void BTDisplay::drawText(const char *words)
  const char *partial = words;
  while (partial)
  {
-  if (TTF_SizeUTF8(font, partial, &w, &h) == -1)
+  if (ttffont)
   {
-   delete [] tmp;
-   return;
+   if (TTF_SizeUTF8(ttffont, partial, &w, &h) == -1)
+   {
+    delete [] tmp;
+    return;
+   }
   }
-  if (xMult != yMult)
+  else
+  {
+   w = strlen(partial) * sfont->w;
+   h = sfont->h;
+  }
+  if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
   {
    w *= xMult;
    h *= yMult;
@@ -229,8 +252,14 @@ void BTDisplay::drawText(const char *words)
     {
      memcpy(tmp + (sp - partial), sp, end - sp);
      tmp[end - partial] = 0;
-     TTF_SizeUTF8(font, tmp, &w, &h);
-     if (xMult != yMult)
+     if (ttffont)
+      TTF_SizeUTF8(ttffont, tmp, &w, &h);
+     else
+     {
+      w = strlen(tmp) * sfont->w;
+      h = sfont->h;
+     }
+     if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
      {
       w *= xMult;
       h *= yMult;
@@ -256,8 +285,12 @@ void BTDisplay::drawText(const char *words)
      end = NULL;
    }
   }
-  SDL_Surface *img = TTF_RenderUTF8_Solid(font, (end ? tmp : partial), black);
-  if (xMult != yMult)
+  SDL_Surface *img;
+  if (ttffont)
+   img = TTF_RenderUTF8_Solid(ttffont, (end ? tmp : partial), black);
+  else
+   img = simpleRender_Solid(sfont, (end ? tmp : partial), black);
+  if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
   {
    SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
    SDL_FreeSurface(img);
@@ -277,6 +310,7 @@ void BTDisplay::drawText(const char *words)
   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
   SDL_FreeSurface(img);
   partial = end;
+//   IKeybufferGet();
  }
 }
 

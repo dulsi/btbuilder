@@ -39,6 +39,4 @@ class Psuedo3D
   static int changeXY[4][2];
 };
 
-extern SDL_Surface *simpleZoomSurface(SDL_Surface *src, int xMult, int yMult);
-
 #endif

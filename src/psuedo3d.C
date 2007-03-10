@@ -7,6 +7,7 @@
 
 #include "psuedo3d.h"
 #include <SDL_image.h>
+#include "sdlextend.h"
 
 int Psuedo3D::changeXY[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} };
 
@@ -194,58 +195,4 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
    SDL_BlitSurface(walls[type - 1][image], &src, display, &dest);
   }
  }
-}
-
-SDL_Surface *simpleZoomSurface(SDL_Surface *src, int xMult, int yMult)
-{
- Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
- rmask = 0xff000000;
- gmask = 0x00ff0000;
- bmask = 0x0000ff00;
- amask = 0x000000ff;
-#else
- rmask = 0x000000ff;
- gmask = 0x0000ff00;
- bmask = 0x00ff0000;
- amask = 0xff000000;
-#endif
-
- SDL_Surface *src32 = src;
- if (src->format->BitsPerPixel != 32)
- {
-  src32 = SDL_CreateRGBSurface(SDL_SWSURFACE, src->w, src->h, 32, rmask, gmask, bmask, amask);
-  SDL_BlitSurface(src, NULL, src32, NULL);
- }
- SDL_Surface *dst = SDL_CreateRGBSurface(SDL_SWSURFACE, src->w * xMult, src->h * yMult, 32, src32->format->Rmask, src32->format->Gmask, src32->format->Bmask, src32->format->Amask);
- SDL_LockSurface(src32);
- char *srcPixelRow = (char *)src32->pixels;
- char *dstPixelRow = (char *)dst->pixels;
- for (int y = 0; y < src->h; y++)
- {
-  if (xMult == 1)
-  {
-   memcpy(dstPixelRow, srcPixelRow, dst->pitch);
-  }
-  else
-  {
-   for (int x = 0; x < src->w; x++)
-   {
-    for (int xCopy = 0; xCopy < xMult; ++xCopy)
-    {
-     memcpy(dstPixelRow + ((x * xMult) + xCopy) * 4, srcPixelRow + (x * 4), 4);
-    }
-   }
-  }
-  for (int yCopy = 1; yCopy < yMult; yCopy++)
-  {
-   memcpy(dstPixelRow + (dst->pitch * yCopy), dstPixelRow, dst->pitch);
-  }
-  dstPixelRow += dst->pitch * yMult;
-  srcPixelRow += src32->pitch;
- }
- SDL_UnlockSurface(src32);
- if (src != src32)
-  SDL_FreeSurface(src32);
- return dst;
 }

@@ -10,6 +10,7 @@
 #include <istdlib.h>
 #include "psuedo3d.h"
 #include <SDL_ttf.h>
+#include "sdlextend.h"
 
 class BTDisplay
 {
@@ -35,7 +36,8 @@ class BTDisplay
   XMLVector<Psuedo3DConfig*> p3dConfig;
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
-  TTF_Font *font;
+  TTF_Font *ttffont;
+  simpleFont *sfont;
   SDL_Color white, black;
 };
 
