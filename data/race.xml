@@ -1,23 +1,58 @@
 <data>
 	<race>
 		<name>Human</name>
+                <stat number="1"><n>1</n><d>7</d><m>9</m></stat>
+                <stat number="2"><n>1</n><d>7</d><m>5</m></stat>
+                <stat number="3"><n>1</n><d>7</d><m>7</m></stat>
+                <stat number="4"><n>1</n><d>7</d><m>7</m></stat>
+                <stat number="5"><n>1</n><d>7</d><m>4</m></stat>
 	</race>
 	<race>
 		<name>Elf</name>
+                <stat number="1"><n>1</n><d>7</d><m>7</m></stat>
+                <stat number="2"><n>1</n><d>7</d><m>8</m></stat>
+                <stat number="3"><n>1</n><d>7</d><m>8</m></stat>
+                <stat number="4"><n>1</n><d>7</d><m>5</m></stat>
+                <stat number="5"><n>1</n><d>7</d><m>5</m></stat>
 	</race>
 	<race>
 		<name>Dwarf</name>
+                <stat number="1"><n>1</n><d>7</d><m>11</m></stat>
+                <stat number="2"><n>1</n><d>7</d><m>5</m></stat>
+                <stat number="3"><n>1</n><d>7</d><m>6</m></stat>
+                <stat number="4"><n>1</n><d>7</d><m>9</m></stat>
+                <stat number="5"><n>1</n><d>7</d><m>2</m></stat>
 	</race>
 	<race>
 		<name>Hobbit</name>
+                <stat number="1"><n>1</n><d>7</d><m>3</m></stat>
+                <stat number="2"><n>1</n><d>7</d><m>5</m></stat>
+                <stat number="3"><n>1</n><d>7</d><m>11</m></stat>
+                <stat number="4"><n>1</n><d>7</d><m>4</m></stat>
+                <stat number="5"><n>1</n><d>7</d><m>9</m></stat>
 	</race>
 	<race>
 		<name>Half-Elf</name>
+                <stat number="1"><n>1</n><d>7</d><m>8</m></stat>
+                <stat number="2"><n>1</n><d>7</d><m>7</m></stat>
+                <stat number="3"><n>1</n><d>7</d><m>8</m></stat>
+                <stat number="4"><n>1</n><d>7</d><m>6</m></stat>
+                <stat number="5"><n>1</n><d>7</d><m>5</m></stat>
 	</race>
 	<race>
 		<name>Half-Orc</name>
+                <stat number="1"><n>1</n><d>7</d><m>10</m></stat>
+                <stat number="2"><n>1</n><d>7</d><m>2</m></stat>
+                <stat number="3"><n>1</n><d>7</d><m>7</m></stat>
+                <stat number="4"><n>1</n><d>7</d><m>10</m></stat>
+                <stat number="5"><n>1</n><d>7</d><m>3</m></stat>
 	</race>
 	<race>
 		<name>Gnome</name>
+                <stat number="1"><n>1</n><d>7</d><m>8</m></stat>
+                <stat number="2"><n>1</n><d>7</d><m>9</m></stat>
+                <stat number="3"><n>1</n><d>7</d><m>6</m></stat>
+                <stat number="4"><n>1</n><d>7</d><m>2</m></stat>
+                <stat number="5"><n>1</n><d>7</d><m>3</m></stat>
 	</job>
 </data>

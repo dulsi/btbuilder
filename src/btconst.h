@@ -77,5 +77,7 @@ extern char *directions[];
 #define BT_MAPTYPES 4
 extern char *mapTypes[];
 
-#endif
+#define BT_STATS 5
+extern char *statAbbrev[];
 
+#endif

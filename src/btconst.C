@@ -221,3 +221,11 @@ char *mapTypes[] =
  "Wilderness"
 };
 
+char *statAbbrev[] =
+{
+ "St",
+ "IQ",
+ "Dx",
+ "Cn",
+ "Lk"
+};

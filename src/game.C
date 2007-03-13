@@ -14,6 +14,7 @@ BTGame *BTGame::game = NULL;
 BTGame::BTGame(const char *itmFile, const char *monFile, const char *splFile)
  : itemList(itmFile), monsterList(monFile), spellList(splFile), levelMap(NULL), xPos(4), yPos(9), facing(BTDIRECTION_EAST)
 {
+ IRandomize();
  BTJob::readXML("data/job.xml", jobList);
  BTRace::readXML("data/race.xml", raceList);
  if (NULL == game)

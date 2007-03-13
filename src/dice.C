@@ -18,16 +18,16 @@ BTDice::BTDice(BinaryReadFile &f)
 }
 
 BTDice::BTDice()
- : number(1), type(validType[0])
+ : number(1), type(validType[0]), modifier(0)
 {
 }
 
-IShort BTDice::getNumber() const
+int BTDice::getNumber() const
 {
  return number;
 }
 
-IShort BTDice::getType() const
+int BTDice::getType() const
 {
  return type;
 }
@@ -39,6 +39,21 @@ void BTDice::read(BinaryReadFile &f)
  f.readUByte(b);
  number = (b & DICE_NUMBERMASK) + 1;
  type = validType[(b & DICE_TYPEMASK) >> 5];
+}
+
+int BTDice::roll() const
+{
+ int r = modifier + number;
+ for (int i = 0; i < number; ++i)
+  r += IRandom(type);
+ return r;
+}
+
+void BTDice::serialize(XMLSerializer* s)
+{
+ s->add("n", &number);
+ s->add("d", &type);
+ s->add("m", &modifier);
 }
 
 void BTDice::setNumber(IShort val)

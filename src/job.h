@@ -1,5 +1,5 @@
-#ifndef __BTJOB_H
-#define __BTJOB_H
+#ifndef __JOB_H
+#define __JOB_H
 /*-------------------------------------------------------------------------*\
   <job.h> -- Job header file
 

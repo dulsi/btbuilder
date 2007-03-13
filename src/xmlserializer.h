@@ -48,6 +48,7 @@ class XMLAttribute
 #define XMLTYPE_CREATE 1
 #define XMLTYPE_INT 2
 #define XMLTYPE_STRING 3
+#define XMLTYPE_OBJECT 4
 
 class XMLAction
 {
@@ -76,6 +77,7 @@ class XMLSerializer : public ExpatXMLParser
   ~XMLSerializer();
 
   void add(const char *name, XMLObject::create func, XMLArray* vec, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
 

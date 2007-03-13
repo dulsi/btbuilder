@@ -1,34 +1,35 @@
-#ifndef __RACE_H
-#define __RACE_H
+#ifndef __PC_H
+#define __PC_H
 /*-------------------------------------------------------------------------*\
-  <race.h> -- Race header file
+  <pc.h> -- Player character header file
 
   Date      Programmer  Description
-  02/11/07  Dennis      Created.
+  03/11/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
 #include "btconst.h"
-#include "dice.h"
 #include "xmlserializer.h"
 
-class BTRace : public XMLObject
+class BTPc : public XMLObject
 {
  public:
-  BTRace()
+  BTPc()
   {
    name = new char[1];
    name[0] = 0;
   }
 
-  ~BTRace() { delete [] name; }
+  ~BTPc() { delete [] name; }
 
   virtual void serialize(XMLSerializer* s);
 
-  static XMLObject *create() { return new BTRace; }
-  static void readXML(const char *filename, XMLVector<BTRace*> &race);
+  static XMLObject *create() { return new BTPc; }
+  static void readXML(const char *filename, XMLVector<BTPc*> &pc);
 
   char *name;
-  BTDice stat[BT_STATS];
+  int race;
+  int job;
+  int stat[BT_STATS];
 };
 
 #endif

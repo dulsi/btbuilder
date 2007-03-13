@@ -31,6 +31,17 @@ void XMLSerializer::add(const char *name, XMLObject::create func, XMLArray* vec,
  action.push_back(act);
 }
 
+void XMLSerializer::add(const char *name, XMLObject *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_OBJECT;
+ act->level = level.size();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
 void XMLSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
@@ -91,6 +102,14 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
     level.push_back(newLevel);
     newLevel->object->serialize(this);
    }
+   else if (XMLTYPE_OBJECT == (*itr)->type)
+   {
+    XMLLevel *newLevel = new XMLLevel;
+    newLevel->state = *itr;
+    newLevel->object = reinterpret_cast<XMLObject*>((*itr)->object);
+    level.push_back(newLevel);
+    newLevel->object->serialize(this);
+   }
    else
    {
     state = *itr;
@@ -121,7 +140,8 @@ void XMLSerializer::endElement(const XML_Char *name)
    }
    XMLLevel *oldLevel = level.back();
    level.pop_back();
-   reinterpret_cast<XMLArray*>(oldLevel->state->object)->push_back(oldLevel->object);
+   if (XMLTYPE_CREATE == oldLevel->state->type)
+    reinterpret_cast<XMLArray*>(oldLevel->state->object)->push_back(oldLevel->object);
    delete oldLevel;
   }
  }

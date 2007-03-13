@@ -8,6 +8,7 @@
 #include "btconst.h"
 #include "map.h"
 #include "game.h"
+#include "pc.h"
 #include "ikbbuffer.h"
 
 BTMapSquare::BTMapSquare()
@@ -139,11 +140,16 @@ void BTSpecialCommand::run(BTDisplay &d) const
 
 #define GUILDSTATE_MAIN 0
 #define GUILDSTATE_QUIT 1
+#define GUILDSTATE_SELECTRACE 2
+#define GUILDSTATE_DISKOPS    3
+#define GUILDSTATE_SELECTJOB  4
+#define GUILDSTATE_SELECTNAME 5
 
 void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
 {
  int state = GUILDSTATE_MAIN;
  unsigned char key = ' ';
+ BTPc *pc = NULL;
 
  d.drawLabel("The Guild");
  while (true)
@@ -151,6 +157,11 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
   switch (state)
   {
    case GUILDSTATE_MAIN:
+    if (NULL != pc)
+    {
+     delete pc;
+     pc = NULL;
+    }
     d.clearText();
     d.drawText("Thou art in the Guild of Adventurers.");
     d.drawText("Add member");
@@ -169,11 +180,19 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
       case 'q':
        state = GUILDSTATE_QUIT;
        break;
+      case 'C':
+      case 'c':
+       state = GUILDSTATE_SELECTRACE;
+       break;
       case 'E':
       case 'e':
        throw BTSpecialFlipGoForward();
        break;
       default:
+       break;
+      case 'D':
+      case 'd':
+       state = GUILDSTATE_DISKOPS;
        break;
      };
     }
@@ -187,10 +206,135 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
     while (state == GUILDSTATE_QUIT)
     {
      key = IKeybufferGet();
-     if (('N' == key) || ('n' == key))
+     if (('N' == key) || ('n' == key) || (27 == key))
       state = GUILDSTATE_MAIN;
      else if (('Y' == key) || ('y' == key))
       throw BTSpecialQuit();
+    }
+    break;
+   case GUILDSTATE_SELECTRACE:
+   {
+    int i;
+    d.clearText();
+    d.drawText("Select a race for your new character:");
+    XMLVector<BTRace*> &race = BTGame::getGame()->getRaceList();
+    for (i = 0; i < race.size(); ++i)
+    {
+     char line[50];
+     snprintf(line, 50, "%d) %s", i + 1, race[i]->name);
+     d.drawText(line);
+    }
+    while (state == GUILDSTATE_SELECTRACE)
+    {
+     key = IKeybufferGet();
+     if (27 == key)
+      state = GUILDSTATE_MAIN;
+     else if (('1' <= key) && ('9' >= key))
+     {
+      int r =  key - '1';
+      if (r < race.size())
+      {
+       if (NULL == pc)
+        pc = new BTPc;
+       pc->race = r;
+       for (i = 0; i < BT_STATS; ++i)
+        pc->stat[i] = race[r]->stat[i].roll();
+       state = GUILDSTATE_SELECTJOB;
+      }
+     }
+    }
+    break;
+   }
+   case GUILDSTATE_SELECTJOB:
+   {
+    char stat[2][10];
+    int i;
+    d.clearText();
+    for (i = 0; i < BT_STATS; i++)
+    {
+     snprintf(stat[i % 2], 10, "%s: %d", statAbbrev[i], pc->stat[i]);
+     if (i % 2 == 1)
+      d.draw2Column(stat[0], stat[1]);
+    }
+    if (i % 2 == 1)
+     d.draw2Column(stat[0], "");
+    XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
+    for (int i = 0; i < 8 /*job.size()*/; ++i)
+    {
+     char line[50];
+     snprintf(line, 50, "%d) %s", i + 1, job[i]->name);
+     d.drawText(line);
+    }
+    d.drawText("(Reroll)");
+    while (state == GUILDSTATE_SELECTJOB)
+    {
+     key = IKeybufferGet();
+     if (27 == key)
+      state = GUILDSTATE_MAIN;
+     else if (('R' == key) || ('r' == key))
+      state = GUILDSTATE_SELECTRACE;
+     else if (('1' <= key) && ('9' >= key))
+     {
+      int c = key - '1';
+      if (c < job.size())
+      {
+       pc->job = c;
+       state = GUILDSTATE_SELECTNAME;
+      }
+     }
+    }
+    break;
+   }
+   case GUILDSTATE_SELECTNAME:
+   {
+//    int i;
+    d.clearText();
+    d.drawText("Enter the new new member's name.");
+/*    XMLVector<BTRace*> &race = BTGame::getGame()->getRaceList();
+    for (i = 0; i < race.size(); ++i)
+    {
+     char line[50];
+     snprintf(line, 50, "%d) %s", i + 1, race[i]->name);
+     d.drawText(line);
+    }*/
+    while (state == GUILDSTATE_SELECTNAME)
+    {
+     key = IKeybufferGet();
+     if (27 == key)
+      state = GUILDSTATE_MAIN;
+/*     else if (('1' <= key) && ('9' >= key))
+     {
+      int r =  key - '1';
+      if (r < race.size())
+      {
+       if (NULL == pc)
+        pc = new BTPc;
+       pc->race = r;
+       for (i = 0; i < BT_STATS; ++i)
+        pc->stat[i] = race[r]->stat[i].roll();
+       state = GUILDSTATE_SELECTJOB;
+      }
+     }*/
+    }
+    break;
+   }
+   case GUILDSTATE_DISKOPS:
+    d.clearText();
+    d.drawText("Delete a member");
+    d.drawText("Rename a member");
+    d.drawText("Exit disk options");
+    while (state == GUILDSTATE_DISKOPS)
+    {
+     key = IKeybufferGet();
+     switch (key)
+     {
+      case 'E':
+      case 'e':
+       state = GUILDSTATE_MAIN;
+       break;
+      default:
+       break;
+     };
     }
     break;
    default:

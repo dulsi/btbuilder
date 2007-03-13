@@ -9,6 +9,7 @@
 
 #include <istdlib.h>
 #include <file.h>
+#include "xmlserializer.h"
 
 /*
  [dice]
@@ -18,22 +19,25 @@
 
 #define DICE_VALIDTYPES 8
 
-class BTDice
+class BTDice : public XMLObject
 {
  public:
   BTDice(BinaryReadFile &f);
   BTDice();
 
-  IShort getNumber() const;
-  IShort getType() const;
+  int getNumber() const;
+  int getType() const;
   void read(BinaryReadFile &f);
+  int roll() const;
+  virtual void serialize(XMLSerializer* s);
   void setNumber(IShort val);
   void setType(IShort val);
   void write(BinaryWriteFile &f);
 
  private:
-  IShort number;
-  IShort type;
+  int number;
+  int type;
+  int modifier;
 
   static IShort validType[DICE_VALIDTYPES];
 };

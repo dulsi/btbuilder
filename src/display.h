@@ -18,13 +18,22 @@ class BTDisplay
   BTDisplay(int xM = 0, int yM = 0);
   ~BTDisplay();
 
+  enum alignment { left, center, right };
+
   void clearText();
   void drawFullScreen(const char *file, int delay);
   void drawImage(const char *file);
   void drawLabel(const char *name);
-  void drawText(const char *words);
+  void drawText(const char *words, alignment a = left);
+  void draw2Column(const char *col1, const char *col2);
   void drawView();
   void setWallGraphics(int type);
+
+ private:
+  bool sizeFont(const char *text, int &w, int &h);
+  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a);
+
+  void scrollUp(int h);
 
  private:
   int xMult, yMult;

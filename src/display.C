@@ -131,116 +131,28 @@ void BTDisplay::drawImage(const char *file)
 void BTDisplay::drawLabel(const char *name)
 {
  int w, h;
- if (ttffont)
- {
-  if (TTF_SizeUTF8(ttffont, name, &w, &h) == -1)
-   return;
- }
- else
- {
-  h = sfont->h;
-  w = strlen(name) * sfont->w;
- }
- SDL_Surface *img;
- if (ttffont)
-  img = TTF_RenderUTF8_Solid(ttffont, name, white);
- else
-  img = simpleRender_Solid(sfont, name, white);
- if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
- {
-  SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
-  SDL_FreeSurface(img);
-  img = img2;
-  w *= xMult;
-  h *= yMult;
- }
- SDL_Rect src, dst;
- src.x = 0;
- src.y = 0;
- src.w = ((w > label.w) ? label.w : w);
- src.h = ((h > label.h) ? label.h : h);
- dst.x = ((w > label.w) ? label.x : label.x + (label.w / 2) - (w / 2));
- dst.y = ((h > label.h) ? label.y : label.y + (label.h / 2) - (h / 2));
- dst.w = src.w;
- dst.h = src.h;
+ if (!sizeFont(name, w, h))
+  return;
  SDL_BlitSurface(mainBackground, &label, mainScreen, &label);
- SDL_BlitSurface(img, &src, mainScreen, &dst);
+ drawFont(name, label, white, center);
  SDL_UpdateRect(mainScreen, label.x, label.y, label.w, label.h);
- SDL_FreeSurface(img);
 }
 
-void BTDisplay::drawText(const char *words)
+void BTDisplay::drawText(const char *words, alignment a /*= left*/)
 {
  int w, h;
- if (0 == *words)
- {
-  if (ttffont)
-   h = TTF_FontHeight(ttffont);
-  else
-   h = sfont->h;
-  if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
-  {
-   h *= yMult;
-  }
-  if (textPos + h > text.h)
-  {
-   SDL_Rect src, dst;
-   src.x = dst.x = text.x;
-   src.y = text.y + h;
-   src.w = dst.w = text.w;
-   src.h = dst.h = text.h - h;
-   dst.y = text.y;
-   SDL_BlitSurface(mainScreen, &src, mainScreen, &dst);
-   src.x = text.x;
-   src.y = text.y + text.h - h;
-   src.w = text.w;
-   src.h = h;
-   SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
-   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
-   textPos -= h;
-  }
-  else
-   textPos += h;
-  return;
- }
  char *tmp = new char[strlen(words)];
  const char *partial = words;
  while (partial)
  {
-  if (ttffont)
+  if (!sizeFont(partial, w, h))
   {
-   if (TTF_SizeUTF8(ttffont, partial, &w, &h) == -1)
-   {
-    delete [] tmp;
-    return;
-   }
-  }
-  else
-  {
-   w = strlen(partial) * sfont->w;
-   h = sfont->h;
-  }
-  if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
-  {
-   w *= xMult;
-   h *= yMult;
+   delete [] tmp;
+   return;
   }
   if (h + textPos > text.h)
   {
-   SDL_Rect src, dst;
-   src.x = dst.x = text.x;
-   src.y = text.y + h;
-   src.w = dst.w = text.w;
-   src.h = dst.h = text.h - h;
-   dst.y = text.y;
-   SDL_BlitSurface(mainScreen, &src, mainScreen, &dst);
-   src.x = text.x;
-   src.y = text.y + text.h - h;
-   src.w = text.w;
-   src.h = h;
-   SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
-   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
-   textPos -= h;
+   scrollUp(h);
   }
   const char *end = NULL;
   if (w > text.w)
@@ -252,18 +164,7 @@ void BTDisplay::drawText(const char *words)
     {
      memcpy(tmp + (sp - partial), sp, end - sp);
      tmp[end - partial] = 0;
-     if (ttffont)
-      TTF_SizeUTF8(ttffont, tmp, &w, &h);
-     else
-     {
-      w = strlen(tmp) * sfont->w;
-      h = sfont->h;
-     }
-     if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
-     {
-      w *= xMult;
-      h *= yMult;
-     }
+     sizeFont(tmp, w, h);
      if (w > text.w)
      {
       end = sp;
@@ -285,33 +186,43 @@ void BTDisplay::drawText(const char *words)
      end = NULL;
    }
   }
-  SDL_Surface *img;
-  if (ttffont)
-   img = TTF_RenderUTF8_Solid(ttffont, (end ? tmp : partial), black);
-  else
-   img = simpleRender_Solid(sfont, (end ? tmp : partial), black);
-  if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
-  {
-   SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
-   SDL_FreeSurface(img);
-   img = img2;
-  }
-  SDL_Rect src, dst;
-  src.x = 0;
-  src.y = 0;
-  src.w = ((img->w > text.w) ? text.w : w);
-  src.h = ((img->h > text.h) ? text.h : h);
+  SDL_Rect dst;
   dst.x = text.x;
   dst.y = text.y + textPos;
-  dst.w = src.w;
-  dst.h = src.h;
-  textPos += src.h;
-  SDL_BlitSurface(img, &src, mainScreen, &dst);
+  dst.w = text.w;
+  dst.h = h;
+  drawFont((end ? tmp : partial), dst, black, a);
+  textPos += h;
   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
-  SDL_FreeSurface(img);
   partial = end;
-//   IKeybufferGet();
  }
+ delete [] tmp;
+}
+
+void BTDisplay::draw2Column(const char *col1, const char *col2)
+{
+ int w[2], h[2];
+ int maxH;
+ if ((!sizeFont(col1, w[0], h[0])) || (!sizeFont(col2, w[1], h[1])))
+  return;
+ maxH = ((h[0] > h[1]) ? h[0] : h[1]);
+ if (maxH + textPos > text.h)
+ {
+  scrollUp(maxH);
+ }
+ SDL_Rect dst;
+ dst.x = text.x;
+ dst.y = text.y + textPos;
+ dst.w = text.w / 2;
+ dst.h = maxH;
+ drawFont(col1, dst, black, left);
+ dst.x = text.x + text.w / 2;
+ dst.y = text.y + textPos;
+ dst.w = text.w / 2;
+ dst.h = maxH;
+ drawFont(col2, dst, black, left);
+ textPos += maxH;
+ SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
 }
 
 void BTDisplay::drawView()
@@ -334,4 +245,92 @@ void BTDisplay::drawView()
 void BTDisplay::setWallGraphics(int type)
 {
  p3d.setConfig(p3dConfig[type]);
+}
+
+bool BTDisplay::sizeFont(const char *text, int &w, int &h)
+{
+ if (ttffont)
+ {
+  if (0 == *text)
+  {
+   w = 0;
+   h = TTF_FontHeight(ttffont);
+  }
+  else if (TTF_SizeUTF8(ttffont, text, &w, &h) == -1)
+    return false;
+ }
+ else
+ {
+  w = strlen(text) * sfont->w;
+  h = sfont->h;
+ }
+ if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
+ {
+  w *= xMult;
+  h *= yMult;
+ }
+ return true;
+}
+
+void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a)
+{
+ if (0 == *text)
+  return;
+ SDL_Surface *img;
+ if (ttffont)
+  img = TTF_RenderUTF8_Solid(ttffont, text, c);
+ else
+  img = simpleRender_Solid(sfont, text, c);
+ if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
+ {
+  SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
+  SDL_FreeSurface(img);
+  img = img2;
+ }
+ SDL_Rect src, final;
+ src.x = 0;
+ src.y = 0;
+ src.w = ((img->w > dst.w) ? dst.w : img->w);
+ src.h = ((img->h > dst.h) ? dst.h : img->h);
+ switch (a)
+ {
+  case left:
+   final.x = dst.x;
+   final.y = dst.y;
+   final.w = src.w;
+   final.h = src.h;
+   break;
+  case center:
+   final.x = ((img->w > dst.w) ? dst.x : dst.x + (dst.w / 2) - (img->w / 2));
+   final.y = ((img->h > dst.h) ? dst.y : dst.y + (dst.h / 2) - (img->h / 2));
+   final.w = src.w;
+   final.h = src.h;
+   break;
+  case right:
+   final.x = dst.x + dst.w - src.w;
+   final.y = dst.y + dst.h - src.h;
+   final.w = src.w;
+   final.h = src.h;
+   break;
+ }
+ SDL_BlitSurface(img, &src, mainScreen, &final);
+ SDL_FreeSurface(img);
+}
+
+void BTDisplay::scrollUp(int h)
+{
+ SDL_Rect src, dst;
+ src.x = dst.x = text.x;
+ src.y = text.y + h;
+ src.w = dst.w = text.w;
+ src.h = dst.h = text.h - h;
+ dst.y = text.y;
+ SDL_BlitSurface(mainScreen, &src, mainScreen, &dst);
+ src.x = text.x;
+ src.y = text.y + text.h - h;
+ src.w = text.w;
+ src.h = h;
+ SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
+ SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ textPos -= h;
 }

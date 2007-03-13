@@ -9,7 +9,15 @@
 
 void BTRace::serialize(XMLSerializer* s)
 {
- s->add("race", &name);
+ s->add("name", &name);
+ for (int i = 0; i < BT_STATS; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  sprintf(tmp, "%d", i + 1);
+  attrib->push_back(XMLAttribute("number", tmp));
+  s->add("stat", &stat[i], attrib);
+ }
 }
 
 void BTRace::readXML(const char *filename, XMLVector<BTRace*> &race)
