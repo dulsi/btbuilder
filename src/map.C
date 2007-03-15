@@ -144,12 +144,19 @@ void BTSpecialCommand::run(BTDisplay &d) const
 #define GUILDSTATE_DISKOPS    3
 #define GUILDSTATE_SELECTJOB  4
 #define GUILDSTATE_SELECTNAME 5
+#define GUILDSTATE_REMOVE 6
+#define GUILDSTATE_ADD 7
+#define GUILDSTATE_SAVEPARTY 8
+#define GUILDSTATE_DELETE 9
+#define GUILDSTATE_RENAME 10
 
 void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
 {
  int state = GUILDSTATE_MAIN;
  unsigned char key = ' ';
  BTPc *pc = NULL;
+ XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
+ XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
 
  d.drawLabel("The Guild");
  while (true)
@@ -180,6 +187,14 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
       case 'q':
        state = GUILDSTATE_QUIT;
        break;
+      case 'A':
+      case 'a':
+       state = GUILDSTATE_ADD;
+       break;
+      case 'R':
+      case 'r':
+       state = GUILDSTATE_REMOVE;
+       break;
       case 'C':
       case 'c':
        state = GUILDSTATE_SELECTRACE;
@@ -195,6 +210,79 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
        state = GUILDSTATE_DISKOPS;
        break;
      };
+    }
+    break;
+   case GUILDSTATE_ADD:
+   {
+    d.clearText();
+    if (0 == roster.size())
+    {
+     d.drawText("No adventurers available.");
+     key = IKeybufferGet();
+    }
+    else if (party.size() >= BT_PARTYSIZE)
+    {
+     d.drawText("Party is full.");
+     key = IKeybufferGet();
+    }
+    else
+    {
+     BTDisplay::selectItem *list = new BTDisplay::selectItem[roster.size()];
+     for (int i = 0; i < roster.size(); ++i)
+     {
+      list[i].name = roster[i]->name;
+     }
+     int start(0), select(0), found;
+     while (d.selectList(list, roster.size(), start, select))
+     {
+      for (found = 0; found < party.size(); ++found)
+       if (0 == strcmp(roster[select]->name, party[found]->name))
+       {
+        char tmp[50];
+        d.clearText();
+        snprintf(tmp, 50, "%s is already in the party.", roster[select]->name);
+        d.drawText(tmp);
+        key = IKeybufferGet();
+        break;
+       }
+      if (found >= party.size())
+      {
+       party.push_back(roster[select]);
+       d.drawStats();
+       if (party.size() >= BT_PARTYSIZE)
+        break;
+      }
+     }
+    }
+    state = GUILDSTATE_MAIN;
+    break;
+   }
+   case GUILDSTATE_REMOVE:
+    d.clearText();
+    if (party.size())
+    {
+     d.drawText("Pick a party member to remove.");
+    }
+    else
+    {
+     d.drawText("The party is empty!");
+    }
+    while (state == GUILDSTATE_REMOVE)
+    {
+     key = IKeybufferGet();
+     if ((27 == key) || (0 == party.size()))
+      state = GUILDSTATE_MAIN;
+     else if (('1' <= key) && ('9' >= key))
+     {
+      int n =  key - '1';
+      if (n < party.size())
+      {
+       // Add monster to save file
+       party.erase(party.begin() + n);
+       d.drawStats();
+       state = GUILDSTATE_MAIN;
+      }
+     }
     }
     break;
    case GUILDSTATE_QUIT:
@@ -287,34 +375,26 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
    }
    case GUILDSTATE_SELECTNAME:
    {
-//    int i;
     d.clearText();
     d.drawText("Enter the new new member's name.");
-/*    XMLVector<BTRace*> &race = BTGame::getGame()->getRaceList();
-    for (i = 0; i < race.size(); ++i)
+    std::string nm = d.readString(13);
+    int found;
+    for (found = 0; found < roster.size(); ++found)
     {
-     char line[50];
-     snprintf(line, 50, "%d) %s", i + 1, race[i]->name);
-     d.drawText(line);
-    }*/
-    while (state == GUILDSTATE_SELECTNAME)
-    {
-     key = IKeybufferGet();
-     if (27 == key)
-      state = GUILDSTATE_MAIN;
-/*     else if (('1' <= key) && ('9' >= key))
+     if (0 == strcmp(roster[found]->name, nm.c_str()))
      {
-      int r =  key - '1';
-      if (r < race.size())
-      {
-       if (NULL == pc)
-        pc = new BTPc;
-       pc->race = r;
-       for (i = 0; i < BT_STATS; ++i)
-        pc->stat[i] = race[r]->stat[i].roll();
-       state = GUILDSTATE_SELECTJOB;
-      }
-     }*/
+      d.clearText();
+      d.drawText("There is already a person by that name.");
+      key = IKeybufferGet();
+      break;
+     }
+    }
+    if (found >= roster.size())
+    {
+     pc->setName(nm.c_str());
+     roster.push_back(pc);
+     pc = NULL;
+     state = GUILDSTATE_MAIN;
     }
     break;
    }

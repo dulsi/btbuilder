@@ -55,6 +55,11 @@ XMLVector<BTRace*> &BTGame::getRaceList()
  return raceList;
 }
 
+XMLVector<BTPc*> &BTGame::getRoster()
+{
+ return roster;
+}
+
 BTFactory<BTSpell> &BTGame::getSpellList()
 {
  return spellList;
@@ -74,6 +79,11 @@ BTMap *BTGame::loadMap(const char *filename)
  BinaryReadFile levelFile(filename);
  levelMap = new BTMap(levelFile);
  return levelMap;
+}
+
+XMLVector<BTPc*> &BTGame::getParty()
+{
+ return party;
 }
 
 int BTGame::getFacing()

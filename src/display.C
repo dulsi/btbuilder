@@ -37,6 +37,10 @@ BTDisplay::BTDisplay(int xM, int yM)
  text.y = 8 * yMult;
  text.w = 136 * xMult;
  text.h = 96 * yMult;
+ stats.x = 10 * xMult;
+ stats.y = 144 * yMult;
+ stats.w = 302 * xMult;
+ stats.h = 56 * yMult;
  if (TTF_Init() == -1)
  {
   printf("Failed - TTF_Init\n");
@@ -240,6 +244,124 @@ void BTDisplay::drawView()
  dst.h = p3d.config->height * yMult;
  SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+}
+
+void BTDisplay::drawStats()
+{
+ BTGame *g = BTGame::getGame();
+ XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+ int w, h;
+ SDL_Rect dst;
+ sizeFont("", w, h);
+ SDL_BlitSurface(mainBackground, &stats, mainScreen, &stats);
+ for (int i = 0; i < party.size(); ++i)
+ {
+  dst.x = stats.x;
+  dst.y = stats.y + i * h;
+  dst.w = stats.w;
+  dst.h = h;
+  drawFont(party[i]->name, dst, black, left);
+ }
+ SDL_UpdateRect(mainScreen, stats.x, stats.y, stats.w, stats.h);
+}
+
+std::string BTDisplay::readString(int max)
+{
+ std::string s;
+ int w, h;
+ sizeFont(s.c_str(), w, h);
+ if (h + textPos > text.h)
+  scrollUp(h);
+ unsigned char key;
+ int len = 0;
+ SDL_Rect dst;
+ dst.h = h;
+ sizeFont(">", w, h);
+ dst.x = text.x;
+ dst.y = text.y + textPos;
+ dst.w = w;
+ SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+ drawFont(">", dst, black, left);
+ dst.x = text.x + w;
+ dst.y = text.y + textPos;
+ dst.w = text.w - w;
+ SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ while (((key = IKeybufferGet()) != 13) && (key !=  27))
+ {
+  if (key == 8)
+  {
+   if (len > 0)
+    s.erase(--len);
+  }
+  else if ((len < max) && (key >= ' ') && (key <= '~'))
+  {
+   s.push_back(key);
+   ++len;
+  }
+  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+  drawFont(s.c_str(), dst, black, left);
+  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ }
+ return s;
+}
+
+bool BTDisplay::selectList(selectItem *list, int size, int &start, int &select)
+{
+ int wFirst, wValue, h, hTmp, lines;
+ unsigned char key = 0;
+ char tmp[20];
+ SDL_Rect dst;
+ sizeFont("", wFirst, h);
+ sizeFont("@", wFirst, hTmp);
+ lines = text.h / h - 1;
+ while ((key != 13) && (key !=  27))
+ {
+  clearText();
+  dst.y = text.y;
+  dst.h = h;
+  for (int i = start; i < start + lines; ++i)
+  {
+   if (i >= size)
+    break;
+   if (select == i)
+   {
+    dst.x = text.x;
+    dst.w = text.w;
+    SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
+   }
+   dst.x = text.x;
+   dst.w = wFirst;
+   tmp[0] = list[i].first;
+   tmp[1] = 0;
+   drawFont(tmp, dst, ((select != i) ? black : white), left);
+   if (list[i].value)
+   {
+    snprintf(tmp, 20, "%d", list[i].value);
+    sizeFont(tmp, wValue, hTmp);
+    dst.w = text.w;
+    drawFont(tmp, dst, ((select != i) ? black : white), right);
+   }
+   else
+    wValue = 0;
+   dst.x += wFirst;
+   dst.w = text.w - wValue - wFirst;
+   drawFont(list[i].name, dst, ((select != i) ? black : white), left);
+   dst.y += h;
+  }
+  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+  key = IKeybufferGet();
+  if (key == 0xBD) // up
+  {
+   if (select > 0)
+    --select;
+  }
+  else if (key == 0xC3) // down
+  {
+   if (select + 1 < size)
+    ++select;
+  }
+ }
+ return (key == 13);
 }
 
 void BTDisplay::setWallGraphics(int type)

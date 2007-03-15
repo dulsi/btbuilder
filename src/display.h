@@ -19,6 +19,14 @@ class BTDisplay
   ~BTDisplay();
 
   enum alignment { left, center, right };
+  struct selectItem
+  {
+   selectItem() : first(0), value(0) {}
+
+   char first;
+   char *name;
+   int value;
+  };
 
   void clearText();
   void drawFullScreen(const char *file, int delay);
@@ -27,6 +35,9 @@ class BTDisplay
   void drawText(const char *words, alignment a = left);
   void draw2Column(const char *col1, const char *col2);
   void drawView();
+  void drawStats();
+  std::string readString(int max);
+  bool selectList(selectItem *list, int size, int &start, int &select);
   void setWallGraphics(int type);
 
  private:
@@ -40,6 +51,7 @@ class BTDisplay
   int x3d, y3d;
   SDL_Rect label;
   SDL_Rect text;
+  SDL_Rect stats;
   int textPos;
   Psuedo3D p3d;
   XMLVector<Psuedo3DConfig*> p3dConfig;

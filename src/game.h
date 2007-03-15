@@ -17,6 +17,7 @@
 #include "race.h"
 #include "spell.h"
 #include "map.h"
+#include "pc.h"
 
 class BTGame : public Psuedo3DMap
 {
@@ -28,9 +29,11 @@ class BTGame : public Psuedo3DMap
   XMLVector<BTJob*> &getJobList();
   BTFactory<BTMonster> &getMonsterList();
   XMLVector<BTRace*> &getRaceList();
+  XMLVector<BTPc*> &getRoster();
   BTFactory<BTSpell> &getSpellList();
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
+  XMLVector<BTPc*> &getParty();
 
   int getFacing();
   int getX();
@@ -50,9 +53,11 @@ class BTGame : public Psuedo3DMap
   XMLVector<BTJob*> jobList;
   BTFactory<BTMonster> monsterList;
   XMLVector<BTRace*> raceList;
+  XMLVector<BTPc*> roster;
   BTFactory<BTSpell> spellList;
   BTMap *levelMap;
   int xPos, yPos, facing;
+  XMLVector<BTPc*> party;
 
   static BTGame *game;
 };

@@ -12,6 +12,13 @@ void BTPc::serialize(XMLSerializer* s)
  s->add("name", &name);
 }
 
+void BTPc::setName(const char *nm)
+{
+ delete [] name;
+ name = new char[strlen(nm) + 1];
+ strcpy(name, nm);
+}
+
 void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)
 {
  XMLSerializer parser;

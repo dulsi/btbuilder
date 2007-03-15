@@ -80,4 +80,6 @@ extern char *mapTypes[];
 #define BT_STATS 5
 extern char *statAbbrev[];
 
+#define BT_PARTYSIZE 7
+
 #endif
