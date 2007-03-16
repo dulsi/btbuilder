@@ -23,6 +23,7 @@ class BTDice : public XMLObject
 {
  public:
   BTDice(BinaryReadFile &f);
+  BTDice(int n, int t, int m = 0);
   BTDice();
 
   int getNumber() const;

@@ -130,6 +130,9 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_GUILD:
    adventurerGuild(d);
    break;
+  case BTSPECIALCOMMAND_SHOP:
+   shop(d);
+   break;
   case BTSPECIALCOMMAND_PRINTLABEL:
    d.drawLabel(text);
    break;
@@ -201,13 +204,19 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
        break;
       case 'E':
       case 'e':
-       throw BTSpecialFlipGoForward();
-       break;
-      default:
+       if (false)
+       {
+        d.clearText();
+        d.drawText("You must have a live party to enter the city.");
+       }
+       else
+        throw BTSpecialFlipGoForward();
        break;
       case 'D':
       case 'd':
        state = GUILDSTATE_DISKOPS;
+       break;
+      default:
        break;
      };
     }
@@ -423,6 +432,63 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
  }
 }
 
+void BTSpecialCommand::shop(BTDisplay &d) const
+{
+ unsigned char key = ' ';
+ BTPc *pc = NULL;
+ XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+
+ d.drawLabel("The Shoppe");
+ while (true)
+ {
+  if (pc == NULL)
+  {
+   d.clearText();
+   d.drawText("Welcome to Garth's Equipment Shoppe, oh wealthy travellers!");
+   d.drawText("Which of you is interested in my fine ware?");
+   while (pc == NULL)
+   {
+    key = IKeybufferGet();
+    if (27 == key)
+     throw BTSpecialFlipGoForward();
+    else if (('1' <= key) && ('9' >= key))
+    {
+     int p = key - '1';
+     if (p < party.size())
+     {
+      pc = party[p];
+     }
+    }
+   }
+  }
+  else
+  {
+   char line[100];
+   snprintf(line, 100, "Greetings, %s. Would you like to:", pc->name);
+   d.clearText();
+   d.drawText(line);
+   d.drawText("");
+   d.drawText("Buy an item.");
+   d.drawText("Sell an item.");
+   d.drawText("Identify item.");
+   d.drawText("Done.");
+   while (pc != NULL)
+   {
+    key = IKeybufferGet();
+    switch (key)
+    {
+     case 'D':
+     case 'd':
+      pc = NULL;
+      break;
+     default:
+      break;
+    }
+   }
+  }
+ }
+}
+
 BTSpecialCommand BTSpecialCommand::Guild(BTSPECIALCOMMAND_GUILD);
 
 BTSpecialConditional::BTSpecialConditional()
@@ -510,11 +576,39 @@ void BTSpecialConditional::read(BinaryReadFile &f)
 
 void BTSpecialConditional::run(BTDisplay &d) const
 {
- if (-1 == type)
+ XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+ bool truth = true;
+ switch (type)
+ {
+  case BTCONDITION_GROUPFACING:
+   truth = (BTGame::getGame()->getFacing() == number);
+   break;
+  case BTCONDITION_JOBINPARTY:
+  {
+   truth = false;
+   for (int i = 0; i < party.size(); ++i)
+    if (party[i]->race == number)
+     truth = true;
+   break;
+  }
+  case BTCONDITION_RANDOM:
+   truth = (BTDice(1, 100).roll() <= number);
+   break;
+  case BTCONDITION_RACEINPARTY:
+  {
+   truth = false;
+   for (int i = 0; i < party.size(); ++i)
+    if (party[i]->race == number)
+     truth = true;
+   break;
+  }
+  default:
+   break;
+ }
+ if (truth)
   thenClause.run(d);
  else
- {
- }
+  elseClause.run(d);
 }
 
 void BTSpecialConditional::setType(IShort val)

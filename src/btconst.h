@@ -46,6 +46,10 @@ extern char *itemTypes[];
 #define BTTIMESUSABLE_UNLIMITED 255
 
 #define BT_CONDITIONALCOMMANDS 18
+#define BTCONDITION_GROUPFACING 6
+#define BTCONDITION_JOBINPARTY  8
+#define BTCONDITION_RANDOM      15
+#define BTCONDITION_RACEINPARTY 16
 extern char *conditionalCommands[];
 
 #define BT_SPECIALCOMMANDS 61
@@ -62,6 +66,7 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_FORWARDONE       21
 #define BTSPECIALCOMMAND_GUILD            23
 #define BTSPECIALCOMMAND_REVIEW           24
+#define BTSPECIALCOMMAND_SHOP             25
 #define BTSPECIALCOMMAND_TRAP             26
 #define BTSPECIALCOMMAND_DRAWPICTURE      27
 #define BTSPECIALCOMMAND_PRINTLABEL       30
@@ -80,6 +85,7 @@ extern char *mapTypes[];
 #define BT_STATS 5
 extern char *statAbbrev[];
 
+#define BT_ITEMS 8
 #define BT_PARTYSIZE 7
 
 #endif

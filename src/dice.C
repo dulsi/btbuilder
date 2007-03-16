@@ -17,6 +17,11 @@ BTDice::BTDice(BinaryReadFile &f)
  read(f);
 }
 
+BTDice::BTDice(int n, int t, int m /*= 0*/)
+ : number(n), type(t), modifier(m)
+{
+}
+
 BTDice::BTDice()
  : number(1), type(validType[0]), modifier(0)
 {

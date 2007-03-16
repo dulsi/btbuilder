@@ -14,7 +14,7 @@ void BTRace::serialize(XMLSerializer* s)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
   char tmp[10];
-  sprintf(tmp, "%d", i + 1);
+  snprintf(tmp, 10, "%d", i + 1);
   attrib->push_back(XMLAttribute("number", tmp));
   s->add("stat", &stat[i], attrib);
  }

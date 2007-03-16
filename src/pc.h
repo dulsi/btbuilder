@@ -10,6 +10,16 @@
 #include "btconst.h"
 #include "xmlserializer.h"
 
+class BTEquipment : public XMLObject
+{
+ public:
+  virtual void serialize(XMLSerializer* s);
+
+  int type;
+  bool equiped, known;
+  int charges;
+};
+
 class BTPc : public XMLObject
 {
  public:
@@ -35,6 +45,9 @@ class BTPc : public XMLObject
   int ac;
   int hp, maxHp;
   int sp, maxSp;
+  int gold;
+  int xp;
+  BTEquipment item[BT_ITEMS];
 };
 
 #endif
