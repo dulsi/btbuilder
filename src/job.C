@@ -16,6 +16,7 @@ void BTJob::serialize(XMLSerializer* s)
  s->add("save", &save);
  s->add("improveSave", &improveSave);
  s->add("hp", &hp);
+ s->add("advanced", &advanced);
 }
 
 void BTJob::readXML(const char *filename, XMLVector<BTJob*> &job)

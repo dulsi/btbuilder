@@ -24,7 +24,7 @@ class BTDisplay
    selectItem() : first(0), value(0) {}
 
    char first;
-   char *name;
+   const char *name;
    int value;
   };
 

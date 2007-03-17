@@ -11,6 +11,8 @@
 #include <file.h>
 #include "dice.h"
 
+class BTPc;
+
 /*
 [item]
 name: char[25]
@@ -36,6 +38,7 @@ class BTItem
   BTItem(BinaryReadFile &f);
   BTItem();
 
+  bool canUse(BTPc *pc) const;
   const char *getName() const;
   IShort getArmorPlus() const;
   const char *getCause() const;

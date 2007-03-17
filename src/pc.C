@@ -13,6 +13,32 @@ void BTEquipment::serialize(XMLSerializer* s)
  s->add("charges", &charges);
 }
 
+bool BTPc::isEquipped(int index) const
+{
+ return item[index].equipped;
+}
+
+bool BTPc::isEquipmentEmpty() const
+{
+ if (BTITEM_NONE == item[0].type)
+  return true;
+ else
+  return false;
+}
+
+bool BTPc::isEquipmentFull() const
+{
+ if (BTITEM_NONE != item[BT_ITEMS - 1].type)
+  return true;
+ else
+  return false;
+}
+
+int BTPc::getItem(int index) const
+{
+ return item[index].type;
+}
+
 void BTPc::serialize(XMLSerializer* s)
 {
  s->add("name", &name);

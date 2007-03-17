@@ -70,6 +70,8 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_TRAP             26
 #define BTSPECIALCOMMAND_DRAWPICTURE      27
 #define BTSPECIALCOMMAND_PRINTLABEL       30
+#define BTSPECIALCOMMAND_PRESSANYKEY      45
+#define BTSPECIALCOMMAND_SETDIRECTION     48
 extern char *specialCommands[];
 
 #define BT_DIRECTIONS 4
@@ -83,9 +85,12 @@ extern char *directions[];
 extern char *mapTypes[];
 
 #define BT_STATS 5
+#define BTSTAT_CN 3
 extern char *statAbbrev[];
 
 #define BT_ITEMS 8
 #define BT_PARTYSIZE 7
+
+#define BTITEM_NONE 0x4000
 
 #endif

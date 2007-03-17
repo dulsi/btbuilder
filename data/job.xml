@@ -79,6 +79,7 @@
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+                <advanced>true</advanced>
 	</job>
 	<job>
 		<name>Wizard</name>
@@ -88,6 +89,7 @@
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+                <advanced>true</advanced>
 	</job>
 	<job>
 		<name>Archmage</name>
@@ -97,6 +99,7 @@
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+                <advanced>true</advanced>
 	</job>
 	<job>
 		<name>Monster</name>
@@ -106,6 +109,7 @@
 		<save>17</save>
 		<improveSave>2</improveSave>
 		<hp>10</hp>
+                <advanced>true</advanced>
 	</job>
 	<job>
 		<name>Illusion</name>
@@ -115,5 +119,6 @@
 		<save>17</save>
 		<improveSave>3</improveSave>
 		<hp>11</hp>
+                <advanced>true</advanced>
 	</job>
 </data>

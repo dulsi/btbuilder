@@ -136,6 +136,13 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_PRINTLABEL:
    d.drawLabel(text);
    break;
+  case BTSPECIALCOMMAND_PRESSANYKEY:
+   d.drawText("(Press any key)");
+   IKeybufferGet();
+   break;
+  case BTSPECIALCOMMAND_SETDIRECTION:
+   BTGame::getGame()->setFacing(number[0]);
+   break;
   default:
    break;
  }
@@ -262,6 +269,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
         break;
       }
      }
+     delete [] list;
     }
     state = GUILDSTATE_MAIN;
     break;
@@ -356,11 +364,15 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
     if (i % 2 == 1)
      d.draw2Column(stat[0], "");
     XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
-    for (int i = 0; i < 8 /*job.size()*/; ++i)
+    int count = 1;
+    for (i = 0; i < job.size(); ++i)
     {
-     char line[50];
-     snprintf(line, 50, "%d) %s", i + 1, job[i]->name);
-     d.drawText(line);
+     if (!job[i]->advanced)
+     {
+      char line[50];
+      snprintf(line, 50, "%d) %s", count++, job[i]->name);
+      d.drawText(line);
+     }
     }
     d.drawText("(Reroll)");
     while (state == GUILDSTATE_SELECTJOB)
@@ -372,11 +384,19 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
       state = GUILDSTATE_SELECTRACE;
      else if (('1' <= key) && ('9' >= key))
      {
-      int c = key - '1';
-      if (c < job.size())
+      count = key - '1';
+      for (i = 0; i < job.size(); i++)
       {
-       pc->job = c;
-       state = GUILDSTATE_SELECTNAME;
+       if (!job[i]->advanced)
+       {
+        if (count == 0)
+        {
+         pc->job = i;
+         pc->hp = pc->maxHp = BTDice(1, 14, 14).roll() + ((pc->stat[BTSTAT_CN] > 14) ? pc->stat[BTSTAT_CN] - 14 : 0);
+         pc->gold = BTDice(1, 61, 110).roll();
+         state = GUILDSTATE_SELECTNAME;
+        }
+       }
       }
      }
     }
@@ -437,6 +457,7 @@ void BTSpecialCommand::shop(BTDisplay &d) const
  unsigned char key = ' ';
  BTPc *pc = NULL;
  XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
 
  d.drawLabel("The Shoppe");
  while (true)
@@ -464,16 +485,21 @@ void BTSpecialCommand::shop(BTDisplay &d) const
   else
   {
    char line[100];
+   bool refresh(true);
    snprintf(line, 100, "Greetings, %s. Would you like to:", pc->name);
-   d.clearText();
-   d.drawText(line);
-   d.drawText("");
-   d.drawText("Buy an item.");
-   d.drawText("Sell an item.");
-   d.drawText("Identify item.");
-   d.drawText("Done.");
    while (pc != NULL)
    {
+    if (refresh)
+    {
+     d.clearText();
+     d.drawText(line);
+     d.drawText("");
+     d.drawText("Buy an item.");
+     d.drawText("Sell an item.");
+     d.drawText("Identify item.");
+     d.drawText("Done.");
+     refresh = false;
+    }
     key = IKeybufferGet();
     switch (key)
     {
@@ -481,6 +507,69 @@ void BTSpecialCommand::shop(BTDisplay &d) const
      case 'd':
       pc = NULL;
       break;
+     case 'B':
+     case 'b':
+     {
+      refresh = true;
+      if (pc->isEquipmentFull())
+      {
+       d.clearText();
+       d.drawText("Your pockets are full."); // You have no items
+       IKeybufferGet();
+      }
+      else
+      {
+       BTDisplay::selectItem *list = new BTDisplay::selectItem[10];
+       for (int i = 0; (i < itemList.size()) && (i < 10); ++i)
+       {
+        if (!itemList[i].canUse(pc))
+         list[i].first = '@';
+        list[i].name = itemList[i].getName();
+        list[i].value = itemList[i].getPrice();
+       }
+       int start(0), select(0), found;
+       while (d.selectList(list, ((10 < itemList.size()) ? 10 : itemList.size()), start, select))
+       {
+       }
+       delete [] list;
+      }
+      break;
+     }
+     case 'S':
+     case 's':
+     {
+      refresh = true;
+      if (pc->isEquipmentEmpty())
+      {
+       d.clearText();
+       d.drawText("You have no items.");
+       IKeybufferGet();
+      }
+      else
+      {
+       BTDisplay::selectItem *list = new BTDisplay::selectItem[BT_ITEMS];
+       int len = 8;
+       for (int i = 0; i < BT_ITEMS; ++i)
+       {
+        int type = pc->getItem(i);
+        if (type == BTITEM_NONE)
+        {
+         len = i;
+         break;
+        }
+        if (pc->isEquipped(i))
+         list[i].first = '*';
+        list[i].name = itemList[type].getName();
+        list[i].value = itemList[type].getPrice() / 2;
+       }
+       int start(0), select(0), found;
+       while (d.selectList(list, ((10 < itemList.size()) ? 10 : itemList.size()), start, select))
+       {
+       }
+       delete [] list;
+      }
+      break;
+     }
      default:
       break;
     }

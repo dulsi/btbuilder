@@ -13,10 +13,11 @@
 class BTEquipment : public XMLObject
 {
  public:
+  BTEquipment() : type(BTITEM_NONE) {}
   virtual void serialize(XMLSerializer* s);
 
   int type;
-  bool equiped, known;
+  bool equipped, known;
   int charges;
 };
 
@@ -24,14 +25,20 @@ class BTPc : public XMLObject
 {
  public:
   BTPc()
-   : ac(0), sp(0), maxSp(0)
+   : race(0), job(0), ac(0), hp(0), maxHp(0),  sp(0), maxSp(0), gold(0), xp(0)
   {
    name = new char[1];
    name[0] = 0;
+   for (int i = 0; i < BT_STATS; ++i)
+    stat[i] = 0;
   }
 
   ~BTPc() { delete [] name; }
 
+  bool isEquipped(int index) const;
+  bool isEquipmentEmpty() const;
+  bool isEquipmentFull() const;
+  int getItem(int index) const;
   virtual void serialize(XMLSerializer* s);
   void setName(const char *nm);
 

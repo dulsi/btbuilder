@@ -118,6 +118,11 @@ int BTGame::getWallType(int x, int y, int direction)
   return 0;
 }
 
+void BTGame::setFacing(int f)
+{
+ facing = f;
+}
+
 void BTGame::run(BTDisplay &d)
 {
  try

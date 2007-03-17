@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "item.h"
+#include "pc.h"
 
 BTItem::BTItem(BinaryReadFile &f)
 {
@@ -30,6 +31,11 @@ BTItem::BTItem(BinaryReadFile &f)
 
 BTItem::BTItem()
 {
+}
+
+bool BTItem::canUse(BTPc *pc) const
+{
+ return ((classAllowed & (1 << pc->job)) == (1 << pc->job));
 }
 
 const char *BTItem::getName() const

@@ -13,7 +13,7 @@ class BTJob : public XMLObject
 {
  public:
   BTJob()
-   : thac0(0), improveThac0(0), save(0), improveSave(0), hp(0)
+   : thac0(0), improveThac0(0), save(0), improveSave(0), hp(0), advanced(false)
   {
    name = new char[1];
    name[0] = 0;
@@ -35,6 +35,7 @@ class BTJob : public XMLObject
   int save;
   int improveSave;
   int hp;
+  bool advanced;
 };
 
 #endif
