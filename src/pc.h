@@ -35,10 +35,13 @@ class BTPc : public XMLObject
 
   ~BTPc() { delete [] name; }
 
+  bool isAlive() const;
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
   bool isEquipmentFull() const;
   int getItem(int index) const;
+  bool giveItem(int type, bool known, int charges);
+  bool takeItem(int type);
   virtual void serialize(XMLSerializer* s);
   void setName(const char *nm);
 

@@ -13,6 +13,11 @@ void BTEquipment::serialize(XMLSerializer* s)
  s->add("charges", &charges);
 }
 
+bool BTPc::isAlive() const
+{
+ return hp > 0;
+}
+
 bool BTPc::isEquipped(int index) const
 {
  return item[index].equipped;
@@ -37,6 +42,44 @@ bool BTPc::isEquipmentFull() const
 int BTPc::getItem(int index) const
 {
  return item[index].type;
+}
+
+bool BTPc::giveItem(int type, bool known, int charges)
+{
+ for (int i = 0; i < BT_ITEMS; ++i)
+ {
+  if (BTITEM_NONE == item[i].type)
+  {
+   item[i].type = type;
+   item[i].equipped = false;
+   item[i].known = known;
+   item[i].charges = charges;
+   return true;
+  }
+ }
+ return false;
+}
+
+bool BTPc::takeItem(int type)
+{
+ bool found = false;
+ for (int i = 0; i < BT_ITEMS; ++i)
+ {
+  if (found)
+  {
+   item[i - 1].type = item[i].type;
+   item[i - 1].equipped = item[i].equipped;
+   item[i - 1].known = item[i].known;
+   item[i - 1].charges = item[i].charges;
+  }
+  else if (type == item[i].type)
+  {
+   found = true;
+  }
+ }
+ if (found)
+  item[BT_ITEMS - 1].type = BTITEM_NONE;
+ return found;
 }
 
 void BTPc::serialize(XMLSerializer* s)

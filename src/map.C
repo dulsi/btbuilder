@@ -35,6 +35,11 @@ void BTMapSquare::read(BinaryReadFile &f)
  f.readShort(special);
 }
 
+void BTMapSquare::setSpecial(IShort s)
+{
+ special = s;
+}
+
 BTSpecialCommand::BTSpecialCommand()
 {
  type = 0;
@@ -94,6 +99,7 @@ void BTSpecialCommand::print(FILE *f) const
    case 'G':
    case 'F':
    case '!':
+   case 'J':
     fprintf(f, "%d", number[count++]);
     break;
    case '$':
@@ -116,13 +122,20 @@ void BTSpecialCommand::read(BinaryReadFile &f)
 
 void BTSpecialCommand::run(BTDisplay &d) const
 {
+ BTGame *game = BTGame::getGame();
  switch (type)
  {
   case BTSPECIALCOMMAND_STOP:
    throw BTSpecialStop();
    break;
+  case BTSPECIALCOMMAND_GETINPUT:
+   game->setLastInput(d.readString("", 13));
+   break;
   case BTSPECIALCOMMAND_PRINT:
    d.drawText(text);
+   break;
+  case BTSPECIALCOMMAND_BACKONE:
+   throw BTSpecialBack();
    break;
   case BTSPECIALCOMMAND_FORWARDONE:
    throw BTSpecialForward();
@@ -133,6 +146,12 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_SHOP:
    shop(d);
    break;
+  case BTSPECIALCOMMAND_CLEARSPECIALAT:
+   game->getMap()->setSpecial(number[0], number[1], BTSPECIAL_NONE);
+   break;
+  case BTSPECIALCOMMAND_SETSPECIALAT:
+   game->getMap()->setSpecial(number[1], number[2], number[0]);
+   break;
   case BTSPECIALCOMMAND_PRINTLABEL:
    d.drawLabel(text);
    break;
@@ -141,7 +160,22 @@ void BTSpecialCommand::run(BTDisplay &d) const
    IKeybufferGet();
    break;
   case BTSPECIALCOMMAND_SETDIRECTION:
-   BTGame::getGame()->setFacing(number[0]);
+   game->setFacing(number[0]);
+   break;
+  case BTSPECIALCOMMAND_CLEARSPECIAL:
+   game->getMap()->setSpecial(game->getX(), game->getY(), BTSPECIAL_NONE);
+   break;
+  case BTSPECIALCOMMAND_SETSPECIAL:
+   game->getMap()->setSpecial(game->getX(), game->getY(), number[0]);
+   break;
+  case BTSPECIALCOMMAND_CLEARTEXT:
+   d.clearText();
+   break;
+  case BTSPECIALCOMMAND_DRAWFULLPICTURE:
+   d.drawFullScreen(text, 0);
+   break;
+  case BTSPECIALCOMMAND_GOTO:
+   throw BTSpecialGoto(number[0]);
    break;
   default:
    break;
@@ -159,6 +193,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
 #define GUILDSTATE_SAVEPARTY 8
 #define GUILDSTATE_DELETE 9
 #define GUILDSTATE_RENAME 10
+#define GUILDSTATE_NOPARTY 11
 
 void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
 {
@@ -211,14 +246,22 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
        break;
       case 'E':
       case 'e':
-       if (false)
+      {
+       bool live = false;
+       for (int i = 0; i < party.size(); ++i)
        {
-        d.clearText();
-        d.drawText("You must have a live party to enter the city.");
+        if (party[i]->isAlive())
+        {
+         live = true;
+         break;
+        }
        }
+       if (!live)
+        state = GUILDSTATE_NOPARTY;
        else
         throw BTSpecialFlipGoForward();
        break;
+      }
       case 'D':
       case 'd':
        state = GUILDSTATE_DISKOPS;
@@ -227,6 +270,12 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
        break;
      };
     }
+    break;
+   case GUILDSTATE_NOPARTY:
+    d.clearText();
+    d.drawText("You must have a live party to enter the city.");
+    key = IKeybufferGet();
+    state = GUILDSTATE_MAIN;
     break;
    case GUILDSTATE_ADD:
    {
@@ -406,7 +455,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
    {
     d.clearText();
     d.drawText("Enter the new new member's name.");
-    std::string nm = d.readString(13);
+    std::string nm = d.readString(">", 13);
     int found;
     for (found = 0; found < roster.size(); ++found)
     {
@@ -669,6 +718,9 @@ void BTSpecialConditional::run(BTDisplay &d) const
  bool truth = true;
  switch (type)
  {
+  case BTCONDITION_LASTINPUT:
+   truth = (strcmp(BTGame::getGame()->getLastInput().c_str(), text) == 0);
+   break;
   case BTCONDITION_GROUPFACING:
    truth = (BTGame::getGame()->getFacing() == number);
    break;
@@ -819,6 +871,11 @@ BTMap::~BTMap()
    delete specials[i];
   }
  }
+}
+
+void BTMap::setSpecial(IShort x, IShort y, IShort special)
+{
+ square[y][x].setSpecial(special);
 }
 
 const char *BTMap::getFilename() const

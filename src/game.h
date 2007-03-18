@@ -41,8 +41,11 @@ class BTGame : public Psuedo3DMap
   int getWallType(int x, int y, int direction);
   void setFacing(int f);
 
+  std::string getLastInput(void) const;
+  void setLastInput(std::string input);
+
   void run(BTDisplay &d);
-  void moveForward(BTDisplay &d);
+  void move(BTDisplay &d, int dir);
   void turnLeft(BTDisplay &d);
   void turnRight(BTDisplay &d);
   void turnAround(BTDisplay &d);
@@ -59,6 +62,7 @@ class BTGame : public Psuedo3DMap
   BTMap *levelMap;
   int xPos, yPos, facing;
   XMLVector<BTPc*> party;
+  std::string lastInput;
 
   static BTGame *game;
 };

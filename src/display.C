@@ -265,7 +265,7 @@ void BTDisplay::drawStats()
  SDL_UpdateRect(mainScreen, stats.x, stats.y, stats.w, stats.h);
 }
 
-std::string BTDisplay::readString(int max)
+std::string BTDisplay::readString(const char *prompt, int max)
 {
  std::string s;
  int w, h;
@@ -276,12 +276,15 @@ std::string BTDisplay::readString(int max)
  int len = 0;
  SDL_Rect dst;
  dst.h = h;
- sizeFont(">", w, h);
- dst.x = text.x;
- dst.y = text.y + textPos;
- dst.w = w;
- SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
- drawFont(">", dst, black, left);
+ if (0 != *prompt)
+ {
+  sizeFont(prompt, w, h);
+  dst.x = text.x;
+  dst.y = text.y + textPos;
+  dst.w = w;
+  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+  drawFont(prompt, dst, black, left);
+ }
  dst.x = text.x + w;
  dst.y = text.y + textPos;
  dst.w = text.w - w;
@@ -302,6 +305,7 @@ std::string BTDisplay::readString(int max)
   drawFont(s.c_str(), dst, black, left);
   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  }
+ textPos += h;
  return s;
 }
 

@@ -61,6 +61,7 @@ class BTMapSquare
   IShort getWall(IShort dir) const;
   IShort getSpecial() const;
   void read(BinaryReadFile &f);
+  void setSpecial(IShort s);
 
  private:
   IUByte wallInfo;
@@ -168,6 +169,7 @@ class BTMap
   BTMap(BinaryReadFile &f);
   ~BTMap();
 
+  void setSpecial(IShort x, IShort y, IShort special);
   const char *getFilename() const;
   IShort getLevel() const;
   IShort getMonsterChance() const;

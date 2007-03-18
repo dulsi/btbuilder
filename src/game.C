@@ -123,6 +123,16 @@ void BTGame::setFacing(int f)
  facing = f;
 }
 
+std::string BTGame::getLastInput(void) const
+{
+ return lastInput;
+}
+
+void BTGame::setLastInput(std::string input)
+{
+ lastInput = input;
+}
+
 void BTGame::run(BTDisplay &d)
 {
  try
@@ -137,7 +147,7 @@ void BTGame::run(BTDisplay &d)
   catch (const BTSpecialFlipGoForward &)
   {
    turnAround(d);
-   moveForward(d);
+   move(d, facing);
   }
   while (true)
   {
@@ -147,7 +157,7 @@ void BTGame::run(BTDisplay &d)
    switch (key)
    {
     case 0xBD: // up
-     moveForward(d);
+     move(d, facing);
      break;
     case 0xBF: // left
      turnLeft(d);
@@ -185,14 +195,14 @@ void BTGame::run(BTDisplay &d)
  }
 }
 
-void BTGame::moveForward(BTDisplay &d)
+void BTGame::move(BTDisplay &d, int dir)
 {
  const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
- if (current.getWall(facing) != 1)
+ if (current.getWall(dir) != 1)
  {
-  xPos += Psuedo3D::changeXY[facing][0] + 22;
+  xPos += Psuedo3D::changeXY[dir][0] + 22;
   xPos = xPos % 22;
-  yPos += Psuedo3D::changeXY[facing][1] + 22;
+  yPos += Psuedo3D::changeXY[dir][1] + 22;
   yPos = yPos % 22;
   const BTMapSquare& next = levelMap->getSquare(yPos, xPos);
   IShort s = next.getSpecial();
@@ -202,18 +212,18 @@ void BTGame::moveForward(BTDisplay &d)
    if (s >= 0)
     levelMap->getSpecial(s)->run(d);
   }
-/*  catch (const BTSpecialBack &)
+  catch (const BTSpecialBack &)
   {
-   moveBackward(d);
-  }*/
+   move(d, (facing + 2) % 4);
+  }
   catch (const BTSpecialFlipGoForward &)
   {
    turnAround(d);
-   moveForward(d);
+   move(d, facing);
   }
   catch (const BTSpecialForward &)
   {
-   moveForward(d);
+   move(d, facing);
   }
  }
 }

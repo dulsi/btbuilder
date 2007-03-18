@@ -36,7 +36,7 @@ class BTDisplay
   void draw2Column(const char *col1, const char *col2);
   void drawView();
   void drawStats();
-  std::string readString(int max);
+  std::string readString(const char *prompt, int max);
   bool selectList(selectItem *list, int size, int &start, int &select);
   void setWallGraphics(int type);
 
