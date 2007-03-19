@@ -13,10 +13,10 @@
 class BTEquipment : public XMLObject
 {
  public:
-  BTEquipment() : type(BTITEM_NONE) {}
+  BTEquipment() : id(BTITEM_NONE) {}
   virtual void serialize(XMLSerializer* s);
 
-  int type;
+  int id;
   bool equipped, known;
   int charges;
 };
@@ -39,11 +39,15 @@ class BTPc : public XMLObject
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
   bool isEquipmentFull() const;
+  int getGold() const;
   int getItem(int index) const;
-  bool giveItem(int type, bool known, int charges);
-  bool takeItem(int type);
+  bool giveItem(int id, bool known, int charges);
+  void giveXP(int amount);
+  bool hasItem(int id);
   virtual void serialize(XMLSerializer* s);
   void setName(const char *nm);
+  int takeGold(int amount);
+  bool takeItem(int id);
 
   static XMLObject *create() { return new BTPc; }
   static void readXML(const char *filename, XMLVector<BTPc*> &pc);
@@ -56,7 +60,7 @@ class BTPc : public XMLObject
   int hp, maxHp;
   int sp, maxSp;
   int gold;
-  int xp;
+  unsigned int xp;
   BTEquipment item[BT_ITEMS];
 };
 

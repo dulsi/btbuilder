@@ -9,7 +9,9 @@
 
 void BTEquipment::serialize(XMLSerializer* s)
 {
- s->add("type", &type);
+ s->add("id", &id);
+ s->add("equipped", &equipped);
+ s->add("known", &known);
  s->add("charges", &charges);
 }
 
@@ -25,7 +27,7 @@ bool BTPc::isEquipped(int index) const
 
 bool BTPc::isEquipmentEmpty() const
 {
- if (BTITEM_NONE == item[0].type)
+ if (BTITEM_NONE == item[0].id)
   return true;
  else
   return false;
@@ -33,24 +35,29 @@ bool BTPc::isEquipmentEmpty() const
 
 bool BTPc::isEquipmentFull() const
 {
- if (BTITEM_NONE != item[BT_ITEMS - 1].type)
+ if (BTITEM_NONE != item[BT_ITEMS - 1].id)
   return true;
  else
   return false;
 }
 
-int BTPc::getItem(int index) const
+int BTPc::getGold() const
 {
- return item[index].type;
+ return gold;
 }
 
-bool BTPc::giveItem(int type, bool known, int charges)
+int BTPc::getItem(int index) const
+{
+ return item[index].id;
+}
+
+bool BTPc::giveItem(int id, bool known, int charges)
 {
  for (int i = 0; i < BT_ITEMS; ++i)
  {
-  if (BTITEM_NONE == item[i].type)
+  if (BTITEM_NONE == item[i].id)
   {
-   item[i].type = type;
+   item[i].id = id;
    item[i].equipped = false;
    item[i].known = known;
    item[i].charges = charges;
@@ -60,26 +67,23 @@ bool BTPc::giveItem(int type, bool known, int charges)
  return false;
 }
 
-bool BTPc::takeItem(int type)
+void BTPc::giveXP(int amount)
 {
- bool found = false;
+ xp += amount;
+ if (xp > 4000000000UL)
+  xp = 4000000000UL;
+}
+
+bool BTPc::hasItem(int id)
+{
  for (int i = 0; i < BT_ITEMS; ++i)
  {
-  if (found)
+  if (id == item[i].id)
   {
-   item[i - 1].type = item[i].type;
-   item[i - 1].equipped = item[i].equipped;
-   item[i - 1].known = item[i].known;
-   item[i - 1].charges = item[i].charges;
-  }
-  else if (type == item[i].type)
-  {
-   found = true;
+   return true;
   }
  }
- if (found)
-  item[BT_ITEMS - 1].type = BTITEM_NONE;
- return found;
+ return false;
 }
 
 void BTPc::serialize(XMLSerializer* s)
@@ -109,6 +113,43 @@ void BTPc::setName(const char *nm)
  delete [] name;
  name = new char[strlen(nm) + 1];
  strcpy(name, nm);
+}
+
+int BTPc::takeGold(int amount)
+{
+ if (amount > gold)
+ {
+  int taken = gold;
+  gold = 0;
+  return taken;
+ }
+ else
+ {
+  gold -= amount;
+  return amount;
+ }
+}
+
+bool BTPc::takeItem(int id)
+{
+ bool found = false;
+ for (int i = 0; i < BT_ITEMS; ++i)
+ {
+  if (found)
+  {
+   item[i - 1].id = item[i].id;
+   item[i - 1].equipped = item[i].equipped;
+   item[i - 1].known = item[i].known;
+   item[i - 1].charges = item[i].charges;
+  }
+  else if (id == item[i].id)
+  {
+   found = true;
+  }
+ }
+ if (found)
+  item[BT_ITEMS - 1].id = BTITEM_NONE;
+ return found;
 }
 
 void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)

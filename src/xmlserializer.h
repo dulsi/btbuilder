@@ -50,6 +50,7 @@ class XMLAttribute
 #define XMLTYPE_STRING 3
 #define XMLTYPE_OBJECT 4
 #define XMLTYPE_BOOL 5
+#define XMLTYPE_UINT 6
 
 class XMLAction
 {
@@ -81,6 +82,7 @@ class XMLSerializer : public ExpatXMLParser
   void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
 
   virtual void startElement(const XML_Char *name, const XML_Char **atts);

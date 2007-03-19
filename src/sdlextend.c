@@ -8,7 +8,9 @@
 #include "sdlextend.h"
 #include <istdlib.h>
 #include <igrbasics.h>
-#include <igrtext.h>
+//#include <igrtext.h>
+
+extern unsigned char ITextFont8x8[256][8]; // will be in igrtext.h in the next release.
 
 simpleFont simple8x8 = { 8, 8, (unsigned char*)ITextFont8x8 };
 

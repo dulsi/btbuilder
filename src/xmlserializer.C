@@ -64,6 +64,17 @@ void XMLSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *att
  action.push_back(act);
 }
 
+void XMLSerializer::add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_UINT;
+ act->level = level.size();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
 void XMLSerializer::add(const char *name, char **p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
@@ -170,6 +181,12 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
    case XMLTYPE_INT:
     *(reinterpret_cast<int*>(state->object)) = atoi(s);
     break;
+   case XMLTYPE_UINT:
+   {
+    std::string str(s, len);
+    sscanf(str.c_str(), "%u", reinterpret_cast<unsigned int*>(state->object));
+    break;
+   }
    case XMLTYPE_STRING:
    {
     char *str = *(reinterpret_cast<char**>(state->object));

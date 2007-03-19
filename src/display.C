@@ -142,6 +142,21 @@ void BTDisplay::drawLabel(const char *name)
  SDL_UpdateRect(mainScreen, label.x, label.y, label.w, label.h);
 }
 
+void BTDisplay::drawLast(const char *words, alignment a /*= left*/)
+{
+ int w, h;
+ if (!sizeFont(words, w, h))
+  return;
+ SDL_Rect dst;
+ dst.x = text.x;
+ dst.y = text.y + text.h - h;
+ dst.w = text.w;
+ dst.h = h;
+ SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+ drawFont(words, dst, black, a);
+ SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+}
+
 void BTDisplay::drawText(const char *words, alignment a /*= left*/)
 {
  int w, h;

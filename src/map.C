@@ -147,14 +147,24 @@ void BTSpecialCommand::run(BTDisplay &d) const
    shop(d);
    break;
   case BTSPECIALCOMMAND_CLEARSPECIALAT:
-   game->getMap()->setSpecial(number[0], number[1], BTSPECIAL_NONE);
+   game->getMap()->setSpecial(number[0], 21 - number[1], BTSPECIAL_NONE);
    break;
   case BTSPECIALCOMMAND_SETSPECIALAT:
-   game->getMap()->setSpecial(number[1], number[2], number[0]);
+   game->getMap()->setSpecial(number[1], 21 - number[2], number[0]);
    break;
   case BTSPECIALCOMMAND_PRINTLABEL:
    d.drawLabel(text);
    break;
+  case BTSPECIALCOMMAND_GIVEXP:
+  {
+   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   int xp = number[0] / party.size();
+   for (int i = 0; i < party.size(); ++i)
+   {
+    party[i]->giveXP(xp);
+   }
+   break;
+  }
   case BTSPECIALCOMMAND_PRESSANYKEY:
    d.drawText("(Press any key)");
    IKeybufferGet();
@@ -171,11 +181,23 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_CLEARTEXT:
    d.clearText();
    break;
+  case BTSPECIALCOMMAND_TAKEGOLD:
+  {
+   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   int left = number[0];
+   for (int i = 0; i < party.size(); ++i)
+   {
+    left -= party[i]->takeGold(left);
+    if (left <= 0)
+     break;
+   }
+   break;
+  }
   case BTSPECIALCOMMAND_DRAWFULLPICTURE:
    d.drawFullScreen(text, 0);
    break;
   case BTSPECIALCOMMAND_GOTO:
-   throw BTSpecialGoto(number[0]);
+   throw BTSpecialGoto(number[0] - 1);
    break;
   default:
    break;
@@ -445,6 +467,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
          pc->gold = BTDice(1, 61, 110).roll();
          state = GUILDSTATE_SELECTNAME;
         }
+        --count;
        }
       }
      }
@@ -568,8 +591,8 @@ void BTSpecialCommand::shop(BTDisplay &d) const
       }
       else
       {
-       BTDisplay::selectItem *list = new BTDisplay::selectItem[10];
-       for (int i = 0; (i < itemList.size()) && (i < 10); ++i)
+       BTDisplay::selectItem *list = new BTDisplay::selectItem[9];
+       for (int i = 0; (i < itemList.size()) && (i < 9); ++i)
        {
         if (!itemList[i].canUse(pc))
          list[i].first = '@';
@@ -577,8 +600,23 @@ void BTSpecialCommand::shop(BTDisplay &d) const
         list[i].value = itemList[i].getPrice();
        }
        int start(0), select(0), found;
-       while (d.selectList(list, ((10 < itemList.size()) ? 10 : itemList.size()), start, select))
+       while (d.selectList(list, ((9 < itemList.size()) ? 9 : itemList.size()), start, select))
        {
+        if (pc->getGold() < itemList[select].getPrice())
+        {
+         d.clearText();
+         d.drawText("Not enough gold."); // You have no items
+         IKeybufferGet();
+        }
+        else
+        {
+         d.drawLast("Done!");
+         IKeybufferGet();
+         pc->takeGold(itemList[select].getPrice());
+         pc->giveItem(select, true, itemList[select].getTimesUsable());
+         if (pc->isEquipmentFull())
+          break;
+        }
        }
        delete [] list;
       }
@@ -600,19 +638,21 @@ void BTSpecialCommand::shop(BTDisplay &d) const
        int len = 8;
        for (int i = 0; i < BT_ITEMS; ++i)
        {
-        int type = pc->getItem(i);
-        if (type == BTITEM_NONE)
+        int id = pc->getItem(i);
+        if (id == BTITEM_NONE)
         {
          len = i;
          break;
         }
         if (pc->isEquipped(i))
          list[i].first = '*';
-        list[i].name = itemList[type].getName();
-        list[i].value = itemList[type].getPrice() / 2;
+        else if (!itemList[id].canUse(pc))
+         list[i].first = '@';
+        list[i].name = itemList[id].getName();
+        list[i].value = itemList[id].getPrice() / 2;
        }
        int start(0), select(0), found;
-       while (d.selectList(list, ((10 < itemList.size()) ? 10 : itemList.size()), start, select))
+       while (d.selectList(list, len, start, select))
        {
        }
        delete [] list;
@@ -718,9 +758,42 @@ void BTSpecialConditional::run(BTDisplay &d) const
  bool truth = true;
  switch (type)
  {
+  case BTCONDITION_ANYONEITEM:
+  {
+   truth = false;
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i]->hasItem(number))
+    {
+     truth = true;
+     break;
+    }
+   }
+   break;
+  }
+  case BTCONDITION_EVERYONEITEM:
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (!party[i]->hasItem(number))
+    {
+     truth = false;
+     break;
+    }
+   }
+   break;
+  }
   case BTCONDITION_LASTINPUT:
    truth = (strcmp(BTGame::getGame()->getLastInput().c_str(), text) == 0);
    break;
+  case BTCONDITION_ANSWERYES:
+  {
+   d.drawText(text);
+   std::string ans = d.readString("", 3);
+   truth = ((strcmp(ans.c_str(), "y") == 0) ||
+    (strcmp(ans.c_str(), "yes") == 0));
+   break;
+  }
   case BTCONDITION_GROUPFACING:
    truth = (BTGame::getGame()->getFacing() == number);
    break;
@@ -741,6 +814,18 @@ void BTSpecialConditional::run(BTDisplay &d) const
    for (int i = 0; i < party.size(); ++i)
     if (party[i]->race == number)
      truth = true;
+   break;
+  }
+  case BTCONDITION_CANTAKEGOLD:
+  {
+   int gold = 0;
+   truth = false;
+   for (int i = 0; i < party.size(); ++i)
+   {
+    gold += party[i]->getGold();
+    if (gold > number)
+     truth = true;
+   }
    break;
   }
   default:

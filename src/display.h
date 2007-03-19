@@ -32,6 +32,7 @@ class BTDisplay
   void drawFullScreen(const char *file, int delay);
   void drawImage(const char *file);
   void drawLabel(const char *name);
+  void drawLast(const char *words, alignment a = left);
   void drawText(const char *words, alignment a = left);
   void draw2Column(const char *col1, const char *col2);
   void drawView();
