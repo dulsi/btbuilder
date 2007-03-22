@@ -11,7 +11,10 @@
   Includes
 \* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include <istdlib.h>
-#include <physfs.h>
+#include <glob.h>
+
+// Run-Time Type Identification breaks fstreams under g++ 2.7.2
+#include <stdio.h>
 
 /* Error Note:
        At this time very little if any error checking is done in the binary
@@ -23,6 +26,18 @@ class FileException
 {
  public:
   FileException();
+};
+
+class FileList
+{
+ public:
+  FileList(const char *pattern);
+  ~FileList();
+  IUShort length();
+  char *operator[](int num);
+
+ private:
+  glob_t results;
 };
 
 class BinaryReadFile
@@ -49,7 +64,7 @@ class BinaryReadFile
   void setSwap(bool value);
 
  private:
-  PHYSFS_file *file;
+  FILE *file;
   bool swap;
 };
 
@@ -76,7 +91,7 @@ class BinaryWriteFile
   void seek(const IULong where);
 
  private:
-  PHYSFS_file *file;
+  FILE *file;
 };
 
 #endif

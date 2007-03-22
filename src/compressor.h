@@ -1,36 +1,23 @@
-#ifndef __FILE_H
-#define __FILE_H
+#ifndef __COMPRESSOR_H
+#define __COMPRESSOR_H
 /*-------------------------------------------------------------------------*\
-  <file.h> -- Platform independant binary file opperations.
+  <compressor.h> -- Compress/decompress binary file opperations.
 
   Date      Programmer  Description
-  03/20/98  Dennis      Created.
+  12/01/00  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *\
   Includes
 \* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#include <istdlib.h>
-#include <physfs.h>
+#include "file.h"
 
-/* Error Note:
-       At this time very little if any error checking is done in the binary
-  file functions.  Eventually exceptions will be thrown in the event of an
-  error.
-*/
-
-class FileException
+class BTCompressorReadFile
 {
  public:
-  FileException();
-};
-
-class BinaryReadFile
-{
- public:
-  BinaryReadFile();
-  BinaryReadFile(const char *filename);
-  ~BinaryReadFile();
+  BTCompressorReadFile();
+  BTCompressorReadFile(const char *filename);
+  ~BTCompressorReadFile();
   void close();
   void open(const char *filename);
   void readByte(IByte &a);
@@ -45,20 +32,24 @@ class BinaryReadFile
   void readUShortArray(const int size, IUShort *a);
   void readULong(IULong &a);
   void readULongArray(const int size, IULong *a);
-  void seek(IULong where);
   void setSwap(bool value);
 
  private:
-  PHYSFS_file *file;
+  void readData(const int number, const int size, IUByte *a);
+
+  BinaryReadFile file;
   bool swap;
+  IUByte *data;
+  IULong where;
+  IULong length;
 };
 
-class BinaryWriteFile
+class BTCompressorWriteFile
 {
  public:
-  BinaryWriteFile();
-  BinaryWriteFile(const char *filename);
-  ~BinaryWriteFile();
+  BTCompressorWriteFile();
+  BTCompressorWriteFile(const char *filename);
+  ~BTCompressorWriteFile();
   void close();
   void open(const char *filename);
   void writeByte(const IByte &a);
@@ -73,10 +64,12 @@ class BinaryWriteFile
   void writeUShortArray(const int size, const IUShort *a);
   void writeULong(const IULong &a);
   void writeULongArray(const int size, const IULong *a);
-  void seek(const IULong where);
 
  private:
-  PHYSFS_file *file;
+  void writeData(const int size, const IUByte *a);
+
+  int count;
+  BinaryWriteFile file;
 };
 
 #endif

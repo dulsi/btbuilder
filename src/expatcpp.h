@@ -19,7 +19,7 @@ class ExpatXMLParser
   virtual void endElement(const XML_Char *name) = 0;
   virtual void characterData(const XML_Char *s, int len) = 0;
 
-  void parse(const char *filename);
+  void parse(const char *filename, bool physfs);
 
  private:
   static void startElement(void *userData, const XML_Char *name, const XML_Char **atts);

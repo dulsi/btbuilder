@@ -156,5 +156,5 @@ void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)
 {
  XMLSerializer parser;
  parser.add("pc", &BTPc::create, &pc);
- parser.parse(filename);
+ parser.parse(filename, true);
 }

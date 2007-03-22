@@ -146,6 +146,9 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_SHOP:
    shop(d);
    break;
+  case BTSPECIALCOMMAND_DRAWPICTURE:
+   d.drawImage(number[0]);
+   break;
   case BTSPECIALCOMMAND_CLEARSPECIALAT:
    game->getMap()->setSpecial(number[0], 21 - number[1], BTSPECIAL_NONE);
    break;
@@ -195,6 +198,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
   }
   case BTSPECIALCOMMAND_DRAWFULLPICTURE:
    d.drawFullScreen(text, 0);
+   d.refresh();
    break;
   case BTSPECIALCOMMAND_GOTO:
    throw BTSpecialGoto(number[0] - 1);

@@ -24,5 +24,5 @@ void BTRace::readXML(const char *filename, XMLVector<BTRace*> &race)
 {
  XMLSerializer parser;
  parser.add("race", &BTRace::create, &race);
- parser.parse(filename);
+ parser.parse(filename, true);
 }

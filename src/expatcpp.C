@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <physfs.h>
 
 #define XMLBUFFER 2048
 
@@ -21,20 +22,38 @@ ExpatXMLParser::ExpatXMLParser()
  XML_SetCharacterDataHandler(p, characterData);
 }
 
-void ExpatXMLParser::parse(const char *filename)
+void ExpatXMLParser::parse(const char *filename, bool physfs)
 {
  char *buffer = new char[XMLBUFFER];
- int fd = open(filename, O_RDONLY);
- if (-1 == fd)
-  return; // Throw exception
- while (true)
+ if (physfs)
  {
-  size_t num = read(fd, buffer, XMLBUFFER);
-  XML_Parse(p, buffer, num, (0 == num));
-  if (0 == num)
-   break;
+  PHYSFS_file *f = PHYSFS_openRead(filename);
+  while (true)
+  {
+   PHYSFS_sint64 num = PHYSFS_read(f, buffer, 1, XMLBUFFER);
+   XML_Parse(p, buffer, num, ((0 == num) || (PHYSFS_eof(f))));
+   if ((0 == num) || (PHYSFS_eof(f)))
+    break;
+  }
+  PHYSFS_close(f);
  }
- close(fd);
+ else
+ {
+  int fd = open(filename, O_RDONLY);
+  if (-1 == fd)
+  {
+   delete [] buffer;
+   return; // Throw exception
+  }
+  while (true)
+  {
+   size_t num = read(fd, buffer, XMLBUFFER);
+   XML_Parse(p, buffer, num, (0 == num));
+   if (0 == num)
+    break;
+  }
+  close(fd);
+ }
  delete [] buffer;
 }
 

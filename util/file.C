@@ -26,42 +26,64 @@ FileException::FileException()
 {
 }
 
+FileList::FileList(const char *pattern)
+{
+ if (glob(pattern, 0, NULL, &results))
+ {
+  results.gl_pathc = 0;
+ }
+}
+
+FileList::~FileList()
+{
+ if (results.gl_pathc)
+ {
+  globfree(&results);
+ }
+}
+
+IUShort FileList::length()
+{
+ return results.gl_pathc;
+}
+
+char *FileList::operator[](int num)
+{
+ return results.gl_pathv[num];
+}
+
 BinaryReadFile::BinaryReadFile()
 {
- file = (PHYSFS_file *)0;
+ file = (FILE *)0;
  swap = false;
 }
 
 BinaryReadFile::BinaryReadFile(const char *filename)
 {
- file = PHYSFS_openRead(filename);
+ file = fopen(filename, "rb");
  swap = false;
 }
 
 BinaryReadFile::~BinaryReadFile()
 {
- if (file) PHYSFS_close(file);
+ if (file) fclose(file);
 }
 
 void BinaryReadFile::close()
 {
- if (file)
- {
-  PHYSFS_close(file);
-  file = (PHYSFS_file *)0;
- }
+ if (file) fclose(file);
 }
 
 void BinaryReadFile::open(const char *filename)
 {
  if (file) close();
- file = PHYSFS_openRead(filename);
+ file = fopen(filename, "rb");
  swap = false;
 }
 
 void BinaryReadFile::readByte(IByte &a)
 {
- size_t ans = PHYSFS_read(file, &a, 1, 1);
+ size_t ans = fread(&a, 1, 1, file);
  if (ans != 1)
  {
   throw FileException();
@@ -70,7 +92,7 @@ void BinaryReadFile::readByte(IByte &a)
 
 void BinaryReadFile::readByteArray(const int size, IByte *a)
 {
- size_t ans = PHYSFS_read(file, a, 1, size);
+ size_t ans = fread(a, 1, size, file);
  if (ans != size)
  {
   throw FileException();
@@ -79,7 +101,7 @@ void BinaryReadFile::readByteArray(const int size, IByte *a)
 
 void BinaryReadFile::readShort(IShort &a)
 {
- size_t ans = PHYSFS_read(file, &a, 2, 1);
+ size_t ans = fread(&a, 2, 1, file);
  if (ans != 1)
  {
   throw FileException();
@@ -92,7 +114,7 @@ void BinaryReadFile::readShort(IShort &a)
 
 void BinaryReadFile::readShortArray(const int size, IShort *a)
 {
- size_t ans = PHYSFS_read(file, a, 2, size);
+ size_t ans = fread(a, 2, size, file);
  if (ans != size)
  {
   throw FileException();
@@ -108,7 +130,7 @@ void BinaryReadFile::readShortArray(const int size, IShort *a)
 
 void BinaryReadFile::readLong(ILong &a)
 {
- size_t ans = PHYSFS_read(file, &a, 4, 1);
+ size_t ans = fread(&a, 4, 1, file);
  if (ans != 1)
  {
   throw FileException();
@@ -121,7 +143,7 @@ void BinaryReadFile::readLong(ILong &a)
 
 void BinaryReadFile::readLongArray(const int size, ILong *a)
 {
- size_t ans = PHYSFS_read(file, a, 4, size);
+ size_t ans = fread(a, 4, size, file);
  if (ans != size)
  {
   throw FileException();
@@ -137,7 +159,7 @@ void BinaryReadFile::readLongArray(const int size, ILong *a)
 
 void BinaryReadFile::readUByte(IUByte &a)
 {
- size_t ans = PHYSFS_read(file, &a, 1, 1);
+ size_t ans = fread(&a, 1, 1, file);
  if (ans != 1)
  {
   throw FileException();
@@ -146,7 +168,7 @@ void BinaryReadFile::readUByte(IUByte &a)
 
 void BinaryReadFile::readUByteArray(const int size, IUByte *a)
 {
- size_t ans = PHYSFS_read(file, a, 1, size);
+ size_t ans = fread(a, 1, size, file);
  if (ans != size)
  {
   throw FileException();
@@ -155,7 +177,7 @@ void BinaryReadFile::readUByteArray(const int size, IUByte *a)
 
 void BinaryReadFile::readUShort(IUShort &a)
 {
- size_t ans = PHYSFS_read(file, &a, 2, 1);
+ size_t ans = fread(&a, 2, 1, file);
  if (ans != 1)
  {
   throw FileException();
@@ -168,7 +190,7 @@ void BinaryReadFile::readUShort(IUShort &a)
 
 void BinaryReadFile::readUShortArray(const int size, IUShort *a)
 {
- size_t ans = PHYSFS_read(file, a, 2, size);
+ size_t ans = fread(a, 2, size, file);
  if (ans != size)
  {
   throw FileException();
@@ -184,7 +206,7 @@ void BinaryReadFile::readUShortArray(const int size, IUShort *a)
 
 void BinaryReadFile::readULong(IULong &a)
 {
- size_t ans = PHYSFS_read(file, &a, 4, 1);
+ size_t ans = fread(&a, 4, 1, file);
  if (ans != 1)
  {
   throw FileException();
@@ -197,7 +219,7 @@ void BinaryReadFile::readULong(IULong &a)
 
 void BinaryReadFile::readULongArray(const int size, IULong *a)
 {
- size_t ans = PHYSFS_read(file, a, 4, size);
+ size_t ans = fread(a, 4, size, file);
  if (ans != size)
  {
   throw FileException();
@@ -213,8 +235,8 @@ void BinaryReadFile::readULongArray(const int size, IULong *a)
 
 void BinaryReadFile::seek(IULong where)
 {
-// clearerr(file);
- PHYSFS_seek(file, where);
+ clearerr(file);
+ fseek(file, where, SEEK_SET);
 }
 
 void BinaryReadFile::setSwap(bool value)
@@ -224,96 +246,92 @@ void BinaryReadFile::setSwap(bool value)
 
 BinaryWriteFile::BinaryWriteFile()
 {
- file = (PHYSFS_file *)0;
+ file = (FILE *)0;
 }
 
 BinaryWriteFile::BinaryWriteFile(const char *filename)
 {
- file = PHYSFS_openWrite(filename);
+ file = fopen(filename, "wb");
 }
 
 BinaryWriteFile::~BinaryWriteFile()
 {
- if (file) PHYSFS_close(file);
+ if (file) fclose(file);
 }
 
 void BinaryWriteFile::close()
 {
- if (file)
- {
-  PHYSFS_close(file);
-  file = (PHYSFS_file *)0;
- }
+ if (file) fclose(file);
 }
 
 void BinaryWriteFile::open(const char *filename)
 {
  if (file) close();
- file = PHYSFS_openWrite(filename);
+ file = fopen(filename, "wb");
 }
 
 void BinaryWriteFile::writeByte(const IByte &a)
 {
- PHYSFS_write(file, &a, 1, 1);
+ fwrite(&a, 1, 1, file);
 }
 
 void BinaryWriteFile::writeByteArray(const int size, const IByte *a)
 {
- PHYSFS_write(file, a, 1, size);
+ fwrite(a, 1, size, file);
 }
 
 void BinaryWriteFile::writeShort(const IShort &a)
 {
- PHYSFS_write(file, &a, 2, 1);
+ fwrite(&a, 2, 1, file);
 }
 
 void BinaryWriteFile::writeShortArray(const int size, const IShort *a)
 {
- PHYSFS_write(file, a, 2, size);
+ fwrite(a, 2, size, file);
 }
 
 void BinaryWriteFile::writeLong(const ILong &a)
 {
- PHYSFS_write(file, &a, 4, 1);
+ fwrite(&a, 4, 1, file);
 }
 
 void BinaryWriteFile::writeLongArray(const int size, const ILong *a)
 {
- PHYSFS_write(file, a, 4, size);
+ fwrite(a, 4, size, file);
 }
 
 void BinaryWriteFile::writeUByte(const IUByte &a)
 {
- PHYSFS_write(file, &a, 1, 1);
+ fwrite(&a, 1, 1, file);
 }
 
 void BinaryWriteFile::writeUByteArray(const int size, const IUByte *a)
 {
- PHYSFS_write(file, a, 1, size);
+ fwrite(a, 1, size, file);
 }
 
 void BinaryWriteFile::writeUShort(const IUShort &a)
 {
- PHYSFS_write(file, &a, 2, 1);
+ fwrite(&a, 2, 1, file);
 }
 
 void BinaryWriteFile::writeUShortArray(const int size, const IUShort *a)
 {
- PHYSFS_write(file, a, 2, size);
+ fwrite(a, 2, size, file);
 }
 
 void BinaryWriteFile::writeULong(const IULong &a)
 {
- PHYSFS_write(file, &a, 4, 1);
+ fwrite(&a, 4, 1, file);
 }
 
 void BinaryWriteFile::writeULongArray(const int size, const IULong *a)
 {
- PHYSFS_write(file, a, 4, size);
+ fwrite(a, 4, size, file);
 }
 
 void BinaryWriteFile::seek(const IULong where)
 {
- PHYSFS_seek(file, where);
+ fseek(file, where, SEEK_SET);
 }
 

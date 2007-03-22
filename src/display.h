@@ -30,7 +30,7 @@ class BTDisplay
 
   void clearText();
   void drawFullScreen(const char *file, int delay);
-  void drawImage(const char *file);
+  void drawImage(int pic);
   void drawLabel(const char *name);
   void drawLast(const char *words, alignment a = left);
   void drawText(const char *words, alignment a = left);
@@ -38,7 +38,10 @@ class BTDisplay
   void drawView();
   void drawStats();
   std::string readString(const char *prompt, int max);
+  void refresh();
   bool selectList(selectItem *list, int size, int &start, int &select);
+  void setBackground(const char *file);
+  void setPsuedo3DConfig(const char *file);
   void setWallGraphics(int type);
 
  private:

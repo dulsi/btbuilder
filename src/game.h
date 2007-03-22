@@ -13,6 +13,7 @@
 #include "factory.h"
 #include "item.h"
 #include "job.h"
+#include "module.h"
 #include "monster.h"
 #include "race.h"
 #include "spell.h"
@@ -22,7 +23,7 @@
 class BTGame : public Psuedo3DMap
 {
  public:
-  BTGame(const char *itmFile, const char *monFile, const char *splFile);
+  BTGame(BTModule *m);
   ~BTGame();
 
   BTFactory<BTItem> &getItemList();
@@ -53,6 +54,7 @@ class BTGame : public Psuedo3DMap
   static BTGame *getGame();
 
  private:
+  BTModule *module;
   BTFactory<BTItem> itemList;
   XMLVector<BTJob*> jobList;
   BTFactory<BTMonster> monsterList;

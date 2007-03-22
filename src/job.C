@@ -23,5 +23,5 @@ void BTJob::readXML(const char *filename, XMLVector<BTJob*> &job)
 {
  XMLSerializer parser;
  parser.add("job", &BTJob::create, &job);
- parser.parse(filename);
+ parser.parse(filename, true);
 }

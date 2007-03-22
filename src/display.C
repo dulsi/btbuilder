@@ -5,9 +5,11 @@
   02/28/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
+#include "compressor.h"
 #include "display.h"
 #include "game.h"
 #include "ikbbuffer.h"
+#include "physfsrwops.h"
 #include <SDL_image.h>
 
 BTDisplay::BTDisplay(int xM, int yM)
@@ -53,16 +55,6 @@ BTDisplay::BTDisplay(int xM, int yM)
   printf("Failed - SDL_SetVideoMode\n");
   exit(0);
  }
- SDL_Surface *img = IMG_Load("image/mainscreen.png");
- if ((xMult > 1) || (yMult > 1))
- {
-  mainBackground = simpleZoomSurface(img, xMult, yMult);
-  SDL_FreeSurface(img);
- }
- else
-  mainBackground = img;
- SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
- Psuedo3DConfig::readXML("data/wall.xml", p3dConfig);
 // ttffont = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));
  white.r = 255;
  white.g = 255;
@@ -86,7 +78,8 @@ void BTDisplay::clearText()
 
 void BTDisplay::drawFullScreen(const char *file, int delay)
 {
- SDL_Surface *img = IMG_Load(file);
+ SDL_RWops *f = PHYSFSRWOPS_openRead(file);
+ SDL_Surface *img = IMG_Load_RW(f, 1);
  if (img)
  {
   // HACK: Bug in SDL's lbm loading code
@@ -105,29 +98,69 @@ void BTDisplay::drawFullScreen(const char *file, int delay)
    SDL_Delay(delay);
   else
    IKeybufferGet();
-  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  }
 }
 
-void BTDisplay::drawImage(const char *file)
+void BTDisplay::drawImage(int pic)
 {
- SDL_Surface *img = IMG_Load(file);
+ char filename[50];
+ const char *dir = PHYSFS_getDirSeparator();
+ SDL_Surface *img = NULL;
+ snprintf(filename, 50, "image%sslot%d.png", dir, pic);
+ if (PHYSFS_exists(filename))
+ {
+  SDL_RWops *f = PHYSFSRWOPS_openRead(filename);
+  img = IMG_Load_RW(f, 1);
+ }
+ if ((pic >= 45) && (img == NULL))
+ {
+  snprintf(filename, 50, "PICS%sSLOT%d.PIC", dir, pic);
+  if (PHYSFS_exists(filename))
+  {
+   img = SDL_CreateRGBSurface(SDL_SWSURFACE, 112, 88, 8, 0, 0, 0, 0);
+   char *pixels = (char *)img->pixels;
+   BTCompressorReadFile file(filename);
+   for (int y = 0; y < 88; ++y)
+   {
+    file.readUByteArray(112, (IUByte *)pixels);
+    pixels += img->pitch;
+   }
+   SDL_Color *colors = img->format->palette->colors;
+   img->format->palette->ncolors = 256;
+   snprintf(filename, 50, "PICS%sSLOT%d.PAC", dir, pic);
+   BTCompressorReadFile palFile(filename);
+   for (int c = 0; c < 256; ++c)
+   {
+    palFile.readUByte((IUByte&)colors[c].r);
+    palFile.readUByte((IUByte&)colors[c].g);
+    palFile.readUByte((IUByte&)colors[c].b);
+    colors[c].r *= 4;
+    colors[c].g *= 4;
+    colors[c].b *= 4;
+   }
+  }
+ }
+ SDL_Rect src, dst;
+ dst.x = x3d * xMult;
+ dst.y = y3d * yMult;
+ dst.w = p3d.config->width * xMult;
+ dst.h = p3d.config->height * yMult;
+ if (NULL == img)
+ {
+  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
+  return;
+ }
  if ((xMult > 1) || (yMult > 1))
  {
   SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
   SDL_FreeSurface(img);
   img = img2;
  }
- SDL_Rect src, dst;
  src.x = 0;
  src.y = 0;
  src.w = p3d.config->width * xMult;
  src.h = p3d.config->height * yMult;
- dst.x = x3d * xMult;
- dst.y = y3d * yMult;
- dst.w = p3d.config->width * xMult;
- dst.h = p3d.config->height * yMult;
- SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
+ SDL_BlitSurface(img, &src, mainScreen, &dst);
  SDL_FreeSurface(img);
  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
@@ -324,6 +357,13 @@ std::string BTDisplay::readString(const char *prompt, int max)
  return s;
 }
 
+void BTDisplay::refresh()
+{
+ SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
+ drawStats();
+ SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+}
+
 bool BTDisplay::selectList(selectItem *list, int size, int &start, int &select)
 {
  int wFirst, wValue, h, hTmp, lines;
@@ -381,6 +421,26 @@ bool BTDisplay::selectList(selectItem *list, int size, int &start, int &select)
   }
  }
  return (key == 13);
+}
+
+void BTDisplay::setBackground(const char *file)
+{
+ SDL_RWops *f = PHYSFSRWOPS_openRead(file);
+ SDL_Surface *img = IMG_Load_RW(f, 1);
+ if ((xMult > 1) || (yMult > 1))
+ {
+  mainBackground = simpleZoomSurface(img, xMult, yMult);
+  SDL_FreeSurface(img);
+ }
+ else
+  mainBackground = img;
+ SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
+ SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+}
+
+void BTDisplay::setPsuedo3DConfig(const char *file)
+{
+ Psuedo3DConfig::readXML(file, p3dConfig);
 }
 
 void BTDisplay::setWallGraphics(int type)

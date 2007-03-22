@@ -11,12 +11,23 @@
 
 BTGame *BTGame::game = NULL;
 
-BTGame::BTGame(const char *itmFile, const char *monFile, const char *splFile)
- : itemList(itmFile), monsterList(monFile), spellList(splFile), levelMap(NULL), xPos(4), yPos(9), facing(BTDIRECTION_EAST)
+BTGame::BTGame(BTModule *m)
+ : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL)
 {
  IRandomize();
- BTJob::readXML("data/job.xml", jobList);
- BTRace::readXML("data/race.xml", raceList);
+ BTJob::readXML(m->job, jobList);
+ BTRace::readXML(m->race, raceList);
+ PHYSFS_file *start = PHYSFS_openRead(m->start);
+ char levelName[14];
+ PHYSFS_read(start, levelName, 1, 14);
+ loadMap(levelName);
+ PHYSFS_uint16 tmp;
+ PHYSFS_readULE16(start, &tmp);
+ xPos = tmp;
+ PHYSFS_readULE16(start, &tmp);
+ yPos = 21 - tmp;
+ PHYSFS_readULE16(start, &tmp);
+ facing = tmp;
  if (NULL == game)
  {
   game = this;
@@ -137,7 +148,9 @@ void BTGame::run(BTDisplay &d)
 {
  try
  {
-  d.drawFullScreen("usrscr.lbm", 5000);
+  d.drawFullScreen(module->title, 5000);
+  d.setBackground(module->background);
+  d.setPsuedo3DConfig(module->wall);
   d.setWallGraphics(0);
   unsigned char key = ' ';
   try

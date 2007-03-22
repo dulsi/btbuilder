@@ -32,5 +32,5 @@ void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &c
 {
  XMLSerializer parser;
  parser.add("psuedo3d", &Psuedo3DConfig::create, &cfg);
- parser.parse(filename);
+ parser.parse(filename, true);
 }

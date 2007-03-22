@@ -11,13 +11,13 @@ CXX = g++
 CXXFLAGS = -g -frtti -DSDLLIB -I$(IDENTICALINC_DIR) -I$(BTBUILDEROBJ_DIR) $(SDL_CFLAGS) -I.
 LIBS = -L$(IDENTICALLIB_DIR) -lidentical-sdl -ldl $(SDL_LDFLAGS)
 
-PCX2PIAC_OBJ = pcx2piac.o compressor.o $(BTBUILDEROBJ_DIR)/file.o
+PCX2PIAC_OBJ = pcx2piac.o compressor.o file.o
 PCX2PIAC_EXE = pcx2piac
 
-PIAC2PCX_OBJ = piac2pcx.o compressor.o $(BTBUILDEROBJ_DIR)/file.o
+PIAC2PCX_OBJ = piac2pcx.o compressor.o file.o
 PIAC2PCX_EXE = piac2pcx
 
-DECOMP_OBJ = decomp.o compressor.o $(BTBUILDEROBJ_DIR)/file.o
+DECOMP_OBJ = decomp.o compressor.o file.o
 DECOMP_EXE = decomp
 
 all: $(PCX2PIAC_EXE) $(PIAC2PCX_EXE) $(DECOMP_EXE)
