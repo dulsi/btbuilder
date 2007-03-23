@@ -222,8 +222,23 @@ void BTGame::move(BTDisplay &d, int dir)
   d.drawView();
   try
   {
-   if (s >= 0)
-    levelMap->getSpecial(s)->run(d);
+   try
+   {
+    if (s >= 0)
+     levelMap->getSpecial(s)->run(d);
+   }
+   catch (const BTSpecialTeleport &t) // Hmm... what if another teleport
+   {
+    loadMap(t.map.c_str()); // Detect if same map
+    xPos = t.x;
+    yPos = t.y;
+    facing = t.facing;
+    const BTMapSquare& start = levelMap->getSquare(yPos, xPos);
+    d.drawView();
+    s = start.getSpecial();
+    if ((t.activate) && (s >= 0))
+     levelMap->getSpecial(s)->run(d);
+   }
   }
   catch (const BTSpecialBack &)
   {

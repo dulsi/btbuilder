@@ -86,6 +86,16 @@ class BTSpecialForward
   BTSpecialForward() {}
 };
 
+class BTSpecialTeleport
+{
+ public:
+  BTSpecialTeleport(const char *m, int x1, int y1, int f, bool a) : map(m), x(x1), y(y1), facing(f), activate(a) {}
+
+  std::string map;
+  int x, y, facing;
+  bool activate;
+};
+
 class BTSpecialGoto
 {
  public:

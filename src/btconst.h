@@ -61,6 +61,7 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_STOP             1
 #define BTSPECIALCOMMAND_SPIN             2
 #define BTSPECIALCOMMAND_GETINPUT         6
+#define BTSPECIALCOMMAND_SELLITEM         11
 #define BTSPECIALCOMMAND_PRINT            13
 #define BTSPECIALCOMMAND_REGENERATESPELLS 14
 #define BTSPECIALCOMMAND_TAKESPELLS       15
@@ -70,6 +71,7 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_TAKESONGS        19
 #define BTSPECIALCOMMAND_BACKONE          20
 #define BTSPECIALCOMMAND_FORWARDONE       21
+#define BTSPECIALCOMMAND_TELEPORT         22
 #define BTSPECIALCOMMAND_GUILD            23
 #define BTSPECIALCOMMAND_REVIEW           24
 #define BTSPECIALCOMMAND_SHOP             25

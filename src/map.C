@@ -131,6 +131,57 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_GETINPUT:
    game->setLastInput(d.readString("", 13));
    break;
+  case BTSPECIALCOMMAND_SELLITEM:
+   d.drawText("");
+   d.drawText("Pick a party member:");
+   while (true)
+   {
+    char key = IKeybufferGet();
+    if (27 == key)
+     break;
+    else if (('1' <= key) && ('9' >= key))
+    {
+     XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+     BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+     int n =  key - '1';
+     if (n < party.size())
+     {
+      char tmp[100];
+      d.drawText(party[n]->name);
+      snprintf(tmp, 100, "%s costs %d gold coins.", itemList[number[0]].getName(), number[1]);
+      d.drawText(tmp);
+      d.drawText("Wilt thou pay?");
+      d.drawText("Yes, or");
+      d.drawText("No");
+      while (true)
+      {
+       key = IKeybufferGet();
+       if ((27 == key) || ('Y' == key) || ('y' == key) || ('N' == key) || ('n' == key))
+        break;
+      }
+      if (('Y' == key) || ('y' == key))
+      {
+       if (party[n]->getGold() < number[1])
+        snprintf(tmp, 100, "%s does not have enough gold!", party[n]->name);
+       else if (party[n]->isEquipmentFull())
+       {
+        snprintf(tmp, 100, "%s has no room for %s!", party[n]->name, itemList[number[0]].getName());
+        d.drawText(tmp);
+        snprintf(tmp, 100, "%s does not have room to carry it!", party[n]->name);
+       }
+       else
+       {
+        party[n]->takeGold(number[1]);
+        party[n]->giveItem(number[0], true, itemList[number[0]].getTimesUsable());
+        snprintf(tmp, 100, "%s gets %s.", party[n]->name, itemList[number[0]].getName());
+       }
+       d.drawText(tmp);
+      }
+      break;
+     }
+    }
+   }
+   break;
   case BTSPECIALCOMMAND_PRINT:
    d.drawText(text);
    break;
@@ -139,6 +190,9 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_FORWARDONE:
    throw BTSpecialForward();
+   break;
+  case BTSPECIALCOMMAND_TELEPORT:
+   throw BTSpecialTeleport(text, number[0], 21 - number[1], number[2], false);
    break;
   case BTSPECIALCOMMAND_GUILD:
    adventurerGuild(d);
@@ -229,6 +283,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
 
+ d.drawImage(40);
  d.drawLabel("The Guild");
  while (true)
  {
@@ -535,6 +590,7 @@ void BTSpecialCommand::shop(BTDisplay &d) const
  XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
 
+ d.drawImage(39);
  d.drawLabel("The Shoppe");
  while (true)
  {
