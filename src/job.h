@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "xmlserializer.h"
+#include "pc.h"
 
 class BTJob : public XMLObject
 {
@@ -23,6 +24,7 @@ class BTJob : public XMLObject
 
   ~BTJob() { delete [] name; delete [] abbrev; }
 
+  bool isAllowed(BTPc *pc, bool starting);
   virtual void serialize(XMLSerializer* s);
 
   static XMLObject *create() { return new BTJob; }
@@ -36,6 +38,7 @@ class BTJob : public XMLObject
   int improveSave;
   int hp;
   bool advanced;
+  BitField allowedRace;
 };
 
 #endif

@@ -6,6 +6,25 @@
 \*-------------------------------------------------------------------------*/
 
 #include "job.h"
+#include "game.h"
+
+bool BTJob::isAllowed(BTPc *pc, bool starting)
+{
+ if (starting)
+ {
+  if (advanced)
+   return false;
+ }
+ else
+ {
+  // Check to see if can change class
+ }
+ if (allowedRace.isSet(pc->race))
+ {
+  return true;
+ }
+ return false;
+}
 
 void BTJob::serialize(XMLSerializer* s)
 {
@@ -17,11 +36,12 @@ void BTJob::serialize(XMLSerializer* s)
  s->add("improveSave", &improveSave);
  s->add("hp", &hp);
  s->add("advanced", &advanced);
+ s->add("allowedRace", &allowedRace, &BTGame::getGame()->getRaceList());
 }
 
 void BTJob::readXML(const char *filename, XMLVector<BTJob*> &job)
 {
  XMLSerializer parser;
- parser.add("job", &BTJob::create, &job);
+ parser.add("job", &job, &BTJob::create);
  parser.parse(filename, true);
 }

@@ -155,6 +155,6 @@ bool BTPc::takeItem(int id)
 void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)
 {
  XMLSerializer parser;
- parser.add("pc", &BTPc::create, &pc);
+ parser.add("pc", &pc, &BTPc::create);
  parser.parse(filename, true);
 }

@@ -7,6 +7,13 @@
 		<save>17</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Dwarf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Paladin</name>
@@ -16,6 +23,9 @@
 		<save>13</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Dwarf</allowedRace>
 	</job>
 	<job>
 		<name>Rogue</name>
@@ -25,6 +35,13 @@
 		<save>15</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Dwarf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Bard</name>
@@ -34,6 +51,11 @@
 		<save>17</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Dwarf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
 	</job>
 	<job>
 		<name>Hunter</name>
@@ -43,6 +65,10 @@
 		<save>15</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Dwarf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Monk</name>
@@ -52,6 +78,12 @@
 		<save>15</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Dwarf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Conjurer</name>
@@ -61,6 +93,12 @@
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Magician</name>
@@ -70,6 +108,12 @@
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Sorcerer</name>

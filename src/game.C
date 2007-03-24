@@ -15,8 +15,12 @@ BTGame::BTGame(BTModule *m)
  : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL)
 {
  IRandomize();
- BTJob::readXML(m->job, jobList);
+ if (NULL == game)
+ {
+  game = this;
+ }
  BTRace::readXML(m->race, raceList);
+ BTJob::readXML(m->job, jobList);
  PHYSFS_file *start = PHYSFS_openRead(m->start);
  char levelName[14];
  PHYSFS_read(start, levelName, 1, 14);
@@ -28,10 +32,6 @@ BTGame::BTGame(BTModule *m)
  yPos = 21 - tmp;
  PHYSFS_readULE16(start, &tmp);
  facing = tmp;
- if (NULL == game)
- {
-  game = this;
- }
 }
 
 BTGame::~BTGame()
@@ -61,7 +61,7 @@ BTFactory<BTMonster> &BTGame::getMonsterList()
  return monsterList;
 }
 
-XMLVector<BTRace*> &BTGame::getRaceList()
+BTRaceList &BTGame::getRaceList()
 {
  return raceList;
 }

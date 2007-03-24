@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "expatcpp.h"
+#include "bitfield.h"
 #include <vector>
 #include <list>
 #include <string>
@@ -51,6 +52,7 @@ class XMLAttribute
 #define XMLTYPE_OBJECT 4
 #define XMLTYPE_BOOL 5
 #define XMLTYPE_UINT 6
+#define XMLTYPE_BITFIELD 7
 
 class XMLAction
 {
@@ -62,7 +64,7 @@ class XMLAction
   int type;
   int level;
   void *object;
-  XMLObject::create func;
+  void *data;
 };
 
 class XMLLevel
@@ -78,12 +80,13 @@ class XMLSerializer : public ExpatXMLParser
   XMLSerializer();
   ~XMLSerializer();
 
-  void add(const char *name, XMLObject::create func, XMLArray* vec, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, BitField *p, BitFieldLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
 
   virtual void startElement(const XML_Char *name, const XML_Char **atts);
   virtual void endElement(const XML_Char *name);

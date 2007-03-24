@@ -25,12 +25,12 @@ void Psuedo3DConfig::serialize(XMLSerializer* s)
  s->add("height", &height);
  s->add("width", &width);
  s->add("background", &background);
- s->add("walltype", &Psuedo3DWallType::create, &wallType);
+ s->add("walltype", &wallType, &Psuedo3DWallType::create);
 }
 
 void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg)
 {
  XMLSerializer parser;
- parser.add("psuedo3d", &Psuedo3DConfig::create, &cfg);
+ parser.add("psuedo3d", &cfg, &Psuedo3DConfig::create);
  parser.parse(filename, true);
 }

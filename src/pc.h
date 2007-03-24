@@ -25,12 +25,13 @@ class BTPc : public XMLObject
 {
  public:
   BTPc()
-   : race(0), job(0), ac(0), hp(0), maxHp(0),  sp(0), maxSp(0), gold(0), xp(0)
+   : race(0), job(0), ac(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(0), gold(0), xp(0)
   {
    name = new char[1];
    name[0] = 0;
    for (int i = 0; i < BT_STATS; ++i)
     stat[i] = 0;
+   spellLvl = new int[4];
   }
 
   ~BTPc() { delete [] name; }
@@ -59,8 +60,10 @@ class BTPc : public XMLObject
   int ac;
   int hp, maxHp;
   int sp, maxSp;
-  int gold;
+  int level;
   unsigned int xp;
+  unsigned int gold;
+  int *spellLvl;
   BTEquipment item[BT_ITEMS];
 };
 

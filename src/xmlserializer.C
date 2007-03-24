@@ -19,7 +19,7 @@ XMLSerializer::~XMLSerializer()
  action.clear();
 }
 
-void XMLSerializer::add(const char *name, XMLObject::create func, XMLArray* vec, std::vector<XMLAttribute> *atts /*= NULL*/)
+void XMLSerializer::add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
@@ -27,7 +27,7 @@ void XMLSerializer::add(const char *name, XMLObject::create func, XMLArray* vec,
  act->type = XMLTYPE_CREATE;
  act->level = level.size();
  act->object = reinterpret_cast<void*>(vec);
- act->func = func;
+ act->data = reinterpret_cast<void*>(func);
  action.push_back(act);
 }
 
@@ -86,6 +86,18 @@ void XMLSerializer::add(const char *name, char **p, std::vector<XMLAttribute> *a
  action.push_back(act);
 }
 
+void XMLSerializer::add(const char *name, BitField *p, BitFieldLookup *lookup, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_BITFIELD;
+ act->level = level.size();
+ act->object = reinterpret_cast<void*>(p);
+ act->data = reinterpret_cast<void*>(lookup);
+ action.push_back(act);
+}
+
 void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
 {
  int curLevel = level.size();
@@ -120,7 +132,7 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
    {
     XMLLevel *newLevel = new XMLLevel;
     newLevel->state = *itr;
-    newLevel->object = (*((*itr)->func))();
+    newLevel->object = (*reinterpret_cast<XMLObject::create>((*itr)->data))();
     level.push_back(newLevel);
     newLevel->object->serialize(this);
    }
@@ -196,6 +208,14 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
     strncpy(str, s, len);
     str[len] = 0;
     *(reinterpret_cast<char**>(state->object)) = str;
+    break;
+   }
+   case XMLTYPE_BITFIELD:
+   {
+    std::string str(s, len);
+    int index = reinterpret_cast<BitFieldLookup*>(state->data)->getIndex(str);
+    if (-1 != index)
+     reinterpret_cast<BitField*>(state->object)->set(index);
     break;
    }
    default:

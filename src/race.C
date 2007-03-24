@@ -23,6 +23,22 @@ void BTRace::serialize(XMLSerializer* s)
 void BTRace::readXML(const char *filename, XMLVector<BTRace*> &race)
 {
  XMLSerializer parser;
- parser.add("race", &BTRace::create, &race);
+ parser.add("race", &race, &BTRace::create);
  parser.parse(filename, true);
+}
+
+std::string BTRaceList::getName(int index)
+{
+ if (size() > index)
+  return operator[](index)->name;
+ else
+  return "";
+}
+
+int BTRaceList::getIndex(std::string name)
+{
+ for (int i = 0; i < size(); ++i)
+  if (strcmp(name.c_str(), operator[](i)->name) == 0)
+   return i;
+ return -1;
 }

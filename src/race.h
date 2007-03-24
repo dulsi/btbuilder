@@ -31,4 +31,11 @@ class BTRace : public XMLObject
   BTDice stat[BT_STATS];
 };
 
+class BTRaceList : public BitFieldLookup, public XMLVector<BTRace*>
+{
+ public:
+  virtual std::string getName(int index);
+  virtual int getIndex(std::string name);
+};
+
 #endif

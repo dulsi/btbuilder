@@ -497,7 +497,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
     int count = 1;
     for (i = 0; i < job.size(); ++i)
     {
-     if (!job[i]->advanced)
+     if (job[i]->isAllowed(pc, true))
      {
       char line[50];
       snprintf(line, 50, "%d) %s", count++, job[i]->name);
@@ -517,7 +517,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
       count = key - '1';
       for (i = 0; i < job.size(); i++)
       {
-       if (!job[i]->advanced)
+       if (job[i]->isAllowed(pc, true))
        {
         if (count == 0)
         {
