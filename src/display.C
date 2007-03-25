@@ -148,6 +148,7 @@ void BTDisplay::drawImage(int pic)
  if (NULL == img)
  {
   SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
+  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
   return;
  }
  if ((xMult > 1) || (yMult > 1))

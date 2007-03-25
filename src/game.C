@@ -146,6 +146,7 @@ void BTGame::setLastInput(std::string input)
 
 void BTGame::run(BTDisplay &d)
 {
+ bool special = false;
  try
  {
   d.drawFullScreen(module->title, 5000);
@@ -160,46 +161,84 @@ void BTGame::run(BTDisplay &d)
   catch (const BTSpecialFlipGoForward &)
   {
    turnAround(d);
-   move(d, facing);
+   special = move(d, facing);
   }
   while (true)
   {
    d.drawView();
    d.drawLabel(levelMap->getName());
-   key = IKeybufferGet();
-   switch (key)
+   if (special)
    {
-    case 0xBD: // up
-     move(d, facing);
-     break;
-    case 0xBF: // left
-     turnLeft(d);
-     break;
-    case 0xC3: // down
+    special = false;
+    const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
+    IShort s = current.getSpecial();
+    try
+    {
+     if (s >= 0)
+      levelMap->getSpecial(s)->run(d);
+    }
+    catch (const BTSpecialTeleport &t) // Hmm... what if another teleport
+    {
+     loadMap(t.map.c_str()); // Detect if same map
+     xPos = t.x;
+     yPos = t.y;
+     facing = t.facing;
+     d.drawView();
+     special = t.activate;
+    }
+    catch (const BTSpecialBack &)
+    {
+     special = move(d, (facing + 2) % 4);
+    }
+    catch (const BTSpecialFlipGoForward &)
+    {
      turnAround(d);
-     break;
-    case 0xC1: // right
-     turnRight(d);
-     break;
-    case 'q':
-     d.clearText();
-     d.drawText("Your game will not be saved. Do you want to quit?");
-     d.drawText("Yes, or");
-     d.drawText("No");
-     while (true)
-     {
-      unsigned char response = IKeybufferGet();
-      if (('y' == response) || ('Y' == response))
-       throw BTSpecialQuit();
-      else if (('n' == response) || ('N' == response))
+     special = move(d, facing);
+    }
+    catch (const BTSpecialForward &)
+    {
+     special = move(d, facing);
+    }
+   }
+   d.drawView();
+   d.drawLabel(levelMap->getName());
+   if (!special)
+   {
+    key = IKeybufferGet();
+    switch (key)
+    {
+     case 0xBD: // up
+      special = move(d, facing);
+      break;
+     case 0xBF: // left
+      turnLeft(d);
+      break;
+     case 0xC3: // down
+      turnAround(d);
+      break;
+     case 0xC1: // right
+      turnRight(d);
+      break;
+     case 'q':
+      d.clearText();
+      d.drawText("Your game will not be saved. Do you want to quit?");
+      d.drawText("Yes, or");
+      d.drawText("No");
+      while (true)
       {
-       d.clearText();
-       break;
+       unsigned char response = IKeybufferGet();
+       if (('y' == response) || ('Y' == response))
+        throw BTSpecialQuit();
+       else if (('n' == response) || ('N' == response))
+       {
+        d.clearText();
+        break;
+       }
       }
-     }
-     break;
-    default:
-     break;
+      break;
+     default:
+      break;
+    }
    }
   }
  }
@@ -208,7 +247,7 @@ void BTGame::run(BTDisplay &d)
  }
 }
 
-void BTGame::move(BTDisplay &d, int dir)
+bool BTGame::move(BTDisplay &d, int dir)
 {
  const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
  if (current.getWall(dir) != 1)
@@ -217,43 +256,9 @@ void BTGame::move(BTDisplay &d, int dir)
   xPos = xPos % 22;
   yPos += Psuedo3D::changeXY[dir][1] + 22;
   yPos = yPos % 22;
-  const BTMapSquare& next = levelMap->getSquare(yPos, xPos);
-  IShort s = next.getSpecial();
-  d.drawView();
-  try
-  {
-   try
-   {
-    if (s >= 0)
-     levelMap->getSpecial(s)->run(d);
-   }
-   catch (const BTSpecialTeleport &t) // Hmm... what if another teleport
-   {
-    loadMap(t.map.c_str()); // Detect if same map
-    xPos = t.x;
-    yPos = t.y;
-    facing = t.facing;
-    const BTMapSquare& start = levelMap->getSquare(yPos, xPos);
-    d.drawView();
-    s = start.getSpecial();
-    if ((t.activate) && (s >= 0))
-     levelMap->getSpecial(s)->run(d);
-   }
-  }
-  catch (const BTSpecialBack &)
-  {
-   move(d, (facing + 2) % 4);
-  }
-  catch (const BTSpecialFlipGoForward &)
-  {
-   turnAround(d);
-   move(d, facing);
-  }
-  catch (const BTSpecialForward &)
-  {
-   move(d, facing);
-  }
+  return true;
  }
+ return false;
 }
 
 void BTGame::turnLeft(BTDisplay &d)

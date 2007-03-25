@@ -61,6 +61,8 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_STOP             1
 #define BTSPECIALCOMMAND_SPIN             2
 #define BTSPECIALCOMMAND_GETINPUT         6
+#define BTSPECIALCOMMAND_TAKEITEM         9
+#define BTSPECIALCOMMAND_GIVEITEM         10
 #define BTSPECIALCOMMAND_SELLITEM         11
 #define BTSPECIALCOMMAND_PRINT            13
 #define BTSPECIALCOMMAND_REGENERATESPELLS 14
@@ -80,6 +82,8 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_CLEARSPECIALAT   28
 #define BTSPECIALCOMMAND_SETSPECIALAT     29
 #define BTSPECIALCOMMAND_PRINTLABEL       30
+#define BTSPECIALCOMMAND_MONSTERJOIN      31
+#define BTSPECIALCOMMAND_GIVEGOLD         43
 #define BTSPECIALCOMMAND_GIVEXP           44
 #define BTSPECIALCOMMAND_PRESSANYKEY      45
 #define BTSPECIALCOMMAND_SETDIRECTION     48
@@ -104,6 +108,7 @@ extern char *directions[];
 extern char *mapTypes[];
 
 #define BT_STATS 5
+#define BTSTAT_IQ 2
 #define BTSTAT_CN 3
 extern char *statAbbrev[];
 

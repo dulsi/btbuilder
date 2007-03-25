@@ -128,9 +128,44 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_STOP:
    throw BTSpecialStop();
    break;
+  case BTSPECIALCOMMAND_SPIN:
+   game->setFacing(BTDice(1, 4, 0).roll() % 4);
+   break;
   case BTSPECIALCOMMAND_GETINPUT:
    game->setLastInput(d.readString("", 13));
    break;
+  case BTSPECIALCOMMAND_TAKEITEM:
+  {
+   XMLVector<BTPc*> &party = game->getParty();
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i]->takeItem(number[0]))
+     break;
+   }
+   break;
+  }
+  case BTSPECIALCOMMAND_GIVEITEM:
+  {
+   XMLVector<BTPc*> &party = game->getParty();
+   int who = 0;
+   int charges = game->getItemList()[number[0]].getTimesUsable();
+   for (; who < party.size(); ++who)
+   {
+    if (party[who]->giveItem(number[0], true, charges))
+     break;
+   }
+   char tmp[100];
+   if (who < party.size())
+   {
+    snprintf(tmp, 100, "%s gets %s.", party[who]->name, game->getItemList()[number[0]].getName());
+   }
+   else
+   {
+    snprintf(tmp, 100, "No one has room for %s!", game->getItemList()[number[0]].getName());
+   }
+   d.drawText(tmp);
+   break;
+  }
   case BTSPECIALCOMMAND_SELLITEM:
    d.drawText("");
    d.drawText("Pick a party member:");
@@ -212,6 +247,52 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_PRINTLABEL:
    d.drawLabel(text);
    break;
+  case BTSPECIALCOMMAND_MONSTERJOIN:
+  {
+   BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
+   char tmp[100];
+   snprintf(tmp, 100, "%s asks to join the party! Do you say", monsterList[number[0]].getName());
+   d.drawText(tmp);
+   d.drawText("Yes, or");
+   d.drawText("No");
+   char key;
+   while (true)
+   {
+    key = IKeybufferGet();
+    if ((27 == key) || ('Y' == key) || ('y' == key) || ('N' == key) || ('n' == key))
+     break;
+   }
+   if (('Y' == key) || ('y' == key))
+   {
+    XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+    if (party.size() >= BT_PARTYSIZE)
+    {
+     snprintf(tmp, 100, "No room in your party. %s cannot join!", monsterList[number[0]].getName());
+     d.drawText(tmp);
+    }
+    else
+    {
+     BTPc *pc = new BTPc;
+     pc->setName(monsterList[number[0]].getName());
+     pc->ac = monsterList[number[0]].getAc();
+     pc->hp = pc->maxHp = monsterList[number[0]].getHp().roll();
+     party.push_back(pc);
+     d.drawStats();
+    }
+   }
+   break;
+  }
+  case BTSPECIALCOMMAND_GIVEGOLD:
+  {
+   // Loses extra gold like BTCS.  Should fix.
+   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   int gold = number[0] / party.size();
+   for (int i = 0; i < party.size(); ++i)
+   {
+    party[i]->giveGold(gold);
+   }
+   break;
+  }
   case BTSPECIALCOMMAND_GIVEXP:
   {
    XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
@@ -522,8 +603,14 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
         if (count == 0)
         {
          pc->job = i;
+         pc->picture = job[i]->picture;
          pc->hp = pc->maxHp = BTDice(1, 14, 14).roll() + ((pc->stat[BTSTAT_CN] > 14) ? pc->stat[BTSTAT_CN] - 14 : 0);
          pc->gold = BTDice(1, 61, 110).roll();
+         if (job[i]->spells)
+         {
+          pc->spellLvl[i] = 1;
+          pc->sp = pc->maxSp = BTDice(1, 8, 9).roll() + ((pc->stat[BTSTAT_IQ] > 14) ? pc->stat[BTSTAT_IQ] - 14 : 0);
+         }
          state = GUILDSTATE_SELECTNAME;
         }
         --count;

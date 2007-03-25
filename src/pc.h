@@ -24,17 +24,8 @@ class BTEquipment : public XMLObject
 class BTPc : public XMLObject
 {
  public:
-  BTPc()
-   : race(0), job(0), ac(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(0), gold(0), xp(0)
-  {
-   name = new char[1];
-   name[0] = 0;
-   for (int i = 0; i < BT_STATS; ++i)
-    stat[i] = 0;
-   spellLvl = new int[4];
-  }
-
-  ~BTPc() { delete [] name; }
+  BTPc();
+  ~BTPc() { delete [] name; delete [] spellLvl; }
 
   bool isAlive() const;
   bool isEquipped(int index) const;
@@ -42,12 +33,13 @@ class BTPc : public XMLObject
   bool isEquipmentFull() const;
   int getGold() const;
   int getItem(int index) const;
+  unsigned int giveGold(unsigned int amount);
   bool giveItem(int id, bool known, int charges);
-  void giveXP(int amount);
+  void giveXP(unsigned int amount);
   bool hasItem(int id);
   virtual void serialize(XMLSerializer* s);
   void setName(const char *nm);
-  int takeGold(int amount);
+  unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);
 
   static XMLObject *create() { return new BTPc; }
@@ -56,6 +48,8 @@ class BTPc : public XMLObject
   char *name;
   int race;
   int job;
+  int picture;
+  int monster;
   int stat[BT_STATS];
   int ac;
   int hp, maxHp;

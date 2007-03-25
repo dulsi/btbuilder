@@ -2,6 +2,7 @@
 	<job>
 		<name>Warrior</name>
 		<abbreviation>Wa</abbreviation>
+		<picture>30</picture>
 		<thac0>20</thac0>
 		<improveThac0>1</improveThac0>
 		<save>17</save>
@@ -18,6 +19,7 @@
 	<job>
 		<name>Paladin</name>
 		<abbreviation>Pa</abbreviation>
+		<picture>31</picture>
 		<thac0>20</thac0>
 		<improveThac0>1</improveThac0>
 		<save>13</save>
@@ -30,6 +32,7 @@
 	<job>
 		<name>Rogue</name>
 		<abbreviation>Ro</abbreviation>
+		<picture>32</picture>
 		<thac0>22</thac0>
 		<improveThac0>3</improveThac0>
 		<save>15</save>
@@ -46,6 +49,7 @@
 	<job>
 		<name>Bard</name>
 		<abbreviation>Ba</abbreviation>
+		<picture>33</picture>
 		<thac0>20</thac0>
 		<improveThac0>1</improveThac0>
 		<save>17</save>
@@ -60,6 +64,7 @@
 	<job>
 		<name>Hunter</name>
 		<abbreviation>Hu</abbreviation>
+		<picture>34</picture>
 		<thac0>21</thac0>
 		<improveThac0>2</improveThac0>
 		<save>15</save>
@@ -73,6 +78,7 @@
 	<job>
 		<name>Monk</name>
 		<abbreviation>Mo</abbreviation>
+		<picture>35</picture>
 		<thac0>21</thac0>
 		<improveThac0>2</improveThac0>
 		<save>15</save>
@@ -88,11 +94,13 @@
 	<job>
 		<name>Conjurer</name>
 		<abbreviation>Co</abbreviation>
+		<picture>36</picture>
 		<thac0>24</thac0>
 		<improveThac0>4</improveThac0>
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
+                <spells>true</spells>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Hobbit</allowedRace>
@@ -103,11 +111,13 @@
 	<job>
 		<name>Magician</name>
 		<abbreviation>Ma</abbreviation>
+		<picture>36</picture>
 		<thac0>24</thac0>
 		<improveThac0>4</improveThac0>
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
+                <spells>true</spells>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Hobbit</allowedRace>
@@ -118,32 +128,56 @@
 	<job>
 		<name>Sorcerer</name>
 		<abbreviation>So</abbreviation>
+		<picture>36</picture>
 		<thac0>24</thac0>
 		<improveThac0>4</improveThac0>
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+                <spells>true</spells>
                 <advanced>true</advanced>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Wizard</name>
 		<abbreviation>Wi</abbreviation>
+		<picture>36</picture>
 		<thac0>24</thac0>
 		<improveThac0>4</improveThac0>
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+                <spells>true</spells>
                 <advanced>true</advanced>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Archmage</name>
 		<abbreviation>Am</abbreviation>
+		<picture>37</picture>
 		<thac0>24</thac0>
 		<improveThac0>4</improveThac0>
 		<save>12</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+                <spells>true</spells>
                 <advanced>true</advanced>
+		<allowedRace>Human</allowedRace>
+		<allowedRace>Elf</allowedRace>
+		<allowedRace>Hobbit</allowedRace>
+		<allowedRace>Half-Elf</allowedRace>
+		<allowedRace>Half-Orc</allowedRace>
+		<allowedRace>Gnome</allowedRace>
 	</job>
 	<job>
 		<name>Monster</name>

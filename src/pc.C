@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "pc.h"
+#include "game.h"
 
 void BTEquipment::serialize(XMLSerializer* s)
 {
@@ -13,6 +14,20 @@ void BTEquipment::serialize(XMLSerializer* s)
  s->add("equipped", &equipped);
  s->add("known", &known);
  s->add("charges", &charges);
+}
+
+BTPc::BTPc()
+ : race(0), job(0), picture(-1), monster(-1), ac(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
+{
+ name = new char[1];
+ name[0] = 0;
+ int i;
+ for (i = 0; i < BT_STATS; ++i)
+  stat[i] = 10;
+ int jobs = BTGame::getGame()->getJobList().size();
+ spellLvl = new int[jobs];
+ for (i = 0; i < jobs; ++i)
+  spellLvl[i] = 0;
 }
 
 bool BTPc::isAlive() const
@@ -67,7 +82,14 @@ bool BTPc::giveItem(int id, bool known, int charges)
  return false;
 }
 
-void BTPc::giveXP(int amount)
+unsigned int BTPc::giveGold(unsigned int amount)
+{
+ gold += amount;
+ if (gold > 4000000000UL)
+  gold = 4000000000UL;
+}
+
+void BTPc::giveXP(unsigned int amount)
 {
  xp += amount;
  if (xp > 4000000000UL)
@@ -88,10 +110,13 @@ bool BTPc::hasItem(int id)
 
 void BTPc::serialize(XMLSerializer* s)
 {
+ int i;
  s->add("name", &name);
  s->add("race", &race);
  s->add("job", &job);
- for (int i = 0; i < BT_STATS; ++i)
+ s->add("picture", &race);
+ s->add("monster", &job);
+ for (i = 0; i < BT_STATS; ++i)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
   char tmp[10];
@@ -104,8 +129,18 @@ void BTPc::serialize(XMLSerializer* s)
  s->add("hp", &hp);
  s->add("maxsp", &maxSp);
  s->add("sp", &sp);
- s->add("gold", &gold);
+ s->add("level", &level);
  s->add("xp", &xp);
+ s->add("gold", &gold);
+ int jobs = BTGame::getGame()->getJobList().size();
+ for (i = 0; i < jobs; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  snprintf(tmp, 10, "%d", i + 1);
+  attrib->push_back(XMLAttribute("job", tmp));
+  s->add("spellLvl", &spellLvl[i], attrib);
+ }
 }
 
 void BTPc::setName(const char *nm)
@@ -115,7 +150,7 @@ void BTPc::setName(const char *nm)
  strcpy(name, nm);
 }
 
-int BTPc::takeGold(int amount)
+unsigned int BTPc::takeGold(unsigned int amount)
 {
  if (amount > gold)
  {

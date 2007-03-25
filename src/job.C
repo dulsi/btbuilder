@@ -30,11 +30,13 @@ void BTJob::serialize(XMLSerializer* s)
 {
  s->add("name", &name);
  s->add("abbreviation", &abbrev);
+ s->add("picture", &picture);
  s->add("thac0", &thac0);
  s->add("improveThac0", &improveThac0);
  s->add("save", &save);
  s->add("improveSave", &improveSave);
  s->add("hp", &hp);
+ s->add("spells", &spells);
  s->add("advanced", &advanced);
  s->add("allowedRace", &allowedRace, &BTGame::getGame()->getRaceList());
 }

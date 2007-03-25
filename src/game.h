@@ -46,7 +46,7 @@ class BTGame : public Psuedo3DMap
   void setLastInput(std::string input);
 
   void run(BTDisplay &d);
-  void move(BTDisplay &d, int dir);
+  bool move(BTDisplay &d, int dir);
   void turnLeft(BTDisplay &d);
   void turnRight(BTDisplay &d);
   void turnAround(BTDisplay &d);
