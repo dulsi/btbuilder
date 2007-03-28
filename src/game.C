@@ -7,6 +7,7 @@
 
 #include "btconst.h"
 #include "game.h"
+#include "status.h"
 #include "ikbbuffer.h"
 
 BTGame *BTGame::game = NULL;
@@ -51,7 +52,7 @@ BTFactory<BTItem> &BTGame::getItemList()
  return itemList;
 }
 
-XMLVector<BTJob*> &BTGame::getJobList()
+BTJobList &BTGame::getJobList()
 {
  return jobList;
 }
@@ -236,6 +237,23 @@ void BTGame::run(BTDisplay &d)
        }
       }
       break;
+     case '1':
+     case '2':
+     case '3':
+     case '4':
+     case '5':
+     case '6':
+     case '7':
+     case '8':
+     case '9':
+     {
+      int n =  key - '1';
+      if (n < party.size())
+      {
+       BTStatus s(d, party[n]);
+       s.parse("data/status.xml", true);
+      }
+     }
      default:
       break;
     }

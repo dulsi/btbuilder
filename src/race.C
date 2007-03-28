@@ -7,7 +7,7 @@
 
 #include "race.h"
 
-void BTRace::serialize(XMLSerializer* s)
+void BTRace::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
  for (int i = 0; i < BT_STATS; ++i)

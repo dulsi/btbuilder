@@ -27,7 +27,7 @@ class BTGame : public Psuedo3DMap
   ~BTGame();
 
   BTFactory<BTItem> &getItemList();
-  XMLVector<BTJob*> &getJobList();
+  BTJobList &getJobList();
   BTFactory<BTMonster> &getMonsterList();
   BTRaceList &getRaceList();
   XMLVector<BTPc*> &getRoster();
@@ -56,7 +56,7 @@ class BTGame : public Psuedo3DMap
  private:
   BTModule *module;
   BTFactory<BTItem> itemList;
-  XMLVector<BTJob*> jobList;
+  BTJobList jobList;
   BTFactory<BTMonster> monsterList;
   BTRaceList raceList;
   XMLVector<BTPc*> roster;

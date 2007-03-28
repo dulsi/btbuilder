@@ -15,7 +15,7 @@ class BTModule : public XMLObject
   BTModule();
   ~BTModule();
 
-  virtual void serialize(XMLSerializer* s);
+  virtual void serialize(ObjectSerializer* s);
 
   char *name;
   char *author;

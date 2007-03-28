@@ -8,7 +8,7 @@
 #include "psuedo3dconfig.h"
 #include "xmlserializer.h"
 
-void Psuedo3DWallType::serialize(XMLSerializer* s)
+void Psuedo3DWallType::serialize(ObjectSerializer* s)
 {
  for (int i = 0; i < WALL_DIRECTIONS; ++i)
  {
@@ -20,7 +20,7 @@ void Psuedo3DWallType::serialize(XMLSerializer* s)
  }
 }
 
-void Psuedo3DConfig::serialize(XMLSerializer* s)
+void Psuedo3DConfig::serialize(ObjectSerializer* s)
 {
  s->add("height", &height);
  s->add("width", &width);

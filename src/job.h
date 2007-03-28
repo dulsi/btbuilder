@@ -25,7 +25,7 @@ class BTJob : public XMLObject
   ~BTJob() { delete [] name; delete [] abbrev; }
 
   bool isAllowed(BTPc *pc, bool starting);
-  virtual void serialize(XMLSerializer* s);
+  virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create() { return new BTJob; }
   static void readXML(const char *filename, XMLVector<BTJob*> &job);
@@ -41,6 +41,13 @@ class BTJob : public XMLObject
   bool spells;
   bool advanced;
   BitField allowedRace;
+};
+
+class BTJobList : public ValueLookup, public XMLVector<BTJob*>
+{
+ public:
+  virtual std::string getName(int index);
+  virtual int getIndex(std::string name);
 };
 
 #endif

@@ -59,7 +59,7 @@ BTModule::~BTModule()
   delete [] wall;
 }
 
-void BTModule::serialize(XMLSerializer* s)
+void BTModule::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
  s->add("author", &author);

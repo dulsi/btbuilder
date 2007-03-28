@@ -7,103 +7,100 @@
 
 #include "xmlserializer.h"
 
-XMLSerializer::XMLSerializer()
-: state(0)
+ObjectSerializer::ObjectSerializer()
 {
 }
 
-XMLSerializer::~XMLSerializer()
+ObjectSerializer::~ObjectSerializer()
 {
  for (std::vector<XMLAction*>::iterator itr(action.begin()); itr != action.end(); itr++)
   delete *itr;
  action.clear();
 }
 
-void XMLSerializer::add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
  act->attrib = atts;
  act->type = XMLTYPE_CREATE;
- act->level = level.size();
+ act->level = getLevel();
  act->object = reinterpret_cast<void*>(vec);
  act->data = reinterpret_cast<void*>(func);
  action.push_back(act);
 }
 
-void XMLSerializer::add(const char *name, XMLObject *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, XMLObject *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
  act->attrib = atts;
  act->type = XMLTYPE_OBJECT;
- act->level = level.size();
+ act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
 }
 
-void XMLSerializer::add(const char *name, bool *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, bool *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
  act->attrib = atts;
  act->type = XMLTYPE_BOOL;
- act->level = level.size();
+ act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
 }
 
-void XMLSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *atts /*= NULL*/, ValueLookup *lookup /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
  act->attrib = atts;
  act->type = XMLTYPE_INT;
- act->level = level.size();
- act->object = reinterpret_cast<void*>(p);
- action.push_back(act);
-}
-
-void XMLSerializer::add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts /*= NULL*/)
-{
- XMLAction *act = new XMLAction;
- act->name = name;
- act->attrib = atts;
- act->type = XMLTYPE_UINT;
- act->level = level.size();
- act->object = reinterpret_cast<void*>(p);
- action.push_back(act);
-}
-
-void XMLSerializer::add(const char *name, char **p, std::vector<XMLAttribute> *atts /*= NULL*/)
-{
- XMLAction *act = new XMLAction;
- act->name = name;
- act->attrib = atts;
- act->type = XMLTYPE_STRING;
- act->level = level.size();
- act->object = reinterpret_cast<void*>(p);
- action.push_back(act);
-}
-
-void XMLSerializer::add(const char *name, BitField *p, BitFieldLookup *lookup, std::vector<XMLAttribute> *atts /*= NULL*/)
-{
- XMLAction *act = new XMLAction;
- act->name = name;
- act->attrib = atts;
- act->type = XMLTYPE_BITFIELD;
- act->level = level.size();
+ act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  act->data = reinterpret_cast<void*>(lookup);
  action.push_back(act);
 }
 
-void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
+void ObjectSerializer::add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
- int curLevel = level.size();
- // Shouldn't already be in a state
- if (state)
-  return;
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_UINT;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
+void ObjectSerializer::add(const char *name, char **p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_STRING;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
+void ObjectSerializer::add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_BITFIELD;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ act->data = reinterpret_cast<void*>(lookup);
+ action.push_back(act);
+}
+
+XMLAction* ObjectSerializer::find(const XML_Char *name, const XML_Char **atts)
+{
+ int curLevel = getLevel();
  for (std::vector<XMLAction*>::reverse_iterator itr(action.rbegin()); (action.rend() != itr) && ((*itr)->level == curLevel); itr++)
  {
   if (0 == strcmp((*itr)->name.c_str(), name))
@@ -128,28 +125,63 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
     if (!found)
      continue;
    }
-   if (XMLTYPE_CREATE == (*itr)->type)
-   {
-    XMLLevel *newLevel = new XMLLevel;
-    newLevel->state = *itr;
-    newLevel->object = (*reinterpret_cast<XMLObject::create>((*itr)->data))();
-    level.push_back(newLevel);
-    newLevel->object->serialize(this);
-   }
-   else if (XMLTYPE_OBJECT == (*itr)->type)
-   {
-    XMLLevel *newLevel = new XMLLevel;
-    newLevel->state = *itr;
-    newLevel->object = reinterpret_cast<XMLObject*>((*itr)->object);
-    level.push_back(newLevel);
-    newLevel->object->serialize(this);
-   }
-   else
-   {
-    state = *itr;
-   }
-   return;
+   return *itr;
   }
+ }
+ return NULL;
+}
+
+void ObjectSerializer::removeLevel()
+{
+ int curLevel = getLevel();
+ for (XMLAction *act(action.back()); (act) && (act->level == curLevel); act = action.back())
+ {
+  action.pop_back();
+  delete act;
+ }
+}
+
+XMLSerializer::XMLSerializer()
+: state(0)
+{
+}
+
+XMLSerializer::~XMLSerializer()
+{
+}
+
+int XMLSerializer::getLevel()
+{
+ return level.size();
+}
+
+void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
+{
+ // Shouldn't already be in a state
+ if (state)
+  return;
+ XMLAction *act = find(name, atts);
+ if (NULL == act)
+  return;
+ if (XMLTYPE_CREATE == act->type)
+ {
+  XMLLevel *newLevel = new XMLLevel;
+  newLevel->state = act;
+  newLevel->object = (*reinterpret_cast<XMLObject::create>(act->data))();
+  level.push_back(newLevel);
+  newLevel->object->serialize(this);
+ }
+ else if (XMLTYPE_OBJECT == act->type)
+ {
+  XMLLevel *newLevel = new XMLLevel;
+  newLevel->state = act;
+  newLevel->object = reinterpret_cast<XMLObject*>(act->object);
+  level.push_back(newLevel);
+  newLevel->object->serialize(this);
+ }
+ else
+ {
+  state = act;
  }
 }
 
@@ -166,12 +198,7 @@ void XMLSerializer::endElement(const XML_Char *name)
  {
   if (0 == strcmp(level.back()->state->name.c_str(), name))
   {
-   int curLevel = level.size();
-   for (XMLAction *act(action.back()); (act) && (act->level == curLevel); act = action.back())
-   {
-    action.pop_back();
-    delete act;
-   }
+   removeLevel();
    XMLLevel *oldLevel = level.back();
    level.pop_back();
    if (XMLTYPE_CREATE == oldLevel->state->type)
@@ -191,7 +218,13 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
     *(reinterpret_cast<bool*>(state->object)) = ((strncmp(s, "true", 4) == 0) ? true : false);
     break;
    case XMLTYPE_INT:
-    *(reinterpret_cast<int*>(state->object)) = atoi(s);
+    if (state->data)
+    {
+     std::string str(s, len);
+     *(reinterpret_cast<int*>(state->object)) = reinterpret_cast<ValueLookup*>(state->data)->getIndex(str);
+    }
+    else
+     *(reinterpret_cast<int*>(state->object)) = atoi(s);
     break;
    case XMLTYPE_UINT:
    {
@@ -213,7 +246,7 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
    case XMLTYPE_BITFIELD:
    {
     std::string str(s, len);
-    int index = reinterpret_cast<BitFieldLookup*>(state->data)->getIndex(str);
+    int index = reinterpret_cast<ValueLookup*>(state->data)->getIndex(str);
     if (-1 != index)
      reinterpret_cast<BitField*>(state->object)->set(index);
     break;

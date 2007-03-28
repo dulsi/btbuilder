@@ -1,7 +1,7 @@
-#ifndef __BITFIELD_H
-#define __BITFIELD_H
+#ifndef __VALUELOOKUP_H
+#define __VALUELOOKUP_H
 /*-------------------------------------------------------------------------*\
-  <bitfield.h> -- BitField header file
+  <valuelookup.h> -- ValueLookup header file
 
   Date      Programmer  Description
   03/24/07  Dennis      Created.
@@ -9,16 +9,11 @@
 
 #include <string>
 
-class BitField
+class ValueLookup
 {
  public:
-  BitField();
-
-  bool isSet(int index);
-  void set(int index);
-
- private:
-  int bits;
+  virtual std::string getName(int index) = 0;
+  virtual int getIndex(std::string name) = 0;
 };
 
 #endif

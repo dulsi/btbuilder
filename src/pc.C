@@ -8,7 +8,7 @@
 #include "pc.h"
 #include "game.h"
 
-void BTEquipment::serialize(XMLSerializer* s)
+void BTEquipment::serialize(ObjectSerializer* s)
 {
  s->add("id", &id);
  s->add("equipped", &equipped);
@@ -108,12 +108,12 @@ bool BTPc::hasItem(int id)
  return false;
 }
 
-void BTPc::serialize(XMLSerializer* s)
+void BTPc::serialize(ObjectSerializer* s)
 {
  int i;
  s->add("name", &name);
- s->add("race", &race);
- s->add("job", &job);
+ s->add("race", &race, NULL, &BTGame::getGame()->getRaceList());
+ s->add("job", &job, NULL, &BTGame::getGame()->getJobList());
  s->add("picture", &race);
  s->add("monster", &job);
  for (i = 0; i < BT_STATS; ++i)
@@ -140,6 +140,14 @@ void BTPc::serialize(XMLSerializer* s)
   snprintf(tmp, 10, "%d", i + 1);
   attrib->push_back(XMLAttribute("job", tmp));
   s->add("spellLvl", &spellLvl[i], attrib);
+ }
+ for (i = 0; i < BT_ITEMS; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  snprintf(tmp, 10, "%d", i + 1);
+  attrib->push_back(XMLAttribute("number", tmp));
+  s->add("item", &item[i], attrib);
  }
 }
 

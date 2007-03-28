@@ -22,7 +22,7 @@ class BTRace : public XMLObject
 
   ~BTRace() { delete [] name; }
 
-  virtual void serialize(XMLSerializer* s);
+  virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create() { return new BTRace; }
   static void readXML(const char *filename, XMLVector<BTRace*> &race);
@@ -31,7 +31,7 @@ class BTRace : public XMLObject
   BTDice stat[BT_STATS];
 };
 
-class BTRaceList : public BitFieldLookup, public XMLVector<BTRace*>
+class BTRaceList : public ValueLookup, public XMLVector<BTRace*>
 {
  public:
   virtual std::string getName(int index);

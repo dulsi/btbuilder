@@ -26,7 +26,7 @@ bool BTJob::isAllowed(BTPc *pc, bool starting)
  return false;
 }
 
-void BTJob::serialize(XMLSerializer* s)
+void BTJob::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
  s->add("abbreviation", &abbrev);
@@ -46,4 +46,20 @@ void BTJob::readXML(const char *filename, XMLVector<BTJob*> &job)
  XMLSerializer parser;
  parser.add("job", &job, &BTJob::create);
  parser.parse(filename, true);
+}
+
+std::string BTJobList::getName(int index)
+{
+ if (size() > index)
+  return operator[](index)->name;
+ else
+  return "";
+}
+
+int BTJobList::getIndex(std::string name)
+{
+ for (int i = 0; i < size(); ++i)
+  if (strcmp(name.c_str(), operator[](i)->name) == 0)
+   return i;
+ return -1;
 }

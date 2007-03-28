@@ -52,7 +52,7 @@ class Psuedo3DWallType : public XMLObject
       delete [] walls[i];
   }
 
-  virtual void serialize(XMLSerializer* s);
+  virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create() { return new Psuedo3DWallType; }
 
@@ -73,7 +73,7 @@ class Psuedo3DConfig : public XMLObject
     delete [] background;
   }
 
-  virtual void serialize(XMLSerializer* s);
+  virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create() { return new Psuedo3DConfig; }
   static void readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg);

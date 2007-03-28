@@ -54,7 +54,7 @@ int BTDice::roll() const
  return r;
 }
 
-void BTDice::serialize(XMLSerializer* s)
+void BTDice::serialize(ObjectSerializer* s)
 {
  s->add("n", &number);
  s->add("d", &type);

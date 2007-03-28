@@ -14,7 +14,7 @@ class BTEquipment : public XMLObject
 {
  public:
   BTEquipment() : id(BTITEM_NONE) {}
-  virtual void serialize(XMLSerializer* s);
+  virtual void serialize(ObjectSerializer* s);
 
   int id;
   bool equipped, known;
@@ -37,7 +37,7 @@ class BTPc : public XMLObject
   bool giveItem(int id, bool known, int charges);
   void giveXP(unsigned int amount);
   bool hasItem(int id);
-  virtual void serialize(XMLSerializer* s);
+  virtual void serialize(ObjectSerializer* s);
   void setName(const char *nm);
   unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);

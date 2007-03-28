@@ -9,18 +9,19 @@
 
 #include "expatcpp.h"
 #include "bitfield.h"
+#include "valuelookup.h"
 #include <vector>
 #include <list>
 #include <string>
 
-class XMLSerializer;
+class ObjectSerializer;
 
 class XMLObject
 {
  public:
   typedef XMLObject* (*create)();
 
-  virtual void serialize(XMLSerializer* s) = 0;
+  virtual void serialize(ObjectSerializer* s) = 0;
 };
 
 class XMLArray
@@ -74,26 +75,41 @@ class XMLLevel
   XMLObject *object;
 };
 
-class XMLSerializer : public ExpatXMLParser
+class ObjectSerializer
+{
+ public:
+  ObjectSerializer();
+  ~ObjectSerializer();
+
+  void add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL);
+  void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
+
+  XMLAction* find(const XML_Char *name, const XML_Char **atts);
+  virtual int getLevel() = 0;
+  void removeLevel();
+
+ private:
+  std::vector<XMLAction*> action;
+};
+
+class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
 {
  public:
   XMLSerializer();
   ~XMLSerializer();
 
-  void add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, BitField *p, BitFieldLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
+  virtual int getLevel();
 
   virtual void startElement(const XML_Char *name, const XML_Char **atts);
   virtual void endElement(const XML_Char *name);
   virtual void characterData(const XML_Char *s, int len);
 
  private:
-  std::vector<XMLAction*> action;
   std::list<XMLLevel*> level;
   XMLAction *state;
 };

@@ -1,0 +1,19 @@
+<status>
+	<screen page="1">
+		<line><name /></line>
+		<line>Race: <race /></line>
+		<line>Class: <job /></line>
+		<line><col>St: <stat number="1" /></col><col>IQ: <stat number="2" /></col></line>
+		<line><col>Dx: <stat number="3" /></col><col>Cn: <stat number="4" /></col></line>
+		<line><col>Lk: <stat number="5" /></col><col>HP: <hp /></col></line>
+		<line><col>Lvl: <level /></col><col>SP: <sp /></col></line>
+		<line>Expr: <xp /></line>
+		<line>Gold: <gold /></line>
+	</screen>
+	<screen page="2">
+		<line><name /></line>
+		<inventory tag="item" show="8" />
+		<line><col>Conj: <spellLvl job="7" /></col><col>Sorc: <spellLvl job="9" /></col></line>
+		<line><col>Magi: <spellLvl job="8" /></col><col>Wizd: <spellLvl job="10" /></col></line>
+	</screen>
+</status>
