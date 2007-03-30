@@ -314,6 +314,11 @@ void BTDisplay::drawStats()
  SDL_UpdateRect(mainScreen, stats.x, stats.y, stats.w, stats.h);
 }
 
+unsigned char BTDisplay::readChar()
+{
+ return IKeybufferGet();
+}
+
 std::string BTDisplay::readString(const char *prompt, int max)
 {
  std::string s;

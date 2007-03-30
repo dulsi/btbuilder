@@ -10,6 +10,7 @@
 #include <istdlib.h>
 #include <file.h>
 #include "dice.h"
+#include "bitfield.h"
 
 class BTPc;
 
@@ -63,10 +64,12 @@ class BTItem
   IShort chanceXSpecial;
   IShort type;
   IShort spellCast;
-  IShort classAllowed;
+  BitField classAllowed;
   IShort price;
   char cause[24];
   char effect[24];
+
+  static int compatJobAllowed[11];
 };
 
 #endif

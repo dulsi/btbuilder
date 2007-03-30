@@ -13,7 +13,7 @@ class ExpatXMLParser
 {
  public:
   ExpatXMLParser();
-  ~ExpatXMLParser() { XML_ParserFree(p); }
+  ~ExpatXMLParser() { }
 
   virtual void startElement(const XML_Char *name, const XML_Char **atts) = 0;
   virtual void endElement(const XML_Char *name) = 0;
@@ -25,9 +25,6 @@ class ExpatXMLParser
   static void startElement(void *userData, const XML_Char *name, const XML_Char **atts);
   static void endElement(void *userData, const XML_Char *name);
   static void characterData(void *userData, const XML_Char *s, int len);
-
- private:
-  XML_Parser p;
 };
 
 #endif

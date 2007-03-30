@@ -251,7 +251,7 @@ void BTGame::run(BTDisplay &d)
       if (n < party.size())
       {
        BTStatus s(d, party[n]);
-       s.parse("data/status.xml", true);
+       s.run();
       }
      }
      default:

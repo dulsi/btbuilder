@@ -89,7 +89,8 @@ class ObjectSerializer
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
 
-  XMLAction* find(const XML_Char *name, const XML_Char **atts);
+  XMLAction* find(const char *name, const char **atts);
+  void findAll(const char *name, std::list<XMLAction*> &list);
   virtual int getLevel() = 0;
   void removeLevel();
 

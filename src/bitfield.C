@@ -12,7 +12,7 @@ BitField::BitField()
 {
 }
 
-bool BitField::isSet(int index)
+bool BitField::isSet(int index) const
 {
  return ((bits & (1 << index)) != 0);
 }

@@ -30,6 +30,23 @@ BTPc::BTPc()
   spellLvl[i] = 0;
 }
 
+void BTPc::equip(int index)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ int type = itemList[item[index].id].getType();
+ for (int i = 0; i < BT_ITEMS; ++i)
+ {
+  if (BTITEM_NONE == item[i].id)
+   break;
+  if ((item[i].equipped) && (type == itemList[item[i].id].getType()))
+  {
+   unequip(i);
+  }
+ }
+ ac += itemList[item[index].id].getArmorPlus();
+ item[index].equipped = true;
+}
+
 bool BTPc::isAlive() const
 {
  return hp > 0;
@@ -193,6 +210,13 @@ bool BTPc::takeItem(int id)
  if (found)
   item[BT_ITEMS - 1].id = BTITEM_NONE;
  return found;
+}
+
+void BTPc::unequip(int index)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ ac -= itemList[item[index].id].getArmorPlus();
+ item[index].equipped = false;
 }
 
 void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)

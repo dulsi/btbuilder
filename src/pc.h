@@ -27,6 +27,7 @@ class BTPc : public XMLObject
   BTPc();
   ~BTPc() { delete [] name; delete [] spellLvl; }
 
+  void equip(int index);
   bool isAlive() const;
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
@@ -41,6 +42,7 @@ class BTPc : public XMLObject
   void setName(const char *nm);
   unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);
+  void unequip(int index);
 
   static XMLObject *create() { return new BTPc; }
   static void readXML(const char *filename, XMLVector<BTPc*> &pc);

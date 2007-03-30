@@ -37,6 +37,7 @@ class BTDisplay
   void draw2Column(const char *col1, const char *col2);
   void drawView();
   void drawStats();
+  unsigned char readChar();
   std::string readString(const char *prompt, int max);
   void refresh();
   bool selectList(selectItem *list, int size, int &start, int &select);

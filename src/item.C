@@ -8,6 +8,8 @@
 #include "item.h"
 #include "pc.h"
 
+int BTItem::compatJobAllowed[11] = {0x80, 0x04, 0x10, 0x08, 0x02, 0x01, 0x40, 0x40, 0x40, 0x20, 0x20};
+
 BTItem::BTItem(BinaryReadFile &f)
 {
  IUByte unknown;
@@ -23,7 +25,13 @@ BTItem::BTItem(BinaryReadFile &f)
  f.readShort(chanceXSpecial);
  f.readShort(type);
  f.readShort(spellCast);
- f.readShort(classAllowed);
+ IShort jobAllowed;
+ f.readShort(jobAllowed);
+ for (int i = 0; i < 11; i++)
+ {
+  if (jobAllowed & compatJobAllowed[i])
+   classAllowed.set(i);
+ }
  f.readShort(price);
  f.readUByteArray(24, (IUByte *)cause);
  f.readUByteArray(24, (IUByte *)effect);
@@ -35,7 +43,7 @@ BTItem::BTItem()
 
 bool BTItem::canUse(BTPc *pc) const
 {
- return ((classAllowed & (1 << pc->job)) == (1 << pc->job));
+ return classAllowed.isSet(pc->job);
 }
 
 const char *BTItem::getName() const
@@ -113,7 +121,13 @@ void BTItem::write(BinaryWriteFile &f)
  f.writeShort(chanceXSpecial);
  f.writeShort(type);
  f.writeShort(spellCast);
- f.writeShort(classAllowed);
+ IShort jobAllowed(0);
+ for (int i = 0; i < 11; i++)
+ {
+  if (classAllowed.isSet(i))
+   jobAllowed |= compatJobAllowed[i];
+ }
+ f.writeShort(jobAllowed);
  f.writeShort(price);
  f.writeUByteArray(24, (IUByte *)cause);
  f.writeUByteArray(24, (IUByte *)effect);

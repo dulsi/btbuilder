@@ -16,14 +16,14 @@
 
 ExpatXMLParser::ExpatXMLParser()
 {
- p = XML_ParserCreate(NULL);
- XML_SetUserData(p, this);
- XML_SetElementHandler(p, startElement, endElement);
- XML_SetCharacterDataHandler(p, characterData);
 }
 
 void ExpatXMLParser::parse(const char *filename, bool physfs)
 {
+ XML_Parser p = XML_ParserCreate(NULL);
+ XML_SetUserData(p, this);
+ XML_SetElementHandler(p, startElement, endElement);
+ XML_SetCharacterDataHandler(p, characterData);
  char *buffer = new char[XMLBUFFER];
  if (physfs)
  {
@@ -31,7 +31,17 @@ void ExpatXMLParser::parse(const char *filename, bool physfs)
   while (true)
   {
    PHYSFS_sint64 num = PHYSFS_read(f, buffer, 1, XMLBUFFER);
-   XML_Parse(p, buffer, num, ((0 == num) || (PHYSFS_eof(f))));
+   try
+   {
+    XML_Parse(p, buffer, num, ((0 == num) || (PHYSFS_eof(f))));
+   }
+   catch(...)
+   {
+    delete [] buffer;
+    PHYSFS_close(f);
+    XML_ParserFree(p);
+    throw;
+   }
    if ((0 == num) || (PHYSFS_eof(f)))
     break;
   }
@@ -43,18 +53,30 @@ void ExpatXMLParser::parse(const char *filename, bool physfs)
   if (-1 == fd)
   {
    delete [] buffer;
+   XML_ParserFree(p);
    return; // Throw exception
   }
   while (true)
   {
    size_t num = read(fd, buffer, XMLBUFFER);
-   XML_Parse(p, buffer, num, (0 == num));
+   try
+   {
+    XML_Parse(p, buffer, num, (0 == num));
+   }
+   catch(...)
+   {
+    delete [] buffer;
+    close(fd);
+    XML_ParserFree(p);
+    throw;
+   }
    if (0 == num)
     break;
   }
   close(fd);
  }
  delete [] buffer;
+ XML_ParserFree(p);
 }
 
 void ExpatXMLParser::startElement(void *userData, const XML_Char *name, const XML_Char **atts)

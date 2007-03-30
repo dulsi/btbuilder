@@ -14,7 +14,7 @@ class BitField
  public:
   BitField();
 
-  bool isSet(int index);
+  bool isSet(int index) const;
   void set(int index);
 
  private:

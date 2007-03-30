@@ -17,6 +17,8 @@ class BTStatus : public ExpatXMLParser, public ObjectSerializer
   BTStatus(BTDisplay &d, BTPc *c);
   ~BTStatus();
 
+  void run();
+
   virtual int getLevel();
 
   virtual void startElement(const XML_Char *name, const XML_Char **atts);
@@ -25,7 +27,9 @@ class BTStatus : public ExpatXMLParser, public ObjectSerializer
 
  private:
   BTDisplay &display;
-  int level;
+  BTPc *pc;
+  int page;
+  bool gotoPage;
   std::list<std::string> line;
 };
 

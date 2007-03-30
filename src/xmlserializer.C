@@ -98,7 +98,7 @@ void ObjectSerializer::add(const char *name, BitField *p, ValueLookup *lookup, s
  action.push_back(act);
 }
 
-XMLAction* ObjectSerializer::find(const XML_Char *name, const XML_Char **atts)
+XMLAction* ObjectSerializer::find(const char *name, const char **atts)
 {
  int curLevel = getLevel();
  for (std::vector<XMLAction*>::reverse_iterator itr(action.rbegin()); (action.rend() != itr) && ((*itr)->level == curLevel); itr++)
@@ -129,6 +129,18 @@ XMLAction* ObjectSerializer::find(const XML_Char *name, const XML_Char **atts)
   }
  }
  return NULL;
+}
+
+void ObjectSerializer::findAll(const char *name, std::list<XMLAction*> &list)
+{
+ int curLevel = getLevel();
+ for (std::vector<XMLAction*>::reverse_iterator itr(action.rbegin()); (action.rend() != itr) && ((*itr)->level == curLevel); itr++)
+ {
+  if (0 == strcmp((*itr)->name.c_str(), name))
+  {
+   list.push_front(*itr);
+  }
+ }
 }
 
 void ObjectSerializer::removeLevel()

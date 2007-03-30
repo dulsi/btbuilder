@@ -6,11 +6,19 @@
 \*-------------------------------------------------------------------------*/
 
 #include "status.h"
+#include "game.h"
 #include "ikbbuffer.h"
 
+class BTStatusGoto
+{
+ public:
+  BTStatusGoto(int pg) : page(pg) {}
+
+  int page;
+};
 
 BTStatus::BTStatus(BTDisplay &d, BTPc *c)
-: display(d), level(0)
+: display(d), pc(c), page(0), gotoPage(false)
 {
  c->serialize(this);
 }
@@ -20,16 +28,51 @@ BTStatus::~BTStatus()
  display.clearText();
 }
 
+void BTStatus::run()
+{
+ while (true)
+ {
+  try
+  {
+   parse("data/status.xml", true);
+   break;
+  }
+  catch (const BTStatusGoto &g)
+  {
+   page = g.page;
+   gotoPage = true;
+  }
+ }
+}
+
 int BTStatus::getLevel()
 {
- return level;
+ return 0;
 }
 
 void BTStatus::startElement(const XML_Char *name, const XML_Char **atts)
 {
  if (0 == strcmp("screen", name))
  {
+  for (int i = 0; atts[i]; i += 2)
+  {
+   if (0 == strcmp("page", atts[i]))
+   {
+    if (gotoPage)
+    {
+     if (page == atoi(atts[i + 1]))
+      gotoPage = false;
+    }
+    else
+     page = atoi(atts[i + 1]);
+   }
+  }
   display.clearText();
+ }
+ else if (gotoPage)
+ {
+  line.clear();
+  return;
  }
  else if (0 == strcmp("line", name))
  {
@@ -37,7 +80,21 @@ void BTStatus::startElement(const XML_Char *name, const XML_Char **atts)
  }
  else if (0 == strcmp("inventory", name))
  {
-  // Special handling
+  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+  std::list<XMLAction*> items;
+  char tmp[40];
+  int i(0);
+  findAll("item", items);
+  for (std::list<XMLAction*>::iterator itr(items.begin()); (items.end() != itr); itr++)
+  {
+   BTEquipment *item = static_cast<BTEquipment*>(reinterpret_cast<XMLObject*>((*itr)->object));
+   if (item->id == BTITEM_NONE)
+    snprintf(tmp, 40, "%d)", i + 1);
+   else
+    snprintf(tmp, 40, "%d)%c%s", i + 1, (item->equipped ? '*' : (itemList[item->id].canUse(pc) ? ' ' : '@')), itemList[item->id].getName());
+   display.drawText(tmp);
+   ++i;
+  }
  }
  else if (0 == strcmp("col", name))
  {
@@ -80,13 +137,6 @@ void BTStatus::startElement(const XML_Char *name, const XML_Char **atts)
     case XMLTYPE_STRING:
      line.back() += *(reinterpret_cast<char**>(state->object));
     case XMLTYPE_BITFIELD:
-/*    {
-     std::string str(s, len);
-     int index = reinterpret_cast<ValueLookup*>(state->data)->getIndex(str);
-     if (-1 != index)
-      reinterpret_cast<BitField*>(state->object)->set(index);
-     break;
-    }*/
     default:
      break;
    }
@@ -96,9 +146,53 @@ void BTStatus::startElement(const XML_Char *name, const XML_Char **atts)
 
 void BTStatus::endElement(const XML_Char *name)
 {
- if (0 == strcmp("screen", name))
+ if (gotoPage)
+  return;
+ else if (0 == strcmp("screen", name))
  {
-  /*key = */IKeybufferGet();
+  unsigned char key;
+  while (true)
+  {
+   key = display.readChar();
+   if (('C' == key) || ('c' == key) || ('D' == key) || ('d' == key))
+    break;
+   else if (('1' <= key) && ('8' >= key))
+   {
+    int item = key - '1';
+    if (pc->getItem(item) != BTITEM_NONE)
+    {
+     BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+     display.clearText();
+     char tmp[100];
+     snprintf(tmp, 100, "%s do you wish to:", pc->name);
+     display.drawText(tmp);
+     display.drawText("");
+     display.drawText("Trade the item");
+     display.drawText("Drop the item");
+     if (pc->isEquipped(item))
+      display.drawText("Unequip the item");
+     else if (itemList[pc->getItem(item)].canUse(pc))
+      display.drawText("Equip the item");
+     display.drawLast("(Continue)", BTDisplay::center);
+     while (true)
+     {
+      key = display.readChar();
+      if (('C' == key) || ('c' == key))
+       throw BTStatusGoto(page);
+      else if ((('E' == key) || ('e' == key)) && (itemList[pc->getItem(item)].canUse(pc)) && (!pc->isEquipped(item)))
+      {
+       pc->equip(item);
+       throw BTStatusGoto(page);
+      }
+      else if ((('U' == key) || ('u' == key)) && (pc->isEquipped(item)))
+      {
+       pc->unequip(item);
+       throw BTStatusGoto(page);
+      }
+     }
+    }
+   }
+  }
  }
  else if (0 == strcmp("line", name))
  {
