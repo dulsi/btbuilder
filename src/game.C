@@ -253,6 +253,7 @@ void BTGame::run(BTDisplay &d)
        BTStatus s(d, party[n]);
        s.run();
       }
+      break;
      }
      default:
       break;

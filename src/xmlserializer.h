@@ -54,6 +54,8 @@ class XMLAttribute
 #define XMLTYPE_BOOL 5
 #define XMLTYPE_UINT 6
 #define XMLTYPE_BITFIELD 7
+#define XMLTYPE_INT16 8
+#define XMLTYPE_UINT16 9
 
 class XMLAction
 {
@@ -86,6 +88,8 @@ class ObjectSerializer
   void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL);
   void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, int16_t *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, uint16_t *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
 

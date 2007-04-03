@@ -12,50 +12,49 @@
 #include "physfsrwops.h"
 #include <SDL_image.h>
 
-BTDisplay::BTDisplay(int xM, int yM)
- : xMult(xM), yMult(yM), x3d(16), y3d(15), textPos(0), p3d(xM, yM), mainScreen(0), ttffont(0), sfont(&simple8x8)
+BTDisplay::BTDisplay(BTDisplayConfig *c)
+ : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), ttffont(0), sfont(&simple8x8)
 {
  if (SDL_Init(SDL_INIT_VIDEO) < 0)
  {
   printf("Failed - SDL_Init\n");
   exit(0);
  }
+ const SDL_VideoInfo *info = SDL_GetVideoInfo();
+ xFull = info->current_w;
+ yFull = info->current_h;
  if ((xMult == 0) || (yMult == 0))
  {
-  const SDL_VideoInfo *info = SDL_GetVideoInfo();
-  xMult = (info->current_w - 10) / 320; // Allow for window decoration
-  yMult = (info->current_h - 10) / 200; // Allow for window decoration
+  xMult = (xFull - 10) / config->width; // Allow for window decoration
+  yMult = (yFull - 10) / config->height; // Allow for window decoration
   if (xMult > yMult)
    xMult = yMult;
   else
    yMult = xMult;
   p3d.setMultiplier(xMult, yMult);
  }
- label.x = 16 * xMult;
- label.y = 103 * yMult;
- label.w = 112 * xMult;
- label.h = 13 * yMult;
- text.x = 168 * xMult;
- text.y = 8 * yMult;
- text.w = 136 * xMult;
- text.h = 96 * yMult;
- stats.x = 10 * xMult;
- stats.y = 144 * yMult;
- stats.w = 302 * xMult;
- stats.h = 56 * yMult;
+ label.x = config->label.x * xMult;
+ label.y = config->label.y * yMult;
+ label.w = config->label.w * xMult;
+ label.h = config->label.h * yMult;
+ text.x = config->text.x * xMult;
+ text.y = config->text.y * yMult;
+ text.w = config->text.w * xMult;
+ text.h = config->text.h * yMult;
  if (TTF_Init() == -1)
  {
   printf("Failed - TTF_Init\n");
   exit(0);
  }
- mainScreen = SDL_SetVideoMode(320 * xMult, 200 * yMult, 32,
+ mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
    SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
  if (mainScreen == NULL)
  {
   printf("Failed - SDL_SetVideoMode\n");
   exit(0);
  }
-// ttffont = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));
+/* if (config->font)
+  ttffont = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));*/
  white.r = 255;
  white.g = 255;
  white.b = 255;
@@ -141,8 +140,8 @@ void BTDisplay::drawImage(int pic)
   }
  }
  SDL_Rect src, dst;
- dst.x = x3d * xMult;
- dst.y = y3d * yMult;
+ dst.x = config->x3d * xMult;
+ dst.y = config->y3d * yMult;
  dst.w = p3d.config->width * xMult;
  dst.h = p3d.config->height * yMult;
  if (NULL == img)
@@ -176,7 +175,27 @@ void BTDisplay::drawLabel(const char *name)
  SDL_UpdateRect(mainScreen, label.x, label.y, label.w, label.h);
 }
 
-void BTDisplay::drawLast(const char *words, alignment a /*= left*/)
+void BTDisplay::drawChoice(const char *keys, const char *words, alignment a /*= left*/)
+{
+ int w, h;
+ if (!sizeFont(words, w, h))
+  return;
+ if (h + textPos > text.h)
+ {
+  scrollUp(h);
+ }
+ SDL_Rect dst;
+ dst.x = text.x;
+ dst.y = text.y + textPos;
+ dst.w = text.w;
+ dst.h = h;
+ SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+ drawFont(words, dst, black, a);
+ SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ textPos += h;
+}
+
+void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= left*/)
 {
  int w, h;
  if (!sizeFont(words, w, h))
@@ -287,8 +306,8 @@ void BTDisplay::drawView()
  src.y = 0;
  src.w = p3d.config->width * xMult;
  src.h = p3d.config->height * yMult;
- dst.x = x3d * xMult;
- dst.y = y3d * yMult;
+ dst.x = config->x3d * xMult;
+ dst.y = config->y3d * yMult;
  dst.w = p3d.config->width * xMult;
  dst.h = p3d.config->height * yMult;
  SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
@@ -297,21 +316,37 @@ void BTDisplay::drawView()
 
 void BTDisplay::drawStats()
 {
- BTGame *g = BTGame::getGame();
- XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
- int w, h;
+ int i;
  SDL_Rect dst;
- sizeFont("", w, h);
- SDL_BlitSurface(mainBackground, &stats, mainScreen, &stats);
- for (int i = 0; i < party.size(); ++i)
+ for (i = 0; i < BT_PARTYSIZE; ++i)
  {
-  dst.x = stats.x;
-  dst.y = stats.y + i * h;
-  dst.w = stats.w;
-  dst.h = h;
-  drawFont(party[i]->name, dst, black, left);
+  dst.x = config->status[i].x * xMult;
+  dst.y = config->status[i].y * yMult;
+  dst.w = config->status[i].w * xMult;
+  dst.h = config->status[i].h * yMult;
+  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
  }
- SDL_UpdateRect(mainScreen, stats.x, stats.y, stats.w, stats.h);
+ status.draw();
+ for (i = 0; i < BT_PARTYSIZE; ++i)
+ {
+  SDL_UpdateRect(mainScreen, config->status[i].x * xMult, config->status[i].y * yMult, config->status[i].w * xMult, config->status[i].h * yMult);
+ }
+}
+
+SDL_Color &BTDisplay::getBlack()
+{
+ return black;
+}
+
+BTDisplayConfig *BTDisplay::getConfig()
+{
+ return config;
+}
+
+void BTDisplay::getMultiplier(int &x, int &y)
+{
+ x = xMult;
+ y = yMult;
 }
 
 unsigned char BTDisplay::readChar()

@@ -173,7 +173,7 @@ void BTStatus::endElement(const XML_Char *name)
       display.drawText("Unequip the item");
      else if (itemList[pc->getItem(item)].canUse(pc))
       display.drawText("Equip the item");
-     display.drawLast("(Continue)", BTDisplay::center);
+     display.drawLast("Cc", "(Cancel)", BTDisplay::center);
      while (true)
      {
       key = display.readChar();
@@ -182,11 +182,13 @@ void BTStatus::endElement(const XML_Char *name)
       else if ((('E' == key) || ('e' == key)) && (itemList[pc->getItem(item)].canUse(pc)) && (!pc->isEquipped(item)))
       {
        pc->equip(item);
+       display.drawStats();
        throw BTStatusGoto(page);
       }
       else if ((('U' == key) || ('u' == key)) && (pc->isEquipped(item)))
       {
        pc->unequip(item);
+       display.drawStats();
        throw BTStatusGoto(page);
       }
      }

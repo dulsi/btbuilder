@@ -74,7 +74,12 @@ IUByte sideWallsUTF8[4][4] =
 
 void testDisplay()
 {
- BTDisplay display;
+ BTDisplayConfig config;
+ BTModule module;
+ XMLSerializer parser;
+ config.serialize(&parser);
+ parser.parse("data/display.xml", true);
+ BTDisplay display(&config);
  IKeybufferStart();
  BTGame::getGame()->run(display);
 }

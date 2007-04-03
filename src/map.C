@@ -757,7 +757,7 @@ void BTSpecialCommand::shop(BTDisplay &d) const
         }
         else
         {
-         d.drawLast("Done!");
+         d.drawLast(0, "Done!");
          IKeybufferGet();
          pc->takeGold(itemList[select].getPrice());
          pc->giveItem(select, true, itemList[select].getTimesUsable());

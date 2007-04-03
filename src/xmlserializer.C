@@ -64,6 +64,28 @@ void ObjectSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *
  action.push_back(act);
 }
 
+void ObjectSerializer::add(const char *name, uint16_t *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_UINT16;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
+void ObjectSerializer::add(const char *name, int16_t *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_INT16;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
 void ObjectSerializer::add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
@@ -146,10 +168,13 @@ void ObjectSerializer::findAll(const char *name, std::list<XMLAction*> &list)
 void ObjectSerializer::removeLevel()
 {
  int curLevel = getLevel();
- for (XMLAction *act(action.back()); (act) && (act->level == curLevel); act = action.back())
+ if (action.size() > 0)
  {
-  action.pop_back();
-  delete act;
+  for (XMLAction *act(action.back()); (act) && (act->level == curLevel); act = ((action.size() > 0) ? action.back() : NULL))
+  {
+   action.pop_back();
+   delete act;
+  }
  }
 }
 
@@ -242,6 +267,17 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
    {
     std::string str(s, len);
     sscanf(str.c_str(), "%u", reinterpret_cast<unsigned int*>(state->object));
+    break;
+   }
+   case XMLTYPE_INT16:
+    *(reinterpret_cast<int16_t*>(state->object)) = atoi(s);
+    break;
+   case XMLTYPE_UINT16:
+   {
+    std::string str(s, len);
+    unsigned int u;
+    sscanf(str.c_str(), "%u", &u);
+    *(reinterpret_cast<uint16_t*>(state->object)) = u;
     break;
    }
    case XMLTYPE_STRING:
