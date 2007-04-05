@@ -145,6 +145,16 @@ void BTGame::setLastInput(std::string input)
  lastInput = input;
 }
 
+int BTGame::getCounter(void) const
+{
+ return counter;
+}
+
+void BTGame::setCounter(int val)
+{
+ counter = val;
+}
+
 void BTGame::run(BTDisplay &d)
 {
  bool special = false;

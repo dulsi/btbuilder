@@ -17,7 +17,7 @@ void BTEquipment::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), job(0), picture(-1), monster(-1), ac(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
+ : race(0), job(0), picture(-1), monster(-1), ac(0), toHit(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
@@ -44,6 +44,7 @@ void BTPc::equip(int index)
   }
  }
  ac += itemList[item[index].id].getArmorPlus();
+ toHit += itemList[item[index].id].getHitPlus();
  item[index].equipped = true;
 }
 
@@ -142,6 +143,7 @@ void BTPc::serialize(ObjectSerializer* s)
   s->add("stat", &stat[i], attrib);
  }
  s->add("ac", &ac);
+ s->add("toHit", &toHit);
  s->add("maxhp", &maxHp);
  s->add("hp", &hp);
  s->add("maxsp", &maxSp);
@@ -216,6 +218,7 @@ void BTPc::unequip(int index)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  ac -= itemList[item[index].id].getArmorPlus();
+ toHit -= itemList[item[index].id].getHitPlus();
  item[index].equipped = false;
 }
 

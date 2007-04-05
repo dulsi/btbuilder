@@ -25,7 +25,9 @@ BTMonster::BTMonster(BinaryReadFile &f)
  f.readShort(picture);
  f.readShortArray(4, combatAction);
  f.readShort(meleeExtra);
- f.readShort(ac);
+ IShort calcAc;
+ f.readShort(calcAc);
+ ac = (calcAc * -1) + 10;
  f.readShort(maxAppearing);
  hp.read(f);
  meleeDamage.read(f);
@@ -178,7 +180,9 @@ void BTMonster::write(BinaryWriteFile &f)
  f.writeShort(picture);
  f.writeShortArray(4, combatAction);
  f.writeShort(meleeExtra);
- f.writeShort(ac);
+ IShort calcAc;
+ calcAc = (ac - 10) * -1;
+ f.writeShort(calcAc);
  f.writeShort(maxAppearing);
  hp.write(f);
  meleeDamage.write(f);

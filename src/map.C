@@ -274,6 +274,10 @@ void BTSpecialCommand::run(BTDisplay &d) const
     {
      BTPc *pc = new BTPc;
      pc->setName(monsterList[number[0]].getName());
+     pc->race = -1;
+     pc->job = BTJOB_MONSTER; // Illusions become monster for some reason
+     pc->picture = monsterList[number[0]].getPicture();
+     pc->monster = number[0];
      pc->ac = monsterList[number[0]].getAc();
      pc->hp = pc->maxHp = monsterList[number[0]].getHp().roll();
      party.push_back(pc);
@@ -282,10 +286,33 @@ void BTSpecialCommand::run(BTDisplay &d) const
    }
    break;
   }
+  case BTSPECIALCOMMAND_ALLMONSTERSLEAVE:
+  {
+   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   for (int i = party.size(); i > 0; )
+   {
+    --i;
+    if (party[i]->job == BTJOB_MONSTER)
+    {
+     char tmp[100];
+     snprintf(tmp, 100, "%s leaves your party.", party[i]->name);
+     d.drawText(tmp);
+     party.erase(party.begin() + i);
+     d.drawStats();
+    }
+   }
+   break;
+  }
+  case BTSPECIALCOMMAND_SETCOUNTER:
+   game->setCounter(number[0]);
+   break;
+  case BTSPECIALCOMMAND_ADDCOUNTER:
+   game->setCounter(game->getCounter() + number[0]);
+   break;
   case BTSPECIALCOMMAND_GIVEGOLD:
   {
    // Loses extra gold like BTCS.  Should fix.
-   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   XMLVector<BTPc*> &party = game->getParty();
    int gold = number[0] / party.size();
    for (int i = 0; i < party.size(); ++i)
    {
@@ -295,7 +322,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
   }
   case BTSPECIALCOMMAND_GIVEXP:
   {
-   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   XMLVector<BTPc*> &party = game->getParty();
    int xp = number[0] / party.size();
    for (int i = 0; i < party.size(); ++i)
    {
@@ -307,6 +334,23 @@ void BTSpecialCommand::run(BTDisplay &d) const
    d.drawText("(Press any key)");
    IKeybufferGet();
    break;
+  case BTSPECIALCOMMAND_MONSTERLEAVE:
+  {
+   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName())))
+    {
+     char tmp[100];
+     snprintf(tmp, 100, "%s leaves your party.", party[i]->name);
+     d.drawText(tmp);
+     party.erase(party.begin() + i);
+     d.drawStats();
+     break;
+    }
+   }
+   break;
+  }
   case BTSPECIALCOMMAND_SETDIRECTION:
    game->setFacing(number[0]);
    break;
@@ -337,6 +381,9 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_GOTO:
    throw BTSpecialGoto(number[0] - 1);
+   break;
+  case BTSPECIALCOMMAND_SUBTRACTCOUNTER:
+   game->setCounter(game->getCounter() - number[0]);
    break;
   default:
    break;
@@ -944,6 +991,14 @@ void BTSpecialConditional::run(BTDisplay &d) const
   case BTCONDITION_GROUPFACING:
    truth = (BTGame::getGame()->getFacing() == number);
    break;
+  case BTCONDITION_MONSTERINPARTY:
+  {
+   truth = false;
+   for (int i = 0; i < party.size(); ++i)
+    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number].getName())))
+     truth = true;
+   break;
+  }
   case BTCONDITION_JOBINPARTY:
   {
    truth = false;
@@ -952,6 +1007,12 @@ void BTSpecialConditional::run(BTDisplay &d) const
      truth = true;
    break;
   }
+  case BTCONDITION_COUNTERGREATER:
+   truth = ((BTGame::getGame()->getCounter() > number) ? true : false);
+   break;
+  case BTCONDITION_COUNTEREQUAL:
+   truth = ((BTGame::getGame()->getCounter() == number) ? true : false);
+   break;
   case BTCONDITION_RANDOM:
    truth = (BTDice(1, 100).roll() <= number);
    break;

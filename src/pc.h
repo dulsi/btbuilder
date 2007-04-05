@@ -54,6 +54,8 @@ class BTPc : public XMLObject
   int monster;
   int stat[BT_STATS];
   int ac;
+  int toHit;
+  BitField status;
   int hp, maxHp;
   int sp, maxSp;
   int level;

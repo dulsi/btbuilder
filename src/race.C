@@ -29,10 +29,10 @@ void BTRace::readXML(const char *filename, XMLVector<BTRace*> &race)
 
 std::string BTRaceList::getName(int index)
 {
- if (size() > index)
+ if ((size() > index) && (index >= 0))
   return operator[](index)->name;
  else
-  return "";
+  return "---";
 }
 
 int BTRaceList::getIndex(std::string name)

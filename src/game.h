@@ -45,6 +45,9 @@ class BTGame : public Psuedo3DMap
   std::string getLastInput(void) const;
   void setLastInput(std::string input);
 
+  int getCounter(void) const;
+  void setCounter(int val);
+
   void run(BTDisplay &d);
   bool move(BTDisplay &d, int dir);
   void turnLeft(BTDisplay &d);
@@ -65,6 +68,7 @@ class BTGame : public Psuedo3DMap
   int xPos, yPos, facing;
   XMLVector<BTPc*> party;
   std::string lastInput;
+  int counter;
 
   static BTGame *game;
 };

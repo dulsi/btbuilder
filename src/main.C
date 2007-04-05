@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
    BTMonster &mon(monList[i]);
    printf("Name: %s\n", mon.getName());
    printf("Illusion: %s   Base armor class: %d\n",
-     (mon.isIllusion() ? "Yes" : "No"), mon.getAc());
+     (mon.isIllusion() ? "Yes" : "No"), (mon.getAc() - 10) * -1);
    printf("Level: %d   Thaumaturgical resistance: %d\n", mon.getLevel(),
      mon.getMagicResistance());
    printf("Starting distance (*10'): %d   Moves per round: %d\n",
