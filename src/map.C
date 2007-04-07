@@ -220,6 +220,81 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_PRINT:
    d.drawText(text);
    break;
+  case BTSPECIALCOMMAND_REGENERATESPELLS:
+  {
+   XMLVector<BTPc*> &party = game->getParty();
+   for (int who = 0; who < party.size(); ++who)
+   {
+    if (party[who]->sp < party[who]->maxSp)
+    {
+     if (party[who]->sp + number[0] < party[who]->maxSp)
+      party[who]->sp += number[0];
+     else
+      party[who]->sp = party[who]->maxSp;
+    }
+   }
+   d.drawStats();
+   break;
+  }
+  case BTSPECIALCOMMAND_TAKESPELLS:
+  {
+   XMLVector<BTPc*> &party = game->getParty();
+   for (int who = 0; who < party.size(); ++who)
+   {
+    if (party[who]->sp > 0)
+    {
+     if (party[who]->sp < number[0])
+      party[who]->sp = 0;
+     else
+      party[who]->sp -= number[0];
+    }
+   }
+   d.drawStats();
+   break;
+  }
+  case BTSPECIALCOMMAND_HEALHITPOINTS:
+  {
+   BTParty &party = game->getParty();
+   for (int who = 0; who < party.size(); ++who)
+   {
+    // BTCS heals even if dead.  Not sure if we want to mimic that
+    if (party[who]->status.isSet(BTSTATUS_DEAD))
+    {
+     break;
+    }
+    party[who]->giveHP(number[0]);
+   }
+   d.drawStats();
+   break;
+  }
+  case BTSPECIALCOMMAND_DAMAGEHITPOINTS:
+  {
+   BTParty &party = game->getParty();
+   char tmp[100];
+   for (int who = 0; who < party.size(); ++who)
+   {
+    if (party[who]->status.isSet(BTSTATUS_DEAD))
+    {
+     break;
+    }
+    bool saved = party[who]->savingThrow(BTSAVE_DIFFICULTY);
+    if (saved)
+    {
+     snprintf(tmp, 100, "%s saves!", party[who]->name);
+     d.drawText(tmp);
+    }
+    // Still need to handle special damage like poison
+    if (party[who]->takeHP((saved ? number[0] >> 1 : number[0])))
+    {
+     snprintf(tmp, 100, "%s dies!", party[who]->name);
+     d.drawText(tmp);
+    }
+   }
+   if (party.checkDead())
+    throw BTPartyDead();
+   d.drawStats();
+   break;
+  }
   case BTSPECIALCOMMAND_BACKONE:
    throw BTSpecialBack();
    break;
@@ -409,7 +484,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
  unsigned char key = ' ';
  BTPc *pc = NULL;
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
- XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+ BTParty &party = BTGame::getGame()->getParty();
 
  d.drawImage(40);
  d.drawLabel("The Guild");
@@ -456,16 +531,9 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
       case 'E':
       case 'e':
       {
-       bool live = false;
-       for (int i = 0; i < party.size(); ++i)
-       {
-        if (party[i]->isAlive())
-        {
-         live = true;
-         break;
-        }
-       }
-       if (!live)
+       bool dead = party.checkDead();
+       d.drawStats();
+       if (dead)
         state = GUILDSTATE_NOPARTY;
        else
         throw BTSpecialFlipGoForward();
@@ -652,6 +720,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
          pc->job = i;
          pc->picture = job[i]->picture;
          pc->hp = pc->maxHp = BTDice(1, 14, 14).roll() + ((pc->stat[BTSTAT_CN] > 14) ? pc->stat[BTSTAT_CN] - 14 : 0);
+         pc->save = job[i]->save + ((pc->stat[BTSTAT_LK] > 14) ? pc->stat[BTSTAT_LK] - 14 : 0);
          pc->gold = BTDice(1, 61, 110).roll();
          if (job[i]->spells)
          {

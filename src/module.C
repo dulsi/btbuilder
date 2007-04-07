@@ -25,8 +25,6 @@ BTModule::BTModule()
  strcpy(start, "START.BRD");
  title = new char[strlen("USRSCR.LBM") + 1];
  strcpy(title, "USRSCR.LBM");
- background = new char[strlen("image/mainscreen.png") + 1];
- strcpy(background, "image/mainscreen.png");
  wall = new char[strlen("data/wall.xml") + 1];
  strcpy(wall, "data/wall.xml");
 }
@@ -53,8 +51,6 @@ BTModule::~BTModule()
   delete [] start;
  if (title)
   delete [] title;
- if (background)
-  delete [] background;
  if (wall)
   delete [] wall;
 }

@@ -61,6 +61,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c)
  black.r = 0;
  black.g = 0;
  black.b = 0;
+ setBackground(config->background);
 }
 
 BTDisplay::~BTDisplay()

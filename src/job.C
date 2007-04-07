@@ -31,8 +31,8 @@ void BTJob::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("abbreviation", &abbrev);
  s->add("picture", &picture);
- s->add("thac0", &thac0);
- s->add("improveThac0", &improveThac0);
+ s->add("toHit", &toHit);
+ s->add("improveToHit", &improveToHit);
  s->add("save", &save);
  s->add("improveSave", &improveSave);
  s->add("hp", &hp);

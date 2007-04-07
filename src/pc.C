@@ -17,7 +17,7 @@ void BTEquipment::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), job(0), picture(-1), monster(-1), ac(0), toHit(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
+ : race(0), job(0), picture(-1), monster(-1), ac(0), toHit(0), save(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
@@ -107,6 +107,16 @@ unsigned int BTPc::giveGold(unsigned int amount)
   gold = 4000000000UL;
 }
 
+void BTPc::giveHP(int amount)
+{
+ if (!status.isSet(BTSTATUS_DEAD))
+ {
+  hp += amount;
+  if (hp > maxHp)
+   hp = maxHp;
+ }
+}
+
 void BTPc::giveXP(unsigned int amount)
 {
  xp += amount;
@@ -114,7 +124,7 @@ void BTPc::giveXP(unsigned int amount)
   xp = 4000000000UL;
 }
 
-bool BTPc::hasItem(int id)
+bool BTPc::hasItem(int id) const
 {
  for (int i = 0; i < BT_ITEMS; ++i)
  {
@@ -124,6 +134,17 @@ bool BTPc::hasItem(int id)
   }
  }
  return false;
+}
+
+bool BTPc::savingThrow(int difficulty) const
+{
+ int roll = BTDice(1, 20, save).roll();
+ if (roll == 20 + save)
+  return true;
+ else if (roll == 1 + save)
+  return false;
+ else
+  return (roll >= difficulty);
 }
 
 void BTPc::serialize(ObjectSerializer* s)
@@ -144,6 +165,8 @@ void BTPc::serialize(ObjectSerializer* s)
  }
  s->add("ac", &ac);
  s->add("toHit", &toHit);
+ s->add("save", &save);
+ s->add("status", &status, &BTStatusLookup::lookup);
  s->add("maxhp", &maxHp);
  s->add("hp", &hp);
  s->add("maxsp", &maxSp);
@@ -192,6 +215,17 @@ unsigned int BTPc::takeGold(unsigned int amount)
  }
 }
 
+bool BTPc::takeHP(int amount)
+{
+ if (!status.isSet(BTSTATUS_DEAD))
+ {
+  hp -= amount;
+  if (hp < 0)
+   status.set(BTSTATUS_DEAD);
+ }
+ return hp < 0;
+}
+
 bool BTPc::takeItem(int id)
 {
  bool found = false;
@@ -228,3 +262,36 @@ void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)
  parser.add("pc", &pc, &BTPc::create);
  parser.parse(filename, true);
 }
+
+bool BTParty::checkDead()
+{
+ int restDead = size();
+ int who;
+ for (who = size() - 1; who >= 0; --who)
+ {
+  if (operator[](who)->status.isSet(BTSTATUS_DEAD))
+   restDead = who;
+  else
+   break;
+ }
+ if (restDead == 0)
+  return true;
+ for (who = 0; who < restDead; )
+ {
+  if (operator[](who)->status.isSet(BTSTATUS_DEAD))
+  {
+   BTPc *pc = operator[](who);
+   erase(begin() + who);
+   push_back(pc);
+   --restDead;
+  }
+  else
+  {
+   ++who;
+  }
+ }
+ return false;
+}
+
+BTStatusLookup BTStatusLookup::lookup;
+char *BTStatusLookup::value[7] = { "Dead", "Poisoned", "Insane", "Aged", "Possessed", "Turned to stone", "Paralyzed" };

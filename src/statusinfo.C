@@ -78,20 +78,79 @@ void BTStatBlock::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
  }
 }
 
+void BTPrint::serialize(ObjectSerializer* s)
+{
+ s->add("text", &text);
+ s->add("position", &position);
+ s->add("align", &align, NULL, &BTAlignmentLookup::lookup);
+}
+
+void BTPrint::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
+{
+ int xMult, yMult;
+ SDL_Rect dst;
+ d.getMultiplier(xMult, yMult);
+ dst.x = (x + position.x) * xMult;
+ dst.y = (y + position.y) * yMult;
+ dst.w = position.w * xMult;
+ dst.h = position.h * yMult;
+ d.drawFont(text, dst, d.getBlack(), (BTDisplay::alignment)align);
+}
+
+bool BTCondition::compare(ObjectSerializer *pc) const
+{
+ return true;
+}
+
+void BTCondition::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
+{
+ for (int i = 0; i < info.size(); ++i)
+ {
+  info[i]->draw(d, x, y, pc); 
+ }
+}
+
+void BTCondition::serialize(ObjectSerializer* s)
+{
+ s->add("statBlock", &info, &BTStatBlock::create);
+ s->add("conditional", &info, &BTConditional::create);
+ s->add("print", &info, &BTPrint::create);
+}
+
+bool BTCheckBit::compare(ObjectSerializer *pc) const
+{
+ XMLAction *state = pc->find(attribute, NULL);
+ if ((state) && (XMLTYPE_BITFIELD == state->type))
+ {
+  return reinterpret_cast<BitField*>(state->object)->isSet(bit);
+ }
+ return false;
+}
+
+void BTCheckBit::serialize(ObjectSerializer* s)
+{
+ s->add("attribute", &attribute);
+ s->add("bit", &bit);
+ BTCondition::serialize(s);
+}
+
+void BTConditional::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
+{
+ for (int i = 0; i < condition.size(); ++i)
+ {
+  if (condition[i]->compare(pc))
+  {
+   condition[i]->draw(d, x, y, pc);
+   return;
+  }
+ }
+}
+
+void BTConditional::serialize(ObjectSerializer* s)
+{
+ s->add("checkBit", &condition, &BTCheckBit::create);
+ s->add("default", &condition, &BTCondition::create);
+}
+
 BTAlignmentLookup BTAlignmentLookup::lookup;
 char *BTAlignmentLookup::value[3] = { "left", "center", "right" };
-
-std::string BTAlignmentLookup::getName(int index)
-{
- return value[index];
-}
-
-int BTAlignmentLookup::getIndex(std::string name)
-{
- for (int i = 0; i < 3; ++i)
- {
-  if (0 == strcmp(name.c_str(), value[i]))
-   return i;
- }
- return 0;
-}

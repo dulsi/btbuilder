@@ -118,6 +118,7 @@ extern char *mapTypes[];
 #define BT_STATS 5
 #define BTSTAT_IQ 2
 #define BTSTAT_CN 3
+#define BTSTAT_LK 4
 extern char *statAbbrev[];
 
 #define BTJOB_MONSTER  11
@@ -127,5 +128,9 @@ extern char *statAbbrev[];
 #define BT_PARTYSIZE 7
 
 #define BTITEM_NONE 0x4000
+
+#define BTSAVE_DIFFICULTY 20
+
+#define BTSTATUS_DEAD 1
 
 #endif

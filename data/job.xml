@@ -3,9 +3,9 @@
 		<name>Warrior</name>
 		<abbreviation>Wa</abbreviation>
 		<picture>30</picture>
-		<thac0>20</thac0>
-		<improveThac0>1</improveThac0>
-		<save>17</save>
+		<toHit>-10</toHit>
+		<improveToHit>1</improveToHit>
+		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
 		<allowedRace>Human</allowedRace>
@@ -20,9 +20,9 @@
 		<name>Paladin</name>
 		<abbreviation>Pa</abbreviation>
 		<picture>31</picture>
-		<thac0>20</thac0>
-		<improveThac0>1</improveThac0>
-		<save>13</save>
+		<toHit>-10</toHit>
+		<improveToHit>1</improveToHit>
+		<save>7</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
 		<allowedRace>Human</allowedRace>
@@ -33,9 +33,9 @@
 		<name>Rogue</name>
 		<abbreviation>Ro</abbreviation>
 		<picture>32</picture>
-		<thac0>22</thac0>
-		<improveThac0>3</improveThac0>
-		<save>15</save>
+		<toHit>-12</toHit>
+		<improveToHit>3</improveToHit>
+		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
 		<allowedRace>Human</allowedRace>
@@ -50,9 +50,9 @@
 		<name>Bard</name>
 		<abbreviation>Ba</abbreviation>
 		<picture>33</picture>
-		<thac0>20</thac0>
-		<improveThac0>1</improveThac0>
-		<save>17</save>
+		<toHit>-10</toHit>
+		<improveToHit>1</improveToHit>
+		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
 		<allowedRace>Human</allowedRace>
@@ -65,9 +65,9 @@
 		<name>Hunter</name>
 		<abbreviation>Hu</abbreviation>
 		<picture>34</picture>
-		<thac0>21</thac0>
-		<improveThac0>2</improveThac0>
-		<save>15</save>
+		<toHit>-11</toHit>
+		<improveToHit>2</improveToHit>
+		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
 		<allowedRace>Human</allowedRace>
@@ -79,9 +79,9 @@
 		<name>Monk</name>
 		<abbreviation>Mo</abbreviation>
 		<picture>35</picture>
-		<thac0>21</thac0>
-		<improveThac0>2</improveThac0>
-		<save>15</save>
+		<toHit>-11</toHit>
+		<improveToHit>2</improveToHit>
+		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
 		<allowedRace>Human</allowedRace>
@@ -95,9 +95,9 @@
 		<name>Conjurer</name>
 		<abbreviation>Co</abbreviation>
 		<picture>36</picture>
-		<thac0>24</thac0>
-		<improveThac0>4</improveThac0>
-		<save>12</save>
+		<toHit>-14</toHit>
+		<improveToHit>4</improveToHit>
+		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
                 <spells>true</spells>
@@ -112,9 +112,9 @@
 		<name>Magician</name>
 		<abbreviation>Ma</abbreviation>
 		<picture>36</picture>
-		<thac0>24</thac0>
-		<improveThac0>4</improveThac0>
-		<save>12</save>
+		<toHit>-14</toHit>
+		<improveToHit>4</improveToHit>
+		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
                 <spells>true</spells>
@@ -129,9 +129,9 @@
 		<name>Sorcerer</name>
 		<abbreviation>So</abbreviation>
 		<picture>36</picture>
-		<thac0>24</thac0>
-		<improveThac0>4</improveThac0>
-		<save>12</save>
+		<toHit>-14</toHit>
+		<improveToHit>4</improveToHit>
+		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
                 <spells>true</spells>
@@ -147,9 +147,9 @@
 		<name>Wizard</name>
 		<abbreviation>Wi</abbreviation>
 		<picture>36</picture>
-		<thac0>24</thac0>
-		<improveThac0>4</improveThac0>
-		<save>12</save>
+		<toHit>-14</toHit>
+		<improveToHit>4</improveToHit>
+		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
                 <spells>true</spells>
@@ -165,9 +165,9 @@
 		<name>Archmage</name>
 		<abbreviation>Am</abbreviation>
 		<picture>37</picture>
-		<thac0>24</thac0>
-		<improveThac0>4</improveThac0>
-		<save>12</save>
+		<toHit>-14</toHit>
+		<improveToHit>4</improveToHit>
+		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
                 <spells>true</spells>
@@ -182,9 +182,9 @@
 	<job>
 		<name>Monster</name>
 		<abbreviation>Mn</abbreviation>
-		<thac0>20</thac0>
-		<improveThac0>1</improveThac0>
-		<save>17</save>
+		<toHit>-10</toHit>
+		<improveToHit>1</improveToHit>
+		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>10</hp>
                 <advanced>true</advanced>
@@ -192,9 +192,9 @@
 	<job>
 		<name>Illusion</name>
 		<abbreviation>Il</abbreviation>
-		<thac0>20</thac0>
-		<improveThac0>2</improveThac0>
-		<save>17</save>
+		<toHit>-10</toHit>
+		<improveToHit>2</improveToHit>
+		<save>3</save>
 		<improveSave>3</improveSave>
 		<hp>11</hp>
                 <advanced>true</advanced>

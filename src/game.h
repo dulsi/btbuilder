@@ -20,6 +20,12 @@
 #include "map.h"
 #include "pc.h"
 
+class BTPartyDead
+{
+ public:
+  BTPartyDead() {}
+};
+
 class BTGame : public Psuedo3DMap
 {
  public:
@@ -34,7 +40,7 @@ class BTGame : public Psuedo3DMap
   BTFactory<BTSpell> &getSpellList();
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
-  XMLVector<BTPc*> &getParty();
+  BTParty &getParty();
 
   int getFacing();
   int getX();
@@ -66,7 +72,7 @@ class BTGame : public Psuedo3DMap
   BTFactory<BTSpell> spellList;
   BTMap *levelMap;
   int xPos, yPos, facing;
-  XMLVector<BTPc*> party;
+  BTParty party;
   std::string lastInput;
   int counter;
 

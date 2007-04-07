@@ -93,7 +93,7 @@ BTMap *BTGame::loadMap(const char *filename)
  return levelMap;
 }
 
-XMLVector<BTPc*> &BTGame::getParty()
+BTParty &BTGame::getParty()
 {
  return party;
 }
@@ -161,7 +161,6 @@ void BTGame::run(BTDisplay &d)
  try
  {
   d.drawFullScreen(module->title, 5000);
-  d.setBackground(module->background);
   d.setPsuedo3DConfig(module->wall);
   d.setWallGraphics(0);
   unsigned char key = ' ';

@@ -35,12 +35,15 @@ class BTPc : public XMLObject
   int getGold() const;
   int getItem(int index) const;
   unsigned int giveGold(unsigned int amount);
+  void giveHP(int amount);
   bool giveItem(int id, bool known, int charges);
   void giveXP(unsigned int amount);
-  bool hasItem(int id);
+  bool hasItem(int id) const;
+  bool savingThrow(int difficulty) const;
   virtual void serialize(ObjectSerializer* s);
   void setName(const char *nm);
   unsigned int takeGold(unsigned int amount);
+  bool takeHP(int amount);
   bool takeItem(int id);
   void unequip(int index);
 
@@ -55,6 +58,7 @@ class BTPc : public XMLObject
   int stat[BT_STATS];
   int ac;
   int toHit;
+  int save;
   BitField status;
   int hp, maxHp;
   int sp, maxSp;
@@ -63,6 +67,23 @@ class BTPc : public XMLObject
   unsigned int gold;
   int *spellLvl;
   BTEquipment item[BT_ITEMS];
+};
+
+class BTParty : public XMLVector<BTPc*>
+{
+ public:
+  bool checkDead();
+};
+
+class BTStatusLookup : public ArrayLookup
+{
+ public:
+  BTStatusLookup() : ArrayLookup(7, value) {}
+
+  static BTStatusLookup lookup;
+
+ private:
+  static char *value[7];
 };
 
 #endif

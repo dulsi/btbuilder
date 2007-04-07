@@ -27,7 +27,6 @@ class BTModule : public XMLObject
   char *job;
   char *start;
   char *title;
-  char *background;
   char *wall;
 };
 

@@ -40,11 +40,66 @@ class BTStatBlock : public BTStatusInfo
   /*BTDisplay::alignment*/int align;
 };
 
-class BTAlignmentLookup : public ValueLookup
+class BTPrint : public BTStatusInfo
 {
  public:
-  virtual std::string getName(int index);
-  virtual int getIndex(std::string name);
+  BTPrint() : text(0), align(0) {}
+
+  virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create() { return new BTPrint; }
+
+ public:
+  char *text;
+  SerialRect position;
+  /*BTDisplay::alignment*/int align;
+};
+
+class BTCondition : public XMLObject
+{
+ public:
+  virtual bool compare(ObjectSerializer *pc) const;
+  virtual void serialize(ObjectSerializer* s);
+  void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
+
+  static XMLObject *create() { return new BTCondition; }
+
+ private:
+  XMLVector<BTStatusInfo*> info;
+};
+
+class BTCheckBit : public BTCondition
+{
+ public:
+  virtual bool compare(ObjectSerializer *pc) const;
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create() { return new BTCheckBit; }
+
+ private:
+  char *attribute;
+  int bit;
+};
+
+class BTConditional : public BTStatusInfo
+{
+ public:
+  BTConditional() {}
+
+  virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create() { return new BTConditional; }
+
+ public:
+  XMLVector<BTCondition*> condition;
+};
+
+class BTAlignmentLookup : public ArrayLookup
+{
+ public:
+  BTAlignmentLookup() : ArrayLookup(3, value) {}
 
   static BTAlignmentLookup lookup;
 
