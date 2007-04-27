@@ -12,6 +12,8 @@
 #include "physfsrwops.h"
 #include <SDL_image.h>
 
+const char *BTDisplay::allKeys = "allKeys";
+
 BTDisplay::BTDisplay(BTDisplayConfig *c)
  : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), ttffont(0), sfont(&simple8x8)
 {
@@ -66,11 +68,96 @@ BTDisplay::BTDisplay(BTDisplayConfig *c)
 
 BTDisplay::~BTDisplay()
 {
+ for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
+ {
+  delete (*elementItr);
+ }
+ element.clear();
  SDL_Quit();
+}
+
+void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= left*/)
+{
+ element.push_back(new BTUIChoice(keys, words, a));
+}
+
+void BTDisplay::addText(const char *words, alignment a /*= left*/)
+{
+ int w, h;
+ char *tmp = new char[strlen(words)];
+ const char *partial = words;
+ while (partial)
+ {
+  if (!sizeFont(partial, w, h))
+  {
+   delete [] tmp;
+   return;
+  }
+  const char *end = NULL;
+  if (w > text.w)
+  {
+   const char *sp = partial;
+   for (end = partial; *end; ++end)
+   {
+    if (isspace(*end))
+    {
+     memcpy(tmp + (sp - partial), sp, end - sp);
+     tmp[end - partial] = 0;
+     sizeFont(tmp, w, h);
+     if (w > text.w)
+     {
+      end = sp;
+      break;
+     }
+     sp = end;
+    }
+   }
+   if (!(*end))
+    end = sp;
+   if (end == partial)
+    end = NULL;
+   else
+   {
+    tmp[end - partial] = 0;
+    while (isspace(*end))
+     ++end;
+    if (!(*end))
+     end = NULL;
+   }
+  }
+  element.push_back(new BTUIText((end ? tmp : partial), a));
+  partial = end;
+ }
+ delete [] tmp;
+}
+
+void BTDisplay::add2Column(const char *col1, const char *col2)
+{
+ element.push_back(new BTUI2Column(col1, col2));
+}
+
+void BTDisplay::addReadString(const char *prompt, int maxLen, std::string &response)
+{
+ element.push_back(new BTUIReadString(prompt, maxLen, response));
+}
+
+void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select, bool num /*= false*/)
+{
+ element.push_back(new BTUISelect(list, size, start, select, num));
+}
+
+void BTDisplay::clear(SDL_Rect &r)
+{
+ SDL_BlitSurface(mainBackground, &r, mainScreen, &r);
 }
 
 void BTDisplay::clearText()
 {
+ for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
+ {
+  delete (*elementItr);
+ }
+ element.clear();
  SDL_BlitSurface(mainBackground, &text, mainScreen, &text);
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  textPos = 0;
@@ -350,6 +437,164 @@ void BTDisplay::getMultiplier(int &x, int &y)
  y = yMult;
 }
 
+SDL_Color &BTDisplay::getWhite()
+{
+ return white;
+}
+
+unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
+{
+ unsigned char key;
+ std::vector<BTUIElement*>::iterator top = element.begin();
+ for (; top != element.end(); ++top)
+ {
+  if ((BTUI_SELECT == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()))
+  {
+   break;
+  }
+  else if (BTUI_2COLUMN == (*top)->getType())
+  {
+   BTUI2Column *item = static_cast<BTUI2Column*>(*top);
+   int maxH = item->maxHeight(*this);
+   if (0 == maxH)
+    continue;
+   if (maxH + textPos > text.h)
+   {
+    scrollUp(maxH);
+   }
+   item->draw(text.x, text.y + textPos, text.w, maxH, *this);
+   textPos += maxH;
+  }
+  else if ((BTUI_TEXT == (*top)->getType()) || (BTUI_CHOICE == (*top)->getType()))
+  {
+   BTUIText *item = static_cast<BTUIText*>(*top);
+   int maxH = item->maxHeight(*this);
+   item->position.x = text.x;
+   item->position.y = text.y + textPos;
+   item->position.w = text.w;
+   item->position.h = maxH;
+   drawFont(item->text.c_str(), item->position, black, left);
+   textPos += maxH;
+  }
+ }
+ BTUISelect *select = NULL;
+ if (top != element.end())
+ {
+  std::vector<BTUIElement*>::iterator bottom = --(element.end());
+  int bottomPos = text.h;
+  for (; bottom != top; --bottom)
+  {
+   if (BTUI_2COLUMN == (*bottom)->getType())
+   {
+    BTUI2Column* item = static_cast<BTUI2Column*>(*bottom);
+    int maxH = item->maxHeight(*this);
+    if (0 == maxH)
+     continue;
+    bottomPos -= maxH;
+    item->draw(text.x, text.y + bottomPos, text.w, maxH, *this);
+   }
+   else if ((BTUI_TEXT == (*bottom)->getType()) || (BTUI_CHOICE == (*bottom)->getType()))
+   {
+    BTUIText *item = static_cast<BTUIText*>(*bottom);
+    int maxH = item->maxHeight(*this);
+    bottomPos -= maxH;
+    item->position.x = text.x;
+    item->position.y = text.y + bottomPos;
+    item->position.w = text.w;
+    item->position.h = maxH;
+    drawFont(item->text.c_str(), item->position, black, left);
+   }
+  }
+  if (BTUI_READSTRING == (*top)->getType())
+  {
+   BTUIReadString *item = static_cast<BTUIReadString*>(*top);
+   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+   item->response = readString(item->prompt.c_str(), item->maxLen);
+   return 13;
+  }
+  else if (BTUI_SELECT == (*top)->getType())
+  {
+   select = static_cast<BTUISelect*>(*top);
+   select->position.x = text.x;
+   select->position.y = text.y + textPos;
+   select->position.w = text.w;
+   select->position.h = bottomPos - textPos;
+  }
+ }
+ if (!select)
+  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ else if (select->numbered)
+ {
+   select->draw(*this);
+   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ }
+ while (true)
+ {
+  if ((select) && (!select->numbered))
+  {
+   select->draw(*this);
+   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+  }
+  key = readChar();
+  if (key == 27)
+   break;
+  if (select)
+  {
+   if ((key >= '1') && (key <= '9'))
+   {
+    int offset = key - '1';
+    if (select->start + offset < select->size)
+    {
+     select->select = select->start + offset;
+     key = 13;
+     break;
+    }
+   }
+   else if (!select->numbered)
+   {
+    if (key == 0xBD) // up
+    {
+     if (select->select > 0)
+      --select->select;
+     continue;
+    }
+    else if (key == 0xC3) // down
+    {
+     if (select->select + 1 < select->size)
+      ++select->select;
+     continue;
+    }
+    else if (key == 13)
+     break;
+   }
+  }
+  char utf8Key[5];
+  // FIXME: Do real utf-8 conversion
+  utf8Key[0] = key;
+  utf8Key[1] = 0;
+  for (top = element.begin(); top != element.end(); top++)
+  {
+   if (BTUI_CHOICE == (*top)->getType())
+   {
+    BTUIChoice *item = static_cast<BTUIChoice*>(*top);
+    if (item->keys.find(utf8Key) != std::string::npos)
+     return key;
+   }
+  }
+  if (specialKeys == allKeys)
+   return key;
+  else if (specialKeys)
+  {
+   for (int i = 0; specialKeys[i]; ++i)
+   {
+    if (specialKeys[i] == key)
+     return key;
+   }
+  }
+ }
+ return key;
+}
+
 unsigned char BTDisplay::readChar()
 {
  return IKeybufferGet();
@@ -560,6 +805,11 @@ void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment
  SDL_FreeSurface(img);
 }
 
+void BTDisplay::drawRect(SDL_Rect &dst, SDL_Color c)
+{
+ SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, c.r, c.g, c.b));
+}
+
 void BTDisplay::scrollUp(int h)
 {
  SDL_Rect src, dst;
@@ -576,4 +826,105 @@ void BTDisplay::scrollUp(int h)
  SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  textPos -= h;
+}
+
+int BTUIText::maxHeight(BTDisplay &d)
+{
+ int w, h;
+ if (!d.sizeFont(text.c_str(), w, h))
+  return 0;
+ return h;
+}
+
+BTUISelect::BTUISelect(BTDisplay::selectItem *l, int sz, int &st, int &sel, bool num /*= false*/)
+ : list(l), size(sz), start(st), select(sel), numbered(num)
+{
+ if (size > 9)
+  numbered = false;
+}
+
+void BTUISelect::draw(BTDisplay &d)
+{
+ int wFirst, wValue, h, hTmp, lines;
+ char tmp[20];
+ SDL_Rect dst;
+ d.sizeFont("", wFirst, h);
+ lines = position.h / h;
+ d.clear(position);
+ dst.y = position.y;
+ dst.h = h;
+ if (numbered)
+ {
+  d.sizeFont("1) ", wFirst, hTmp);
+  for (int i = 0; i < size; ++i)
+  {
+   dst.x = position.x;
+   dst.w = wFirst;
+   tmp[0] = '1' + i;
+   tmp[1] = ')';
+   tmp[2] = ' ';
+   tmp[3] = 0;
+   d.drawFont(tmp, dst, d.getBlack(), BTDisplay::left);
+   dst.x += wFirst;
+   dst.w = position.w - wFirst;
+   d.drawFont(list[i].name, dst, d.getBlack(), BTDisplay::left);
+   dst.y += h;
+  }
+ }
+ else
+ {
+  d.sizeFont("@", wFirst, hTmp);
+  for (int i = start; i < start + lines; ++i)
+  {
+   if (i >= size)
+    break;
+   if (select == i)
+   {
+    dst.x = position.x;
+    dst.w = position.w;
+    d.drawRect(dst, d.getBlack());
+   }
+   dst.x = position.x;
+   dst.w = wFirst;
+   tmp[0] = list[i].first;
+   tmp[1] = 0;
+   d.drawFont(tmp, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
+   if (list[i].value)
+   {
+    snprintf(tmp, 20, "%d", list[i].value);
+    d.sizeFont(tmp, wValue, hTmp);
+    dst.w = position.w;
+    d.drawFont(tmp, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::right);
+   }
+   else
+    wValue = 0;
+   dst.x += wFirst;
+   dst.w = position.w - wValue - wFirst;
+   d.drawFont(list[i].name, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
+   dst.y += h;
+  }
+ }
+}
+
+void BTUI2Column::draw(int x, int y, int w, int h, BTDisplay& d)
+{
+ SDL_Rect dst;
+ dst.x = x;
+ dst.y = y;
+ dst.w = w / 2;
+ dst.h = h;
+ d.drawFont(col1.c_str(), dst, d.getBlack(), BTDisplay::left);
+ dst.x = x + w / 2;
+ dst.y = y;
+ dst.w = w / 2;
+ dst.h = h;
+ d.drawFont(col2.c_str(), dst, d.getBlack(), BTDisplay::left);
+}
+
+int BTUI2Column::maxHeight(BTDisplay &d)
+{
+ int w[2], h[2];
+ if ((!d.sizeFont(col1.c_str(), w[0], h[0])) || (!d.sizeFont(col2.c_str(), w[1], h[1])))
+  return 0;
+ return ((h[0] > h[1]) ? h[0] : h[1]);
 }

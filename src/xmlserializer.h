@@ -19,9 +19,14 @@ class ObjectSerializer;
 class XMLObject
 {
  public:
-  typedef XMLObject* (*create)();
+  typedef XMLObject* (*create)(const XML_Char *name, const XML_Char **atts);
+
+  virtual ~XMLObject() {}
 
   virtual void serialize(ObjectSerializer* s) = 0;
+
+  virtual void elementData(const XML_Char *name, const XML_Char **atts) {}
+  virtual void characterData(const XML_Char *s, int len) {}
 };
 
 class XMLArray

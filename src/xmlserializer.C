@@ -199,12 +199,16 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
   return;
  XMLAction *act = find(name, atts);
  if (NULL == act)
+ {
+  if ((!level.empty()) && ((XMLTYPE_CREATE == level.back()->state->type) || (XMLTYPE_OBJECT == level.back()->state->type)))
+   level.back()->object->elementData(name, atts);
   return;
+ }
  if (XMLTYPE_CREATE == act->type)
  {
   XMLLevel *newLevel = new XMLLevel;
   newLevel->state = act;
-  newLevel->object = (*reinterpret_cast<XMLObject::create>(act->data))();
+  newLevel->object = (*reinterpret_cast<XMLObject::create>(act->data))(name, atts);
   level.push_back(newLevel);
   newLevel->object->serialize(this);
  }
@@ -302,5 +306,9 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
    default:
     break;
   };
+ }
+ else if ((!level.empty()) && ((XMLTYPE_CREATE == level.back()->state->type) || (XMLTYPE_OBJECT == level.back()->state->type)))
+ {
+  level.back()->object->characterData(s, len);
  }
 }

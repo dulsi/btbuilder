@@ -27,7 +27,7 @@ class BTJob : public XMLObject
   bool isAllowed(BTPc *pc, bool starting);
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new BTJob; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTJob; }
   static void readXML(const char *filename, XMLVector<BTJob*> &job);
 
   char *name;

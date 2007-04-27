@@ -68,6 +68,14 @@ class BTMapSquare
   IShort special;
 };
 
+class BTSpecialError
+{
+ public:
+  BTSpecialError(const std::string &e) : error(e) {}
+
+  std::string error;
+};
+
 class BTSpecialBack
 {
  public:

@@ -54,7 +54,7 @@ class Psuedo3DWallType : public XMLObject
 
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new Psuedo3DWallType; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DWallType; }
 
   char *walls[WALL_DIRECTIONS];
 };
@@ -75,7 +75,7 @@ class Psuedo3DConfig : public XMLObject
 
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new Psuedo3DConfig; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DConfig; }
   static void readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg);
 
   int height, width;

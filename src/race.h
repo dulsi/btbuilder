@@ -24,7 +24,7 @@ class BTRace : public XMLObject
 
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new BTRace; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRace; }
   static void readXML(const char *filename, XMLVector<BTRace*> &race);
 
   char *name;

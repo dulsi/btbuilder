@@ -28,7 +28,7 @@ class BTStatBlock : public BTStatusInfo
   virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new BTStatBlock; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTStatBlock; }
 
  public:
   char *attribute;
@@ -48,7 +48,7 @@ class BTPrint : public BTStatusInfo
   virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new BTPrint; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPrint; }
 
  public:
   char *text;
@@ -63,7 +63,7 @@ class BTCondition : public XMLObject
   virtual void serialize(ObjectSerializer* s);
   void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
 
-  static XMLObject *create() { return new BTCondition; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTCondition; }
 
  private:
   XMLVector<BTStatusInfo*> info;
@@ -75,7 +75,7 @@ class BTCheckBit : public BTCondition
   virtual bool compare(ObjectSerializer *pc) const;
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new BTCheckBit; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTCheckBit; }
 
  private:
   char *attribute;
@@ -90,7 +90,7 @@ class BTConditional : public BTStatusInfo
   virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
 
-  static XMLObject *create() { return new BTConditional; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTConditional; }
 
  public:
   XMLVector<BTCondition*> condition;

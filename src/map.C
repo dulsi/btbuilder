@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "btconst.h"
+#include "building.h"
 #include "map.h"
 #include "game.h"
 #include "pc.h"
@@ -305,8 +306,17 @@ void BTSpecialCommand::run(BTDisplay &d) const
    throw BTSpecialTeleport(text, number[0], 21 - number[1], number[2], false);
    break;
   case BTSPECIALCOMMAND_GUILD:
-   adventurerGuild(d);
+  {
+   BTBuilding b("data/guild.xml");
+   b.run(d);
    break;
+  }
+  case BTSPECIALCOMMAND_REVIEW:
+  {
+   BTBuilding b("data/review.xml");
+   b.run(d);
+   break;
+  }
   case BTSPECIALCOMMAND_SHOP:
    shop(d);
    break;
@@ -739,7 +749,7 @@ void BTSpecialCommand::adventurerGuild(BTDisplay &d) const
    case GUILDSTATE_SELECTNAME:
    {
     d.clearText();
-    d.drawText("Enter the new new member's name.");
+    d.drawText("Enter the new member's name.");
     std::string nm = d.readString(">", 13);
     int found;
     for (found = 0; found < roster.size(); ++found)

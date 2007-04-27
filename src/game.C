@@ -187,7 +187,7 @@ void BTGame::run(BTDisplay &d)
      if (s >= 0)
       levelMap->getSpecial(s)->run(d);
     }
-    catch (const BTSpecialTeleport &t) // Hmm... what if another teleport
+    catch (const BTSpecialTeleport &t)
     {
      loadMap(t.map.c_str()); // Detect if same map
      xPos = t.x;

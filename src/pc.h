@@ -47,7 +47,7 @@ class BTPc : public XMLObject
   bool takeItem(int id);
   void unequip(int index);
 
-  static XMLObject *create() { return new BTPc; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }
   static void readXML(const char *filename, XMLVector<BTPc*> &pc);
 
   char *name;

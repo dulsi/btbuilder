@@ -1,0 +1,16 @@
+<building>
+	<picture>44</picture>
+	<label>Review Board</label>
+	<screen number="1" escapeScreen="exit">
+		<line>You are in the Halls of Review. A clerk asks which of you is interested in going before the board?</line>
+		<selectParty screen="2" />
+	</screen>
+	<screen number="2">
+		<line>The Review Board recognizes <name />.</line>
+		<line>Wouldst thou like to be reviewed for:</line>
+		<choice keys="aA">Advancement</choice>
+		<choice keys="sS">Spell Acquiring</choice>
+		<choice keys="cC">Class Change</choice>
+		<choice keys="dD" screen="1">Done</choice>
+	</screen>
+</building>

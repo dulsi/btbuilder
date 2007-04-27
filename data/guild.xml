@@ -1,0 +1,57 @@
+<building>
+	<picture>40</picture>
+	<label>The Guild</label>
+	<screen number="1">
+		<line>Thou art in the Guild of Adventurers.</line>
+		<choice keys="aA" screen="2" >Add member</choice>
+		<choice keys="rR" action="ensureParty" screen="3" >Remove member</choice>
+		<choice keys="cC" action="create" screen="5" >Create a member</choice>
+		<choice keys="sS" action="ensureParty" screen="9" >Save party</choice>
+		<choice keys="qQ" screen="4" >Quit game</choice>
+		<choice keys="eE" action="exit" >Exit the guild</choice>
+		<choice keys="dD" screen="8" >Disk options</choice>
+	</screen>
+	<screen number="2">
+		<selectRoster action="addToParty" fullscreen="1" screen="2" />
+	</screen>
+	<screen number="3">
+		<line>Pick a party member to remove.</line>
+		<selectParty action="removeFromParty" screen="1" />
+	</screen>
+	<screen number="4">
+		<line></line>
+		<line>Quit the game?</line>
+		<choice keys="yY" action="quit" >Yes, or</choice>
+		<choice keys="nN" screen="1" >No</choice>
+	</screen>
+	<screen number="5">
+		<line>Select a race for your new character:</line>
+		<selectRace action="setRace" screen="6" />
+	</screen>
+	<screen number="6">
+		<line><col>St: <stat number="1" /></col><col>IQ: <stat number="2" /></col></line>
+		<line><col>Dx: <stat number="3" /></col><col>Cn: <stat number="4" /></col></line>
+		<line><col>Lk: <stat number="5" /></col><col></col></line>
+		<selectJob action="setJob" screen="7" />
+		<choice keys="rR" action="display" screen="5" >(Reroll)</choice>
+	</screen>
+	<screen number="7">
+		<line>Enter the new member's name.</line>
+		<readString action="save" screen="1">&gt;</readString>
+	</screen>
+	<screen number="8">
+		<choice keys="dD" >Delete a member</choice>
+		<choice keys="rR" >Rename a member</choice>
+		<choice keys="eE" screen="1" >Exit disk options</choice>
+	</screen>
+	<screen number="9">
+		<line>What name do you want to use?</line>
+		<readString action="saveParty" screen="1">&gt;</readString>
+	</screen>
+	<error type="dead">You must have a live party to enter the city.</error>
+	<error type="noparty" retry="true">The party is empty!</error>
+	<error type="noroster">No adventurers available.</error>
+	<error type="inparty"><name /> is already in the party.</error>
+	<error type="exists" retry="true">There is already a person by that name.</error>
+	<error type="fullparty">Party is full.</error>
+</building>
