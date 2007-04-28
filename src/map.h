@@ -135,7 +135,6 @@ class BTSpecialCommand
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
 
-  void adventurerGuild(BTDisplay &d) const;
   void shop(BTDisplay &d) const;
 
   static BTSpecialCommand Guild;
