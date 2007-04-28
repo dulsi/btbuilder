@@ -45,6 +45,7 @@ class BTPc : public XMLObject
   unsigned int takeGold(unsigned int amount);
   bool takeHP(int amount);
   bool takeItem(int id);
+  bool takeItemFromIndex(int index);
   void unequip(int index);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }

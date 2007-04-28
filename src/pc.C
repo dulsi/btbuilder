@@ -228,24 +228,31 @@ bool BTPc::takeHP(int amount)
 
 bool BTPc::takeItem(int id)
 {
- bool found = false;
  for (int i = 0; i < BT_ITEMS; ++i)
  {
-  if (found)
+  if (id == item[i].id)
   {
-   item[i - 1].id = item[i].id;
-   item[i - 1].equipped = item[i].equipped;
-   item[i - 1].known = item[i].known;
-   item[i - 1].charges = item[i].charges;
-  }
-  else if (id == item[i].id)
-  {
-   found = true;
+   return takeItemFromIndex(i);
   }
  }
- if (found)
-  item[BT_ITEMS - 1].id = BTITEM_NONE;
- return found;
+ return false;
+}
+
+bool BTPc::takeItemFromIndex(int index)
+{
+ if (item[index].id == BTITEM_NONE)
+  return false;
+ if (item[index].equipped)
+  unequip(index);
+ for (int i = index + 1; i < BT_ITEMS; ++i)
+ {
+  item[i - 1].id = item[i].id;
+  item[i - 1].equipped = item[i].equipped;
+  item[i - 1].known = item[i].known;
+  item[i - 1].charges = item[i].charges;
+ }
+ item[BT_ITEMS - 1].id = BTITEM_NONE;
+ return true;
 }
 
 void BTPc::unequip(int index)

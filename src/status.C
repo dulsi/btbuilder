@@ -30,6 +30,8 @@ BTStatus::~BTStatus()
 
 void BTStatus::run()
 {
+ display.drawImage(pc->picture);
+ display.drawLabel(pc->name);
  while (true)
  {
   try

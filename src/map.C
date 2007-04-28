@@ -318,8 +318,11 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   }
   case BTSPECIALCOMMAND_SHOP:
-   shop(d);
+  {
+   BTBuilding b("data/shop.xml");
+   b.run(d);
    break;
+  }
   case BTSPECIALCOMMAND_DRAWPICTURE:
    d.drawImage(number[0]);
    break;
@@ -472,150 +475,6 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   default:
    break;
- }
-}
-
-void BTSpecialCommand::shop(BTDisplay &d) const
-{
- unsigned char key = ' ';
- BTPc *pc = NULL;
- XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
- BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-
- d.drawImage(39);
- d.drawLabel("The Shoppe");
- while (true)
- {
-  if (pc == NULL)
-  {
-   d.clearText();
-   d.drawText("Welcome to Garth's Equipment Shoppe, oh wealthy travellers!");
-   d.drawText("Which of you is interested in my fine ware?");
-   while (pc == NULL)
-   {
-    key = IKeybufferGet();
-    if (27 == key)
-     throw BTSpecialFlipGoForward();
-    else if (('1' <= key) && ('9' >= key))
-    {
-     int p = key - '1';
-     if (p < party.size())
-     {
-      pc = party[p];
-     }
-    }
-   }
-  }
-  else
-  {
-   char line[100];
-   bool refresh(true);
-   snprintf(line, 100, "Greetings, %s. Would you like to:", pc->name);
-   while (pc != NULL)
-   {
-    if (refresh)
-    {
-     d.clearText();
-     d.drawText(line);
-     d.drawText("");
-     d.drawText("Buy an item.");
-     d.drawText("Sell an item.");
-     d.drawText("Identify item.");
-     d.drawText("Done.");
-     refresh = false;
-    }
-    key = IKeybufferGet();
-    switch (key)
-    {
-     case 'D':
-     case 'd':
-      pc = NULL;
-      break;
-     case 'B':
-     case 'b':
-     {
-      refresh = true;
-      if (pc->isEquipmentFull())
-      {
-       d.clearText();
-       d.drawText("Your pockets are full."); // You have no items
-       IKeybufferGet();
-      }
-      else
-      {
-       BTDisplay::selectItem *list = new BTDisplay::selectItem[9];
-       for (int i = 0; (i < itemList.size()) && (i < 9); ++i)
-       {
-        if (!itemList[i].canUse(pc))
-         list[i].first = '@';
-        list[i].name = itemList[i].getName();
-        list[i].value = itemList[i].getPrice();
-       }
-       int start(0), select(0), found;
-       while (d.selectList(list, ((9 < itemList.size()) ? 9 : itemList.size()), start, select))
-       {
-        if (pc->getGold() < itemList[select].getPrice())
-        {
-         d.clearText();
-         d.drawText("Not enough gold."); // You have no items
-         IKeybufferGet();
-        }
-        else
-        {
-         d.drawLast(0, "Done!");
-         IKeybufferGet();
-         pc->takeGold(itemList[select].getPrice());
-         pc->giveItem(select, true, itemList[select].getTimesUsable());
-         if (pc->isEquipmentFull())
-          break;
-        }
-       }
-       delete [] list;
-      }
-      break;
-     }
-     case 'S':
-     case 's':
-     {
-      refresh = true;
-      if (pc->isEquipmentEmpty())
-      {
-       d.clearText();
-       d.drawText("You have no items.");
-       IKeybufferGet();
-      }
-      else
-      {
-       BTDisplay::selectItem *list = new BTDisplay::selectItem[BT_ITEMS];
-       int len = 8;
-       for (int i = 0; i < BT_ITEMS; ++i)
-       {
-        int id = pc->getItem(i);
-        if (id == BTITEM_NONE)
-        {
-         len = i;
-         break;
-        }
-        if (pc->isEquipped(i))
-         list[i].first = '*';
-        else if (!itemList[id].canUse(pc))
-         list[i].first = '@';
-        list[i].name = itemList[id].getName();
-        list[i].value = itemList[id].getPrice() / 2;
-       }
-       int start(0), select(0), found;
-       while (d.selectList(list, len, start, select))
-       {
-       }
-       delete [] list;
-      }
-      break;
-     }
-     default:
-      break;
-    }
-   }
-  }
  }
 }
 

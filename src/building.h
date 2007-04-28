@@ -35,7 +35,7 @@ class BTScreenItem : public XMLObject
   virtual void addStat(const char *name, const char **atts) {}
   virtual std::string getKeys() { return ""; }
   virtual std::string getAction() { return ""; }
-  virtual int getScreen() { return 0; }
+  virtual int getScreen(BTPc *pc) { return 0; }
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj) = 0;
 
@@ -74,7 +74,7 @@ class BTChoice : public BTLine
   virtual void addCol();
   virtual std::string getKeys();
   virtual std::string getAction();
-  virtual int getScreen();
+  virtual int getScreen(BTPc *pc);
   void setKeys(std::string k);
   void setAction(std::string a);
   void setScreen(int s);
@@ -98,7 +98,7 @@ class BTReadString : public BTLine
   virtual std::string getKeys();
   virtual std::string getAction();
   std::string getResponse() { return response; }
-  virtual int getScreen();
+  virtual int getScreen(BTPc *pc);
   void setAction(std::string a);
   void setScreen(int s);
 
@@ -123,7 +123,7 @@ class BTSelectCommon : public BTScreenItem
   virtual int buildList(ObjectSerializer *obj) = 0;
   virtual std::string getKeys();
   virtual std::string getAction();
-  virtual int getScreen();
+  virtual int getScreen(BTPc *pc);
   void setAction(std::string a);
   void setScreen(int s);
 
@@ -142,7 +142,7 @@ class BTSelectRoster : public BTSelectCommon
 {
  public:
   virtual int buildList(ObjectSerializer *obj);
-  virtual int getScreen();
+  virtual int getScreen(BTPc *pc);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 
@@ -165,6 +165,29 @@ class BTSelectJob : public BTSelectCommon
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 };
 
+class BTSelectGoods : public BTSelectCommon
+{
+ public:
+  virtual int buildList(ObjectSerializer *obj);
+  virtual int getScreen(BTPc *pc);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+
+  int shop;
+  int fullscreen;
+};
+
+class BTSelectInventory : public BTSelectCommon
+{
+ public:
+  virtual int buildList(ObjectSerializer *obj);
+  virtual int getScreen(BTPc *pc);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+
+  int fullscreen;
+};
+
 class BTSelectParty : public BTScreenItem
 {
  public:
@@ -172,7 +195,7 @@ class BTSelectParty : public BTScreenItem
 
   virtual std::string getKeys();
   virtual std::string getAction();
-  virtual int getScreen();
+  virtual int getScreen(BTPc *pc);
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj);
 
@@ -236,22 +259,15 @@ class BTBuilding : public ObjectSerializer
 
   // Actions
   static void addToParty(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
+  static void buy(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
   static void create(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
   static void exit(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
   static void quit(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
   static void removeFromParty(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
   static void save(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
+  static void sell(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
   static void setJob(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
   static void setRace(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-
-//Actions
-// Create person
-// Set race
-// Set class
-// Set name
-// 
-/*  void adventurerGuild(BTDisplay &d) const;
-  void shop(BTDisplay &d) const;*/
 
  private:
   BTPc *pc;

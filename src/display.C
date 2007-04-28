@@ -549,6 +549,8 @@ unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
      key = 13;
      break;
     }
+    else
+     key = 1;
    }
    else if (!select->numbered)
    {

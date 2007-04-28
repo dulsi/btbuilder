@@ -174,7 +174,7 @@ std::string BTChoice::getAction()
  return action;
 }
 
-int BTChoice::getScreen()
+int BTChoice::getScreen(BTPc *pc)
 {
  return screen;
 }
@@ -233,7 +233,7 @@ std::string BTReadString::getAction()
  return action;
 }
 
-int BTReadString::getScreen()
+int BTReadString::getScreen(BTPc *pc)
 {
  return screen;
 }
@@ -298,7 +298,7 @@ std::string BTSelectCommon::getAction()
  return action;
 }
 
-int BTSelectCommon::getScreen()
+int BTSelectCommon::getScreen(BTPc *pc)
 {
  return screen;
 }
@@ -344,7 +344,7 @@ int BTSelectRoster::buildList(ObjectSerializer *obj)
  return roster.size();
 }
 
-int BTSelectRoster::getScreen()
+int BTSelectRoster::getScreen(BTPc *pc)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTParty &party = BTGame::getGame()->getParty();
@@ -426,6 +426,99 @@ XMLObject *BTSelectJob::create(const XML_Char *name, const XML_Char **atts)
  return obj;
 }
 
+int BTSelectGoods::buildList(ObjectSerializer *obj)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ XMLAction *act = obj->find("pc", NULL);
+ BTPc *pc = static_cast<BTPc*>(reinterpret_cast<XMLObject*>(act->object));
+ if (pc->isEquipmentFull())
+  throw BTSpecialError("fullinventory");
+ list = new BTDisplay::selectItem[9];
+ for (int i = 0; (i < itemList.size()) && (i < 9); ++i)
+ {
+  if (!itemList[i].canUse(pc))
+   list[i].first = '@';
+  list[i].name = itemList[i].getName();
+  list[i].value = itemList[i].getPrice();
+ }
+ return ((9 < itemList.size()) ? 9 : itemList.size());
+}
+
+int BTSelectGoods::getScreen(BTPc *pc)
+{
+ if (pc->isEquipmentFull())
+  return fullscreen;
+ else
+  return screen;
+}
+
+XMLObject *BTSelectGoods::create(const XML_Char *name, const XML_Char **atts)
+{
+ BTSelectGoods *obj = new BTSelectGoods();
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "action"))
+   obj->setAction(att[1]);
+  else if (0 == strcmp(*att, "screen"))
+   obj->setScreen(atoi(att[1]));
+  else if (0 == strcmp(*att, "fullscreen"))
+   obj->fullscreen = atoi(att[1]);
+  else if (0 == strcmp(*att, "shop"))
+   obj->shop = atoi(att[1]);
+ }
+ return obj;
+}
+
+int BTSelectInventory::buildList(ObjectSerializer *obj)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ XMLAction *act = obj->find("pc", NULL);
+ BTPc *pc = static_cast<BTPc*>(reinterpret_cast<XMLObject*>(act->object));
+ if (pc->isEquipmentEmpty())
+  throw BTSpecialError("noinventory");
+ list = new BTDisplay::selectItem[BT_ITEMS];
+ int len = 8;
+ for (int i = 0; i < BT_ITEMS; ++i)
+ {
+  int id = pc->getItem(i);
+  if (id == BTITEM_NONE)
+  {
+   len = i;
+   break;
+  }
+  if (pc->isEquipped(i))
+   list[i].first = '*';
+  else if (!itemList[id].canUse(pc))
+   list[i].first = '@';
+  list[i].name = itemList[id].getName();
+  list[i].value = itemList[id].getPrice() / 2;
+ }
+ return len;
+}
+
+int BTSelectInventory::getScreen(BTPc *pc)
+{
+ if (pc->isEquipmentEmpty())
+  return fullscreen;
+ else
+  return screen;
+}
+
+XMLObject *BTSelectInventory::create(const XML_Char *name, const XML_Char **atts)
+{
+ BTSelectInventory *obj = new BTSelectInventory();
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "action"))
+   obj->setAction(att[1]);
+  else if (0 == strcmp(*att, "screen"))
+   obj->setScreen(atoi(att[1]));
+  else if (0 == strcmp(*att, "fullscreen"))
+   obj->fullscreen = atoi(att[1]);
+ }
+ return obj;
+}
+
 std::string BTSelectParty::getKeys()
 {
  return "123456789";
@@ -436,7 +529,7 @@ std::string BTSelectParty::getAction()
  return action;
 }
 
-int BTSelectParty::getScreen()
+int BTSelectParty::getScreen(BTPc *pc)
 {
  return screen;
 }
@@ -492,6 +585,8 @@ void BTBuildingScreen::serialize(ObjectSerializer* s)
  s->add("selectRoster", &items, &BTSelectRoster::create);
  s->add("selectRace", &items, &BTSelectRace::create);
  s->add("selectJob", &items, &BTSelectJob::create);
+ s->add("selectGoods", &items, &BTSelectGoods::create);
+ s->add("selectInventory", &items, &BTSelectInventory::create);
  s->add("selectParty", &items, &BTSelectParty::create);
 }
 
@@ -539,11 +634,13 @@ BTBuilding::BTBuilding(const char *filename)
  parser.parse(filename, true);
 
  actionList["addToParty"] = &addToParty;
+ actionList["buy"] = &buy;
  actionList["create"] = &create;
  actionList["exit"] = &exit;
  actionList["quit"] = &quit;
  actionList["removeFromParty"] = &removeFromParty;
  actionList["save"] = &save;
+ actionList["sell"] = &sell;
  actionList["setJob"] = &setJob;
  actionList["setRace"] = &setRace;
 }
@@ -599,6 +696,8 @@ BTBuilding::action BTBuilding::findAction(const std::string &actionName)
 
 int BTBuilding::findScreen(int num)
 {
+ if (num == -1)
+  return -1;
  for (int i = 0; i < screen.size(); ++i)
  {
   if (num == screen[i]->getNumber())
@@ -663,11 +762,11 @@ void BTBuilding::run(BTDisplay &d)
     throw;
    }
    if (!retry)
-    where = findScreen(item->getScreen());
+    where = findScreen(item->getScreen(pc));
   }
   else if (key == 27)
   {
-   where = screen[where]->getEscapeScreen();
+   where = findScreen(screen[where]->getEscapeScreen());
   }
   else if ((key >= '1') && (key <= '9'))
   {
@@ -729,6 +828,23 @@ void BTBuilding::addToParty(BTBuilding &b, BTDisplay &d, BTScreenItem *item)
  select->clear();
 }
 
+void BTBuilding::buy(BTBuilding &b, BTDisplay &d, BTScreenItem *item)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ BTSelectGoods *select = static_cast<BTSelectGoods*>(item);
+ if (b.pc->getGold() < itemList[select->select].getPrice())
+ {
+  throw BTSpecialError("notenoughgold");
+ }
+ else
+ {
+  d.drawLast(0, "Done!");
+  IKeybufferGet();
+  b.pc->takeGold(itemList[select->select].getPrice());
+  b.pc->giveItem(select->select, true, itemList[select->select].getTimesUsable());
+ }
+}
+
 void BTBuilding::create(BTBuilding &b, BTDisplay &d, BTScreenItem *item)
 {
  b.setPc(new BTPc);
@@ -783,6 +899,15 @@ void BTBuilding::save(BTBuilding &b, BTDisplay &d, BTScreenItem *item)
  b.pc = NULL;
 }
 
+void BTBuilding::sell(BTBuilding &b, BTDisplay &d, BTScreenItem *item)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
+ b.pc->giveGold(itemList[b.pc->getItem(select->select)].getPrice() / 2);
+ b.pc->takeItemFromIndex(select->select);
+ d.drawStats();
+}
+
 void BTBuilding::setJob(BTBuilding &b, BTDisplay &d, BTScreenItem *item)
 {
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
@@ -821,147 +946,3 @@ void BTBuilding::setRace(BTBuilding &b, BTDisplay &d, BTScreenItem *item)
   b.pc->stat[i] = race[b.pc->race]->stat[i].roll();
  select->clear();
 }
-
-/*void BTSpecialCommand::shop(BTDisplay &d) const
-{
- unsigned char key = ' ';
- BTPc *pc = NULL;
- XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
- BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-
- d.drawImage(39);
- d.drawLabel("The Shoppe");
- while (true)
- {
-  if (pc == NULL)
-  {
-   d.clearText();
-   d.drawText("Welcome to Garth's Equipment Shoppe, oh wealthy travellers!");
-   d.drawText("Which of you is interested in my fine ware?");
-   while (pc == NULL)
-   {
-    key = IKeybufferGet();
-    if (27 == key)
-     throw BTSpecialFlipGoForward();
-    else if (('1' <= key) && ('9' >= key))
-    {
-     int p = key - '1';
-     if (p < party.size())
-     {
-      pc = party[p];
-     }
-    }
-   }
-  }
-  else
-  {
-   char line[100];
-   bool refresh(true);
-   snprintf(line, 100, "Greetings, %s. Would you like to:", pc->name);
-   while (pc != NULL)
-   {
-    if (refresh)
-    {
-     d.clearText();
-     d.drawText(line);
-     d.drawText("");
-     d.drawText("Buy an item.");
-     d.drawText("Sell an item.");
-     d.drawText("Identify item.");
-     d.drawText("Done.");
-     refresh = false;
-    }
-    key = IKeybufferGet();
-    switch (key)
-    {
-     case 'D':
-     case 'd':
-      pc = NULL;
-      break;
-     case 'B':
-     case 'b':
-     {
-      refresh = true;
-      if (pc->isEquipmentFull())
-      {
-       d.clearText();
-       d.drawText("Your pockets are full."); // You have no items
-       IKeybufferGet();
-      }
-      else
-      {
-       BTDisplay::selectItem *list = new BTDisplay::selectItem[9];
-       for (int i = 0; (i < itemList.size()) && (i < 9); ++i)
-       {
-        if (!itemList[i].canUse(pc))
-         list[i].first = '@';
-        list[i].name = itemList[i].getName();
-        list[i].value = itemList[i].getPrice();
-       }
-       int start(0), select(0), found;
-       while (d.selectList(list, ((9 < itemList.size()) ? 9 : itemList.size()), start, select))
-       {
-        if (pc->getGold() < itemList[select].getPrice())
-        {
-         d.clearText();
-         d.drawText("Not enough gold."); // You have no items
-         IKeybufferGet();
-        }
-        else
-        {
-         d.drawLast(0, "Done!");
-         IKeybufferGet();
-         pc->takeGold(itemList[select].getPrice());
-         pc->giveItem(select, true, itemList[select].getTimesUsable());
-         if (pc->isEquipmentFull())
-          break;
-        }
-       }
-       delete [] list;
-      }
-      break;
-     }
-     case 'S':
-     case 's':
-     {
-      refresh = true;
-      if (pc->isEquipmentEmpty())
-      {
-       d.clearText();
-       d.drawText("You have no items.");
-       IKeybufferGet();
-      }
-      else
-      {
-       BTDisplay::selectItem *list = new BTDisplay::selectItem[BT_ITEMS];
-       int len = 8;
-       for (int i = 0; i < BT_ITEMS; ++i)
-       {
-        int id = pc->getItem(i);
-        if (id == BTITEM_NONE)
-        {
-         len = i;
-         break;
-        }
-        if (pc->isEquipped(i))
-         list[i].first = '*';
-        else if (!itemList[id].canUse(pc))
-         list[i].first = '@';
-        list[i].name = itemList[id].getName();
-        list[i].value = itemList[id].getPrice() / 2;
-       }
-       int start(0), select(0), found;
-       while (d.selectList(list, len, start, select))
-       {
-       }
-       delete [] list;
-      }
-      break;
-     }
-     default:
-      break;
-    }
-   }
-  }
- }
-}*/
