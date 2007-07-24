@@ -1,4 +1,4 @@
-<building>
+<screenset>
 	<picture>40</picture>
 	<label>The Guild</label>
 	<screen number="1">
@@ -54,4 +54,4 @@
 	<error type="inparty"><name /> is already in the party.</error>
 	<error type="exists" retry="true">There is already a person by that name.</error>
 	<error type="fullparty">Party is full.</error>
-</building>
+</screenset>

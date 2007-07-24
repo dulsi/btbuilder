@@ -1,4 +1,4 @@
-<building>
+<screenset>
 	<picture>44</picture>
 	<label>Review Board</label>
 	<screen number="1" escapeScreen="exit">
@@ -13,4 +13,4 @@
 		<choice keys="cC">Class Change</choice>
 		<choice keys="dD" screen="1">Done</choice>
 	</screen>
-</building>
+</screenset>

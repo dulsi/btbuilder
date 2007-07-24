@@ -1,7 +1,7 @@
-#ifndef __BUILDING_H
-#define __BUILDING_H
+#ifndef __SCREENSET_H
+#define __SCREENSET_H
 /*-------------------------------------------------------------------------*\
-  <building.h> -- Building header file
+  <screenset.h> -- Screen set header file
 
   Date      Programmer  Description
   04/09/07  Dennis      Created.
@@ -206,10 +206,10 @@ class BTSelectParty : public BTScreenItem
   int screen;
 };
 
-class BTBuildingScreen : public XMLObject
+class BTScreenSetScreen : public XMLObject
 {
  public:
-  BTBuildingScreen(int n, int escScr) : number(n), escapeScreen(escScr) {}
+  BTScreenSetScreen(int n, int escScr) : number(n), escapeScreen(escScr) {}
 
   void draw(BTDisplay &d, ObjectSerializer *obj);
   BTScreenItem *findItem(int key);
@@ -241,13 +241,13 @@ class BTError : public BTLine
   bool retry;
 };
 
-class BTBuilding : public ObjectSerializer
+class BTScreenSet : public ObjectSerializer
 {
  public:
-  typedef void (*action)(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
+  typedef void (*action)(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
 
-  BTBuilding(const char *filename);
-  ~BTBuilding();
+  BTScreenSet(const char *filename);
+  ~BTScreenSet();
 
   virtual int getLevel();
 
@@ -258,22 +258,22 @@ class BTBuilding : public ObjectSerializer
   void setPc(BTPc *c);
 
   // Actions
-  static void addToParty(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void buy(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void create(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void exit(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void quit(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void removeFromParty(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void save(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void sell(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void setJob(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
-  static void setRace(BTBuilding &b, BTDisplay &d, BTScreenItem *item);
+  static void addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
 
  private:
   BTPc *pc;
   int picture;
   char *label;
-  XMLVector<BTBuildingScreen*> screen;
+  XMLVector<BTScreenSetScreen*> screen;
   XMLVector<BTError*> errors;
   std::map<std::string, action> actionList;
 };

@@ -6,7 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "btconst.h"
-#include "building.h"
+#include "screenset.h"
 #include "map.h"
 #include "game.h"
 #include "pc.h"
@@ -307,19 +307,19 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_GUILD:
   {
-   BTBuilding b("data/guild.xml");
+   BTScreenSet b("data/guild.xml");
    b.run(d);
    break;
   }
   case BTSPECIALCOMMAND_REVIEW:
   {
-   BTBuilding b("data/review.xml");
+   BTScreenSet b("data/review.xml");
    b.run(d);
    break;
   }
   case BTSPECIALCOMMAND_SHOP:
   {
-   BTBuilding b("data/shop.xml");
+   BTScreenSet b("data/shop.xml");
    b.run(d);
    break;
   }
@@ -396,6 +396,15 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_ADDCOUNTER:
    game->setCounter(game->getCounter() + number[0]);
+   break;
+  case BTSPECIALCOMMAND_SETENCOUNTER:
+   game->getCombat().addEncounter(number[0]);
+   break;
+  case BTSPECIALCOMMAND_SETNUMENCOUNTER:
+   game->getCombat().addEncounter(number[1], number[0]);
+   break;
+  case BTSPECIALCOMMAND_BEGINCOMBAT:
+   game->getCombat().run(d);
    break;
   case BTSPECIALCOMMAND_GIVEGOLD:
   {

@@ -1,4 +1,4 @@
-<building>
+<screenset>
 	<picture>30</picture>
 	<label>The Shoppe</label>
 	<screen number="1" escapeScreen="exit">
@@ -25,4 +25,4 @@
 	<error type="fullinventory">Your pockets are full.</error>
 	<error type="noinventory">You have no items.</error>
 	<error type="notenoughgold">Not enough gold.</error>
-</building>
+</screenset>

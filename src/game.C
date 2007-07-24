@@ -155,6 +155,11 @@ void BTGame::setCounter(int val)
  counter = val;
 }
 
+BTCombat &BTGame::getCombat()
+{
+ return combat;
+}
+
 void BTGame::run(BTDisplay &d)
 {
  bool special = false;

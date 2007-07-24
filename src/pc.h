@@ -68,6 +68,20 @@ class BTPc : public XMLObject
   unsigned int gold;
   int *spellLvl;
   BTEquipment item[BT_ITEMS];
+
+  // Combat actions
+  class BTPcAction
+  {
+   public:
+    enum pcAction { attack, partyAttack, defend, useItem };
+
+    bool active;
+    pcAction action;
+    int item;
+    int target;
+  };
+
+  BTPcAction combat;
 };
 
 class BTParty : public XMLVector<BTPc*>

@@ -9,6 +9,7 @@
 
 #include <istdlib.h>
 #include <file.h>
+#include "combat.h"
 #include "display.h"
 #include "factory.h"
 #include "item.h"
@@ -54,6 +55,8 @@ class BTGame : public Psuedo3DMap
   int getCounter(void) const;
   void setCounter(int val);
 
+  BTCombat &getCombat();
+
   void run(BTDisplay &d);
   bool move(BTDisplay &d, int dir);
   void turnLeft(BTDisplay &d);
@@ -75,6 +78,7 @@ class BTGame : public Psuedo3DMap
   BTParty party;
   std::string lastInput;
   int counter;
+  BTCombat combat;
 
   static BTGame *game;
 };
