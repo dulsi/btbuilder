@@ -72,6 +72,8 @@ class BTCondition : public XMLObject
 class BTCheckBit : public BTCondition
 {
  public:
+  BTCheckBit() : attribute(0) {}
+
   virtual bool compare(ObjectSerializer *pc) const;
   virtual void serialize(ObjectSerializer* s);
 
