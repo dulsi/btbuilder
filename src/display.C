@@ -8,7 +8,6 @@
 #include "compressor.h"
 #include "display.h"
 #include "game.h"
-#include "ikbbuffer.h"
 #include "physfsrwops.h"
 #include <SDL_image.h>
 
@@ -17,7 +16,7 @@ const char *BTDisplay::allKeys = "allKeys";
 BTDisplay::BTDisplay(BTDisplayConfig *c)
  : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), ttffont(0), sfont(&simple8x8)
 {
- if (SDL_Init(SDL_INIT_VIDEO) < 0)
+ if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
  {
   printf("Failed - SDL_Init\n");
   exit(0);
@@ -64,6 +63,12 @@ BTDisplay::BTDisplay(BTDisplayConfig *c)
  black.g = 0;
  black.b = 0;
  setBackground(config->background);
+
+ SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+ SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+ SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
+ SDL_EventState(SDL_MOUSEBUTTONUP, SDL_IGNORE);
+ SDL_EnableUNICODE(1);
 }
 
 BTDisplay::~BTDisplay()
@@ -85,7 +90,18 @@ void BTDisplay::addText(const char *words, alignment a /*= left*/)
 {
  int w, h;
  char *tmp = new char[strlen(words)];
- const char *partial = words;
+ const char *partial;
+ if (partial = strchr(words, '\n'))
+ {
+  do
+  {
+   memcpy(tmp, words, partial - words);
+   words = partial + 1;
+   addText(tmp, a);
+  }
+  while (partial = strchr(words, '\n'));
+ }
+ partial = words;
  while (partial)
  {
   if (!sizeFont(partial, w, h))
@@ -151,13 +167,18 @@ void BTDisplay::clear(SDL_Rect &r)
  SDL_BlitSurface(mainBackground, &r, mainScreen, &r);
 }
 
-void BTDisplay::clearText()
+void BTDisplay::clearElements()
 {
  for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
  {
   delete (*elementItr);
  }
  element.clear();
+}
+
+void BTDisplay::clearText()
+{
+ clearElements();
  SDL_BlitSurface(mainBackground, &text, mainScreen, &text);
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  textPos = 0;
@@ -184,7 +205,7 @@ void BTDisplay::drawFullScreen(const char *file, int delay)
   if (delay)
    SDL_Delay(delay);
   else
-   IKeybufferGet();
+   readChar();
  }
 }
 
@@ -442,9 +463,9 @@ SDL_Color &BTDisplay::getWhite()
  return white;
 }
 
-unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
+unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*= 0*/)
 {
- unsigned char key;
+ unsigned int key;
  std::vector<BTUIElement*>::iterator top = element.begin();
  for (; top != element.end(); ++top)
  {
@@ -469,6 +490,10 @@ unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
   {
    BTUIText *item = static_cast<BTUIText*>(*top);
    int maxH = item->maxHeight(*this);
+   if (maxH + textPos > text.h)
+   {
+    scrollUp(maxH);
+   }
    item->position.x = text.x;
    item->position.y = text.y + textPos;
    item->position.w = text.w;
@@ -528,6 +553,9 @@ unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
    select->draw(*this);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  }
+ SDL_TimerID timer;
+ if (delay)
+  timer = SDL_AddTimer(delay, timerCallback, NULL);
  while (true)
  {
   if ((select) && (!select->numbered))
@@ -536,6 +564,13 @@ unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
   }
   key = readChar();
+  if (delay != 0)
+  {
+   if (key == 0)
+    break;
+   else
+    SDL_RemoveTimer(timer);
+  }
   if (key == 27)
    break;
   if (select)
@@ -554,13 +589,13 @@ unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
    }
    else if (!select->numbered)
    {
-    if (key == 0xBD) // up
+    if (key == BTKEY_UP)
     {
      if (select->select > 0)
       --select->select;
      continue;
     }
-    else if (key == 0xC3) // down
+    else if (key == BTKEY_DOWN)
     {
      if (select->select + 1 < select->size)
       ++select->select;
@@ -597,9 +632,30 @@ unsigned char BTDisplay::process(const char *specialKeys /*= NULL*/)
  return key;
 }
 
-unsigned char BTDisplay::readChar()
+unsigned int BTDisplay::readChar()
 {
- return IKeybufferGet();
+ SDL_Event sdlevent;
+ while (true)
+ {
+  SDL_WaitEvent(&sdlevent);
+  if (sdlevent.type == SDL_KEYDOWN)
+  {
+   if (sdlevent.key.keysym.unicode)
+    return sdlevent.key.keysym.unicode;
+   else if (sdlevent.key.keysym.sym == SDLK_UP)
+    return BTKEY_UP;
+   else if (sdlevent.key.keysym.sym == SDLK_DOWN)
+    return BTKEY_DOWN;
+   else if (sdlevent.key.keysym.sym == SDLK_LEFT)
+    return BTKEY_LEFT;
+   else if (sdlevent.key.keysym.sym == SDLK_RIGHT)
+    return BTKEY_RIGHT;
+  }
+  else if (sdlevent.type == SDL_USEREVENT)
+  {
+   return 0;
+  }
+ }
 }
 
 std::string BTDisplay::readString(const char *prompt, int max)
@@ -626,7 +682,7 @@ std::string BTDisplay::readString(const char *prompt, int max)
  dst.y = text.y + textPos;
  dst.w = text.w - w;
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
- while (((key = IKeybufferGet()) != 13) && (key !=  27))
+ while (((key = readChar()) != 13) && (key !=  27))
  {
   if (key == 8)
   {
@@ -697,7 +753,7 @@ bool BTDisplay::selectList(selectItem *list, int size, int &start, int &select)
    dst.y += h;
   }
   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
-  key = IKeybufferGet();
+  key = readChar();
   if (key == 0xBD) // up
   {
    if (select > 0)
@@ -828,6 +884,23 @@ void BTDisplay::scrollUp(int h)
  SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  textPos -= h;
+}
+
+Uint32 BTDisplay::timerCallback(Uint32 interval, void *param)
+{
+ SDL_Event event;
+ SDL_UserEvent userevent;
+
+ userevent.type = SDL_USEREVENT;
+ userevent.code = 0;
+ userevent.data1 = NULL;
+ userevent.data2 = NULL;
+
+ event.type = SDL_USEREVENT;
+ event.user = userevent;
+
+ SDL_PushEvent(&event);
+ return 0;
 }
 
 int BTUIText::maxHeight(BTDisplay &d)

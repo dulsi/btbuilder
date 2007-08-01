@@ -7,7 +7,6 @@
 
 #include "status.h"
 #include "game.h"
-#include "ikbbuffer.h"
 
 class BTStatusGoto
 {

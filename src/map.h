@@ -7,7 +7,7 @@
   11/09/00  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include <istdlib.h>
+#include "istdlib.h"
 #include <file.h>
 #include "display.h"
 

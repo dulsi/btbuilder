@@ -10,9 +10,6 @@
 #include "game.h"
 #include "pc.h"
 #include "status.h"
-#include "ikbbuffer.h"
-
-#define BTSCREEN_EXIT -1
 
 BTElement::BTElement(const char *name, const char **a)
  : isText(false), text(name)
@@ -555,6 +552,77 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
  return new BTSelectParty(act, s);
 }
 
+std::string BTCan::getKeys()
+{
+ return items[0]->getKeys();
+}
+
+std::string BTCan::getAction()
+{
+ return items[0]->getAction();
+}
+
+int BTCan::getScreen(BTPc *pc)
+{
+ return items[0]->getScreen(pc);
+}
+
+void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
+{
+ XMLAction *state = obj->find(option.c_str(), NULL);
+ if (state)
+ {
+  switch(state->type)
+  {
+   case XMLTYPE_BOOL:
+    if (false == *(reinterpret_cast<bool*>(state->object)))
+     return;
+    break;
+   case XMLTYPE_INT:
+    if (0 >= *(reinterpret_cast<int*>(state->object)))
+     return;
+    break;
+   case XMLTYPE_UINT:
+    if (0 >= *(reinterpret_cast<unsigned int*>(state->object)))
+     return;
+    break;
+   case XMLTYPE_STRING:
+   case XMLTYPE_BITFIELD:
+   default:
+    break;
+  }
+ }
+
+ for (int i = 0; i < items.size(); ++i)
+ {
+  items[i]->draw(d, obj);
+ }
+}
+
+void BTCan::serialize(ObjectSerializer *s)
+{
+ s->add("line", &items, &BTLine::create);
+ s->add("choice", &items, &BTChoice::create);
+ s->add("readString", &items, &BTReadString::create);
+ s->add("selectRoster", &items, &BTSelectRoster::create);
+ s->add("selectRace", &items, &BTSelectRace::create);
+ s->add("selectJob", &items, &BTSelectJob::create);
+ s->add("selectGoods", &items, &BTSelectGoods::create);
+ s->add("selectInventory", &items, &BTSelectInventory::create);
+ s->add("selectParty", &items, &BTSelectParty::create);
+}
+
+XMLObject *BTCan::create(const XML_Char *name, const XML_Char **atts)
+{
+ const char *option = NULL;
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "option"))
+   option = att[1];
+ }
+ return new BTCan(option);
+}
+
 void BTScreenSetScreen::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  for (int i = 0; i < items.size(); ++i)
@@ -588,6 +656,7 @@ void BTScreenSetScreen::serialize(ObjectSerializer* s)
  s->add("selectGoods", &items, &BTSelectGoods::create);
  s->add("selectInventory", &items, &BTSelectInventory::create);
  s->add("selectParty", &items, &BTSelectParty::create);
+ s->add("can", &items, &BTCan::create);
 }
 
 XMLObject *BTScreenSetScreen::create(const XML_Char *name, const XML_Char **atts)
@@ -623,16 +692,9 @@ XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
  return new BTError(type, retry);
 }
 
-BTScreenSet::BTScreenSet(const char *filename)
+BTScreenSet::BTScreenSet()
  : picture(-1), label(0), pc(0)
 {
- XMLSerializer parser;
- parser.add("picture", &picture);
- parser.add("label", &label);
- parser.add("screen", &screen, &BTScreenSetScreen::create);
- parser.add("error", &errors, &BTError::create);
- parser.parse(filename, true);
-
  actionList["addToParty"] = &addToParty;
  actionList["buy"] = &buy;
  actionList["create"] = &create;
@@ -654,6 +716,11 @@ BTScreenSet::~BTScreenSet()
 int BTScreenSet::getLevel()
 {
  return 0;
+}
+
+BTPc* BTScreenSet::getPc()
+{
+ return pc;
 }
 
 bool BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
@@ -706,17 +773,28 @@ int BTScreenSet::findScreen(int num)
  return 0;
 }
 
-void BTScreenSet::run(BTDisplay &d)
+void BTScreenSet::open(const char *filename)
+{
+ XMLSerializer parser;
+ parser.add("picture", &picture);
+ parser.add("label", &label);
+ parser.add("screen", &screen, &BTScreenSetScreen::create);
+ parser.add("error", &errors, &BTError::create);
+ parser.parse(filename, true);
+}
+
+void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
 {
  BTParty &party = BTGame::getGame()->getParty();
  char specialKeys[10];
  int previous = 0;
- int where = 0;
+ int where = start;
  d.drawImage(picture);
  d.drawLabel(label);
  while (true)
  {
   d.clearText();
+  initScreen(d);
   if (pc)
   {
    add("pc", pc);
@@ -735,11 +813,15 @@ void BTScreenSet::run(BTDisplay &d)
   }
   previous = where;
   removeLevel();
-  for (int i = 0; i < party.size(); ++i)
-   specialKeys[i] = i + '1';
+  if (status)
+  {
+   for (int i = 0; i < party.size(); ++i)
+    specialKeys[i] = i + '1';
+  }
   specialKeys[party.size()] = 27;
   specialKeys[party.size() + 1] = 0;
   int key = d.process(specialKeys);
+  endScreen(d);
   BTScreenItem *item = screen[where]->findItem(key);
   if (item)
   {
@@ -808,6 +890,14 @@ void BTScreenSet::setPc(BTPc *c)
  pc = c;
 }
 
+void BTScreenSet::setPicture(BTDisplay &d, int pic, char *l)
+{
+ picture = pic;
+ d.drawImage(picture);
+ label = l;
+ d.drawLabel(label);
+}
+
 void BTScreenSet::addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
@@ -839,7 +929,7 @@ void BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
  else
  {
   d.drawLast(0, "Done!");
-  IKeybufferGet();
+  d.readChar();
   b.pc->takeGold(itemList[select->select].getPrice());
   b.pc->giveItem(select->select, true, itemList[select->select].getTimesUsable());
  }

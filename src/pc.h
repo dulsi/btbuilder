@@ -73,7 +73,7 @@ class BTPc : public XMLObject
   class BTPcAction
   {
    public:
-    enum pcAction { attack, partyAttack, defend, useItem };
+    enum pcAction { advance, attack, partyAttack, defend, useItem, runAway };
 
     bool active;
     pcAction action;

@@ -7,7 +7,6 @@
   02/12/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include <istdlib.h>
 #include "psuedo3d.h"
 #include "displayconfig.h"
 #include "statusbar.h"
@@ -19,6 +18,11 @@
 #define BTUI_TEXT 3
 #define BTUI_2COLUMN 4
 #define BTUI_READSTRING 5
+
+#define BTKEY_UP 1
+#define BTKEY_DOWN 2
+#define BTKEY_LEFT 3
+#define BTKEY_RIGHT 4
 
 class BTUIElement
 {
@@ -52,6 +56,7 @@ class BTDisplay
   void addReadString(const char *prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, bool num = false);
   void clear(SDL_Rect &r);
+  void clearElements();
   void clearText();
   void drawChoice(const char *key, const char *words, alignment a = left);
   void drawFullScreen(const char *file, int delay);
@@ -66,8 +71,8 @@ class BTDisplay
   BTDisplayConfig *getConfig();
   void getMultiplier(int &x, int &y);
   SDL_Color &getWhite();
-  unsigned char process(const char *specialKeys = NULL);
-  unsigned char readChar();
+  unsigned int process(const char *specialKeys = NULL, int delay = 0);
+  unsigned int readChar();
   std::string readString(const char *prompt, int max);
   void refresh();
   bool selectList(selectItem *list, int size, int &start, int &select);
@@ -81,6 +86,7 @@ class BTDisplay
 
  private:
   void scrollUp(int h);
+  static Uint32 timerCallback(Uint32 interval, void *param);
 
  public:
   static const char *allKeys;

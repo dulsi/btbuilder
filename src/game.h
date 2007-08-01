@@ -7,7 +7,6 @@
   11/17/00  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include <istdlib.h>
 #include <file.h>
 #include "combat.h"
 #include "display.h"

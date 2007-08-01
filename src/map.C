@@ -10,7 +10,6 @@
 #include "map.h"
 #include "game.h"
 #include "pc.h"
-#include "ikbbuffer.h"
 
 BTMapSquare::BTMapSquare()
  : wallInfo(0), special(-1)
@@ -172,7 +171,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    d.drawText("Pick a party member:");
    while (true)
    {
-    char key = IKeybufferGet();
+    char key = d.readChar();
     if (27 == key)
      break;
     else if (('1' <= key) && ('9' >= key))
@@ -191,7 +190,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
       d.drawText("No");
       while (true)
       {
-       key = IKeybufferGet();
+       key = d.readChar();
        if ((27 == key) || ('Y' == key) || ('y' == key) || ('N' == key) || ('n' == key))
         break;
       }
@@ -307,19 +306,22 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_GUILD:
   {
-   BTScreenSet b("data/guild.xml");
+   BTScreenSet b;
+   b.open("data/guild.xml");
    b.run(d);
    break;
   }
   case BTSPECIALCOMMAND_REVIEW:
   {
-   BTScreenSet b("data/review.xml");
+   BTScreenSet b;
+   b.open("data/review.xml");
    b.run(d);
    break;
   }
   case BTSPECIALCOMMAND_SHOP:
   {
-   BTScreenSet b("data/shop.xml");
+   BTScreenSet b;
+   b.open("data/shop.xml");
    b.run(d);
    break;
   }
@@ -346,7 +348,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    char key;
    while (true)
    {
-    key = IKeybufferGet();
+    key = d.readChar();
     if ((27 == key) || ('Y' == key) || ('y' == key) || ('N' == key) || ('n' == key))
      break;
    }
@@ -429,7 +431,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
   }
   case BTSPECIALCOMMAND_PRESSANYKEY:
    d.drawText("(Press any key)");
-   IKeybufferGet();
+   d.readChar();
    break;
   case BTSPECIALCOMMAND_MONSTERLEAVE:
   {

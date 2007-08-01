@@ -11,6 +11,90 @@
 #include "pc.h"
 #include <sstream>
 
+#define BTCOMBATSCREEN_OPTION 2
+#define BTCOMBATSCREEN_COMBAT 3
+
+static char *blank = "";
+
+void BTCombatScreen::draw(BTDisplay &d, ObjectSerializer *obj)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ for (int i = 0; i < party.size(); i++)
+ {
+  std::string text = party[i]->name;
+  text += " is ";
+  switch (party[i]->combat.action)
+  {
+   case BTPc::BTPcAction::advance:
+    text += "advancing";
+    break;
+   case BTPc::BTPcAction::attack:
+    text += "attacking";
+    break;
+   case BTPc::BTPcAction::partyAttack:
+    text += "attacking the party";
+    break;
+   case BTPc::BTPcAction::defend:
+    text += "defending";
+    break;
+   case BTPc::BTPcAction::useItem:
+    text += "using an item";
+    break;
+   case BTPc::BTPcAction::runAway:
+    text += "running";
+    break;
+   default:
+    break;
+  }
+  d.addText(text.c_str());
+  d.addText(blank);
+  d.process(BTDisplay::allKeys, 1000);
+  d.clearElements();
+  if (party[i]->combat.action == BTPc::BTPcAction::runAway)
+   throw BTCombatError("runAway");
+ }
+}
+
+XMLObject *BTCombatScreen::create(const XML_Char *name, const XML_Char **atts)
+{
+ int number = 0;
+ int escapeScreen = 0;
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "number"))
+   number = atoi(att[1]);
+  else if (0 == strcmp(*att, "escapeScreen"))
+  {
+   if (0 == strcmp(att[1], "exit"))
+    escapeScreen = BTSCREEN_EXIT;
+   else
+    escapeScreen = atoi(att[1]);
+  }
+ }
+ return new BTCombatScreen(number, escapeScreen);
+}
+
+BTCombat::BTCombat()
+ : won(false), optionState(false), canAdvance(false), canAttack(false)
+{
+ partyLabel = strdup("PARTY");
+ monsterNames = (char *)malloc(400);
+ monsterNames[0] = 0;
+
+ actionList["advance"] = &advance;
+ actionList["attack"] = &attack;
+ actionList["combatOption"] = &combatOption;
+ actionList["defend"] = &defend;
+ actionList["partyAttack"] = &partyAttack;
+ actionList["runAway"] = &runAway;
+ actionList["useItem"] = &useItem;
+}
+
+BTCombat::~BTCombat()
+{
+ free(partyLabel);
+}
+
 void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
@@ -32,15 +116,133 @@ void BTCombat::clearEncounters()
  monsters.clear();
 }
 
+void BTCombat::endScreen(BTDisplay &d)
+{
+ endRound();
+}
+
+int BTCombat::findScreen(int num)
+{
+ int i;
+ if ((optionState) && ((num == BTCOMBATSCREEN_OPTION) || (num == BTCOMBATSCREEN_COMBAT)))
+ {
+  BTParty &party = BTGame::getGame()->getParty();
+  BTPc* current = getPc();
+  if (current == NULL)
+  {
+   setPc(party[0]);
+   canAttack = (!canAdvance);
+  }
+  else
+  {
+   for (i = 0; i < party.size(); ++i)
+    if (party[i] == current)
+     break;
+   if ((num == BTCOMBATSCREEN_OPTION) && (i != 0))
+   {
+    setPc(party[i - 1]);
+    canAttack = ((!canAdvance) && (i - 1 < BT_BACK));
+   }
+   else if (num == BTCOMBATSCREEN_COMBAT)
+   {
+    if (i == party.size() - 1)
+    {
+     setPc(NULL);
+     optionState = false;
+    }
+    else
+    {
+     setPc(party[i + 1]);
+     canAttack = ((!canAdvance) && (i + 1 < BT_BACK));
+    }
+   }
+  }
+ }
+ if (optionState)
+  return BTScreenSet::findScreen(BTCOMBATSCREEN_OPTION);
+ else
+  return BTScreenSet::findScreen(num);
+}
+
+void BTCombat::initScreen(BTDisplay &d)
+{
+ add("advance", &canAdvance);
+ add("attack", &canAttack);
+ add("monsters", &monsterNames);
+
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ if (0 == monsters.size())
+ {
+  setPicture(d, BTGame::getGame()->getParty()[0]->picture, partyLabel);
+  optionState = true;
+ }
+ else
+ {
+  setPicture(d, monList[monsters.front().monsterType].getPicture(), const_cast<char *>(monList[monsters.front().monsterType].getName()));
+ }
+ monsterNames[0] = 0;
+ int len = monsters.size();
+ canAdvance = (len > 0);
+ int i = 1;
+ for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end(); ++itr, ++i)
+ {
+  if (itr->distance == 1)
+   canAdvance = false;
+  if (itr != monsters.begin())
+  {
+   if (i == len)
+    strcat(monsterNames, " and ");
+   else
+    strcat(monsterNames, ", ");
+  }
+  sprintf(monsterNames + strlen(monsterNames), "%d %s(s) (%d0')", itr->individual.size(), monList[itr->monsterType].getName(), itr->distance);
+ }
+}
+
+void BTCombat::open(const char *filename)
+{
+ XMLSerializer parser;
+ parser.add("picture", &picture);
+ parser.add("label", &label);
+ parser.add("screen", &screen, &BTScreenSetScreen::create);
+ parser.add("combat", &screen, &BTCombatScreen::create);
+ parser.add("error", &errors, &BTError::create);
+ parser.parse(filename, true);
+}
+
 void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
 {
- BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ setPc(NULL);
+ optionState = false;
  won = false;
  round = 0;
- BTCombat::groupAction gAction;
- if (0 == monsters.size())
+ if ((0 == monsters.size()) && (!partyAttack))
   return;
- while (true)
+ initScreen(d);
+ try
+ {
+  BTScreenSet::run(d, ((0 == monsters.size()) ? findScreen(BTCOMBATSCREEN_OPTION) : 0), false);
+ }
+ catch (const BTCombatError &e)
+ {
+  BTError *err = NULL;
+  for (int i = 0; i < errors.size(); ++i)
+  {
+   if (0 == strcmp(errors[i]->getType().c_str(), e.error.c_str()))
+   {
+    err = errors[i];
+    break;
+   }
+  }
+  if (err)
+   err->draw(d, this);
+  else
+   d.addText(("Unknown Error: " + e.error).c_str());
+  d.process(BTDisplay::allKeys, 1000);
+ }
+ d.clearElements();
+ clearEncounters();
+/* while (true)
  {
   if (0 == monsters.size())
   {
@@ -73,58 +275,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
    won = true;
    return;
   }
- }
-}
-
-BTCombat::groupAction BTCombat::fightOrRun(BTDisplay &d)
-{
- bool canAdvance(true);
- BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
- std::stringstream text;
- text << "You are facing ";
- int len = monsters.size();
- int i = 1;
- for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end(); ++itr, ++i)
- {
-  if (itr->distance == 1)
-   canAdvance = false;
-  if (itr != monsters.begin())
-  {
-   if (i == len)
-    text << " and ";
-   else
-    text << ", ";
-  }
-  text << itr->individual.size() << " " << monList[itr->monsterType].getName() << "(s) (" << itr->distance << "0')";
- }
- int key;
- do
- {
-  d.clearText();
-  d.addText(text.str().c_str());
-  d.addText("");
-  d.addText("Will the party");
-  if (canAdvance)
-  {
-   d.addChoice("Aa", "Advance,");
-  }
-  d.addChoice("Ff", "Fight or");
-  d.addChoice("Rr", "Run");
-  key = d.process();
- }
- while (27 == key);
- switch (key)
- {
-  case 'A':
-  case 'a':
-   return BTCombat::advance;
-  case 'F':
-  case 'f':
-   return BTCombat::fight;
-  case 'R':
-  case 'r':
-   return BTCombat::runAway;
- }
+ }*/
 }
 
 bool BTCombat::endRound()
@@ -151,51 +302,41 @@ bool BTCombat::endRound()
  return false;
 }
 
-bool BTCombat::selectAction(BTDisplay &d, int pcNum)
+void BTCombat::advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
 {
  BTParty &party = BTGame::getGame()->getParty();
- std::stringstream text;
- text << "Select battle option for " << party[pcNum]->name;
- while (true)
- {
-  d.clearText();
-  d.addText(text.str().c_str());
-  d.addText("");
-  if (pcNum < 4)
-  {
-   for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end(); ++itr)
-   {
-    if (itr->distance == 1)
-    {
-     d.addChoice("Aa", "Attack foes");
-     break;
-    }
-   }
-  }
-  d.addChoice("Pp", "Party attack");
-  d.addChoice("Dd", "Defend");
-  d.addChoice("Uu", "Use an item");
-  int key = d.process();
-  switch (key)
-  {
-   case 'A':
-   case 'a':
-    party[pcNum]->combat.action = BTPc::BTPcAction::attack;
-    break;
-   case 'P':
-   case 'p':
-    party[pcNum]->combat.action = BTPc::BTPcAction::partyAttack;
-    break;
-   case 'D':
-   case 'd':
-    party[pcNum]->combat.action = BTPc::BTPcAction::defend;
-    break;
-   case 'U':
-   case 'u':
-    party[pcNum]->combat.action = BTPc::BTPcAction::useItem;
-    break;
-   case 27:
-    return false;
-  }
- }
+ for (int i = 0; i < party.size(); ++i)
+  party[i]->combat.action = BTPc::BTPcAction::advance;
+}
+
+void BTCombat::attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+{
+ b.getPc()->combat.action = BTPc::BTPcAction::attack;
+}
+
+void BTCombat::combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+{
+ static_cast<BTCombat&>(b).optionState = true;
+}
+
+void BTCombat::defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+{
+ b.getPc()->combat.action = BTPc::BTPcAction::defend;
+}
+
+void BTCombat::partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+{
+ b.getPc()->combat.action = BTPc::BTPcAction::partyAttack;
+}
+
+void BTCombat::runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ for (int i = 0; i < party.size(); ++i)
+  party[i]->combat.action = BTPc::BTPcAction::runAway;
+}
+
+void BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+{
+ b.getPc()->combat.action = BTPc::BTPcAction::useItem;
 }

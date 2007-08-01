@@ -8,7 +8,6 @@
 #include "btconst.h"
 #include "game.h"
 #include "status.h"
-#include "ikbbuffer.h"
 
 BTGame *BTGame::game = NULL;
 
@@ -33,6 +32,7 @@ BTGame::BTGame(BTModule *m)
  yPos = 21 - tmp;
  PHYSFS_readULE16(start, &tmp);
  facing = tmp;
+ combat.open("data/combat.xml");
 }
 
 BTGame::~BTGame()
@@ -219,19 +219,19 @@ void BTGame::run(BTDisplay &d)
    d.drawLabel(levelMap->getName());
    if (!special)
    {
-    key = IKeybufferGet();
+    key = d.readChar();
     switch (key)
     {
-     case 0xBD: // up
+     case BTKEY_UP:
       special = move(d, facing);
       break;
-     case 0xBF: // left
+     case BTKEY_LEFT:
       turnLeft(d);
       break;
-     case 0xC3: // down
+     case BTKEY_DOWN:
       turnAround(d);
       break;
-     case 0xC1: // right
+     case BTKEY_RIGHT:
       turnRight(d);
       break;
      case 'q':
@@ -241,7 +241,7 @@ void BTGame::run(BTDisplay &d)
       d.drawText("No");
       while (true)
       {
-       unsigned char response = IKeybufferGet();
+       unsigned char response = d.readChar();
        if (('y' == response) || ('Y' == response))
         throw BTSpecialQuit();
        else if (('n' == response) || ('N' == response))

@@ -10,7 +10,7 @@
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *\
   Includes
 \* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-#include <istdlib.h>
+#include "istdlib.h"
 #include <physfs.h>
 
 /* Error Note:

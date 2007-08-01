@@ -8,7 +8,6 @@
 #include "game.h"
 #include "psuedo3d.h"
 #include "job.h"
-#include "ikbbuffer.h"
 #include <getopt.h>
 #include <SDL.h>
 #include <iostream>
@@ -80,7 +79,6 @@ void testDisplay()
  config.serialize(&parser);
  parser.parse("data/display.xml", true);
  BTDisplay display(&config);
- IKeybufferStart();
  BTGame::getGame()->run(display);
 }
 

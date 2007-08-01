@@ -4,9 +4,9 @@
 
 Bt Builder is the beginnings of an open source Bard's Tale Construction
 Set.  It is extremely early in development.  To build it you will need
-the source code, the Identical Software Graphics Library, SDL, SDL_ttf,
-SDL_Image, expat and PhysFS.  Modify the Makefile so that the paths to
-the graphics library is correct and type make.
+the source code, SDL, SDL_ttf, SDL_Image, expat and PhysFS.  Run make
+to compile.  The programs found in the util directory need the Identical
+Software Graphics Library to build.
 
 The program can read the BTCS files.  The core game engine is still a
 work in progress.  Some specials have been implemented but not enough

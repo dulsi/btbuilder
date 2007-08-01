@@ -7,11 +7,12 @@
   04/09/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include <istdlib.h>
 #include <file.h>
 #include "display.h"
 #include "map.h"
 #include <map>
+
+#define BTSCREEN_EXIT -1
 
 class BTElement
 {
@@ -206,12 +207,33 @@ class BTSelectParty : public BTScreenItem
   int screen;
 };
 
+
+class BTCan : public BTScreenItem
+{
+ public:
+  BTCan(const char *o) : option(o) {}
+
+  virtual std::string getKeys();
+  virtual std::string getAction();
+  virtual int getScreen(BTPc *pc);
+
+  void draw(BTDisplay &d, ObjectSerializer *obj);
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+
+ private:
+  std::string option;
+  XMLVector<BTScreenItem*> items;
+};
+
 class BTScreenSetScreen : public XMLObject
 {
  public:
   BTScreenSetScreen(int n, int escScr) : number(n), escapeScreen(escScr) {}
 
-  void draw(BTDisplay &d, ObjectSerializer *obj);
+  virtual void draw(BTDisplay &d, ObjectSerializer *obj);
   BTScreenItem *findItem(int key);
   int getNumber() { return number; }
   int getEscapeScreen() { return escapeScreen; }
@@ -246,16 +268,21 @@ class BTScreenSet : public ObjectSerializer
  public:
   typedef void (*action)(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
 
-  BTScreenSet(const char *filename);
+  BTScreenSet();
   ~BTScreenSet();
 
   virtual int getLevel();
 
+  BTPc* getPc();
   bool displayError(BTDisplay &d, const BTSpecialError &e);
+  virtual void endScreen(BTDisplay &d) {}
   action findAction(const std::string &actionName);
-  int findScreen(int num);
-  void run(BTDisplay &d);
+  virtual int findScreen(int num);
+  virtual void initScreen(BTDisplay &d) {}
+  virtual void open(const char *filename);
+  void run(BTDisplay &d, int start = 0, bool status = true);
   void setPc(BTPc *c);
+  void setPicture(BTDisplay &d, int pic, char *l);
 
   // Actions
   static void addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
@@ -271,6 +298,8 @@ class BTScreenSet : public ObjectSerializer
 
  private:
   BTPc *pc;
+
+ protected:
   int picture;
   char *label;
   XMLVector<BTScreenSetScreen*> screen;

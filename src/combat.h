@@ -7,11 +7,19 @@
   05/02/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include <istdlib.h>
 #include <file.h>
 #include "display.h"
 #include "map.h"
+#include "screenset.h"
 #include <map>
+
+class BTCombatError
+{
+ public:
+  BTCombatError(const std::string &e) : error(e) {}
+
+  std::string error;
+};
 
 class BTMonsterInstance
 {
@@ -32,27 +40,52 @@ class BTMonsterGroup
   std::vector<BTMonsterInstance> individual;
 };
 
-class BTCombat
+class BTCombatScreen : public BTScreenSetScreen
 {
  public:
-  enum groupAction { runAway, fight, advance };
+  BTCombatScreen(int n, int escScr) : BTScreenSetScreen(n, escScr) {}
 
-  BTCombat() : won(false) {}
+  virtual void draw(BTDisplay &d, ObjectSerializer *obj);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+};
+
+class BTCombat : public BTScreenSet
+{
+ public:
+  BTCombat();
+  ~BTCombat();
 
   void addEncounter(int monsterType, int number = 0);
   void clearEncounters();
+  void endScreen(BTDisplay &d);
+  int findScreen(int num);
+  void initScreen(BTDisplay &d);
+  virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
 
+  // Actions
+  static void advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+
  private:
-  groupAction fightOrRun(BTDisplay &d);
   bool endRound();
-  bool selectAction(BTDisplay &d, int pcNum);
-  int selectTarget(bool enemies, bool friends);
 
  private:
   bool won;
+  bool optionState;
   int round;
   std::list<BTMonsterGroup> monsters;
+  char *partyLabel;
+
+  char* monsterNames;
+  bool canAdvance;
+  bool canAttack;
 };
 
 #endif
