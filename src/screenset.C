@@ -663,6 +663,7 @@ XMLObject *BTScreenSetScreen::create(const XML_Char *name, const XML_Char **atts
 {
  int number = 0;
  int escapeScreen = 0;
+ int timeout = 0;
  for (const char **att = atts; *att; att += 2)
  {
   if (0 == strcmp(*att, "number"))
@@ -674,8 +675,10 @@ XMLObject *BTScreenSetScreen::create(const XML_Char *name, const XML_Char **atts
    else
     escapeScreen = atoi(att[1]);
   }
+  else if (0 == strcmp(*att, "timeout"))
+   timeout = atoi(att[1]);
  }
- return new BTScreenSetScreen(number, escapeScreen);
+ return new BTScreenSetScreen(number, escapeScreen, timeout);
 }
 
 XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
@@ -820,7 +823,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   }
   specialKeys[party.size()] = 27;
   specialKeys[party.size() + 1] = 0;
-  int key = d.process(specialKeys);
+  int key = d.process(specialKeys, screen[where]->getTimeout());
   endScreen(d);
   BTScreenItem *item = screen[where]->findItem(key);
   if (item)
@@ -848,7 +851,11 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   }
   else if (key == 27)
   {
-   where = findScreen(screen[where]->getEscapeScreen());
+   int esc = screen[where]->getEscapeScreen();
+   if (esc == 0)
+    where = start;
+   else
+    where = findScreen(esc);
   }
   else if ((key >= '1') && (key <= '9'))
   {
@@ -859,7 +866,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   }
   else
   {
-   where = 0;
+   where = start;
   }
   if (where == -1)
   {

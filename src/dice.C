@@ -27,6 +27,11 @@ BTDice::BTDice()
 {
 }
 
+int BTDice::getMax() const
+{
+ return modifier + type * number;
+}
+
 int BTDice::getNumber() const
 {
  return number;

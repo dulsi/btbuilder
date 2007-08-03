@@ -161,6 +161,11 @@ IShort BTMonster::getStartDistance() const
  return startDistance;
 }
 
+unsigned int BTMonster::getXp() const
+{
+ return rateAttacks * meleeDamage.getMax() + ac + hp.getMax();
+}
+
 IBool BTMonster::isIllusion() const
 {
  return illusion;

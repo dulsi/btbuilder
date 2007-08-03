@@ -26,6 +26,7 @@ class BTDice : public XMLObject
   BTDice(int n, int t, int m = 0);
   BTDice();
 
+  int getMax() const;
   int getNumber() const;
   int getType() const;
   void read(BinaryReadFile &f);

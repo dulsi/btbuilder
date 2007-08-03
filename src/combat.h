@@ -37,15 +37,17 @@ class BTMonsterGroup
  public:
   int monsterType;
   int distance;
+  int active;
   std::vector<BTMonsterInstance> individual;
 };
 
 class BTCombatScreen : public BTScreenSetScreen
 {
  public:
-  BTCombatScreen(int n, int escScr) : BTScreenSetScreen(n, escScr) {}
+  BTCombatScreen(int n, int escScr, int t) : BTScreenSetScreen(n, escScr, t) {}
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj);
+  virtual int getEscapeScreen();
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 };
@@ -61,8 +63,10 @@ class BTCombat : public BTScreenSet
   void endScreen(BTDisplay &d);
   int findScreen(int num);
   void initScreen(BTDisplay &d);
+  bool isWinner() { return won; }
   virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
+  void runCombat(BTDisplay &d);
 
   // Actions
   static void advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
@@ -82,6 +86,8 @@ class BTCombat : public BTScreenSet
   int round;
   std::list<BTMonsterGroup> monsters;
   char *partyLabel;
+  unsigned int xp;
+  unsigned int gold;
 
   char* monsterNames;
   bool canAdvance;

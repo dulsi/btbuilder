@@ -231,12 +231,13 @@ class BTCan : public BTScreenItem
 class BTScreenSetScreen : public XMLObject
 {
  public:
-  BTScreenSetScreen(int n, int escScr) : number(n), escapeScreen(escScr) {}
+  BTScreenSetScreen(int n, int escScr, int t) : number(n), escapeScreen(escScr), timeout(t) {}
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj);
   BTScreenItem *findItem(int key);
   int getNumber() { return number; }
-  int getEscapeScreen() { return escapeScreen; }
+  virtual int getEscapeScreen() { return escapeScreen; }
+  int getTimeout() { return timeout; }
 
   virtual void serialize(ObjectSerializer* s);
 
@@ -245,6 +246,7 @@ class BTScreenSetScreen : public XMLObject
  private:
   int number;
   int escapeScreen;
+  int timeout;
   XMLVector<BTScreenItem*> items;
 };
 

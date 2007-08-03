@@ -277,7 +277,10 @@ bool BTParty::checkDead()
  for (who = size() - 1; who >= 0; --who)
  {
   if (operator[](who)->status.isSet(BTSTATUS_DEAD))
+  {
+   operator[](who)->combat.active = false;
    restDead = who;
+  }
   else
    break;
  }
@@ -288,12 +291,14 @@ bool BTParty::checkDead()
   if (operator[](who)->status.isSet(BTSTATUS_DEAD))
   {
    BTPc *pc = operator[](who);
+   pc->combat.active = false;
    erase(begin() + who);
    push_back(pc);
    --restDead;
   }
   else
   {
+   operator[](who)->combat.active = true;
    ++who;
   }
  }

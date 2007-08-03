@@ -269,6 +269,10 @@ void BTGame::run(BTDisplay &d)
       }
       break;
      }
+     case 'p':
+      combat.clearEncounters();
+      combat.run(d, true);
+      break;
      default:
       break;
     }
