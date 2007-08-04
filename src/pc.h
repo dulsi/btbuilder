@@ -75,6 +75,11 @@ class BTPc : public XMLObject
    public:
     enum pcAction { advance, attack, partyAttack, defend, useItem, runAway };
 
+    void clearTarget(int group, int member = BTTARGET_INDIVIDUAL);
+    void setTarget(int group, int member = BTTARGET_INDIVIDUAL);
+    int getTargetGroup() const { return target >> BTTARGET_GROUPSHIFT; }
+    int getTargetIndividual() const { return target & BTTARGET_INDIVIDUAL; }
+
     bool active;
     pcAction action;
     int item;

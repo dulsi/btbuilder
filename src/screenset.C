@@ -536,6 +536,11 @@ void BTSelectParty::draw(BTDisplay &d, ObjectSerializer *obj)
  BTParty &party = BTGame::getGame()->getParty();
  if (party.size() == 0)
   throw BTSpecialError("noparty");
+ char keys[20];
+ for (int i = 0; i < party.size(); ++i)
+  keys[i] = i + '1';
+ keys[party.size()] = 0;
+ d.addKey(keys);
 }
 
 XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
@@ -706,6 +711,7 @@ BTScreenSet::BTScreenSet()
  actionList["removeFromParty"] = &removeFromParty;
  actionList["save"] = &save;
  actionList["sell"] = &sell;
+ actionList["selectParty"] = &selectParty;
  actionList["setJob"] = &setJob;
  actionList["setRace"] = &setRace;
 }
@@ -828,14 +834,12 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   BTScreenItem *item = screen[where]->findItem(key);
   if (item)
   {
-   if ((key >= '1') && (key <= '9'))
-    setPc(party[key - '1']);
    bool retry(false);
    try
    {
     BTScreenSet::action a = findAction(item->getAction());
     if (a)
-     (*a)(*this, d, item);
+     (*a)(*this, d, item, key);
    }
    catch (const BTSpecialError &e)
    {
@@ -872,7 +876,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   {
    try
    {
-    exit(*this, d, NULL);
+    exit(*this, d, NULL, 0);
    }
    catch (const BTSpecialError &e)
    {
@@ -905,7 +909,7 @@ void BTScreenSet::setPicture(BTDisplay &d, int pic, char *l)
  d.drawLabel(label);
 }
 
-void BTScreenSet::addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTParty &party = BTGame::getGame()->getParty();
@@ -925,7 +929,7 @@ void BTScreenSet::addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
  select->clear();
 }
 
-void BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTSelectGoods *select = static_cast<BTSelectGoods*>(item);
@@ -942,12 +946,12 @@ void BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
  }
 }
 
-void BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.setPc(new BTPc);
 }
 
-void BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  bool dead = BTGame::getGame()->getParty().checkDead();
  d.drawStats();
@@ -957,27 +961,23 @@ void BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
   throw BTSpecialFlipGoForward();
 }
 
-void BTScreenSet::quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  throw BTSpecialQuit();
 }
 
-void BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
- for (int n = 0; n < party.size(); ++n)
+ if ((key >= '1') && (key <= '9') && (key - '1' < party.size()))
  {
-  if (party[n] == b.pc)
-  {
-   // Add monster to save file
-   party.erase(party.begin() + n);
-   d.drawStats();
-   break;
-  }
+  // Add monster to save file
+  party.erase(party.begin() + (key - '1'));
+  d.drawStats();
  }
 }
 
-void BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTReadString *readString = static_cast<BTReadString*>(item);
@@ -996,7 +996,7 @@ void BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
  b.pc = NULL;
 }
 
-void BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
@@ -1005,7 +1005,14 @@ void BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
  d.drawStats();
 }
 
-void BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ if ((key >= '1') && (key <= '9'))
+  b.setPc(party[key - '1']);
+}
+
+void BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
  BTSelectJob *select = static_cast<BTSelectJob*>(item);
@@ -1034,7 +1041,7 @@ void BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
  select->clear();
 }
 
-void BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTRace*> &race = BTGame::getGame()->getRaceList();
  BTSelectRace *select = static_cast<BTSelectRace*>(item);

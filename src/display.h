@@ -51,6 +51,7 @@ class BTDisplay
   };
 
   void addChoice(const char *keys, const char *words, alignment a = left);
+  void addKey(const char *keys);
   void addText(const char *words, alignment a = left);
   void add2Column(const char *col1, const char *col2);
   void addReadString(const char *prompt, int maxLen, std::string &response);
@@ -107,6 +108,7 @@ class BTDisplay
   simpleFont *sfont;
   SDL_Color white, black;
   std::vector<BTUIElement*> element;
+  std::string addKeys;
 };
 
 class BTUIText : public BTUIElement

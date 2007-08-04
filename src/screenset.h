@@ -268,7 +268,7 @@ class BTError : public BTLine
 class BTScreenSet : public ObjectSerializer
 {
  public:
-  typedef void (*action)(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  typedef void (*action)(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
   BTScreenSet();
   ~BTScreenSet();
@@ -287,16 +287,17 @@ class BTScreenSet : public ObjectSerializer
   void setPicture(BTDisplay &d, int pic, char *l);
 
   // Actions
-  static void addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
   BTPc *pc;

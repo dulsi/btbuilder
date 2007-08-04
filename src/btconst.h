@@ -139,4 +139,9 @@ extern char *statAbbrev[];
 
 #define BTCOMBAT_MAXENCOUNTERS 4
 
+#define BTTARGET_INDIVIDUAL  0x0FFF
+#define BTTARGET_GROUPSHIFT  24
+#define BTTARGET_PARTY       1
+#define BTTARGET_MONSTER     2
+
 #endif

@@ -270,6 +270,24 @@ void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)
  parser.parse(filename, true);
 }
 
+void BTPc::BTPcAction::clearTarget(int group, int member /*= BTTARGET_INDIVIDUAL*/)
+{
+ if ((member == BTTARGET_INDIVIDUAL) && (group == getTargetGroup()))
+ {
+  target = 0;
+ }
+ else if ((member != BTTARGET_INDIVIDUAL) && (group == getTargetGroup()) && (member == getTargetIndividual()))
+  target = 0;
+}
+
+void BTPc::BTPcAction::setTarget(int group, int member /*= BTTARGET_INDIVIDUAL*/)
+{
+ if ((member == BTTARGET_INDIVIDUAL) && (group != getTargetGroup()))
+  target = (group << BTTARGET_GROUPSHIFT) + member;
+ else if (member != BTTARGET_INDIVIDUAL)
+  target = (group << BTTARGET_GROUPSHIFT) + member;
+}
+
 bool BTParty::checkDead()
 {
  int restDead = size();

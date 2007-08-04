@@ -69,13 +69,14 @@ class BTCombat : public BTScreenSet
   void runCombat(BTDisplay &d);
 
   // Actions
-  static void advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
-  static void useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item);
+  static void advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void target(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static void useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
   bool endRound();

@@ -4,7 +4,7 @@
 	<screen number="1" escapeScreen="exit">
 		<line>Welcome to Garth's Equipment Shoppe, oh wealthy travellers!</line>
 		<line>Which of you is interested in my fine ware?</line>
-		<selectParty screen="2" />
+		<selectParty action="selectParty" screen="2" />
 	</screen>
 	<screen number="2">
 		<line>Greetings, <name />. Would you like to:</line>

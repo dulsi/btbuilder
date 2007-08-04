@@ -3,7 +3,7 @@
 	<label>Review Board</label>
 	<screen number="1" escapeScreen="exit">
 		<line>You are in the Halls of Review. A clerk asks which of you is interested in going before the board?</line>
-		<selectParty screen="2" />
+		<selectParty action="selectParty" screen="2" />
 	</screen>
 	<screen number="2">
 		<line>The Review Board recognizes <name />.</line>

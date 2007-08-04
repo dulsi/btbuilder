@@ -11,7 +11,7 @@
 		<line>Select battle option for <name /></line>
 		<line />
 		<can option="attack"><choice keys="aA" action="attack" screen="3">Attack foes</choice></can>
-		<choice keys="pP" action="partyAttack" screen="3">Party attack</choice>
+		<choice keys="pP" action="partyAttack" screen="6">Party attack</choice>
 		<choice keys="dD" action="defend" screen="3">Defend</choice>
 		<choice keys="uU" action="useItem" screen="3">Use an item</choice>
 	</screen>
@@ -24,6 +24,10 @@
 		<line>Do you wish to enter a round of intra party combat?</line>
 		<choice keys="yY" action="combatOption" screen="2">Yes, or</choice>
 		<choice keys="nN" screen="-1">No</choice>
+	</screen>
+	<screen number="6" escapeScreen="2">
+		<line>Pick a party member:</line>
+		<selectParty action="target" screen="3" />
 	</screen>
 	<error type="runAway">You are attempting to run away.
 You manage to get away!</error>

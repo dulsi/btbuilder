@@ -66,6 +66,7 @@ BTCombat::BTCombat()
  actionList["defend"] = &defend;
  actionList["partyAttack"] = &partyAttack;
  actionList["runAway"] = &runAway;
+ actionList["target"] = &target;
  actionList["useItem"] = &useItem;
 }
 
@@ -139,7 +140,7 @@ int BTCombat::findScreen(int num)
    }
   }
  }
- if (optionState)
+ if ((optionState) && (num == BTCOMBATSCREEN_COMBAT))
   return BTScreenSet::findScreen(BTCOMBATSCREEN_OPTION);
  else
   return BTScreenSet::findScreen(num);
@@ -320,7 +321,8 @@ void BTCombat::runCombat(BTDisplay &d)
         text += "attacking";
         break;
        case BTPc::BTPcAction::partyAttack:
-        text += "attacking the party";
+        text += "attacking ";
+        text += party[party[i]->combat.getTargetIndividual()]->name;
         break;
        case BTPc::BTPcAction::defend:
         text += "defending";
@@ -398,41 +400,50 @@ bool BTCombat::endRound()
  return false;
 }
 
-void BTCombat::advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTCombat::advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
  for (int i = 0; i < party.size(); ++i)
   party[i]->combat.action = BTPc::BTPcAction::advance;
 }
 
-void BTCombat::attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTCombat::attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.getPc()->combat.action = BTPc::BTPcAction::attack;
 }
 
-void BTCombat::combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTCombat::combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  static_cast<BTCombat&>(b).optionState = true;
 }
 
-void BTCombat::defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTCombat::defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.getPc()->combat.action = BTPc::BTPcAction::defend;
 }
 
-void BTCombat::partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTCombat::partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.getPc()->combat.action = BTPc::BTPcAction::partyAttack;
 }
 
-void BTCombat::runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTCombat::runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
  for (int i = 0; i < party.size(); ++i)
   party[i]->combat.action = BTPc::BTPcAction::runAway;
 }
 
-void BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item)
+void BTCombat::target(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ if ((key >= '1') && (key <= '9') && (key - '1' < party.size()))
+ {
+  b.getPc()->combat.setTarget(BTTARGET_PARTY, key - '1');
+ }
+}
+
+void BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.getPc()->combat.action = BTPc::BTPcAction::useItem;
 }

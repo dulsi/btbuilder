@@ -86,6 +86,11 @@ void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= l
  element.push_back(new BTUIChoice(keys, words, a));
 }
 
+void BTDisplay::addKey(const char *keys)
+{
+ addKeys += keys;
+}
+
 void BTDisplay::addText(const char *words, alignment a /*= left*/)
 {
  int w, h;
@@ -174,6 +179,7 @@ void BTDisplay::clearElements()
   delete (*elementItr);
  }
  element.clear();
+ addKeys = "";
 }
 
 void BTDisplay::clearText()
@@ -554,8 +560,6 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  }
  SDL_TimerID timer;
- if (delay)
-  timer = SDL_AddTimer(delay, timerCallback, NULL);
  while (true)
  {
   if ((select) && (!select->numbered))
@@ -563,6 +567,8 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    select->draw(*this);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
   }
+  if (delay)
+   timer = SDL_AddTimer(delay, timerCallback, NULL);
   key = readChar();
   if (delay != 0)
   {
@@ -620,6 +626,11 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
   }
   if (specialKeys == allKeys)
    return key;
+  else if (addKeys.length() > 0)
+  {
+   if (addKeys.find(utf8Key) != std::string::npos)
+    return key;
+  }
   else if (specialKeys)
   {
    for (int i = 0; specialKeys[i]; ++i)
