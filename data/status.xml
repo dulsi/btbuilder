@@ -13,7 +13,7 @@
 	<screen page="2">
 		<line><name /></line>
 		<inventory tag="item" show="8" />
-		<line><col>Conj: <spellLvl job="7" /></col><col>Sorc: <spellLvl job="9" /></col></line>
-		<line><col>Magi: <spellLvl job="8" /></col><col>Wizd: <spellLvl job="10" /></col></line>
+		<line><col>Conj: <skill number="7" /></col><col>Sorc: <skill number="9" /></col></line>
+		<line><col>Magi: <skill number="8" /></col><col>Wizd: <skill number="10" /></col></line>
 	</screen>
 </status>

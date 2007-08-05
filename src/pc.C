@@ -25,9 +25,9 @@ BTPc::BTPc()
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
  int jobs = BTGame::getGame()->getJobList().size();
- spellLvl = new int[jobs];
+ skill = new int[jobs];
  for (i = 0; i < jobs; ++i)
-  spellLvl[i] = 0;
+  skill[i] = 0;
 }
 
 void BTPc::equip(int index)
@@ -180,8 +180,8 @@ void BTPc::serialize(ObjectSerializer* s)
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
   char tmp[10];
   snprintf(tmp, 10, "%d", i + 1);
-  attrib->push_back(XMLAttribute("job", tmp));
-  s->add("spellLvl", &spellLvl[i], attrib);
+  attrib->push_back(XMLAttribute("number", tmp));
+  s->add("skill", &skill[i], attrib);
  }
  for (i = 0; i < BT_ITEMS; ++i)
  {

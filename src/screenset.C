@@ -1030,7 +1030,7 @@ void BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
     b.pc->gold = BTDice(1, 61, 110).roll();
     if (job[i]->spells)
     {
-     b.pc->spellLvl[i] = 1;
+     b.pc->skill[i] = 1;
      b.pc->sp = b.pc->maxSp = BTDice(1, 8, 9).roll() + ((b.pc->stat[BTSTAT_IQ] > 14) ? b.pc->stat[BTSTAT_IQ] - 14 : 0);
     }
     break;

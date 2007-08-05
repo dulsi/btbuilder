@@ -68,7 +68,7 @@ IShort BTMonster::getAc() const
 
 IShort BTMonster::getCombatAction(IShort round) const
 {
- return combatAction[round];
+ return combatAction[round % 4];
 }
 
 const BTDice &BTMonster::getGold() const

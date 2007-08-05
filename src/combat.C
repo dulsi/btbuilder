@@ -90,6 +90,7 @@ void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
   --number;
  }
  group.active = group.individual.size();
+ group.canMove = true;
 }
 
 void BTCombat::clearEncounters()
@@ -234,7 +235,6 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
 
 void BTCombat::runCombat(BTDisplay &d)
 {
- BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
  BTParty &party = BTGame::getGame()->getParty();
  int active = 0;
  int i = 0;
@@ -286,10 +286,7 @@ void BTCombat::runCombat(BTDisplay &d)
       --who;
       if (-1 == who)
       {
-       monster->active = false;
-       --active;
-       text = monList[itr->monsterType].getName();
-       text += " is attacking";
+       runMonsterAI(d, active, *itr, *monster);
        break;
       }
      }
@@ -339,7 +336,99 @@ void BTCombat::runCombat(BTDisplay &d)
      }
     }
    }
+   d.addText(text.c_str());
+   d.addText(blank);
+   d.process(BTDisplay::allKeys, 1000);
+   d.clearElements();
   }
+ }
+}
+
+void BTCombat::runMonsterAI(BTDisplay &d, int &active, BTMonsterGroup &grp, BTMonsterInstance &mon)
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ mon.active = false;
+ --active;
+ int action = monList[grp.monsterType].getCombatAction(round);
+ if (BTCOMBATACTION_RANDOM == action)
+ {
+  if (grp.distance > 1)
+  {
+   // Move or special attack if available
+   int rangedType = monList[grp.monsterType].getRangedType();
+   if (BTRANGEDTYPE_NONE == rangedType)
+    action = BTCOMBATACTION_MOVEANDATTACK;
+   else if (grp.canMove)
+   {
+    if (BTRANGEDTYPE_MAGIC == rangedType) // WRONG check range of spell
+     action = BTCOMBATACTION_MOVEANDATTACK;
+    else if (((BTRANGEDTYPE_FOE == rangedType) || (BTRANGEDTYPE_GROUP == rangedType)) && ((grp.distance > monList[grp.monsterType].getRange()) || (BTDice(1, 2).roll() == 1)))
+     action = BTCOMBATACTION_MOVEANDATTACK;
+    else
+    {
+     action = BTCOMBATACTION_SPECIALATTACK;
+     grp.canMove = false;
+    }
+   }
+   else
+    action = BTCOMBATACTION_SPECIALATTACK;
+  }
+  else
+  {
+   // Attack or special attack if available
+   if ((BTRANGEDTYPE_NONE != monList[grp.monsterType].getRangedType()) && (BTDice(1, 2).roll() == 1))
+    action = BTCOMBATACTION_SPECIALATTACK;
+   else
+    action = BTCOMBATACTION_ATTACK;
+  }
+ }
+ if (BTCOMBATACTION_MOVEANDATTACK == action)
+ {
+  if (grp.distance > 1)
+  {
+   grp.distance -= monList[grp.monsterType].getMove();
+   if (grp.distance <= 1)
+   {
+    grp.distance = 1;
+    d.addText("Your foes descend upon you!");
+   }
+   else
+    d.addText("Your foes advance!");
+   d.addText(blank);
+   d.process(BTDisplay::allKeys, 1000);
+   d.clearElements();
+   for (std::vector<BTMonsterInstance>::iterator monster(grp.individual.begin()); monster != grp.individual.end(); ++monster)
+   {
+    if (monster->active)
+    {
+     monster->active = false;
+     --active;
+    }
+   }
+  }
+  else
+   action = BTCOMBATACTION_ATTACK;
+ }
+ else if (BTCOMBATACTION_DEPENDENTATTACK == action)
+ {
+  if (grp.distance > 1)
+   action = BTCOMBATACTION_SPECIALATTACK;
+  else
+   action = BTCOMBATACTION_ATTACK;
+ }
+ if (BTCOMBATACTION_ATTACK == action)
+ {
+  std::string text = monList[grp.monsterType].getName();
+  text += " is attacking";
+  d.addText(text.c_str());
+  d.addText(blank);
+  d.process(BTDisplay::allKeys, 1000);
+  d.clearElements();
+ }
+ else if (BTCOMBATACTION_SPECIALATTACK == action)
+ {
+  std::string text = monList[grp.monsterType].getName();
+  text += " is special attacking";
   d.addText(text.c_str());
   d.addText(blank);
   d.process(BTDisplay::allKeys, 1000);
@@ -349,9 +438,11 @@ void BTCombat::runCombat(BTDisplay &d)
 
 bool BTCombat::endRound()
 {
+ ++round;
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end();)
  {
+  itr->canMove = true;
   itr->active = 0;
   for (std::vector<BTMonsterInstance>::iterator monster(itr->individual.begin()); monster != itr->individual.end();)
   {

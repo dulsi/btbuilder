@@ -38,6 +38,7 @@ class BTMonsterGroup
   int monsterType;
   int distance;
   int active;
+  bool canMove;
   std::vector<BTMonsterInstance> individual;
 };
 
@@ -67,6 +68,7 @@ class BTCombat : public BTScreenSet
   virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
   void runCombat(BTDisplay &d);
+  void runMonsterAI(BTDisplay &d, int &active, BTMonsterGroup &grp, BTMonsterInstance &mon);
 
   // Actions
   static void advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

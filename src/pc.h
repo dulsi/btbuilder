@@ -25,7 +25,7 @@ class BTPc : public XMLObject
 {
  public:
   BTPc();
-  ~BTPc() { delete [] name; delete [] spellLvl; }
+  ~BTPc() { delete [] name; delete [] skill; }
 
   void equip(int index);
   bool isAlive() const;
@@ -66,7 +66,7 @@ class BTPc : public XMLObject
   int level;
   unsigned int xp;
   unsigned int gold;
-  int *spellLvl;
+  int *skill;
   BTEquipment item[BT_ITEMS];
 
   // Combat actions

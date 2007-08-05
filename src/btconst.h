@@ -32,12 +32,19 @@ extern char *durations[];
 extern char *extraDamage[];
 
 #define BT_RANGEDTYPES 4
+#define BTRANGEDTYPE_NONE  0
 #define BTRANGEDTYPE_FOE   1
 #define BTRANGEDTYPE_GROUP 2
 #define BTRANGEDTYPE_MAGIC 3
 extern char *rangedTypes[];
 
-#define BT_COMBATACTIONS 13
+#define BT_COMBATACTIONS 6
+#define BTCOMBATACTION_ATTACK          0
+#define BTCOMBATACTION_MOVEANDATTACK   1
+#define BTCOMBATACTION_DEPENDENTATTACK 2
+#define BTCOMBATACTION_SPECIALATTACK   3
+#define BTCOMBATACTION_RANDOM          4
+#define BTCOMBATACTION_NOTHING         5
 extern char *combatActions[];
 
 #define BT_ITEMTYPES 13
