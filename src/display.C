@@ -83,16 +83,6 @@ BTDisplay::~BTDisplay()
 
 void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= left*/)
 {
- element.push_back(new BTUIChoice(keys, words, a));
-}
-
-void BTDisplay::addKey(const char *keys)
-{
- addKeys += keys;
-}
-
-void BTDisplay::addText(const char *words, alignment a /*= left*/)
-{
  int w, h;
  char *tmp = new char[strlen(words)];
  const char *partial;
@@ -102,7 +92,7 @@ void BTDisplay::addText(const char *words, alignment a /*= left*/)
   {
    memcpy(tmp, words, partial - words);
    words = partial + 1;
-   addText(tmp, a);
+   addChoice(keys, tmp, a);
   }
   while (partial = strchr(words, '\n'));
  }
@@ -146,10 +136,23 @@ void BTDisplay::addText(const char *words, alignment a /*= left*/)
      end = NULL;
    }
   }
-  element.push_back(new BTUIText((end ? tmp : partial), a));
+  if (NULL == keys)
+   element.push_back(new BTUIText((end ? tmp : partial), a));
+  else
+   element.push_back(new BTUIChoice(keys, (end ? tmp : partial), a));
   partial = end;
  }
  delete [] tmp;
+}
+
+void BTDisplay::addKey(const char *keys)
+{
+ addKeys += keys;
+}
+
+void BTDisplay::addText(const char *words, alignment a /*= left*/)
+{
+ addChoice(NULL, words, a);
 }
 
 void BTDisplay::add2Column(const char *col1, const char *col2)

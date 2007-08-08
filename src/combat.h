@@ -35,7 +35,14 @@ class BTMonsterInstance
 class BTMonsterGroup
 {
  public:
+  BTMonsterGroup() : monsterName(0), canMove(true) {}
+  ~BTMonsterGroup();
+
+  int findTarget(int ind = BTTARGET_INDIVIDUAL);
+  void setMonsterType(int type, int number = 0);
+
   int monsterType;
+  char *monsterName;
   int distance;
   int active;
   bool canMove;
@@ -63,22 +70,24 @@ class BTCombat : public BTScreenSet
   void clearEncounters();
   void endScreen(BTDisplay &d);
   int findScreen(int num);
+  bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
   void initScreen(BTDisplay &d);
   bool isWinner() { return won; }
   virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
   void runCombat(BTDisplay &d);
-  void runMonsterAI(BTDisplay &d, int &active, BTMonsterGroup &grp, BTMonsterInstance &mon);
+  void runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTMonsterInstance &mon);
+  void runPcAction(BTDisplay &d, int &active, BTPc &pc);
 
   // Actions
-  static void advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void target(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int target(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
   bool endRound();
@@ -89,6 +98,8 @@ class BTCombat : public BTScreenSet
   int round;
   std::list<BTMonsterGroup> monsters;
   char *partyLabel;
+  int treasurePic;
+  char *treasureLabel;
   unsigned int xp;
   unsigned int gold;
 

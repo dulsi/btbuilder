@@ -14,7 +14,7 @@
 /*
  [monster]
  name: char[14]
- starting distance: short {(1 to 9) * 16}
+ starting distance: short {(1 to 9) * 10}
  move: short {0 to 15}
  rate of attacks: short {0 to 15}
  illusion: short {0 or 1}

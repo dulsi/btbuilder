@@ -79,6 +79,19 @@ int BTPc::getGold() const
  return gold;
 }
 
+int BTPc::getHandWeapon() const
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ for (int i = 0; i < BT_ITEMS; ++i)
+ {
+  if ((isEquipped(i)) && (BTITEM_HANDWEAPON == itemList[getItem(i)].getType()))
+  {
+   return getItem(i);
+  }
+ }
+ return -1;
+}
+
 int BTPc::getItem(int index) const
 {
  return item[index].id;

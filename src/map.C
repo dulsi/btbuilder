@@ -641,6 +641,9 @@ void BTSpecialConditional::run(BTDisplay &d) const
   case BTCONDITION_COUNTEREQUAL:
    truth = ((BTGame::getGame()->getCounter() == number) ? true : false);
    break;
+  case BTCONDITION_COMBATWON:
+   truth = BTGame::getGame()->getCombat().isWinner();
+   break;
   case BTCONDITION_RANDOM:
    truth = (BTDice(1, 100).roll() <= number);
    break;

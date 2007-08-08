@@ -14,14 +14,14 @@
 
 #define BTSCREEN_EXIT -1
 
+typedef char *char_ptr;
+
 class BTElement
 {
  public:
   BTElement(const std::string &t) : isText(true), text(t), atts(0) {}
   BTElement(const char *name, const char **a);
   ~BTElement();
-
-  typedef char *char_ptr;
 
   bool isText;
   std::string text;
@@ -211,7 +211,8 @@ class BTSelectParty : public BTScreenItem
 class BTCan : public BTScreenItem
 {
  public:
-  BTCan(const char *o) : option(o) {}
+  BTCan(const char *o, char_ptr *a, const char *v);
+  ~BTCan();
 
   virtual std::string getKeys();
   virtual std::string getAction();
@@ -225,6 +226,9 @@ class BTCan : public BTScreenItem
 
  private:
   std::string option;
+  char_ptr *atts;
+  std::string value;
+  bool checkValue;
   XMLVector<BTScreenItem*> items;
 };
 
@@ -268,7 +272,7 @@ class BTError : public BTLine
 class BTScreenSet : public ObjectSerializer
 {
  public:
-  typedef void (*action)(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  typedef int (*action)(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
   BTScreenSet();
   ~BTScreenSet();
@@ -287,17 +291,17 @@ class BTScreenSet : public ObjectSerializer
   void setPicture(BTDisplay &d, int pic, char *l);
 
   // Actions
-  static void addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-  static void setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
   BTPc *pc;

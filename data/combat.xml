@@ -17,7 +17,7 @@
 	</screen>
 	<combat number="3" escapeScreen="0" timeout="1000">
 	</combat>
-	<screen number="4" escapeScreen="-1">
+	<screen number="4" escapeScreen="exit" timeout="3000">
 		<line>You have won! Each character receives <xp /> experience points for valor and battle knowledge, and gains <gold /> pieces of gold.</line>
 	</screen>
 	<screen number="5" escapeScreen="5">
@@ -28,6 +28,13 @@
 	<screen number="6" escapeScreen="2">
 		<line>Pick a party member:</line>
 		<selectParty action="target" screen="3" />
+	</screen>
+	<screen number="7" escapeScreen="2">
+		<line>Attack:</line>
+		<can option="distance" number="1" value="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
+		<can option="distance" number="2" value="1"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
+		<can option="distance" number="3" value="1"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
+		<can option="distance" number="4" value="1"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
 	</screen>
 	<error type="runAway">You are attempting to run away.
 You manage to get away!</error>

@@ -13,7 +13,7 @@
 class BTEquipment : public XMLObject
 {
  public:
-  BTEquipment() : id(BTITEM_NONE) {}
+  BTEquipment() : id(BTITEM_NONE), equipped(false), known(false), charges(0) {}
   virtual void serialize(ObjectSerializer* s);
 
   int id;
@@ -33,6 +33,7 @@ class BTPc : public XMLObject
   bool isEquipmentEmpty() const;
   bool isEquipmentFull() const;
   int getGold() const;
+  int getHandWeapon() const;
   int getItem(int index) const;
   unsigned int giveGold(unsigned int amount);
   void giveHP(int amount);

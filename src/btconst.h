@@ -48,6 +48,7 @@ extern char *rangedTypes[];
 extern char *combatActions[];
 
 #define BT_ITEMTYPES 13
+#define BTITEM_HANDWEAPON 1
 extern char *itemTypes[];
 
 #define BTTIMESUSABLE_UNLIMITED 255
@@ -62,6 +63,7 @@ extern char *itemTypes[];
 #define BTCONDITION_JOBINPARTY     8
 #define BTCONDITION_COUNTERGREATER 10
 #define BTCONDITION_COUNTEREQUAL   11
+#define BTCONDITION_COMBATWON      12
 #define BTCONDITION_RANDOM         15
 #define BTCONDITION_RACEINPARTY    16
 #define BTCONDITION_CANTAKEGOLD    17
@@ -126,6 +128,7 @@ extern char *directions[];
 extern char *mapTypes[];
 
 #define BT_STATS 5
+#define BTSTAT_ST 0
 #define BTSTAT_IQ 2
 #define BTSTAT_CN 3
 #define BTSTAT_LK 4
