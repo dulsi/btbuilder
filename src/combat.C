@@ -157,6 +157,7 @@ void BTCombat::endScreen(BTDisplay &d)
 {
  if (endRound())
   won = true;
+ d.drawStats(); // In case check dead move people around
 }
 
 int BTCombat::findScreen(int num)
@@ -183,7 +184,7 @@ int BTCombat::findScreen(int num)
    }
    else if (num == BTCOMBATSCREEN_COMBAT)
    {
-    if (i == party.size() - 1)
+    if ((i == party.size() - 1) || (!party[i + 1]->isAlive()))
     {
      setPc(NULL);
      optionState = false;
@@ -522,13 +523,26 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
  switch (pc.combat.action)
  {
   case BTPc::BTPcAction::attack:
+  case BTPc::BTPcAction::partyAttack:
   {
+   int ac;
    int handWeapon = pc.getHandWeapon();
    BTMonsterGroup *grp = NULL;
    int target = BTTARGET_INDIVIDUAL;
-   findTarget(pc, 1, grp, target);
-   if (NULL == grp)
-    return;
+   if (BTPc::BTPcAction::attack == pc.combat.action)
+   {
+    findTarget(pc, 1, grp, target);
+    if (NULL == grp)
+     return;
+    ac = monList[grp->monsterType].getAc();
+   }
+   else
+   {
+    target = pc.combat.getTargetIndividual();
+    if (!party[target]->isAlive())
+     return;
+    ac = party[target]->ac;
+   }
    text = pc.name;
    text += " ";
    if (-1 == handWeapon)
@@ -541,9 +555,12 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
     text += item.getCause();
    }
    text += " ";
-   text += monList[grp->monsterType].getName();
+   if (BTPc::BTPcAction::attack == pc.combat.action)
+    text += monList[grp->monsterType].getName();
+   else
+    text += party[target]->name;
    int roll = BTDice(1, 20).roll();
-   if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= 10 + monList[grp->monsterType].getAc())))
+   if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= 10 + ac)))
    {
     text += " ";
     int damage = 0;
@@ -565,10 +582,29 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
     sprintf(tmp, "%d", damage);
     text += tmp;
     text += " points of damage";
-    if ((grp->individual[target].hp -= damage) < 0)
-     text += ", killing him!";
+    if (BTPc::BTPcAction::attack == pc.combat.action)
+    {
+     if ((grp->individual[target].hp -= damage) < 0)
+     {
+      text += ", killing him!";
+      if (grp->individual[target].active)
+      {
+       grp->individual[target].active = false;
+       grp->active--;
+       --active;
+      }
+     }
+     else
+      text += ".";
+    }
     else
-     text += ".";
+    {
+     if (party[target]->takeHP(damage))
+      text += ", killing him!";
+     else
+      text += ".";
+     d.drawStats();
+    }
    }
    else
     text += ", but misses!";
@@ -578,16 +614,6 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
    d.clearElements();
    break;
   }
-  case BTPc::BTPcAction::partyAttack:
-   text = pc.name;
-   text += " is ";
-   text += "attacking ";
-   text += party[pc.combat.getTargetIndividual()]->name;
-   d.addText(text.c_str());
-   d.addText(blank);
-   d.process(BTDisplay::allKeys, 1000);
-   d.clearElements();
-   break;
   case BTPc::BTPcAction::defend:
    break;
   case BTPc::BTPcAction::useItem:

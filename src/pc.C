@@ -50,7 +50,7 @@ void BTPc::equip(int index)
 
 bool BTPc::isAlive() const
 {
- return hp > 0;
+ return !status.isSet(BTSTATUS_DEAD);
 }
 
 bool BTPc::isEquipped(int index) const
