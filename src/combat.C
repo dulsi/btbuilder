@@ -153,13 +153,6 @@ void BTCombat::clearEncounters()
  monsters.clear();
 }
 
-void BTCombat::endScreen(BTDisplay &d)
-{
- if (endRound())
-  won = true;
- d.drawStats(); // In case check dead move people around
-}
-
 int BTCombat::findScreen(int num)
 {
  int i;
@@ -418,6 +411,9 @@ void BTCombat::runCombat(BTDisplay &d)
    }
   }
  }
+ if (endRound())
+  won = true;
+ d.drawStats(); // In case check dead move people around
 }
 
 void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTMonsterInstance &mon)
@@ -657,7 +653,7 @@ bool BTCombat::endRound()
  BTParty &party = BTGame::getGame()->getParty();
  if (party.checkDead())
   throw BTSpecialError("dead");
- if ((0 == monsters.size()) && (xp > 0))
+ if ((0 == monsters.size()) && (xp > 0) && (!won))
  {
   int alive = 0;
   int i;

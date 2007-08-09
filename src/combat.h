@@ -68,7 +68,6 @@ class BTCombat : public BTScreenSet
 
   void addEncounter(int monsterType, int number = 0);
   void clearEncounters();
-  void endScreen(BTDisplay &d);
   int findScreen(int num);
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
   void initScreen(BTDisplay &d);
