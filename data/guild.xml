@@ -26,14 +26,16 @@
 	</screen>
 	<screen number="5">
 		<line>Select a race for your new character:</line>
+		<line />
 		<selectRace action="setRace" screen="6" />
+		<choice keys="cC" screen="1" align="center">(CANCEL)</choice>
 	</screen>
 	<screen number="6">
 		<line><col>St: <stat number="1" /></col><col>IQ: <stat number="2" /></col></line>
 		<line><col>Dx: <stat number="3" /></col><col>Cn: <stat number="4" /></col></line>
 		<line><col>Lk: <stat number="5" /></col><col></col></line>
 		<selectJob action="setJob" screen="7" />
-		<choice keys="rR" action="display" screen="5" >(Reroll)</choice>
+		<choice keys="rR" action="display" screen="5" align="center">(REROLL)</choice>
 	</screen>
 	<screen number="7">
 		<line>Enter the new member's name.</line>

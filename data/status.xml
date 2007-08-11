@@ -1,5 +1,5 @@
 <status>
-	<screen page="1">
+	<screen number="1" escapeScreen="2">
 		<line><name /></line>
 		<line>Race: <race /></line>
 		<line>Class: <job /></line>
@@ -9,11 +9,31 @@
 		<line><col>Lvl: <level /></col><col>SP: <sp /></col></line>
 		<line>Expr: <xp /></line>
 		<line>Gold: <gold /></line>
+		<choice keys="pP" action="poolGold" align="center">(POOL GOLD)</choice>
+		<choice keys="tT" action="tradeGold" align="center">(TRADE GOLD)</choice>
+		<choice keys="cCdD" screen="2" align="center">(CONTINUE)</choice>
 	</screen>
-	<screen page="2">
+	<screen number="2" escapeScreen="exit">
 		<line><name /></line>
-		<inventory tag="item" show="8" />
+		<selectInventory action="selectItem" screen="3" noerror="1" numbered="1"/>
 		<line><col>Conj: <skill number="7" /></col><col>Sorc: <skill number="9" /></col></line>
 		<line><col>Magi: <skill number="8" /></col><col>Wizd: <skill number="10" /></col></line>
+		<choice keys="cCdD" screen="exit" align="center">(DONE)</choice>
+	</screen>
+	<screen number="3" escapeScreen="2">
+		<line><name /> do you wish to:</line>
+		<line></line>
+		<choice keys="tT" screen="4">Trade the item</choice>
+		<choice keys="dD" action="drop" screen="2">Drop the item</choice>
+		<can option="equipped" value="1"><choice keys="eEuU" action="equip" screen="2">Equip the item</choice></can>
+		<can option="equipped" value="2"><choice keys="eEuU" action="unequip" screen="2">Unequip the item</choice></can>
+		<barrier />
+		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
+	</screen>
+	<screen number="4" escapeScreen="2">
+		<line></line>
+		<line>Who does <name /> want to give the <itemname /> to?</line>
+		<selectParty action="give" screen="2" />
+		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
 	</screen>
 </status>

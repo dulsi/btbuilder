@@ -81,6 +81,11 @@ BTDisplay::~BTDisplay()
  SDL_Quit();
 }
 
+void BTDisplay::addBarrier(const char *keys)
+{
+ element.push_back(new BTUIBarrier(keys));
+}
+
 void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= left*/)
 {
  int w, h;
@@ -145,11 +150,6 @@ void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= l
  delete [] tmp;
 }
 
-void BTDisplay::addKey(const char *keys)
-{
- addKeys += keys;
-}
-
 void BTDisplay::addText(const char *words, alignment a /*= left*/)
 {
  addChoice(NULL, words, a);
@@ -165,7 +165,7 @@ void BTDisplay::addReadString(const char *prompt, int maxLen, std::string &respo
  element.push_back(new BTUIReadString(prompt, maxLen, response));
 }
 
-void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select, bool num /*= false*/)
+void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select, int num /*= 0*/)
 {
  element.push_back(new BTUISelect(list, size, start, select, num));
 }
@@ -182,7 +182,6 @@ void BTDisplay::clearElements()
   delete (*elementItr);
  }
  element.clear();
- addKeys = "";
 }
 
 void BTDisplay::clearText()
@@ -478,7 +477,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
  std::vector<BTUIElement*>::iterator top = element.begin();
  for (; top != element.end(); ++top)
  {
-  if ((BTUI_SELECT == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()))
+  if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()))
   {
    break;
   }
@@ -507,7 +506,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    item->position.y = text.y + textPos;
    item->position.w = text.w;
    item->position.h = maxH;
-   drawFont(item->text.c_str(), item->position, black, left);
+   drawFont(item->text.c_str(), item->position, black, item->align);
    textPos += maxH;
   }
  }
@@ -536,7 +535,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
     item->position.y = text.y + bottomPos;
     item->position.w = text.w;
     item->position.h = maxH;
-    drawFont(item->text.c_str(), item->position, black, left);
+    drawFont(item->text.c_str(), item->position, black, item->align);
    }
   }
   if (BTUI_READSTRING == (*top)->getType())
@@ -610,7 +609,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
       ++select->select;
      continue;
     }
-    else if (key == 13)
+    else if ((key == 13) && (select->select >= 0))
      break;
    }
   }
@@ -626,14 +625,15 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
     if (item->keys.find(utf8Key) != std::string::npos)
      return key;
    }
+   else if (BTUI_BARRIER == (*top)->getType())
+   {
+    BTUIBarrier *item = static_cast<BTUIBarrier*>(*top);
+    if (item->keys.find(utf8Key) != std::string::npos)
+     return key;
+   }
   }
   if (specialKeys == allKeys)
    return key;
-  else if (addKeys.length() > 0)
-  {
-   if (addKeys.find(utf8Key) != std::string::npos)
-    return key;
-  }
   else if (specialKeys)
   {
    for (int i = 0; specialKeys[i]; ++i)
@@ -925,11 +925,11 @@ int BTUIText::maxHeight(BTDisplay &d)
  return h;
 }
 
-BTUISelect::BTUISelect(BTDisplay::selectItem *l, int sz, int &st, int &sel, bool num /*= false*/)
+BTUISelect::BTUISelect(BTDisplay::selectItem *l, int sz, int &st, int &sel, int num /*= 0*/)
  : list(l), size(sz), start(st), select(sel), numbered(num)
 {
  if (size > 9)
-  numbered = false;
+  numbered = 0;
 }
 
 void BTUISelect::draw(BTDisplay &d)
@@ -945,22 +945,34 @@ void BTUISelect::draw(BTDisplay &d)
  if (numbered)
  {
   d.sizeFont("1) ", wFirst, hTmp);
-  for (int i = 0; i < size; ++i)
+  int i = 0;
+  for (; i < size; ++i)
   {
    dst.x = position.x;
    dst.w = wFirst;
    tmp[0] = '1' + i;
    tmp[1] = ')';
-   tmp[2] = ' ';
+   tmp[2] = list[i].first;
    tmp[3] = 0;
    d.drawFont(tmp, dst, d.getBlack(), BTDisplay::left);
    dst.x += wFirst;
    dst.w = position.w - wFirst;
-   d.drawFont(list[i].name, dst, d.getBlack(), BTDisplay::left);
+   if (list[i].name)
+    d.drawFont(list[i].name, dst, d.getBlack(), BTDisplay::left);
+   dst.y += h;
+  }
+  for (; i < numbered; ++i)
+  {
+   dst.x = position.x;
+   dst.w = wFirst;
+   tmp[0] = '1' + i;
+   tmp[1] = ')';
+   tmp[2] = 0;
+   d.drawFont(tmp, dst, d.getBlack(), BTDisplay::left);
    dst.y += h;
   }
  }
- else
+ else if (size > 0)
  {
   d.sizeFont("@", wFirst, hTmp);
   for (int i = start; i < start + lines; ++i)
@@ -989,7 +1001,8 @@ void BTUISelect::draw(BTDisplay &d)
     wValue = 0;
    dst.x += wFirst;
    dst.w = position.w - wValue - wFirst;
-   d.drawFont(list[i].name, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
+   if (list[i].name)
+    d.drawFont(list[i].name, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
    dst.y += h;
   }
  }

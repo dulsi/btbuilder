@@ -17,6 +17,7 @@
 #include "monster.h"
 #include "race.h"
 #include "spell.h"
+#include "status.h"
 #include "map.h"
 #include "pc.h"
 
@@ -55,6 +56,7 @@ class BTGame : public Psuedo3DMap
   void setCounter(int val);
 
   BTCombat &getCombat();
+  BTStatus &getStatus();
 
   void run(BTDisplay &d);
   bool move(BTDisplay &d, int dir);
@@ -78,6 +80,7 @@ class BTGame : public Psuedo3DMap
   std::string lastInput;
   int counter;
   BTCombat combat;
+  BTStatus status;
 
   static BTGame *game;
 };

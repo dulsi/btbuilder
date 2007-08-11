@@ -33,6 +33,7 @@ BTGame::BTGame(BTModule *m)
  PHYSFS_readULE16(start, &tmp);
  facing = tmp;
  combat.open("data/combat.xml");
+ status.open("data/status.xml");
 }
 
 BTGame::~BTGame()
@@ -160,6 +161,11 @@ BTCombat &BTGame::getCombat()
  return combat;
 }
 
+BTStatus &BTGame::getStatus()
+{
+ return status;
+}
+
 void BTGame::run(BTDisplay &d)
 {
  bool special = false;
@@ -264,8 +270,7 @@ void BTGame::run(BTDisplay &d)
       int n =  key - '1';
       if (n < party.size())
       {
-       BTStatus s(d, party[n]);
-       s.run();
+       status.run(d, party[n]);
       }
       break;
      }

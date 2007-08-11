@@ -13,11 +13,12 @@
 class BTEquipment : public XMLObject
 {
  public:
-  BTEquipment() : id(BTITEM_NONE), equipped(false), known(false), charges(0) {}
+  BTEquipment() : id(BTITEM_NONE), equipped(BTITEM_NOTEQUIPPED), known(false), charges(0) {}
   virtual void serialize(ObjectSerializer* s);
 
   int id;
-  bool equipped, known;
+  int equipped;
+  bool known;
   int charges;
 };
 

@@ -5,6 +5,7 @@
 		<line>Welcome to Garth's Equipment Shoppe, oh wealthy travellers!</line>
 		<line>Which of you is interested in my fine ware?</line>
 		<selectParty action="selectParty" screen="2" />
+		<choice keys="eE" screen="exit" align="center">(EXIT)</choice>
 	</screen>
 	<screen number="2">
 		<line>Greetings, <name />. Would you like to:</line>
@@ -19,7 +20,7 @@
 	</screen>
 	<screen number="4" escapeScreen="2">
 		<line>Which item:</line>
-		<selectInventory action="sell" fullscreen="2" screen="2" />
+		<selectInventory action="sell" fullscreen="2" screen="2" value="1" />
 		<choice keys="cC" align="center" screen="2">(CANCEL)</choice>
 	</screen>
 	<error type="fullinventory">Your pockets are full.</error>

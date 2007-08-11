@@ -47,6 +47,11 @@ BTElement::~BTElement()
  }
 }
 
+void BTBarrier::draw(BTDisplay &d, ObjectSerializer *obj)
+{
+ d.addBarrier("");
+}
+
 BTLine::~BTLine()
 {
  for (std::list<std::vector<BTElement*> >::iterator itr(element.begin()); itr != element.end(); ++itr)
@@ -79,13 +84,23 @@ void BTLine::addStat(const char *name, const char **atts)
  element.back().push_back(new BTElement(name, atts));
 }
 
+void BTLine::setAlignment(std::string a)
+{
+ if (a == "center")
+  align = BTDisplay::center;
+ else if (a == "right")
+  align = BTDisplay::right;
+ else
+  align = BTDisplay::left;
+}
+
 void BTLine::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  std::list<std::string> line;
  for (std::list<std::vector<BTElement*> >::iterator itr = element.begin(); itr != element.end(); ++itr)
   line.push_back(eval(*itr, obj));
  if (line.size() == 1)
-  d.addText(line.front().c_str());
+  d.addText(line.front().c_str(), align);
  else if (line.size() == 0)
   d.addText("");
  else if (line.size() == 2)
@@ -157,6 +172,17 @@ std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) c
  return final;
 }
 
+XMLObject *BTLine::create(const XML_Char *name, const XML_Char **atts)
+{
+ BTLine *obj = new BTLine();
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "align"))
+   obj->setAlignment(att[1]);
+ }
+ return obj;
+}
+
 void BTChoice::addCol()
 {
 }
@@ -198,7 +224,7 @@ void BTChoice::draw(BTDisplay &d, ObjectSerializer *obj)
  {
   line = eval(element.front(), obj);
  }
- d.addChoice(getKeys().c_str(), line.c_str());
+ d.addChoice(getKeys().c_str(), line.c_str(), align);
 }
 
 XMLObject *BTChoice::create(const XML_Char *name, const XML_Char **atts)
@@ -206,12 +232,19 @@ XMLObject *BTChoice::create(const XML_Char *name, const XML_Char **atts)
  BTChoice *obj = new BTChoice();
  for (const char **att = atts; *att; att += 2)
  {
-  if (0 == strcmp(*att, "keys"))
+  if (0 == strcmp(*att, "align"))
+   obj->setAlignment(att[1]);
+  else if (0 == strcmp(*att, "keys"))
    obj->setKeys(att[1]);
   else if (0 == strcmp(*att, "action"))
    obj->setAction(att[1]);
   else if (0 == strcmp(*att, "screen"))
-   obj->setScreen(atoi(att[1]));
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
  }
  return obj;
 }
@@ -295,6 +328,11 @@ std::string BTSelectCommon::getAction()
  return action;
 }
 
+int BTSelectCommon::getNumber()
+{
+ return size;
+}
+
 int BTSelectCommon::getScreen(BTPc *pc)
 {
  return screen;
@@ -318,11 +356,16 @@ void BTSelectCommon::draw(BTDisplay &d, ObjectSerializer *obj)
   list = NULL;
  }
  size = buildList(obj);
+ if (select == -1)
+ {
+  select = 0;
+  start = 0;
+ }
  if (select >= size)
   select = size - 1;
  if (start >= select)
   start = select;
- d.addSelection(list, size, start, select, numbered);
+ d.addSelection(list, size, start, select, (numbered ? getNumber() : 0));
 }
 
 int BTSelectRoster::buildList(ObjectSerializer *obj)
@@ -380,7 +423,8 @@ int BTSelectRace::buildList(ObjectSerializer *obj)
 XMLObject *BTSelectRace::create(const XML_Char *name, const XML_Char **atts)
 {
  BTSelectRace *obj = new BTSelectRace();
- obj->numbered = true;
+ XMLVector<BTRace*> &race = BTGame::getGame()->getRaceList();
+ obj->numbered = race.size();
  for (const char **att = atts; *att; att += 2)
  {
   if (0 == strcmp(*att, "action"))
@@ -406,13 +450,15 @@ int BTSelectJob::buildList(ObjectSerializer *obj)
    ++size;
   }
  }
+ if (numbered)
+  numbered = size;
  return size;
 }
 
 XMLObject *BTSelectJob::create(const XML_Char *name, const XML_Char **atts)
 {
  BTSelectJob *obj = new BTSelectJob();
- obj->numbered = true;
+ obj->numbered = 1;
  for (const char **att = atts; *att; att += 2)
  {
   if (0 == strcmp(*att, "action"))
@@ -466,15 +512,20 @@ XMLObject *BTSelectGoods::create(const XML_Char *name, const XML_Char **atts)
  return obj;
 }
 
+BTSelectInventory::BTSelectInventory()
+: fullscreen(0), noerror(false), value(false)
+{
+}
+
 int BTSelectInventory::buildList(ObjectSerializer *obj)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  XMLAction *act = obj->find("pc", NULL);
  BTPc *pc = static_cast<BTPc*>(reinterpret_cast<XMLObject*>(act->object));
- if (pc->isEquipmentEmpty())
+ if ((pc->isEquipmentEmpty()) && (!noerror))
   throw BTSpecialError("noinventory");
  list = new BTDisplay::selectItem[BT_ITEMS];
- int len = 8;
+ int len = BT_ITEMS;
  for (int i = 0; i < BT_ITEMS; ++i)
  {
   int id = pc->getItem(i);
@@ -488,9 +539,15 @@ int BTSelectInventory::buildList(ObjectSerializer *obj)
   else if (!itemList[id].canUse(pc))
    list[i].first = '@';
   list[i].name = itemList[id].getName();
-  list[i].value = itemList[id].getPrice() / 2;
+  if (value)
+   list[i].value = itemList[id].getPrice() / 2;
  }
  return len;
+}
+
+int BTSelectInventory::getNumber()
+{
+ return BT_ITEMS;
 }
 
 int BTSelectInventory::getScreen(BTPc *pc)
@@ -512,6 +569,12 @@ XMLObject *BTSelectInventory::create(const XML_Char *name, const XML_Char **atts
    obj->setScreen(atoi(att[1]));
   else if (0 == strcmp(*att, "fullscreen"))
    obj->fullscreen = atoi(att[1]);
+  else if (0 == strcmp(*att, "noerror"))
+   obj->noerror = atoi(att[1]);
+  else if (0 == strcmp(*att, "numbered"))
+   obj->numbered = atoi(att[1]);
+  else if (0 == strcmp(*att, "value"))
+   obj->value = atoi(att[1]);
  }
  return obj;
 }
@@ -540,7 +603,7 @@ void BTSelectParty::draw(BTDisplay &d, ObjectSerializer *obj)
  for (int i = 0; i < party.size(); ++i)
   keys[i] = i + '1';
  keys[party.size()] = 0;
- d.addKey(keys);
+ d.addBarrier(keys);
 }
 
 XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
@@ -558,7 +621,7 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
 }
 
 BTCan::BTCan(const char *o, char_ptr *a, const char *v)
-: option(o), atts(a), checkValue(false)
+: option(o), atts(a), checkValue(false), drawn(false)
 {
  if (v)
  {
@@ -581,7 +644,10 @@ BTCan::~BTCan()
 
 std::string BTCan::getKeys()
 {
- return items[0]->getKeys();
+ if (drawn)
+  return items[0]->getKeys();
+ else
+  return "";
 }
 
 std::string BTCan::getAction()
@@ -596,6 +662,7 @@ int BTCan::getScreen(BTPc *pc)
 
 void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
 {
+ drawn = false;
  XMLAction *state = obj->find(option.c_str(), const_cast<const char**>(atts));
  if (state)
  {
@@ -637,6 +704,7 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
  else
   return;
 
+ drawn = true;
  for (int i = 0; i < items.size(); ++i)
  {
   items[i]->draw(d, obj);
@@ -645,6 +713,7 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
 
 void BTCan::serialize(ObjectSerializer *s)
 {
+ s->add("barrier", &items, &BTBarrier::create);
  s->add("line", &items, &BTLine::create);
  s->add("choice", &items, &BTChoice::create);
  s->add("readString", &items, &BTReadString::create);
@@ -715,6 +784,7 @@ BTScreenItem *BTScreenSetScreen::findItem(int key)
 
 void BTScreenSetScreen::serialize(ObjectSerializer* s)
 {
+ s->add("barrier", &items, &BTBarrier::create);
  s->add("line", &items, &BTLine::create);
  s->add("choice", &items, &BTChoice::create);
  s->add("readString", &items, &BTReadString::create);
@@ -769,14 +839,19 @@ BTScreenSet::BTScreenSet()
  actionList["addToParty"] = &addToParty;
  actionList["buy"] = &buy;
  actionList["create"] = &create;
+ actionList["drop"] = &drop;
+ actionList["equip"] = &equip;
  actionList["exit"] = &exit;
+ actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
  actionList["removeFromParty"] = &removeFromParty;
  actionList["save"] = &save;
  actionList["sell"] = &sell;
+ actionList["selectItem"] = &selectItem;
  actionList["selectParty"] = &selectParty;
  actionList["setJob"] = &setJob;
  actionList["setRace"] = &setRace;
+ actionList["unequip"] = &unequip;
 }
 
 BTScreenSet::~BTScreenSet()
@@ -871,6 +946,10 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   {
    add("pc", pc);
    pc->serialize(this);
+   if (-1 != pc->combat.item)
+   {
+    pc->item[pc->combat.item].serialize(this);
+   }
   }
   try
   {
@@ -934,8 +1013,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   }
   else if ((key >= '1') && (key <= '9'))
   {
-   BTStatus s(d, party[key - '1']);
-   s.run();
+   BTGame::getGame()->getStatus().run(d, party[key - '1']);
    d.drawImage(picture);
    d.drawLabel(label);
   }
@@ -970,6 +1048,8 @@ void BTScreenSet::setPc(BTPc *c)
  if ((pc) && (0 == pc->name[0]))
   delete pc;
  pc = c;
+ if (pc)
+  pc->combat.item = -1;
 }
 
 void BTScreenSet::setPicture(BTDisplay &d, int pic, char *l)
@@ -1025,6 +1105,22 @@ int BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  return 0;
 }
 
+int BTScreenSet::drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ b.pc->takeItemFromIndex(b.pc->combat.item);
+ b.pc->combat.item = -1;
+ d.drawStats();
+ return 0;
+}
+
+int BTScreenSet::equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ b.pc->equip(b.pc->combat.item);
+ b.pc->combat.item = -1;
+ d.drawStats();
+ return 0;
+}
+
 int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  bool dead = BTGame::getGame()->getParty().checkDead();
@@ -1033,6 +1129,19 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
   throw BTSpecialError("dead");
  else
   throw BTSpecialFlipGoForward();
+}
+
+int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ for (int i = 0; i < party.size(); ++i)
+ {
+  if (party[i] != b.pc)
+  {
+   unsigned int gp = party[i]->getGold();
+   party[i]->takeGold(gp - b.pc->giveGold(gp));
+  }
+ }
 }
 
 int BTScreenSet::quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
@@ -1090,6 +1199,13 @@ int BTScreenSet::selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, i
  return 0;
 }
 
+int BTScreenSet::selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
+ b.pc->combat.item = select->select;
+ return 0;
+}
+
 int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
@@ -1128,5 +1244,13 @@ int BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  for (int i = 0; i < BT_STATS; ++i)
   b.pc->stat[i] = race[b.pc->race]->stat[i].roll();
  select->clear();
+ return 0;
+}
+
+int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ b.pc->unequip(b.pc->combat.item);
+ b.pc->combat.item = -1;
+ d.drawStats();
  return 0;
 }

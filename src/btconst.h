@@ -143,6 +143,10 @@ extern char *statAbbrev[];
 
 #define BTITEM_NONE 0x4000
 
+#define BTITEM_CANNOTEQUIP 0
+#define BTITEM_NOTEQUIPPED 1
+#define BTITEM_EQUIPPED    2
+
 #define BTSAVE_DIFFICULTY 20
 
 #define BTSTATUS_DEAD 1

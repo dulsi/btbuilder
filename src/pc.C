@@ -38,14 +38,14 @@ void BTPc::equip(int index)
  {
   if (BTITEM_NONE == item[i].id)
    break;
-  if ((item[i].equipped) && (type == itemList[item[i].id].getType()))
+  if ((item[i].equipped == BTITEM_EQUIPPED) && (type == itemList[item[i].id].getType()))
   {
    unequip(i);
   }
  }
  ac += itemList[item[index].id].getArmorPlus();
  toHit += itemList[item[index].id].getHitPlus();
- item[index].equipped = true;
+ item[index].equipped = BTITEM_EQUIPPED;
 }
 
 bool BTPc::isAlive() const
@@ -55,7 +55,7 @@ bool BTPc::isAlive() const
 
 bool BTPc::isEquipped(int index) const
 {
- return item[index].equipped;
+ return (item[index].equipped == BTITEM_EQUIPPED);
 }
 
 bool BTPc::isEquipmentEmpty() const
@@ -103,8 +103,9 @@ bool BTPc::giveItem(int id, bool known, int charges)
  {
   if (BTITEM_NONE == item[i].id)
   {
+   BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
    item[i].id = id;
-   item[i].equipped = false;
+   item[i].equipped = (itemList[id].canUse(this) ? BTITEM_NOTEQUIPPED : BTITEM_CANNOTEQUIP);
    item[i].known = known;
    item[i].charges = charges;
    return true;
@@ -115,9 +116,11 @@ bool BTPc::giveItem(int id, bool known, int charges)
 
 unsigned int BTPc::giveGold(unsigned int amount)
 {
+ // TODO: return the amount left
  gold += amount;
  if (gold > 4000000000UL)
   gold = 4000000000UL;
+ return 0;
 }
 
 void BTPc::giveHP(int amount)
@@ -255,7 +258,7 @@ bool BTPc::takeItemFromIndex(int index)
 {
  if (item[index].id == BTITEM_NONE)
   return false;
- if (item[index].equipped)
+ if (item[index].equipped == BTITEM_EQUIPPED)
   unequip(index);
  for (int i = index + 1; i < BT_ITEMS; ++i)
  {
@@ -273,7 +276,7 @@ void BTPc::unequip(int index)
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  ac -= itemList[item[index].id].getArmorPlus();
  toHit -= itemList[item[index].id].getHitPlus();
- item[index].equipped = false;
+ item[index].equipped = BTITEM_NOTEQUIPPED;
 }
 
 void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)

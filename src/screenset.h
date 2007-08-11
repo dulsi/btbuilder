@@ -43,28 +43,38 @@ class BTScreenItem : public XMLObject
   virtual void serialize(ObjectSerializer* s) {}
 };
 
+class BTBarrier : public BTScreenItem
+{
+ public:
+  virtual void draw(BTDisplay &d, ObjectSerializer *obj);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTBarrier; }
+};
+
 class BTLine : public BTScreenItem
 {
  public:
-  BTLine() {}
+  BTLine() : align(BTDisplay::left) {}
   ~BTLine();
 
   virtual void addCol();
   virtual void addText(std::string text);
   virtual void addStat(const char *name, const char **atts);
+  void setAlignment(std::string a);
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj);
 
   virtual void elementData(const XML_Char *name, const XML_Char **atts);
   virtual void characterData(const XML_Char *s, int len);
 
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTLine; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 
  protected:
   std::string eval(std::vector<BTElement*> &line, ObjectSerializer *obj) const;
 
  protected:
   std::list<std::vector<BTElement*> > element;
+  BTDisplay::alignment align;
 };
 
 class BTChoice : public BTLine
@@ -124,6 +134,7 @@ class BTSelectCommon : public BTScreenItem
   virtual int buildList(ObjectSerializer *obj) = 0;
   virtual std::string getKeys();
   virtual std::string getAction();
+  virtual int getNumber();
   virtual int getScreen(BTPc *pc);
   void setAction(std::string a);
   void setScreen(int s);
@@ -181,12 +192,17 @@ class BTSelectGoods : public BTSelectCommon
 class BTSelectInventory : public BTSelectCommon
 {
  public:
+  BTSelectInventory();
+
   virtual int buildList(ObjectSerializer *obj);
+  virtual int getNumber();
   virtual int getScreen(BTPc *pc);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 
   int fullscreen;
+  bool noerror;
+  bool value;
 };
 
 class BTSelectParty : public BTScreenItem
@@ -229,6 +245,7 @@ class BTCan : public BTScreenItem
   char_ptr *atts;
   std::string value;
   bool checkValue;
+  bool drawn;
   XMLVector<BTScreenItem*> items;
 };
 
@@ -294,14 +311,19 @@ class BTScreenSet : public ObjectSerializer
   static int addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
   BTPc *pc;

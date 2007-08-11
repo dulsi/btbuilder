@@ -7,30 +7,17 @@
   03/27/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include "xmlserializer.h"
+#include "screenset.h"
 #include "display.h"
 #include "pc.h"
 
-class BTStatus : public ExpatXMLParser, public ObjectSerializer
+class BTStatus : public BTScreenSet
 {
  public:
-  BTStatus(BTDisplay &d, BTPc *c);
+  BTStatus();
   ~BTStatus();
 
-  void run();
-
-  virtual int getLevel();
-
-  virtual void startElement(const XML_Char *name, const XML_Char **atts);
-  virtual void endElement(const XML_Char *name);
-  virtual void characterData(const XML_Char *s, int len);
-
- private:
-  BTDisplay &display;
-  BTPc *pc;
-  int page;
-  bool gotoPage;
-  std::list<std::string> line;
+  void run(BTDisplay &d, BTPc *pc);
 };
 
 #endif

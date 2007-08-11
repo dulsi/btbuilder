@@ -18,6 +18,7 @@
 #define BTUI_TEXT 3
 #define BTUI_2COLUMN 4
 #define BTUI_READSTRING 5
+#define BTUI_BARRIER 6
 
 #define BTKEY_UP 1
 #define BTKEY_DOWN 2
@@ -43,19 +44,19 @@ class BTDisplay
   enum alignment { left, center, right };
   struct selectItem
   {
-   selectItem() : first(0), value(0) {}
+   selectItem() : first(0), name(0), value(0) {}
 
    char first;
    const char *name;
    int value;
   };
 
+  void addBarrier(const char *keys);
   void addChoice(const char *keys, const char *words, alignment a = left);
-  void addKey(const char *keys);
   void addText(const char *words, alignment a = left);
   void add2Column(const char *col1, const char *col2);
   void addReadString(const char *prompt, int maxLen, std::string &response);
-  void addSelection(selectItem *list, int size, int &start, int &select, bool num = false);
+  void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
   void clear(SDL_Rect &r);
   void clearElements();
   void clearText();
@@ -108,18 +109,18 @@ class BTDisplay
   simpleFont *sfont;
   SDL_Color white, black;
   std::vector<BTUIElement*> element;
-  std::string addKeys;
 };
 
 class BTUIText : public BTUIElement
 {
  public:
-  BTUIText(const std::string &t, BTDisplay::alignment a) : text(t) {}
+  BTUIText(const std::string &t, BTDisplay::alignment a) : text(t), align(a) {}
 
   virtual int getType() const { return BTUI_TEXT; }
   int maxHeight(BTDisplay &d);
 
   std::string text;
+  BTDisplay::alignment align;
 };
 
 class BTUIChoice : public BTUIText
@@ -144,10 +145,20 @@ class BTUIReadString : public BTUIElement
   std::string &response;
 };
 
+class BTUIBarrier : public BTUIElement
+{
+ public:
+  BTUIBarrier(const std::string &k) : keys(k) {}
+
+  virtual int getType() const { return BTUI_BARRIER; }
+
+  std::string keys;
+};
+
 class BTUISelect : public BTUIElement
 {
  public:
-  BTUISelect(BTDisplay::selectItem *l, int sz, int &st, int &sel, bool num = false);
+  BTUISelect(BTDisplay::selectItem *l, int sz, int &st, int &sel, int num = 0);
 
   virtual int getType() const { return BTUI_SELECT; }
 
@@ -157,7 +168,7 @@ class BTUISelect : public BTUIElement
   int size;
   int &start;
   int &select;
-  bool numbered;
+  int numbered;
 };
 
 class BTUI2Column : public BTUIElement
