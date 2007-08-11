@@ -1,4 +1,4 @@
-<status>
+<screenset>
 	<screen number="1" escapeScreen="2">
 		<line><name /></line>
 		<line>Race: <race /></line>
@@ -32,8 +32,9 @@
 	</screen>
 	<screen number="4" escapeScreen="2">
 		<line></line>
-		<line>Who does <name /> want to give the <itemname /> to?</line>
+		<line>Who does <name /> want to give the <itemName /> to?</line>
 		<selectParty action="give" screen="2" />
 		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
 	</screen>
-</status>
+	<error type="fullinventory"><name /> has no room for that item!</error>
+</screenset>

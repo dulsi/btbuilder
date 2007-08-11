@@ -51,9 +51,9 @@
 		<readString action="saveParty" screen="1">&gt;</readString>
 	</screen>
 	<error type="dead">You must have a live party to enter the city.</error>
-	<error type="noparty" retry="true">The party is empty!</error>
+	<error type="noparty" screen="1">The party is empty!</error>
 	<error type="noroster">No adventurers available.</error>
 	<error type="inparty"><name /> is already in the party.</error>
-	<error type="exists" retry="true">There is already a person by that name.</error>
+	<error type="exists" screen="7">There is already a person by that name.</error>
 	<error type="fullparty">Party is full.</error>
 </screenset>

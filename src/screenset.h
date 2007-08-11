@@ -274,16 +274,16 @@ class BTScreenSetScreen : public XMLObject
 class BTError : public BTLine
 {
  public:
-  BTError(const char *t, bool r) : type(t), retry(r) {}
+  BTError(const char *t, int s) : type(t), screen(s) {}
 
   const std::string &getType() { return type; }
-  bool getRetry() { return retry; }
+  int getScreen() { return screen; }
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 
  private:
   std::string type;
-  bool retry;
+  int screen;
 };
 
 class BTScreenSet : public ObjectSerializer
@@ -297,7 +297,7 @@ class BTScreenSet : public ObjectSerializer
   virtual int getLevel();
 
   BTPc* getPc();
-  bool displayError(BTDisplay &d, const BTSpecialError &e);
+  int displayError(BTDisplay &d, const BTSpecialError &e);
   virtual void endScreen(BTDisplay &d) {}
   action findAction(const std::string &actionName);
   virtual int findScreen(int num);
@@ -314,6 +314,7 @@ class BTScreenSet : public ObjectSerializer
   static int drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

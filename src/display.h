@@ -60,13 +60,11 @@ class BTDisplay
   void clear(SDL_Rect &r);
   void clearElements();
   void clearText();
-  void drawChoice(const char *key, const char *words, alignment a = left);
   void drawFullScreen(const char *file, int delay);
   void drawImage(int pic);
   void drawLabel(const char *name);
   void drawLast(const char *keys, const char *words, alignment a = left);
   void drawText(const char *words, alignment a = left);
-  void draw2Column(const char *col1, const char *col2);
   void drawView();
   void drawStats();
   SDL_Color &getBlack();
@@ -77,7 +75,6 @@ class BTDisplay
   unsigned int readChar();
   std::string readString(const char *prompt, int max);
   void refresh();
-  bool selectList(selectItem *list, int size, int &start, int &select);
   void setBackground(const char *file);
   void setPsuedo3DConfig(const char *file);
   void setWallGraphics(int type);

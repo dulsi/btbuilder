@@ -556,7 +556,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
    else
     text += party[target]->name;
    int roll = BTDice(1, 20).roll();
-   if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= 10 + ac)))
+   if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= ac)))
    {
     text += " ";
     int damage = 0;

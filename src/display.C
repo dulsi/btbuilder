@@ -292,26 +292,6 @@ void BTDisplay::drawLabel(const char *name)
  SDL_UpdateRect(mainScreen, label.x, label.y, label.w, label.h);
 }
 
-void BTDisplay::drawChoice(const char *keys, const char *words, alignment a /*= left*/)
-{
- int w, h;
- if (!sizeFont(words, w, h))
-  return;
- if (h + textPos > text.h)
- {
-  scrollUp(h);
- }
- SDL_Rect dst;
- dst.x = text.x;
- dst.y = text.y + textPos;
- dst.w = text.w;
- dst.h = h;
- SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
- drawFont(words, dst, black, a);
- SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
- textPos += h;
-}
-
 void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= left*/)
 {
  int w, h;
@@ -386,32 +366,6 @@ void BTDisplay::drawText(const char *words, alignment a /*= left*/)
   partial = end;
  }
  delete [] tmp;
-}
-
-void BTDisplay::draw2Column(const char *col1, const char *col2)
-{
- int w[2], h[2];
- int maxH;
- if ((!sizeFont(col1, w[0], h[0])) || (!sizeFont(col2, w[1], h[1])))
-  return;
- maxH = ((h[0] > h[1]) ? h[0] : h[1]);
- if (maxH + textPos > text.h)
- {
-  scrollUp(maxH);
- }
- SDL_Rect dst;
- dst.x = text.x;
- dst.y = text.y + textPos;
- dst.w = text.w / 2;
- dst.h = maxH;
- drawFont(col1, dst, black, left);
- dst.x = text.x + text.w / 2;
- dst.y = text.y + textPos;
- dst.w = text.w / 2;
- dst.h = maxH;
- drawFont(col2, dst, black, left);
- textPos += maxH;
- SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
 }
 
 void BTDisplay::drawView()
@@ -721,65 +675,6 @@ void BTDisplay::refresh()
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  drawStats();
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
-}
-
-bool BTDisplay::selectList(selectItem *list, int size, int &start, int &select)
-{
- int wFirst, wValue, h, hTmp, lines;
- unsigned char key = 0;
- char tmp[20];
- SDL_Rect dst;
- sizeFont("", wFirst, h);
- sizeFont("@", wFirst, hTmp);
- lines = text.h / h - 1;
- while ((key != 13) && (key !=  27))
- {
-  clearText();
-  dst.y = text.y;
-  dst.h = h;
-  for (int i = start; i < start + lines; ++i)
-  {
-   if (i >= size)
-    break;
-   if (select == i)
-   {
-    dst.x = text.x;
-    dst.w = text.w;
-    SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
-   }
-   dst.x = text.x;
-   dst.w = wFirst;
-   tmp[0] = list[i].first;
-   tmp[1] = 0;
-   drawFont(tmp, dst, ((select != i) ? black : white), left);
-   if (list[i].value)
-   {
-    snprintf(tmp, 20, "%d", list[i].value);
-    sizeFont(tmp, wValue, hTmp);
-    dst.w = text.w;
-    drawFont(tmp, dst, ((select != i) ? black : white), right);
-   }
-   else
-    wValue = 0;
-   dst.x += wFirst;
-   dst.w = text.w - wValue - wFirst;
-   drawFont(list[i].name, dst, ((select != i) ? black : white), left);
-   dst.y += h;
-  }
-  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
-  key = readChar();
-  if (key == 0xBD) // up
-  {
-   if (select > 0)
-    --select;
-  }
-  else if (key == 0xC3) // down
-  {
-   if (select + 1 < size)
-    ++select;
-  }
- }
- return (key == 13);
 }
 
 void BTDisplay::setBackground(const char *file)

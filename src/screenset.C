@@ -162,6 +162,10 @@ std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) c
      }
      case XMLTYPE_STRING:
       final += *(reinterpret_cast<char**>(state->object));
+      break;
+     case XMLTYPE_STDSTRING:
+      final += *(reinterpret_cast<std::string*>(state->object));
+      break;
      case XMLTYPE_BITFIELD:
      default:
       break;
@@ -693,6 +697,7 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
      return;
     break;
    case XMLTYPE_STRING:
+   case XMLTYPE_STDSTRING:
      return;
     break;
    case XMLTYPE_BITFIELD:
@@ -822,15 +827,15 @@ XMLObject *BTScreenSetScreen::create(const XML_Char *name, const XML_Char **atts
 XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
 {
  const char *type = NULL;
- bool retry(false);
+ int screen(0);
  for (const char **att = atts; *att; att += 2)
  {
   if (0 == strcmp(*att, "type"))
    type = att[1];
-  else if (0 == strcmp(*att, "retry"))
-   retry = ((strncmp(att[1], "true", 4) == 0) ? true : false);
+  else if (0 == strcmp(*att, "screen"))
+   screen = atoi(att[1]);
  }
- return new BTError(type, retry);
+ return new BTError(type, screen);
 }
 
 BTScreenSet::BTScreenSet()
@@ -842,6 +847,7 @@ BTScreenSet::BTScreenSet()
  actionList["drop"] = &drop;
  actionList["equip"] = &equip;
  actionList["exit"] = &exit;
+ actionList["give"] = &give;
  actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
  actionList["removeFromParty"] = &removeFromParty;
@@ -870,7 +876,7 @@ BTPc* BTScreenSet::getPc()
  return pc;
 }
 
-bool BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
+int BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
 {
  d.clearText();
  if (pc)
@@ -894,9 +900,9 @@ bool BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
  removeLevel();
  d.process(BTDisplay::allKeys);
  if (err)
-  return err->getRetry();
+  return err->getScreen();
  else
-  return false;
+  return 0;
 }
 
 BTScreenSet::action BTScreenSet::findAction(const std::string &actionName)
@@ -933,6 +939,7 @@ void BTScreenSet::open(const char *filename)
 void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
 {
  BTParty &party = BTGame::getGame()->getParty();
+ std::string itemName;
  char specialKeys[10];
  int previous = 0;
  int where = start;
@@ -948,7 +955,13 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
    pc->serialize(this);
    if (-1 != pc->combat.item)
    {
+    BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
     pc->item[pc->combat.item].serialize(this);
+    if (pc->getItem(pc->combat.item) != BTITEM_NONE)
+    {
+     itemName = itemList[pc->getItem(pc->combat.item)].getName();
+     add("itemName", &itemName);
+    }
    }
   }
   try
@@ -978,7 +991,6 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   BTScreenItem *item = screen[where]->findItem(key);
   if (item)
   {
-   bool retry(false);
    int next = 0;
 
    try
@@ -989,19 +1001,16 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
    }
    catch (const BTSpecialError &e)
    {
-    retry = displayError(d, e);
+    next = displayError(d, e);
    }
    catch (...)
    {
     d.clearText();
     throw;
    }
-   if (!retry)
-   {
-    if (0 == next)
-     next = item->getScreen(pc);
-    where = findScreen(next);
-   }
+   if (0 == next)
+    next = item->getScreen(pc);
+   where = findScreen(next);
   }
   else if (key == 27)
   {
@@ -1131,6 +1140,32 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
   throw BTSpecialFlipGoForward();
 }
 
+int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ if ((key >= '1') && (key <= '9') && (key - '1' < party.size()) && (party[key - '1'] != b.pc))
+ {
+  BTEquipment &item = b.pc->item[b.pc->combat.item];
+  if (party[key - '1']->giveItem(item.id, item.known, item.charges))
+  {
+   b.pc->takeItemFromIndex(b.pc->combat.item);
+   b.pc->combat.item = -1;
+   d.drawStats();
+  }
+  else
+  {
+   BTPc *current = b.pc;
+   b.setPc(party[key - '1']);
+   BTSpecialError e("fullinventory");
+   int screen = b.displayError(d, e);
+   b.removeLevel();
+   b.setPc(current);
+   return screen;
+  }
+ }
+ return 0;
+}
+
 int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -1220,6 +1255,7 @@ int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
     b.pc->job = i;
     b.pc->picture = job[i]->picture;
     b.pc->hp = b.pc->maxHp = BTDice(1, 14, 14).roll() + ((b.pc->stat[BTSTAT_CN] > 14) ? b.pc->stat[BTSTAT_CN] - 14 : 0);
+    b.pc->toHit = job[i]->toHit;
     b.pc->save = job[i]->save + ((b.pc->stat[BTSTAT_LK] > 14) ? b.pc->stat[BTSTAT_LK] - 14 : 0);
     b.pc->gold = BTDice(1, 61, 110).roll();
     if (job[i]->spells)

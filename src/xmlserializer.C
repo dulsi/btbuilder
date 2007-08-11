@@ -108,6 +108,17 @@ void ObjectSerializer::add(const char *name, char **p, std::vector<XMLAttribute>
  action.push_back(act);
 }
 
+void ObjectSerializer::add(const char *name, std::string *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_STDSTRING;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
 void ObjectSerializer::add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
@@ -293,6 +304,12 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
     strncpy(str, s, len);
     str[len] = 0;
     *(reinterpret_cast<char**>(state->object)) = str;
+    break;
+   }
+   case XMLTYPE_STDSTRING:
+   {
+    std::string str(s, len);
+    *(reinterpret_cast<std::string*>(state->object)) = str;
     break;
    }
    case XMLTYPE_BITFIELD:
