@@ -169,8 +169,8 @@ void BTPc::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("race", &race, NULL, &BTGame::getGame()->getRaceList());
  s->add("job", &job, NULL, &BTGame::getGame()->getJobList());
- s->add("picture", &race);
- s->add("monster", &job);
+ s->add("picture", &picture);
+ s->add("monster", &monster);
  for (i = 0; i < BT_STATS; ++i)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
@@ -284,6 +284,13 @@ void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)
  XMLSerializer parser;
  parser.add("pc", &pc, &BTPc::create);
  parser.parse(filename, true);
+}
+
+void BTPc::writeXML(const char *filename, XMLVector<BTPc*> &pc)
+{
+ XMLSerializer parser;
+ parser.add("pc", &pc, &BTPc::create);
+ parser.write(filename, true);
 }
 
 void BTPc::BTPcAction::clearTarget(int group, int member /*= BTTARGET_INDIVIDUAL*/)

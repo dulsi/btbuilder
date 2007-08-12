@@ -21,6 +21,7 @@ BTGame::BTGame(BTModule *m)
  }
  BTRace::readXML(m->race, raceList);
  BTJob::readXML(m->job, jobList);
+ BTPc::readXML("roster.xml", roster);
  PHYSFS_file *start = PHYSFS_openRead(m->start);
  char levelName[14];
  PHYSFS_read(start, levelName, 1, 14);

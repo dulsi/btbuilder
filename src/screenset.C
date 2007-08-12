@@ -847,6 +847,7 @@ BTScreenSet::BTScreenSet()
  actionList["drop"] = &drop;
  actionList["equip"] = &equip;
  actionList["exit"] = &exit;
+ actionList["exitAndSave"] = &exitAndSave;
  actionList["give"] = &give;
  actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
@@ -1140,6 +1141,13 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
   throw BTSpecialFlipGoForward();
 }
 
+int BTScreenSet::exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
+ BTPc::writeXML("roster.xml", roster);
+ exit(b, d, item, key);
+}
+
 int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -1181,6 +1189,8 @@ int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
 
 int BTScreenSet::quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
+ BTPc::writeXML("roster.xml", roster);
  throw BTSpecialQuit();
 }
 

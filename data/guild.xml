@@ -8,7 +8,7 @@
 		<choice keys="cC" action="create" screen="5" >Create a member</choice>
 		<choice keys="sS" action="ensureParty" screen="9" >Save party</choice>
 		<choice keys="qQ" screen="4" >Quit game</choice>
-		<choice keys="eE" action="exit" >Exit the guild</choice>
+		<choice keys="eE" action="exitAndSave" >Exit the guild</choice>
 		<choice keys="dD" screen="8" >Disk options</choice>
 	</screen>
 	<screen number="2">

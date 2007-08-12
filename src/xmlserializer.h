@@ -32,15 +32,19 @@ class XMLObject
 class XMLArray
 {
  public:
+  virtual XMLObject *get(size_t i) = 0;
   virtual void push_back(XMLObject *obj) = 0;
+  virtual size_t size() const = 0;
 };
 
 template<class T>
 class XMLVector : public XMLArray, public std::vector<T>
 {
  public:
+  virtual XMLObject *get(size_t i) { return (*this)[i]; }
   virtual void push_back(XMLObject *obj) { std::vector<T>::push_back(static_cast<T>(obj)); }
   void push_back(T obj) { std::vector<T>::push_back(obj); }
+  virtual size_t size() const { return std::vector<T>::size(); }
 };
 
 class XMLAttribute
@@ -67,6 +71,8 @@ class XMLAction
 {
  public:
   ~XMLAction() { if (attrib) delete attrib; }
+
+  std::string createTag();
 
   std::string name;
   std::vector<XMLAttribute> *attrib;
@@ -105,7 +111,7 @@ class ObjectSerializer
   virtual int getLevel() = 0;
   void removeLevel();
 
- private:
+ protected:
   std::vector<XMLAction*> action;
 };
 
@@ -120,6 +126,8 @@ class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
   virtual void startElement(const XML_Char *name, const XML_Char **atts);
   virtual void endElement(const XML_Char *name);
   virtual void characterData(const XML_Char *s, int len);
+
+  void write(const char *filename, bool physfs);
 
  private:
   std::list<XMLLevel*> level;

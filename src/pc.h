@@ -52,6 +52,7 @@ class BTPc : public XMLObject
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }
   static void readXML(const char *filename, XMLVector<BTPc*> &pc);
+  static void writeXML(const char *filename, XMLVector<BTPc*> &pc);
 
   char *name;
   int race;

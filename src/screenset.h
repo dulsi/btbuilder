@@ -314,6 +314,7 @@ class BTScreenSet : public ObjectSerializer
   static int drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
