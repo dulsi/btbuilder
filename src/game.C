@@ -88,8 +88,13 @@ BTMap *BTGame::loadMap(const char *filename)
 {
  if (levelMap)
  {
+  std::string name = levelMap->getFilename();
+  name += ".MAP";
+  if (name == filename)
+   return levelMap;
   delete levelMap;
  }
+ local.clearAll();
  BinaryReadFile levelFile(filename);
  levelMap = new BTMap(levelFile);
  return levelMap;
@@ -165,6 +170,32 @@ BTCombat &BTGame::getCombat()
 BTStatus &BTGame::getStatus()
 {
  return status;
+}
+
+bool BTGame::getLocalFlag(int index)
+{
+ return local.isSet(index);
+}
+
+bool BTGame::getGlobalFlag(int index)
+{
+ return global.isSet(index);
+}
+
+void BTGame::setLocalFlag(int index, bool value)
+{
+ if (value)
+  local.set(index);
+ else
+  local.clear(index);
+}
+
+void BTGame::setGlobalFlag(int index, bool value)
+{
+ if (value)
+  global.set(index);
+ else
+  global.clear(index);
 }
 
 void BTGame::run(BTDisplay &d)

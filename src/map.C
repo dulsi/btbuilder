@@ -134,6 +134,12 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_GETINPUT:
    game->setLastInput(d.readString("", 13));
    break;
+  case BTSPECIALCOMMAND_SETLOCALFLAG:
+   game->setLocalFlag(number[0], true);
+   break;
+  case BTSPECIALCOMMAND_CLEARLOCALFLAG:
+   game->setLocalFlag(number[0], false);
+   break;
   case BTSPECIALCOMMAND_TAKEITEM:
   {
    XMLVector<BTPc*> &party = game->getParty();
@@ -408,6 +414,12 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_BEGINCOMBAT:
    game->getCombat().run(d);
    break;
+  case BTSPECIALCOMMAND_SETGLOBALFLAG:
+   game->setGlobalFlag(number[0], true);
+   break;
+  case BTSPECIALCOMMAND_CLEARGLOBALFLAG:
+   game->setGlobalFlag(number[0], false);
+   break;
   case BTSPECIALCOMMAND_GIVEGOLD:
   {
    // Loses extra gold like BTCS.  Should fix.
@@ -616,6 +628,12 @@ void BTSpecialConditional::run(BTDisplay &d) const
     (strcmp(ans.c_str(), "yes") == 0));
    break;
   }
+  case BTCONDITION_LOCALFLAGSET:
+   truth = (true == BTGame::getGame()->getLocalFlag(number));
+   break;
+  case BTCONDITION_LOCALFLAGCLEAR:
+   truth = (false == BTGame::getGame()->getLocalFlag(number));
+   break;
   case BTCONDITION_GROUPFACING:
    truth = (BTGame::getGame()->getFacing() == number);
    break;
@@ -643,6 +661,12 @@ void BTSpecialConditional::run(BTDisplay &d) const
    break;
   case BTCONDITION_COMBATWON:
    truth = BTGame::getGame()->getCombat().isWinner();
+   break;
+  case BTCONDITION_GLOBALFLAGSET:
+   truth = (true == BTGame::getGame()->getGlobalFlag(number));
+   break;
+  case BTCONDITION_GLOBALFLAGCLEAR:
+   truth = (false == BTGame::getGame()->getGlobalFlag(number));
    break;
   case BTCONDITION_RANDOM:
    truth = (BTDice(1, 100).roll() <= number);

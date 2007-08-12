@@ -28,6 +28,12 @@ void ExpatXMLParser::parse(const char *filename, bool physfs)
  if (physfs)
  {
   PHYSFS_file *f = PHYSFS_openRead(filename);
+  if (NULL == f)
+  {
+   delete [] buffer;
+   XML_ParserFree(p);
+   return; // Throw exception
+  }
   while (true)
   {
    PHYSFS_sint64 num = PHYSFS_read(f, buffer, 1, XMLBUFFER);

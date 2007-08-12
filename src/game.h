@@ -58,6 +58,11 @@ class BTGame : public Psuedo3DMap
   BTCombat &getCombat();
   BTStatus &getStatus();
 
+  bool getLocalFlag(int index);
+  bool getGlobalFlag(int index);
+  void setLocalFlag(int index, bool value);
+  void setGlobalFlag(int index, bool value);
+
   void run(BTDisplay &d);
   bool move(BTDisplay &d, int dir);
   void turnLeft(BTDisplay &d);
@@ -81,6 +86,8 @@ class BTGame : public Psuedo3DMap
   int counter;
   BTCombat combat;
   BTStatus status;
+  BitField local;
+  BitField global;
 
   static BTGame *game;
 };

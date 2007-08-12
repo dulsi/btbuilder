@@ -12,6 +12,16 @@ BitField::BitField()
 {
 }
 
+void BitField::clearAll()
+{
+ bits = 0;
+}
+
+void BitField::clear(int index)
+{
+ bits &= (~(1 << index));
+}
+
 bool BitField::isSet(int index) const
 {
  return ((bits & (1 << index)) != 0);
