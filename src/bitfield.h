@@ -17,6 +17,7 @@ class BitField
   void clearAll();
   void clear(int index);
   bool isSet(int index) const;
+  int getMaxSet() const;
   void set(int index);
 
  private:

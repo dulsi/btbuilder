@@ -9,7 +9,7 @@
 
 std::string ArrayLookup::getName(int index)
 {
- if ((index > 0) && (index < size))
+ if ((index >= 0) && (index < size))
   return array[index];
  else
   return "";

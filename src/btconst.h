@@ -157,7 +157,7 @@ extern char *statAbbrev[];
 
 #define BTSAVE_DIFFICULTY 20
 
-#define BTSTATUS_DEAD 1
+#define BTSTATUS_DEAD 0
 
 #define BTCOMBAT_MAXENCOUNTERS 4
 

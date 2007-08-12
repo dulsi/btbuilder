@@ -419,7 +419,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
      continue;
     }
    }
-   if (XMLTYPE_CREATE != (*itr)->type)
+   if ((XMLTYPE_CREATE != (*itr)->type) && (XMLTYPE_BITFIELD != (*itr)->type))
    {
     std::string tag = (*itr)->createTag();
     PHYSFS_write(f, "<", 1, 1);
@@ -469,6 +469,19 @@ void XMLSerializer::write(const char *filename, bool physfs)
      content = *reinterpret_cast<std::string*>((*itr)->object);
      break;
     }
+    case XMLTYPE_BITFIELD:
+    {
+     BitField *b = reinterpret_cast<BitField*>((*itr)->object);
+     ValueLookup *lookup = reinterpret_cast<ValueLookup*>((*itr)->data);
+     for (int i = b->getMaxSet(); i >= 0; --i)
+     {
+      if (b->isSet(i))
+      {
+       content = "<" + (*itr)->createTag() + ">" + lookup->getName(i) + "</" + (*itr)->name + ">";
+      }
+     }
+     break;
+    }
     case XMLTYPE_CREATE:
     {
      XMLArray *ary = reinterpret_cast<XMLArray*>((*itr)->object);
@@ -504,7 +517,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
    }
    if (content.length())
     PHYSFS_write(f, content.c_str(), 1, content.length());
-   if ((XMLTYPE_CREATE != (*itr)->type) && (XMLTYPE_OBJECT != (*itr)->type))
+   if ((XMLTYPE_CREATE != (*itr)->type) && (XMLTYPE_OBJECT != (*itr)->type) && (XMLTYPE_BITFIELD != (*itr)->type))
    {
     PHYSFS_write(f, "</", 1, 2);
     PHYSFS_write(f, (*itr)->name.c_str(), 1, (*itr)->name.length());

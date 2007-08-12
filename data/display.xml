@@ -27,7 +27,7 @@
 	<conditional>
 		<checkBit>
 			<attribute>status</attribute>
-			<bit>1</bit>
+			<bit>0</bit>
 			<print>
 				<text>-DEAD-</text>
 				<position><x>142</x><y>0</y><w>72</w><h>8</h></position>
@@ -36,7 +36,7 @@
 		</checkBit>
 		<checkBit>
 			<attribute>status</attribute>
-			<bit>6</bit>
+			<bit>5</bit>
 			<print>
 				<text>-STONE-</text>
 				<position><x>142</x><y>0</y><w>72</w><h>8</h></position>

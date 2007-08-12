@@ -22,6 +22,14 @@ void BitField::clear(int index)
  bits &= (~(1 << index));
 }
 
+int BitField::getMaxSet() const
+{
+ int i = 0;
+ while ((bits >> i) > 0)
+  ++i;
+ return i - 1;
+}
+
 bool BitField::isSet(int index) const
 {
  return ((bits & (1 << index)) != 0);
