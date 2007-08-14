@@ -31,7 +31,7 @@ void BTStatBlock::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
  XMLAction *state = pc->find(attribute, NULL);
  if (state)
  {
-  switch(state->type)
+  switch(state->getType())
   {
    case XMLTYPE_BOOL:
     if (*(reinterpret_cast<bool*>(state->object)))
@@ -120,7 +120,7 @@ void BTCondition::serialize(ObjectSerializer* s)
 bool BTCheckBit::compare(ObjectSerializer *pc) const
 {
  XMLAction *state = pc->find(attribute, NULL);
- if ((state) && (XMLTYPE_BITFIELD == state->type))
+ if ((state) && (XMLTYPE_BITFIELD == state->getType()))
  {
   return reinterpret_cast<BitField*>(state->object)->isSet(bit);
  }

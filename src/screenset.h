@@ -308,6 +308,7 @@ class BTScreenSet : public ObjectSerializer
   void setPicture(BTDisplay &d, int pic, char *l);
 
   // Actions
+  static int advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

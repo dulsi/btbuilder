@@ -9,9 +9,18 @@
 	<screen number="2">
 		<line>The Review Board recognizes <name />.</line>
 		<line>Wouldst thou like to be reviewed for:</line>
-		<choice keys="aA">Advancement</choice>
+		<choice keys="aA" action="advanceLevel">Advancement</choice>
 		<choice keys="sS">Spell Acquiring</choice>
 		<choice keys="cC">Class Change</choice>
 		<choice keys="dD" screen="1">Done</choice>
+	</screen>
+	<screen number="3" escapeScreen="2" timeout="1000">
+		<line>The guild leaders deem that <name /> still needth <xpneeded /> experience points prior to advancement...</line>
+	</screen>
+	<screen number="4" escapeScreen="2">
+		<line>The guild leaders deem that <name /> hath earned a level of advancement...</line>
+		<can option="increaseStat"><line>+1 to <increaseStat /></line></can>
+		<barrier />
+		<choice keys="cC" screen="2" align="center">(CONTINUE)</choice>
 	</screen>
 </screenset>

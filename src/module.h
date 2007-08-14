@@ -24,6 +24,7 @@ class BTModule : public XMLObject
   char *monster;
   char *spell;
   char *race;
+  char *xpChart;
   char *job;
   char *start;
   char *title;

@@ -136,8 +136,10 @@ extern char *directions[];
 extern char *mapTypes[];
 
 #define BT_STATS 5
+#define BTSTAT_MAX 18
 #define BTSTAT_ST 0
-#define BTSTAT_IQ 2
+#define BTSTAT_IQ 1
+#define BTSTAT_DX 2
 #define BTSTAT_CN 3
 #define BTSTAT_LK 4
 extern char *statAbbrev[];

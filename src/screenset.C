@@ -11,6 +11,9 @@
 #include "pc.h"
 #include "status.h"
 
+#define BTSCREEN_ADVANCELEVEL 4
+#define BTSCREEN_XPNEEDED     3
+
 BTElement::BTElement(const char *name, const char **a)
  : isText(false), text(name)
 {
@@ -86,12 +89,7 @@ void BTLine::addStat(const char *name, const char **atts)
 
 void BTLine::setAlignment(std::string a)
 {
- if (a == "center")
-  align = BTDisplay::center;
- else if (a == "right")
-  align = BTDisplay::right;
- else
-  align = BTDisplay::left;
+ align = (BTDisplay::alignment)BTAlignmentLookup::lookup.getIndex(a);
 }
 
 void BTLine::draw(BTDisplay &d, ObjectSerializer *obj)
@@ -133,7 +131,7 @@ std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) c
    XMLAction *state = obj->find((*itr)->text.c_str(), const_cast<const char**>((*itr)->atts));
    if (state)
    {
-    switch(state->type)
+    switch(state->getType())
     {
      case XMLTYPE_BOOL:
       if (*(reinterpret_cast<bool*>(state->object)))
@@ -670,7 +668,7 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
  XMLAction *state = obj->find(option.c_str(), const_cast<const char**>(atts));
  if (state)
  {
-  switch(state->type)
+  switch(state->getType())
   {
    case XMLTYPE_BOOL:
     if (false == *(reinterpret_cast<bool*>(state->object)))
@@ -697,7 +695,21 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
      return;
     break;
    case XMLTYPE_STRING:
+    if (checkValue)
+    {
+     if (value != *(reinterpret_cast<char**>(state->object)))
+      return;
+    }
+    else if (0 == strlen(*reinterpret_cast<char**>(state->object)))
+     return;
+    break;
    case XMLTYPE_STDSTRING:
+    if (checkValue)
+    {
+     if (value != *(reinterpret_cast<std::string*>(state->object)))
+      return;
+    }
+    else if (0 == reinterpret_cast<std::string*>(state->object)->length())
      return;
     break;
    case XMLTYPE_BITFIELD:
@@ -841,6 +853,7 @@ XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
 BTScreenSet::BTScreenSet()
  : picture(-1), label(0), pc(0)
 {
+ actionList["advanceLevel"] = &advanceLevel;
  actionList["addToParty"] = &addToParty;
  actionList["buy"] = &buy;
  actionList["create"] = &create;
@@ -1070,6 +1083,23 @@ void BTScreenSet::setPicture(BTDisplay &d, int pic, char *l)
  d.drawLabel(label);
 }
 
+int BTScreenSet::advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ if (b.pc->advanceLevel())
+ {
+  int stat = b.pc->incrementStat();
+  d.drawStats();
+  if (stat != -1)
+   b.add("increaseStat", &statAbbrev[stat]);
+  return BTSCREEN_ADVANCELEVEL;
+ }
+ else
+ {
+  b.add("xpneeded", new unsigned int(b.pc->getXPNeeded()), NULL, true);
+  return BTSCREEN_XPNEEDED;
+ }
+}
+
 int BTScreenSet::addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
@@ -1267,6 +1297,7 @@ int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
     b.pc->hp = b.pc->maxHp = BTDice(1, 14, 14).roll() + ((b.pc->stat[BTSTAT_CN] > 14) ? b.pc->stat[BTSTAT_CN] - 14 : 0);
     b.pc->toHit = job[i]->toHit;
     b.pc->save = job[i]->save + ((b.pc->stat[BTSTAT_LK] > 14) ? b.pc->stat[BTSTAT_LK] - 14 : 0);
+    b.pc->ac = job[i]->ac + ((b.pc->stat[BTSTAT_DX] > 14) ? b.pc->stat[BTSTAT_DX] - 14 : 0);
     b.pc->gold = BTDice(1, 61, 110).roll();
     if (job[i]->spells)
     {

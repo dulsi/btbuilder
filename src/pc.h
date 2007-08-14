@@ -28,7 +28,9 @@ class BTPc : public XMLObject
   BTPc();
   ~BTPc() { delete [] name; delete [] skill; }
 
+  bool advanceLevel();
   void equip(int index);
+  int incrementStat();
   bool isAlive() const;
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
@@ -36,6 +38,7 @@ class BTPc : public XMLObject
   int getGold() const;
   int getHandWeapon() const;
   int getItem(int index) const;
+  unsigned int getXPNeeded();
   unsigned int giveGold(unsigned int amount);
   void giveHP(int amount);
   bool giveItem(int id, bool known, int charges);
@@ -62,6 +65,7 @@ class BTPc : public XMLObject
   int stat[BT_STATS];
   int ac;
   int toHit;
+  int rateAttacks;
   int save;
   BitField status;
   int hp, maxHp;

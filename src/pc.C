@@ -17,7 +17,7 @@ void BTEquipment::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), job(0), picture(-1), monster(-1), ac(0), toHit(0), save(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
+ : race(0), job(0), picture(-1), monster(-1), ac(0), toHit(0), rateAttacks(1), save(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
@@ -28,6 +28,36 @@ BTPc::BTPc()
  skill = new int[jobs];
  for (i = 0; i < jobs; ++i)
   skill[i] = 0;
+}
+
+bool BTPc::advanceLevel()
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ BTXpChartList &xpChartList = BTGame::getGame()->getXpChartList();
+ if (jobList[job]->xpChart != -1)
+ {
+  if (xp >= xpChartList[jobList[job]->xpChart]->getXpNeeded(level))
+  {
+   ++level;
+   if (((level - 1) % jobList[job]->improveToHit) == 0)
+    ++toHit;
+   if ((jobList[job]->improveRateAttacks) && (((level - 1) % jobList[job]->improveRateAttacks) == 0))
+   {
+    ++rateAttacks;
+    if (rateAttacks > jobList[job]->maxRateAttacks)
+     rateAttacks = jobList[job]->improveRateAttacks;
+   }
+   if (((level - 1) % jobList[job]->improveSave) == 0)
+    ++save;
+   if ((jobList[job]->improveAc) && (((level - 1) % jobList[job]->improveAc) == 0))
+    ++ac;
+   int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
+   hp += moreHp;
+   maxHp += moreHp;
+   return true;
+  }
+ }
+ return false;
 }
 
 void BTPc::equip(int index)
@@ -46,6 +76,36 @@ void BTPc::equip(int index)
  ac += itemList[item[index].id].getArmorPlus();
  toHit += itemList[item[index].id].getHitPlus();
  item[index].equipped = BTITEM_EQUIPPED;
+}
+
+int BTPc::incrementStat()
+{
+ int s = 0;
+ int i = 0; 
+ for (; i < BT_STATS; ++i)
+ {
+  if (stat[i] < BTSTAT_MAX)
+   ++s;
+ }
+ if (s == 0)
+  return -1;
+ if (s != 1)
+  s = BTDice(1, s, -1).roll();
+ for (i = 0; i < BT_STATS; ++i)
+ {
+  if (stat[i] < BTSTAT_MAX)
+  {
+   --s;
+   ++stat[i];
+   if ((i == BTSTAT_LK) && (stat[i] > 14))
+    ++save;
+   if ((i == BTSTAT_DX) && (stat[i] > 14))
+    ++ac;
+   if (0 == s)
+    return i;
+  }
+ }
+ return -1; // Can't get here
 }
 
 bool BTPc::isAlive() const
@@ -95,6 +155,18 @@ int BTPc::getHandWeapon() const
 int BTPc::getItem(int index) const
 {
  return item[index].id;
+}
+
+unsigned int BTPc::getXPNeeded()
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ BTXpChartList &xpChartList = BTGame::getGame()->getXpChartList();
+ if (jobList[job]->xpChart != -1)
+ {
+  return xpChartList[jobList[job]->xpChart]->getXpNeeded(level) - xp;
+ }
+ else
+  return 4000000000UL;
 }
 
 bool BTPc::giveItem(int id, bool known, int charges)
@@ -181,6 +253,7 @@ void BTPc::serialize(ObjectSerializer* s)
  }
  s->add("ac", &ac);
  s->add("toHit", &toHit);
+ s->add("rateAttacks", &rateAttacks);
  s->add("save", &save);
  s->add("status", &status, &BTStatusLookup::lookup);
  s->add("maxhp", &maxHp);

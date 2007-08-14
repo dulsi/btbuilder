@@ -20,6 +20,7 @@ BTGame::BTGame(BTModule *m)
   game = this;
  }
  BTRace::readXML(m->race, raceList);
+ BTXpChart::readXML(m->xpChart, xpChartList);
  BTJob::readXML(m->job, jobList);
  BTPc::readXML("roster.xml", roster);
  PHYSFS_file *start = PHYSFS_openRead(m->start);
@@ -77,6 +78,11 @@ XMLVector<BTPc*> &BTGame::getRoster()
 BTFactory<BTSpell> &BTGame::getSpellList()
 {
  return spellList;
+}
+
+BTXpChartList &BTGame::getXpChartList()
+{
+ return xpChartList;
 }
 
 BTMap *BTGame::getMap()

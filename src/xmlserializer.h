@@ -56,23 +56,27 @@ class XMLAttribute
   std::string value;
 };
 
-#define XMLTYPE_CREATE 1
-#define XMLTYPE_INT 2
-#define XMLTYPE_STRING 3
-#define XMLTYPE_OBJECT 4
-#define XMLTYPE_BOOL 5
-#define XMLTYPE_UINT 6
-#define XMLTYPE_BITFIELD 7
-#define XMLTYPE_INT16 8
-#define XMLTYPE_UINT16 9
-#define XMLTYPE_STDSTRING 10
+#define XMLTYPE_TYPE   0x0FFF
+#define XMLTYPE_DELETE 0x1000
+#define XMLTYPE_CREATE     1
+#define XMLTYPE_INT        2
+#define XMLTYPE_STRING     3
+#define XMLTYPE_OBJECT     4
+#define XMLTYPE_BOOL       5
+#define XMLTYPE_UINT       6
+#define XMLTYPE_BITFIELD   7
+#define XMLTYPE_INT16      8
+#define XMLTYPE_UINT16     9
+#define XMLTYPE_STDSTRING  10
+#define XMLTYPE_VECTORUINT 11
 
 class XMLAction
 {
  public:
-  ~XMLAction() { if (attrib) delete attrib; }
+  ~XMLAction();
 
   std::string createTag();
+  int getType() const { return type & XMLTYPE_TYPE; }
 
   std::string name;
   std::vector<XMLAttribute> *attrib;
@@ -99,12 +103,13 @@ class ObjectSerializer
   void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL);
-  void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, int16_t *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, uint16_t *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, std::string *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, std::string *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, std::vector<unsigned int> *p, std::vector<XMLAttribute> *atts = NULL);
 
   XMLAction* find(const char *name, const char **atts);
   void findAll(const char *name, std::list<XMLAction*> &list);

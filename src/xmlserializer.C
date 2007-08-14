@@ -8,6 +8,25 @@
 #include "xmlserializer.h"
 #include <physfs.h>
 
+XMLAction::~XMLAction()
+{
+ if (attrib) delete attrib;
+ if (type & XMLTYPE_DELETE)
+ {
+  switch (getType())
+  {
+   case XMLTYPE_UINT:
+    delete reinterpret_cast<unsigned int*>(object);
+    break;
+   case XMLTYPE_STDSTRING:
+    delete reinterpret_cast<std::string*>(object);
+    break;
+   default:
+    break;
+  }
+ }
+}
+
 std::string XMLAction::createTag()
 {
  std::string str(name);
@@ -104,12 +123,14 @@ void ObjectSerializer::add(const char *name, int16_t *p, std::vector<XMLAttribut
  action.push_back(act);
 }
 
-void ObjectSerializer::add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts /*= NULL*/, bool delFlg /*= false*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
  act->attrib = atts;
  act->type = XMLTYPE_UINT;
+ if (delFlg)
+  act->type |= XMLTYPE_DELETE;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
@@ -126,12 +147,14 @@ void ObjectSerializer::add(const char *name, char **p, std::vector<XMLAttribute>
  action.push_back(act);
 }
 
-void ObjectSerializer::add(const char *name, std::string *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, std::string *p, std::vector<XMLAttribute> *atts /*= NULL*/, bool delFlg /*= false*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
  act->attrib = atts;
  act->type = XMLTYPE_STDSTRING;
+ if (delFlg)
+  act->type |= XMLTYPE_DELETE;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
@@ -146,6 +169,17 @@ void ObjectSerializer::add(const char *name, BitField *p, ValueLookup *lookup, s
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  act->data = reinterpret_cast<void*>(lookup);
+ action.push_back(act);
+}
+
+void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_VECTORUINT;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
 }
 
@@ -233,7 +267,7 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
    level.back()->object->elementData(name, atts);
   return;
  }
- if (XMLTYPE_CREATE == act->type)
+ if (XMLTYPE_CREATE == act->getType())
  {
   XMLLevel *newLevel = new XMLLevel;
   newLevel->state = act;
@@ -241,7 +275,7 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
   level.push_back(newLevel);
   newLevel->object->serialize(this);
  }
- else if (XMLTYPE_OBJECT == act->type)
+ else if (XMLTYPE_OBJECT == act->getType())
  {
   XMLLevel *newLevel = new XMLLevel;
   newLevel->state = act;
@@ -271,7 +305,7 @@ void XMLSerializer::endElement(const XML_Char *name)
    removeLevel();
    XMLLevel *oldLevel = level.back();
    level.pop_back();
-   if (XMLTYPE_CREATE == oldLevel->state->type)
+   if (XMLTYPE_CREATE == oldLevel->state->getType())
     reinterpret_cast<XMLArray*>(oldLevel->state->object)->push_back(oldLevel->object);
    delete oldLevel;
   }
@@ -282,7 +316,7 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
 {
  if (state)
  {
-  switch(state->type)
+  switch(state->getType())
   {
    case XMLTYPE_BOOL:
     *(reinterpret_cast<bool*>(state->object)) = ((strncmp(s, "true", 4) == 0) ? true : false);
@@ -338,11 +372,19 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
      reinterpret_cast<BitField*>(state->object)->set(index);
     break;
    }
+   case XMLTYPE_VECTORUINT:
+   {
+    std::string str(s, len);
+    unsigned int u;
+    sscanf(str.c_str(), "%u", &u);
+    reinterpret_cast<std::vector<unsigned int> *>(state->object)->push_back(u);
+    break;
+   }
    default:
     break;
   };
  }
- else if ((!level.empty()) && ((XMLTYPE_CREATE == level.back()->state->type) || (XMLTYPE_OBJECT == level.back()->state->type)))
+ else if ((!level.empty()) && ((XMLTYPE_CREATE == level.back()->state->getType()) || (XMLTYPE_OBJECT == level.back()->state->getType())))
  {
   level.back()->object->characterData(s, len);
  }
@@ -363,7 +405,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
     while (*itr != level.back()->state)
      --itr;
     XMLAction *act = (*itr);
-    if (XMLTYPE_CREATE == (*itr)->type)
+    if (XMLTYPE_CREATE == (*itr)->getType())
     {
      XMLArray *ary = reinterpret_cast<XMLArray*>(level.back()->state->object);
      PHYSFS_write(f, "</", 1, 2);
@@ -419,7 +461,8 @@ void XMLSerializer::write(const char *filename, bool physfs)
      continue;
     }
    }
-   if ((XMLTYPE_CREATE != (*itr)->type) && (XMLTYPE_BITFIELD != (*itr)->type))
+   int type = (*itr)->getType();
+   if ((XMLTYPE_CREATE != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
    {
     std::string tag = (*itr)->createTag();
     PHYSFS_write(f, "<", 1, 1);
@@ -428,7 +471,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
    }
    char convert[30];
    std::string content;
-   switch((*itr)->type)
+   switch(type)
    {
     case XMLTYPE_BOOL:
      if (*(reinterpret_cast<bool*>((*itr)->object)))
@@ -482,6 +525,16 @@ void XMLSerializer::write(const char *filename, bool physfs)
      }
      break;
     }
+    case XMLTYPE_VECTORUINT:
+    {
+     std::vector<unsigned int> *v = reinterpret_cast<std::vector<unsigned int> *>((*itr)->object);
+     for (int i = 0; i < v->size(); ++i)
+     {
+      sprintf(convert, "%u", (*v)[i]);
+      content = "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
+     }
+     break;
+    }
     case XMLTYPE_CREATE:
     {
      XMLArray *ary = reinterpret_cast<XMLArray*>((*itr)->object);
@@ -517,7 +570,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
    }
    if (content.length())
     PHYSFS_write(f, content.c_str(), 1, content.length());
-   if ((XMLTYPE_CREATE != (*itr)->type) && (XMLTYPE_OBJECT != (*itr)->type) && (XMLTYPE_BITFIELD != (*itr)->type))
+   if ((XMLTYPE_CREATE != type) && (XMLTYPE_OBJECT != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
    {
     PHYSFS_write(f, "</", 1, 2);
     PHYSFS_write(f, (*itr)->name.c_str(), 1, (*itr)->name.length());

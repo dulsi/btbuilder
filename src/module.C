@@ -19,6 +19,8 @@ BTModule::BTModule()
  strcpy(spell, "DEFAULT.SPL");
  race = new char[strlen("data/race.xml") + 1];
  strcpy(race, "data/race.xml");
+ xpChart = new char[strlen("data/experience.xml") + 1];
+ strcpy(xpChart, "data/experience.xml");
  job = new char[strlen("data/job.xml") + 1];
  strcpy(job, "data/job.xml");
  start = new char[strlen("START.BRD") + 1];
@@ -64,6 +66,7 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("monster", &monster);
  s->add("spell", &spell);
  s->add("race", &race);
+ s->add("xpChart", &xpChart);
  s->add("job", &job);
  s->add("start", &start);
  s->add("title", &title);

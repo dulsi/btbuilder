@@ -20,6 +20,7 @@
 #include "status.h"
 #include "map.h"
 #include "pc.h"
+#include "xpchart.h"
 
 class BTPartyDead
 {
@@ -39,6 +40,7 @@ class BTGame : public Psuedo3DMap
   BTRaceList &getRaceList();
   XMLVector<BTPc*> &getRoster();
   BTFactory<BTSpell> &getSpellList();
+  BTXpChartList &getXpChartList();
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
   BTParty &getParty();
@@ -79,6 +81,7 @@ class BTGame : public Psuedo3DMap
   BTRaceList raceList;
   XMLVector<BTPc*> roster;
   BTFactory<BTSpell> spellList;
+  BTXpChartList xpChartList;
   BTMap *levelMap;
   int xPos, yPos, facing;
   BTParty party;

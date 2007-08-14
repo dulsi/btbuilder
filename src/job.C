@@ -33,9 +33,14 @@ void BTJob::serialize(ObjectSerializer* s)
  s->add("picture", &picture);
  s->add("toHit", &toHit);
  s->add("improveToHit", &improveToHit);
+ s->add("improveRateAttacks", &improveRateAttacks);
+ s->add("maxRateAttacks", &maxRateAttacks);
  s->add("save", &save);
  s->add("improveSave", &improveSave);
+ s->add("ac", &ac);
+ s->add("improveAc", &improveAc);
  s->add("hp", &hp);
+ s->add("xpChart", &xpChart, NULL, &BTGame::getGame()->getXpChartList());
  s->add("spells", &spells);
  s->add("advanced", &advanced);
  s->add("allowedRace", &allowedRace, &BTGame::getGame()->getRaceList());

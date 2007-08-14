@@ -8,6 +8,9 @@
 		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<improveRateAttacks>2</improveRateAttacks>
+		<maxRateAttacks>7</maxRateAttacks>
+		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Dwarf</allowedRace>
@@ -22,9 +25,12 @@
 		<picture>31</picture>
 		<toHit>-10</toHit>
 		<improveToHit>1</improveToHit>
+		<improveRateAttacks>2</improveRateAttacks>
+		<maxRateAttacks>7</maxRateAttacks>
 		<save>7</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Dwarf</allowedRace>
@@ -38,6 +44,7 @@
 		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Dwarf</allowedRace>
@@ -55,6 +62,7 @@
 		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Dwarf</allowedRace>
@@ -70,6 +78,7 @@
 		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Dwarf</allowedRace>
 		<allowedRace>Half-Orc</allowedRace>
@@ -83,7 +92,12 @@
 		<improveToHit>2</improveToHit>
 		<save>5</save>
 		<improveSave>2</improveSave>
+		<improveRateAttacks>2</improveRateAttacks>
+		<maxRateAttacks>7</maxRateAttacks>
+		<ac>1</ac>
+		<improveAc>1</improveAc>
 		<hp>8</hp>
+		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Dwarf</allowedRace>
@@ -101,6 +115,7 @@
 		<improveSave>2</improveSave>
 		<hp>4</hp>
                 <spells>true</spells>
+		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Hobbit</allowedRace>
@@ -118,6 +133,7 @@
 		<improveSave>2</improveSave>
 		<hp>4</hp>
                 <spells>true</spells>
+		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
 		<allowedRace>Hobbit</allowedRace>
@@ -135,6 +151,7 @@
 		<improveSave>2</improveSave>
 		<hp>8</hp>
                 <spells>true</spells>
+		<xpChart>Sorcerer</xpChart>
                 <advanced>true</advanced>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
@@ -153,6 +170,7 @@
 		<improveSave>2</improveSave>
 		<hp>8</hp>
                 <spells>true</spells>
+		<xpChart>Wizard</xpChart>
                 <advanced>true</advanced>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
@@ -171,6 +189,7 @@
 		<improveSave>2</improveSave>
 		<hp>8</hp>
                 <spells>true</spells>
+		<xpChart>Archmage</xpChart>
                 <advanced>true</advanced>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
@@ -187,6 +206,7 @@
 		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>10</hp>
+		<xpChart>Warrior</xpChart>
                 <advanced>true</advanced>
 	</job>
 	<job>
