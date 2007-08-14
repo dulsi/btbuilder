@@ -12,7 +12,8 @@ BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/race.o src/display.o src/sdlextend.o src/pc.o src/module.o \
 	src/physfsrwops.o src/compressor.o src/bitfield.o src/status.o \
 	src/serialrect.o src/displayconfig.o src/statusbar.o \
-	src/statusinfo.o src/valuelookup.o src/screenset.o src/combat.o
+	src/statusinfo.o src/valuelookup.o src/screenset.o src/combat.o \
+	src/xpchart.o
 BTBUILDER_EXE = btbuilder
 
 all: $(BTBUILDER_EXE)
