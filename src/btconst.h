@@ -23,6 +23,10 @@ extern char *spellTypes[];
 extern char *effectiveRanges[];
 
 #define BT_AREAEFFECT 4
+#define BTAREAEFFECT_NONE  0
+#define BTAREAEFFECT_FOE   1
+#define BTAREAEFFECT_GROUP 2
+#define BTAREAEFFECT_ALL   3
 extern char *areaEffect[];
 
 #define BT_DURATION 6

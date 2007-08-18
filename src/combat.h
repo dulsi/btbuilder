@@ -81,6 +81,7 @@ class BTCombat : public BTScreenSet
   // Actions
   static int advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

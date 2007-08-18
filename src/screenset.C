@@ -957,6 +957,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
  char specialKeys[10];
  int previous = 0;
  int where = start;
+ int partySize = party.size();
  d.drawImage(picture);
  d.drawLabel(label);
  while (true)
@@ -966,16 +967,25 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   if (pc)
   {
    add("pc", pc);
+   add("partySize", &partySize);
    pc->serialize(this);
-   if (-1 != pc->combat.item)
+   switch (pc->combat.type)
    {
-    BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-    pc->item[pc->combat.item].serialize(this);
-    if (pc->getItem(pc->combat.item) != BTITEM_NONE)
+    case BTPc::BTPcAction::item:
     {
-     itemName = itemList[pc->getItem(pc->combat.item)].getName();
-     add("itemName", &itemName);
+     BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+     pc->item[pc->combat.object].serialize(this);
+     if (pc->getItem(pc->combat.object) != BTITEM_NONE)
+     {
+      itemName = itemList[pc->getItem(pc->combat.object)].getName();
+      add("itemName", &itemName);
+     }
+     break;
     }
+    case BTPc::BTPcAction::spell:
+     break;
+    default:
+     break;
    }
   }
   try
@@ -1072,7 +1082,10 @@ void BTScreenSet::setPc(BTPc *c)
   delete pc;
  pc = c;
  if (pc)
-  pc->combat.item = -1;
+ {
+  pc->combat.object = -1;
+  pc->combat.type = BTPc::BTPcAction::none;
+ }
 }
 
 void BTScreenSet::setPicture(BTDisplay &d, int pic, char *l)
@@ -1147,16 +1160,18 @@ int BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
 
 int BTScreenSet::drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc->takeItemFromIndex(b.pc->combat.item);
- b.pc->combat.item = -1;
+ b.pc->takeItemFromIndex(b.pc->combat.object);
+ b.pc->combat.object = -1;
+ b.pc->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
  return 0;
 }
 
 int BTScreenSet::equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc->equip(b.pc->combat.item);
- b.pc->combat.item = -1;
+ b.pc->equip(b.pc->combat.object);
+ b.pc->combat.object = -1;
+ b.pc->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
  return 0;
 }
@@ -1183,11 +1198,12 @@ int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  BTParty &party = BTGame::getGame()->getParty();
  if ((key >= '1') && (key <= '9') && (key - '1' < party.size()) && (party[key - '1'] != b.pc))
  {
-  BTEquipment &item = b.pc->item[b.pc->combat.item];
+  BTEquipment &item = b.pc->item[b.pc->combat.object];
   if (party[key - '1']->giveItem(item.id, item.known, item.charges))
   {
-   b.pc->takeItemFromIndex(b.pc->combat.item);
-   b.pc->combat.item = -1;
+   b.pc->takeItemFromIndex(b.pc->combat.object);
+   b.pc->combat.object = -1;
+   b.pc->combat.type = BTPc::BTPcAction::none;
    d.drawStats();
   }
   else
@@ -1277,7 +1293,8 @@ int BTScreenSet::selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, i
 int BTScreenSet::selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
- b.pc->combat.item = select->select;
+ b.pc->combat.object = select->select;
+ b.pc->combat.type = BTPc::BTPcAction::item;
  return 0;
 }
 
@@ -1326,8 +1343,9 @@ int BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
 
 int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc->unequip(b.pc->combat.item);
- b.pc->combat.item = -1;
+ b.pc->unequip(b.pc->combat.object);
+ b.pc->combat.object = -1;
+ b.pc->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
  return 0;
 }

@@ -13,7 +13,10 @@
 		<can option="attack"><choice keys="aA" action="attack" screen="3">Attack foes</choice></can>
 		<choice keys="pP" action="partyAttack" screen="6">Party attack</choice>
 		<choice keys="dD" action="defend" screen="3">Defend</choice>
-		<choice keys="uU" action="useItem" screen="3">Use an item</choice>
+		<can option="maxsp"><choice keys="cC" screen="8">Cast a spell</choice></can>
+		<choice keys="uU" screen="9">Use an item</choice>
+		<can option="skill" number="4"><choice keys="bB" screen="3">Bard song</choice></can>
+		<can option="skill" number="3"><choice keys="hH" screen="3">Hide in shadows</choice></can>
 	</screen>
 	<combat number="3" escapeScreen="0" timeout="1000">
 	</combat>
@@ -36,6 +39,38 @@
 		<can option="distance" number="3" value="1"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
 		<can option="distance" number="4" value="1"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
 	</screen>
+	<screen number="8" escapeScreen="2">
+		<line>Spell to cast:</line>
+		<readString action="cast" screen="3">&gt;</readString>
+	</screen>
+	<screen number="9" escapeScreen="2">
+		<line />
+		<selectInventory action="useItem" screen="3" noerror="1" numbered="1"/>
+		<line>Use item #</line>
+		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
+	</screen>
+	<screen number="10" escapeScreen="2">
+		<line>Use on:</line>
+		<line>Member #[1-<partySize />]</line>
+		<can option="distance" number="1" value="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
+		<can option="distance" number="2" value="1"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
+		<can option="distance" number="3" value="1"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
+		<can option="distance" number="4" value="1"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
+		<selectParty action="target" screen="3" />
+	</screen>
+	<screen number="11" escapeScreen="2">
+		<line>Use on:</line>
+		<choice keys="pP" action="target" screen="3">[p] Party</choice>
+		<can option="distance" number="1" value="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
+		<can option="distance" number="2" value="1"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
+		<can option="distance" number="3" value="1"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
+		<can option="distance" number="4" value="1"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
+		<selectParty action="target" screen="3" />
+	</screen>
 	<error type="runAway">You are attempting to run away.
 You manage to get away!</error>
+	<error type="nospell" screen="2">No spell by that name.</error>
+	<error type="dontknow" screen="2">You don't know this spell.</error>
+	<error type="cantuse" screen="2">You can't use that.</error>
+	<error type="nosp" screen="2">Not enough spell points.</error>
 </screenset>
