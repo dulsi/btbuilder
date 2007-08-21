@@ -45,6 +45,7 @@ class BTGame : public Psuedo3DMap
   BTMap *loadMap(const char *filename);
   BTParty &getParty();
 
+  int getLight();
   int getFacing();
   int getX();
   int getY();
@@ -71,6 +72,11 @@ class BTGame : public Psuedo3DMap
   void turnRight(BTDisplay &d);
   void turnAround(BTDisplay &d);
 
+  void addEffect(BTSpell *s, unsigned int expire);
+  unsigned int getExpiration(unsigned int duration);
+  bool isExpired(unsigned int expiration);
+  void nextTurn();
+
   static BTGame *getGame();
 
  private:
@@ -85,12 +91,14 @@ class BTGame : public Psuedo3DMap
   BTMap *levelMap;
   int xPos, yPos, facing;
   BTParty party;
+  std::list<BTSpellEffect*> spellEffect;
   std::string lastInput;
   int counter;
   BTCombat combat;
   BTStatus status;
   BitField local;
   BitField global;
+  unsigned int gameTime;
 
   static BTGame *game;
 };

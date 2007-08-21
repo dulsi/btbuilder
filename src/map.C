@@ -836,6 +836,14 @@ IShort BTMap::getLevel() const
  return level;
 }
 
+int BTMap::getLight() const
+{
+ if ((BTMAPTYPE_CITY == type) || (BTMAPTYPE_WILDERNESS == type))
+  return 5;
+ else
+  return 0;
+}
+
 IShort BTMap::getMonsterChance() const
 {
  return monsterChance;

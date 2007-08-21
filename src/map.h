@@ -187,6 +187,7 @@ class BTMap
   void setSpecial(IShort x, IShort y, IShort special);
   const char *getFilename() const;
   IShort getLevel() const;
+  int getLight() const;
   IShort getMonsterChance() const;
   IShort getMonsterLevel() const;
   const char *getName() const;

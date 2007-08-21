@@ -12,7 +12,7 @@
 BTGame *BTGame::game = NULL;
 
 BTGame::BTGame(BTModule *m)
- : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL)
+ : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0)
 {
  IRandomize();
  if (NULL == game)
@@ -109,6 +109,20 @@ BTMap *BTGame::loadMap(const char *filename)
 BTParty &BTGame::getParty()
 {
  return party;
+}
+
+int BTGame::getLight()
+{
+ int light = levelMap->getLight();
+ for (std::list<BTSpellEffect*>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+ {
+  if (BTSPELLTYPE_LIGHT == spellList[(*itr)->spell].getType())
+  {
+   if (light < 5)
+    light = 5;
+  }
+ }
+ return light;
 }
 
 int BTGame::getFacing()
@@ -224,6 +238,7 @@ void BTGame::run(BTDisplay &d)
   }
   while (true)
   {
+   nextTurn();
    d.drawView();
    d.drawLabel(levelMap->getName());
    if (special)
@@ -238,7 +253,7 @@ void BTGame::run(BTDisplay &d)
     }
     catch (const BTSpecialTeleport &t)
     {
-     loadMap(t.map.c_str()); // Detect if same map
+     loadMap(t.map.c_str());
      xPos = t.x;
      yPos = t.y;
      facing = t.facing;
@@ -357,6 +372,50 @@ void BTGame::turnAround(BTDisplay &d)
 {
  facing += 2;
  facing = facing % 4;
+}
+
+void BTGame::addEffect(BTSpell *s, unsigned int expire)
+{
+ int index = 0;
+ while (index < spellList.size())
+ {
+  if (&spellList[index] == s)
+   break;
+ }
+ if (index >= spellList.size())
+  return;
+ spellEffect.push_back(new BTSpellEffect(index, expire));
+}
+
+unsigned int BTGame::getExpiration(unsigned int duration)
+{
+ return (duration + gameTime) % (module->maxTime * BTTIME_MAXDAYS);
+}
+
+bool BTGame::isExpired(unsigned int expiration)
+{
+ if (expiration < ((module->maxTime * BTTIME_MAXDAYS) / 4))
+ {
+  if ((gameTime < ((module->maxTime * BTTIME_MAXDAYS) / 2)) && (expiration >= gameTime))
+   return true;
+  else
+   return false;
+ }
+ else if (expiration >= gameTime)
+  return true;
+ else
+  return false;
+}
+
+void BTGame::nextTurn()
+{
+ ++gameTime;
+ for (std::list<BTSpellEffect*>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+ {
+  if (isExpired((*itr)->expiration))
+  {
+  }
+ }
 }
 
 BTGame *BTGame::getGame()

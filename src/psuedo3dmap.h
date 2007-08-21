@@ -10,6 +10,7 @@
 class Psuedo3DMap
 {
  public:
+  virtual int getLight() = 0;
   virtual int getWallType(int x, int y, int direction) = 0;
 };
 

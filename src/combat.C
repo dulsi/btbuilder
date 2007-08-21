@@ -622,6 +622,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
    break;
   case BTPc::BTPcAction::cast:
    pc.sp -= spellList[pc.combat.object].getSp();
+   spellList[pc.combat.object].cast(d, pc.name, this, pc.combat.getTargetGroup(),  pc.combat.getTargetIndividual());
    break;
   case BTPc::BTPcAction::useItem:
   case BTPc::BTPcAction::skill:
@@ -636,8 +637,10 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
 
 bool BTCombat::endRound()
 {
+ BTGame *game = BTGame::getGame();
+ game->nextTurn();
  ++round;
- BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ BTFactory<BTMonster> &monList = game->getMonsterList();
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end();)
  {
   itr->canMove = true;
@@ -662,7 +665,7 @@ bool BTCombat::endRound()
   else
    ++itr;
  }
- BTParty &party = BTGame::getGame()->getParty();
+ BTParty &party = game->getParty();
  if (party.checkDead())
   throw BTSpecialError("dead");
  if ((0 == monsters.size()) && (xp > 0) && (!won))
@@ -739,6 +742,12 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
       return BTCOMBATSCREEN_TARGETSINGLE;
      case BTAREAEFFECT_GROUP:
       return BTCOMBATSCREEN_TARGETGROUP;
+     case BTAREAEFFECT_NONE:
+      b.getPc()->combat.clearTarget(b.getPc()->combat.getTargetGroup());
+      return 0;
+     case BTAREAEFFECT_ALL:
+      b.getPc()->combat.setTarget(BTTARGET_ALLMONSTERS);
+      return 0;
      default:
       return 0;
     }

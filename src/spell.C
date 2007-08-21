@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "spell.h"
+#include "game.h"
 
 BTSpell::BTSpell(BinaryReadFile &f)
 {
@@ -119,6 +120,49 @@ void BTSpell::write(BinaryWriteFile &f)
  f.writeUByteArray(22, (IUByte *)effect);
 }
 
+void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
+{
+ BTGame *game = BTGame::getGame();
+ unsigned int expire = 0;
+ switch(duration)
+ {
+  case BTDURATION_ONE:
+   expire = game->getExpiration(1);
+   break;
+  case BTDURATION_SHORT:
+   expire = game->getExpiration(BTDice(1, 21, 19).roll());
+   break;
+  case BTDURATION_MEDIUM:
+   expire = game->getExpiration(BTDice(1, 31, 29).roll());
+   break;
+  case BTDURATION_LONG:
+   expire = game->getExpiration(BTDice(1, 41, 39).roll());
+   break;
+  case BTDURATION_COMBAT:
+   expire = BTTIME_COMBAT;
+   break;
+  case BTDURATION_PERMANENT:
+   expire = BTTIME_PERMANENT;
+   break;
+  case BTDURATION_CONTINUOUS:
+   expire = BTTIME_CONTINUOUS;
+   break;
+  case BTDURATION_INDEFINITE:
+   expire = BTTIME_INDEFINITE;
+   break;
+  default:
+   break;
+ }
+ switch(type)
+ {
+  case BTSPELLTYPE_LIGHT:
+   game->addEffect(this, expire);
+   break;
+  default:
+   break;
+ }
+}
+
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
 {
  int ans = a.getCaster() - b.getCaster();
@@ -129,3 +173,13 @@ int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
  return ans;
 }
 
+BTSpellEffect::BTSpellEffect(int s, int x)
+ : spell(s), expiration(x)
+{
+}
+
+void BTSpellEffect::serialize(ObjectSerializer *s)
+{
+ s->add("spell", &spell);
+ s->add("expiration", &expiration);
+}

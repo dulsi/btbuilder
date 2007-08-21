@@ -57,16 +57,35 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
  src.x = src.y = dest.x = dest.y = 0;
  src.h = config->height * yMult;
  src.w = config->width * xMult;
- SDL_BlitSurface(background, &src, display, &dest);
- drawEdge(map, x + (changeXY[direction][0] * 4), y + (changeXY[direction][1] * 4), direction, WALL_EDGE_LEFT5_1, 2);
- drawFront(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_FRONT4, 3);
- drawEdge(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_EDGE_LEFT4_1, 2);
- drawFront(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_FRONT3, 2);
- drawEdge(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_EDGE_LEFT3_1, 1);
- drawFront(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_FRONT2, 1);
- drawEdge(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_EDGE_LEFT2, 0);
- drawFront(map, x, y, direction, WALL_FRONT1, 1);
- drawEdge(map, x, y, direction, WALL_EDGE_LEFT1, 0);
+ int light = map->getLight();
+ if (light)
+  SDL_BlitSurface(background, &src, display, &dest);
+ else
+ {
+  SDL_FillRect(display, &dest, SDL_MapRGB(display->format, 0, 0, 0));
+  return;
+ }
+ if (light >= 4)
+ {
+  drawEdge(map, x + (changeXY[direction][0] * 4), y + (changeXY[direction][1] * 4), direction, WALL_EDGE_LEFT5_1, 2);
+  drawFront(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_FRONT4, 3);
+ }
+ if (light >= 3)
+ {
+  drawEdge(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_EDGE_LEFT4_1, 2);
+  drawFront(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_FRONT3, 2);
+ }
+ if (light >= 2)
+ {
+  drawEdge(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_EDGE_LEFT3_1, 1);
+  drawFront(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_FRONT2, 1);
+ }
+ if (light >= 3)
+ {
+  drawEdge(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_EDGE_LEFT2, 0);
+  drawFront(map, x, y, direction, WALL_FRONT1, 1);
+  drawEdge(map, x, y, direction, WALL_EDGE_LEFT1, 0);
+ }
 }
 
 void Psuedo3D::setConfig(Psuedo3DConfig *configNew)

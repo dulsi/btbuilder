@@ -30,6 +30,14 @@ extern char *effectiveRanges[];
 extern char *areaEffect[];
 
 #define BT_DURATION 6
+#define BTDURATION_ONE        0
+#define BTDURATION_SHORT      1
+#define BTDURATION_MEDIUM     2
+#define BTDURATION_LONG       3
+#define BTDURATION_COMBAT     4
+#define BTDURATION_PERMANENT  5
+#define BTDURATION_CONTINUOUS 6
+#define BTDURATION_INDEFINITE 7
 extern char *durations[];
 
 #define BT_MONSTEREXTRADAMAGE 11
@@ -137,6 +145,8 @@ extern char *specialCommands[];
 extern char *directions[];
 
 #define BT_MAPTYPES 4
+#define BTMAPTYPE_CITY       2
+#define BTMAPTYPE_WILDERNESS 3
 extern char *mapTypes[];
 
 #define BT_STATS 5
@@ -171,5 +181,12 @@ extern char *statAbbrev[];
 #define BTTARGET_GROUPSHIFT  24
 #define BTTARGET_PARTY       1
 #define BTTARGET_MONSTER     2
+#define BTTARGET_ALLMONSTERS 7
+
+#define BTTIME_MAXDAYS    256
+#define BTTIME_PERMANENT  0x08000000U
+#define BTTIME_CONTINUOUS 0x04000000U
+#define BTTIME_INDEFINITE 0x02000000U
+#define BTTIME_COMBAT     0x01000000U
 
 #endif

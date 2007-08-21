@@ -11,6 +11,8 @@
 #include <file.h>
 #include "factory.h"
 #include "dice.h"
+#include "combat.h"
+#include "display.h"
 
 /*
 [spell]
@@ -54,6 +56,8 @@ class BTSpell
   IShort getType() const;
   void write(BinaryWriteFile &f);
 
+  void cast(BTDisplay &d, const char *caster, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
+
  private:
   char name[29];
   char code[5];
@@ -74,6 +78,17 @@ class BTSpellListCompare : public BTSortCompare<BTSpell>
 {
  public:
   int Compare(const BTSpell &a, const BTSpell &b) const;
+};
+
+class BTSpellEffect : public XMLObject
+{
+ public:
+  BTSpellEffect(int s, int x);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  int spell;
+  int expiration;
 };
 
 #endif
