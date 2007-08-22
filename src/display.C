@@ -515,7 +515,6 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    select->draw(*this);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  }
- SDL_TimerID timer;
  while (true)
  {
   if ((select) && (!select->numbered))
@@ -523,17 +522,8 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    select->draw(*this);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
   }
-  if (delay)
-   timer = SDL_AddTimer(delay, timerCallback, NULL);
-  key = readChar();
-  if (delay != 0)
-  {
-   if (key == 0)
-    break;
-   else
-    SDL_RemoveTimer(timer);
-  }
-  if (key == 27)
+  key = readChar(delay);
+  if ((key == 0) || (key == 27))
    break;
   if (select)
   {
@@ -600,14 +590,19 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
  return key;
 }
 
-unsigned int BTDisplay::readChar()
+unsigned int BTDisplay::readChar(int delay /*= 0*/)
 {
  SDL_Event sdlevent;
+ SDL_TimerID timer;
+ if (delay)
+  timer = SDL_AddTimer(delay, timerCallback, NULL);
  while (true)
  {
   SDL_WaitEvent(&sdlevent);
   if (sdlevent.type == SDL_KEYDOWN)
   {
+   if (delay)
+    SDL_RemoveTimer(timer);
    if (sdlevent.key.keysym.unicode)
     return sdlevent.key.keysym.unicode;
    else if (sdlevent.key.keysym.sym == SDLK_UP)
@@ -618,6 +613,8 @@ unsigned int BTDisplay::readChar()
     return BTKEY_LEFT;
    else if (sdlevent.key.keysym.sym == SDLK_RIGHT)
     return BTKEY_RIGHT;
+   if (delay)
+    timer = SDL_AddTimer(delay, timerCallback, NULL);
   }
   else if (sdlevent.type == SDL_USEREVENT)
   {

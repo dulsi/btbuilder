@@ -72,10 +72,10 @@ class BTGame : public Psuedo3DMap
   void turnRight(BTDisplay &d);
   void turnAround(BTDisplay &d);
 
-  void addEffect(BTSpell *s, unsigned int expire);
+  void addEffect(BTSpell *s, unsigned int expire, int group, int target);
   unsigned int getExpiration(unsigned int duration);
   bool isExpired(unsigned int expiration);
-  void nextTurn();
+  void nextTurn(BTDisplay &d, BTCombat *combat = NULL);
 
   static BTGame *getGame();
 

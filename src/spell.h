@@ -57,6 +57,8 @@ class BTSpell
   void write(BinaryWriteFile &f);
 
   void cast(BTDisplay &d, const char *caster, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
+  void finish(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
+  void maintain(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
 
  private:
   char name[29];
@@ -83,12 +85,15 @@ class BTSpellListCompare : public BTSortCompare<BTSpell>
 class BTSpellEffect : public XMLObject
 {
  public:
-  BTSpellEffect(int s, int x);
+  BTSpellEffect(int s, int x, int g, int t);
 
   virtual void serialize(ObjectSerializer *s);
 
   int spell;
   int expiration;
+  bool first;
+  int group;
+  int target;
 };
 
 #endif

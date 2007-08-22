@@ -123,6 +123,7 @@ void BTSpell::write(BinaryWriteFile &f)
 void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
 {
  BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
  unsigned int expire = 0;
  switch(duration)
  {
@@ -153,14 +154,81 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
   default:
    break;
  }
+ std::string text = caster;
+ text += " casts ";
+ text += name;
+ text += ".";
  switch(type)
  {
+  case BTSPELLTYPE_RESURRECT:
+   if (BTTARGET_PARTY == group)
+   {
+    if (BTTARGET_INDIVIDUAL == target)
+    {
+     text += " ";
+     text += effect;
+     text += " the whole party!";
+    }
+    d.addText(text.c_str());
+    d.addText("");
+    d.process(BTDisplay::allKeys, 1000);
+    d.clearElements();
+    if (BTTARGET_INDIVIDUAL == target)
+    {
+     for (int i = 0; i < party.size(); ++i)
+     {
+      if (!party[i]->isAlive())
+      {
+       text = party[i]->name;
+       text += " rises from the dead!";
+       d.addText(text.c_str());
+       d.addText("");
+       d.process(BTDisplay::allKeys, 1000);
+       d.clearElements();
+       party[i]->status.clear(BTSTATUS_DEAD);
+       party[i]->hp = 1;
+      }
+     }
+    }
+    else
+    {
+     if (!party[target]->isAlive())
+     {
+      text = effect;
+      text += " ";
+      text += party[target]->name;
+      text += ". ";
+      text += party[target]->name;
+      text += " rises from the dead!";
+      party[target]->status.clear(BTSTATUS_DEAD);
+      party[target]->hp = 1;
+      d.addText(text.c_str());
+      d.addText("");
+      d.process(BTDisplay::allKeys, 1000);
+    }
+    }
+   }
+   break;
   case BTSPELLTYPE_LIGHT:
-   game->addEffect(this, expire);
+   text += " ";
+   text += effect;
+   d.addText(text.c_str());
+   d.addText("");
+   d.process(BTDisplay::allKeys, 1000);
+   game->addEffect(this, expire, group, target);
    break;
   default:
    break;
  }
+ d.clearElements();
+}
+
+void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
+{
+}
+
+void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
+{
 }
 
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
@@ -173,8 +241,8 @@ int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
  return ans;
 }
 
-BTSpellEffect::BTSpellEffect(int s, int x)
- : spell(s), expiration(x)
+BTSpellEffect::BTSpellEffect(int s, int x, int g, int t)
+ : spell(s), expiration(x), first(true), group(g), target(t)
 {
 }
 

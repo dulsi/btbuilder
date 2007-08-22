@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #define BT_SPELLTYPES 32
+#define BTSPELLTYPE_RESURRECT      1
 #define BTSPELLTYPE_SCRYSIGHT      21
 #define BTSPELLTYPE_LIGHT          22
 #define BTSPELLTYPE_ARMORBONUS     23

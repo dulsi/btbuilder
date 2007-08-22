@@ -238,7 +238,7 @@ void BTGame::run(BTDisplay &d)
   }
   while (true)
   {
-   nextTurn();
+   nextTurn(d);
    d.drawView();
    d.drawLabel(levelMap->getName());
    if (special)
@@ -278,7 +278,7 @@ void BTGame::run(BTDisplay &d)
    d.drawLabel(levelMap->getName());
    if (!special)
    {
-    key = d.readChar();
+    key = d.readChar(6000);
     switch (key)
     {
      case BTKEY_UP:
@@ -374,7 +374,7 @@ void BTGame::turnAround(BTDisplay &d)
  facing = facing % 4;
 }
 
-void BTGame::addEffect(BTSpell *s, unsigned int expire)
+void BTGame::addEffect(BTSpell *s, unsigned int expire, int group, int target)
 {
  int index = 0;
  while (index < spellList.size())
@@ -384,7 +384,7 @@ void BTGame::addEffect(BTSpell *s, unsigned int expire)
  }
  if (index >= spellList.size())
   return;
- spellEffect.push_back(new BTSpellEffect(index, expire));
+ spellEffect.push_back(new BTSpellEffect(index, expire, group, target));
 }
 
 unsigned int BTGame::getExpiration(unsigned int duration)
@@ -396,24 +396,34 @@ bool BTGame::isExpired(unsigned int expiration)
 {
  if (expiration < ((module->maxTime * BTTIME_MAXDAYS) / 4))
  {
-  if ((gameTime < ((module->maxTime * BTTIME_MAXDAYS) / 2)) && (expiration >= gameTime))
+  if ((gameTime < ((module->maxTime * BTTIME_MAXDAYS) / 2)) && (expiration <= gameTime))
    return true;
   else
    return false;
  }
- else if (expiration >= gameTime)
+ else if (expiration <= gameTime)
   return true;
  else
   return false;
 }
 
-void BTGame::nextTurn()
+void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
 {
  ++gameTime;
- for (std::list<BTSpellEffect*>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+ for (std::list<BTSpellEffect*>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
  {
   if (isExpired((*itr)->expiration))
   {
+   spellList[(*itr)->spell].finish(d, combat, (*itr)->group, (*itr)->target);
+   itr = spellEffect.erase(itr);
+  }
+  else
+  {
+   if ((*itr)->first)
+    (*itr)->first = false;
+   else if (BTTIME_PERMANENT != (*itr)->expiration)
+    spellList[(*itr)->spell].maintain(d, combat, (*itr)->group, (*itr)->target);
+   ++itr;
   }
  }
 }

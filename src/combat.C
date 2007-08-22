@@ -414,6 +414,7 @@ void BTCombat::runCombat(BTDisplay &d)
    }
   }
  }
+ BTGame::getGame()->nextTurn(d, this);
  if (endRound())
   won = true;
  d.drawStats(); // In case check dead move people around
@@ -638,7 +639,6 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
 bool BTCombat::endRound()
 {
  BTGame *game = BTGame::getGame();
- game->nextTurn();
  ++round;
  BTFactory<BTMonster> &monList = game->getMonsterList();
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end();)

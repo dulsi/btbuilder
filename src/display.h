@@ -72,7 +72,7 @@ class BTDisplay
   void getMultiplier(int &x, int &y);
   SDL_Color &getWhite();
   unsigned int process(const char *specialKeys = NULL, int delay = 0);
-  unsigned int readChar();
+  unsigned int readChar(int delay = 0);
   std::string readString(const char *prompt, int max);
   void refresh();
   void setBackground(const char *file);
