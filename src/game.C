@@ -114,9 +114,9 @@ BTParty &BTGame::getParty()
 int BTGame::getLight()
 {
  int light = levelMap->getLight();
- for (std::list<BTSpellEffect*>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
  {
-  if (BTSPELLTYPE_LIGHT == spellList[(*itr)->spell].getType())
+  if (BTSPELLTYPE_LIGHT == spellList[itr->spell].getType())
   {
    if (light < 5)
     light = 5;
@@ -374,17 +374,12 @@ void BTGame::turnAround(BTDisplay &d)
  facing = facing % 4;
 }
 
-void BTGame::addEffect(BTSpell *s, unsigned int expire, int group, int target)
+void BTGame::addEffect(int spell, unsigned int expire, int group, int target)
 {
- int index = 0;
- while (index < spellList.size())
- {
-  if (&spellList[index] == s)
-   break;
- }
- if (index >= spellList.size())
-  return;
- spellEffect.push_back(new BTSpellEffect(index, expire, group, target));
+ if (BTTIME_COMBAT == expire)
+  combat.addEffect(spell, expire, group, target);
+ else
+  spellEffect.push_back(BTSpellEffect(spell, expire, group, target));
 }
 
 unsigned int BTGame::getExpiration(unsigned int duration)
@@ -410,19 +405,19 @@ bool BTGame::isExpired(unsigned int expiration)
 void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
 {
  ++gameTime;
- for (std::list<BTSpellEffect*>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
  {
-  if (isExpired((*itr)->expiration))
+  if (isExpired(itr->expiration))
   {
-   spellList[(*itr)->spell].finish(d, combat, (*itr)->group, (*itr)->target);
+   spellList[itr->spell].finish(d, combat, itr->group, itr->target);
    itr = spellEffect.erase(itr);
   }
   else
   {
-   if ((*itr)->first)
-    (*itr)->first = false;
-   else if (BTTIME_PERMANENT != (*itr)->expiration)
-    spellList[(*itr)->spell].maintain(d, combat, (*itr)->group, (*itr)->target);
+   if (itr->first)
+    itr->first = false;
+   else if (BTTIME_PERMANENT != itr->expiration)
+    spellList[itr->spell].maintain(d, combat, itr->group, itr->target);
    ++itr;
   }
  }

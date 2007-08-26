@@ -17,6 +17,7 @@
 #include "monster.h"
 #include "race.h"
 #include "spell.h"
+#include "spelleffect.h"
 #include "status.h"
 #include "map.h"
 #include "pc.h"
@@ -72,7 +73,7 @@ class BTGame : public Psuedo3DMap
   void turnRight(BTDisplay &d);
   void turnAround(BTDisplay &d);
 
-  void addEffect(BTSpell *s, unsigned int expire, int group, int target);
+  void addEffect(int spell, unsigned int expire, int group, int target);
   unsigned int getExpiration(unsigned int duration);
   bool isExpired(unsigned int expiration);
   void nextTurn(BTDisplay &d, BTCombat *combat = NULL);
@@ -91,7 +92,7 @@ class BTGame : public Psuedo3DMap
   BTMap *levelMap;
   int xPos, yPos, facing;
   BTParty party;
-  std::list<BTSpellEffect*> spellEffect;
+  std::list<BTSpellEffect> spellEffect;
   std::string lastInput;
   int counter;
   BTCombat combat;

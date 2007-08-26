@@ -21,6 +21,7 @@ class BTFactory
   BTFactory(const char *filename);
   ~BTFactory();
 
+  int find(item *obj);
   void save(const char *filename);
   IShort size();
   item &operator[](IShort num);
@@ -79,13 +80,24 @@ BTFactory<item>::~BTFactory()
 }
 
 template <class item>
+int BTFactory<item>::find(item *obj)
+{
+ for (size_t i = 0; i < items.size(); i++)
+ {
+  if (items[i] == obj)
+   return i;
+ }
+ return items.size();
+}
+
+template <class item>
 void BTFactory<item>::save(const char *filename)
 {
  BinaryReadFile f(filename);
 // Not sure why gcc doesn't accept this
 // for (std::vector<item_ptr>::iterator itr(items.begin()); itr != items.end(); itr++)
 //  itr->write(f);
- for (size_t i; i < items.size(); i++)
+ for (size_t i = 0; i < items.size(); i++)
  {
   items[i]->write(f);
  }

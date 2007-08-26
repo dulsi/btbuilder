@@ -124,6 +124,10 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
+ BTFactory<BTSpell> &spellList = game->getSpellList();
+ int index = spellList.find(this);
+ if (index >= spellList.size())
+  return;
  unsigned int expire = 0;
  switch(duration)
  {
@@ -175,6 +179,7 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
     d.clearElements();
     if (BTTARGET_INDIVIDUAL == target)
     {
+     game->addEffect(index, expire, group, target);
      for (int i = 0; i < party.size(); ++i)
      {
       if (!party[i]->isAlive())
@@ -205,7 +210,7 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
       d.addText(text.c_str());
       d.addText("");
       d.process(BTDisplay::allKeys, 1000);
-    }
+     }
     }
    }
    break;
@@ -215,7 +220,7 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
    d.addText(text.c_str());
    d.addText("");
    d.process(BTDisplay::allKeys, 1000);
-   game->addEffect(this, expire, group, target);
+   game->addEffect(index, expire, group, target);
    break;
   default:
    break;
@@ -229,6 +234,54 @@ void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target /*= B
 
 void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
 {
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ switch(type)
+ {
+  case BTSPELLTYPE_RESURRECT:
+   if (BTTARGET_PARTY == group)
+   {
+    if (BTTARGET_INDIVIDUAL == target)
+    {
+     for (int i = 0; i < party.size(); ++i)
+     {
+      if (!party[i]->isAlive())
+      {
+       std::string text = party[i]->name;
+       text += " rises from the dead!";
+       d.addText(text.c_str());
+       d.addText("");
+       d.process(BTDisplay::allKeys, 1000);
+       d.clearElements();
+       party[i]->status.clear(BTSTATUS_DEAD);
+       party[i]->hp = 1;
+      }
+     }
+    }
+    else
+    {
+     // BTCS either cancels spells on death or doesn't implement this
+/*     if (!party[target]->isAlive())
+     {
+      text = effect;
+      text += " ";
+      text += party[target]->name;
+      text += ". ";
+      text += party[target]->name;
+      text += " rises from the dead!";
+      party[target]->status.clear(BTSTATUS_DEAD);
+      party[target]->hp = 1;
+      d.addText(text.c_str());
+      d.addText("");
+      d.process(BTDisplay::allKeys, 1000);
+     }*/
+    }
+   }
+   break;
+  default:
+   break;
+ }
+ d.clearElements();
 }
 
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
@@ -239,15 +292,4 @@ int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
   ans = a.getLevel() - b.getLevel();
  }
  return ans;
-}
-
-BTSpellEffect::BTSpellEffect(int s, int x, int g, int t)
- : spell(s), expiration(x), first(true), group(g), target(t)
-{
-}
-
-void BTSpellEffect::serialize(ObjectSerializer *s)
-{
- s->add("spell", &spell);
- s->add("expiration", &expiration);
 }

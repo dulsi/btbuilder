@@ -143,6 +143,11 @@ BTCombat::~BTCombat()
  free(partyLabel);
 }
 
+void BTCombat::addEffect(int spell, unsigned int expire, int group, int target)
+{
+ spellEffect.push_back(BTSpellEffect(spell, expire, group, target));
+}
+
 void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
@@ -176,7 +181,7 @@ int BTCombat::findScreen(int num)
    if ((num == BTCOMBATSCREEN_OPTION) && (i != 0))
    {
     setPc(party[i - 1]);
-    canAttack = ((!canAdvance) && (i - 1 < BT_BACK) && (0 < monsters.size()));
+    canAttack = ((!canAdvance) && (i - 1 < BT_BACK) && (!monsters.empty()));
    }
    else if (num == BTCOMBATSCREEN_COMBAT)
    {
@@ -188,7 +193,7 @@ int BTCombat::findScreen(int num)
     else
     {
      setPc(party[i + 1]);
-     canAttack = ((!canAdvance) && (i + 1 < BT_BACK) && (0 < monsters.size()));
+     canAttack = ((!canAdvance) && (i + 1 < BT_BACK) && (!monsters.empty()));
     }
    }
   }
@@ -307,7 +312,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
  won = false;
  round = 0;
  xp = gold = 0;
- if ((0 == monsters.size()) && (!partyAttack))
+ if ((monsters.empty()) && (!partyAttack))
   return;
  initScreen(d);
  try
@@ -415,7 +420,7 @@ void BTCombat::runCombat(BTDisplay &d)
   }
  }
  BTGame::getGame()->nextTurn(d, this);
- if (endRound())
+ if (endRound(d))
   won = true;
  d.drawStats(); // In case check dead move people around
 }
@@ -636,21 +641,48 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
  }
 }
 
-bool BTCombat::endRound()
+bool BTCombat::endRound(BTDisplay &d)
 {
  BTGame *game = BTGame::getGame();
  ++round;
  BTFactory<BTMonster> &monList = game->getMonsterList();
+ BTFactory<BTSpell> &spellList = game->getSpellList();
+ int group = BTTARGET_MONSTER;
+ std::list<BTSpellEffect>::iterator effect = spellEffect.begin();
+ for (; effect != spellEffect.end(); ++effect)
+ {
+  if (!game->isExpired(effect->expiration))
+  {
+   if (effect->first)
+    effect->first = false;
+   else if (BTTIME_PERMANENT != effect->expiration)
+    spellList[effect->spell].maintain(d, this, effect->group, effect->target);
+  }
+ }
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end();)
  {
   itr->canMove = true;
   itr->active = 0;
+  bool hasIndvidualSpell = true;
   for (std::vector<BTMonsterInstance>::iterator monster(itr->individual.begin()); monster != itr->individual.end();)
   {
    if (monster->hp < 0)
    {
     xp += monList[itr->monsterType].getXp();
     gold += monList[itr->monsterType].getGold().roll();
+    for (std::list<BTSpellEffect>::iterator effect = spellEffect.begin(); effect != spellEffect.end();)
+    {
+     if ((group == effect->group) && (effect->target == monster - itr->individual.begin()))
+     {
+      if ((BTTIME_PERMANENT != effect->expiration) && (BTTIME_CONTINUOUS != effect->expiration))
+       spellList[effect->spell].finish(d, this, effect->group, effect->target);
+      effect = spellEffect.erase(effect);
+     }
+     else if ((group == effect->group) && (effect->target > monster - itr->individual.begin()))
+     {
+      effect->target--;
+     }
+    }
     monster = itr->individual.erase(monster);
    }
    else
@@ -661,15 +693,39 @@ bool BTCombat::endRound()
    }
   }
   if (0 == itr->individual.size())
+  {
+   for (std::list<BTSpellEffect>::iterator effect = spellEffect.begin(); effect != spellEffect.end();)
+   {
+    if (group == effect->group)
+    {
+     if ((BTTIME_PERMANENT != effect->expiration) && (BTTIME_CONTINUOUS != effect->expiration))
+      spellList[effect->spell].finish(d, this, effect->group, effect->target);
+     effect = spellEffect.erase(effect);
+    }
+    else if (group < effect->group)
+    {
+     effect->group--;
+    }
+   }
    itr = monsters.erase(itr);
+  }
   else
+  {
    ++itr;
+   ++group;
+  }
  }
  BTParty &party = game->getParty();
  if (party.checkDead())
   throw BTSpecialError("dead");
- if ((0 == monsters.size()) && (xp > 0) && (!won))
+ if ((monsters.empty()) && (xp > 0) && (!won))
  {
+  for (effect = spellEffect.begin(); effect != spellEffect.end();)
+  {
+   if ((BTTIME_PERMANENT != effect->expiration) && (BTTIME_CONTINUOUS != effect->expiration))
+    spellList[effect->spell].finish(d, this, effect->group, effect->target);
+   effect = spellEffect.erase(effect);
+  }
   int alive = 0;
   int i;
   for (i = 0; i < party.size(); ++i)
@@ -688,6 +744,17 @@ bool BTCombat::endRound()
    }
   }
   return true;
+ }
+ for (effect = spellEffect.begin(); effect != spellEffect.end();)
+ {
+  if (!game->isExpired(effect->expiration))
+  {
+   if ((BTTIME_PERMANENT != effect->expiration) && (BTTIME_CONTINUOUS != effect->expiration))
+    spellList[effect->spell].finish(d, this, effect->group, effect->target);
+   effect = spellEffect.erase(effect);
+  }
+  else
+   ++effect;
  }
  return false;
 }
@@ -722,6 +789,7 @@ int BTCombat::attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 
 int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ BTCombat &c = static_cast<BTCombat&>(b);
  BTReadString *readString = static_cast<BTReadString*>(item);
  BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
  std::string spellCode = readString->getResponse();
@@ -741,7 +809,13 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
      case BTAREAEFFECT_FOE:
       return BTCOMBATSCREEN_TARGETSINGLE;
      case BTAREAEFFECT_GROUP:
-      return BTCOMBATSCREEN_TARGETGROUP;
+      if (c.monsters.empty())
+      {
+       b.getPc()->combat.setTarget(BTTARGET_PARTY);
+       return 0;
+      }
+      else
+       return BTCOMBATSCREEN_TARGETGROUP;
      case BTAREAEFFECT_NONE:
       b.getPc()->combat.clearTarget(b.getPc()->combat.getTargetGroup());
       return 0;

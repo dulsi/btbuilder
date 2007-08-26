@@ -11,6 +11,7 @@
 #include "display.h"
 #include "map.h"
 #include "screenset.h"
+#include "spelleffect.h"
 #include <map>
 
 class BTCombatError
@@ -66,6 +67,7 @@ class BTCombat : public BTScreenSet
   BTCombat();
   ~BTCombat();
 
+  void addEffect(int spell, unsigned int expire, int group, int target);
   void addEncounter(int monsterType, int number = 0);
   void clearEncounters();
   int findScreen(int num);
@@ -90,13 +92,14 @@ class BTCombat : public BTScreenSet
   static int useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
-  bool endRound();
+  bool endRound(BTDisplay &d);
 
  private:
   bool won;
   bool optionState;
   int round;
   std::list<BTMonsterGroup> monsters;
+  std::list<BTSpellEffect> spellEffect;
   char *partyLabel;
   int treasurePic;
   char *treasureLabel;

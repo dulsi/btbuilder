@@ -82,19 +82,5 @@ class BTSpellListCompare : public BTSortCompare<BTSpell>
   int Compare(const BTSpell &a, const BTSpell &b) const;
 };
 
-class BTSpellEffect : public XMLObject
-{
- public:
-  BTSpellEffect(int s, int x, int g, int t);
-
-  virtual void serialize(ObjectSerializer *s);
-
-  int spell;
-  int expiration;
-  bool first;
-  int group;
-  int target;
-};
-
 #endif
 
