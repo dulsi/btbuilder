@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "btconst.h"
+#include "display.h"
 #include "xmlserializer.h"
 
 class BTEquipment : public XMLObject
@@ -101,7 +102,7 @@ class BTPc : public XMLObject
 class BTParty : public XMLVector<BTPc*>
 {
  public:
-  bool checkDead();
+  bool checkDead(BTDisplay &d);
 };
 
 class BTStatusLookup : public ArrayLookup

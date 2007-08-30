@@ -74,6 +74,7 @@ class BTCombat : public BTScreenSet
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
   void initScreen(BTDisplay &d);
   bool isWinner() { return won; }
+  void movedPlayer(BTDisplay &d, int who, int where);
   virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
   void runCombat(BTDisplay &d);

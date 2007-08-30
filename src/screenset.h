@@ -10,6 +10,7 @@
 #include <file.h>
 #include "display.h"
 #include "map.h"
+#include "pc.h"
 #include <map>
 
 #define BTSCREEN_EXIT -1

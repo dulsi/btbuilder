@@ -1178,7 +1178,7 @@ int BTScreenSet::equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
 
 int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- bool dead = BTGame::getGame()->getParty().checkDead();
+ bool dead = BTGame::getGame()->getParty().checkDead(d);
  d.drawStats();
  if (dead)
   throw BTSpecialError("dead");

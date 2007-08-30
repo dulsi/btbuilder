@@ -385,7 +385,7 @@ void BTPc::BTPcAction::setTarget(int group, int member /*= BTTARGET_INDIVIDUAL*/
 //  target = (group << BTTARGET_GROUPSHIFT) + member;
 }
 
-bool BTParty::checkDead()
+bool BTParty::checkDead(BTDisplay &d)
 {
  int restDead = size();
  int who;
@@ -401,10 +401,12 @@ bool BTParty::checkDead()
  }
  if (restDead == 0)
   return true;
+ BTGame *game = BTGame::getGame();
  for (who = 0; who < restDead; )
  {
   if (operator[](who)->status.isSet(BTSTATUS_DEAD))
   {
+   game->movedPlayer(d, who, size() - 1);
    BTPc *pc = operator[](who);
    pc->combat.active = false;
    erase(begin() + who);

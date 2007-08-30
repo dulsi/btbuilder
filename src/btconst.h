@@ -164,6 +164,7 @@ extern char *statAbbrev[];
 
 #define BT_ITEMS 8
 #define BT_PARTYSIZE 7
+#define BTPARTY_REMOVE -1
 #define BT_BACK 4
 
 #define BTITEM_NONE 0x4000

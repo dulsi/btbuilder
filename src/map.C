@@ -296,7 +296,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
      d.drawText(tmp);
     }
    }
-   if (party.checkDead())
+   if (party.checkDead(d))
     throw BTPartyDead();
    d.drawStats();
    break;

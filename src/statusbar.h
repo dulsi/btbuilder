@@ -8,7 +8,6 @@
 \*-------------------------------------------------------------------------*/
 
 #include "xmlserializer.h"
-#include "pc.h"
 
 class BTDisplay;
 

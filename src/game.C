@@ -382,6 +382,36 @@ void BTGame::addEffect(int spell, unsigned int expire, int group, int target)
   spellEffect.push_back(BTSpellEffect(spell, expire, group, target));
 }
 
+void BTGame::movedPlayer(BTDisplay &d, int who, int where)
+{
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  if ((BTTARGET_PARTY == itr->group) && (who == itr->target))
+  {
+   if (where == BTPARTY_REMOVE)
+   {
+    spellList[itr->spell].finish(d, NULL, itr->group, itr->target);
+    itr = spellEffect.erase(itr);
+    continue;
+   }
+   else
+   {
+    itr->target = where;
+   }
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (who < where) && (where >= itr->target) && (who < itr->target))
+  {
+   itr->target--;
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (who > where) && (where <= itr->target) && (who > itr->target))
+  {
+   itr->target++;
+  }
+  ++itr;
+ }
+ combat.movedPlayer(d, who, where);
+}
+
 unsigned int BTGame::getExpiration(unsigned int duration)
 {
  return (duration + gameTime) % (module->maxTime * BTTIME_MAXDAYS);

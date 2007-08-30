@@ -294,6 +294,36 @@ void BTCombat::initScreen(BTDisplay &d)
  }
 }
 
+void BTCombat::movedPlayer(BTDisplay &d, int who, int where)
+{
+ BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  if ((BTTARGET_PARTY == itr->group) && (who == itr->target))
+  {
+   if (where == BTPARTY_REMOVE)
+   {
+    spellList[itr->spell].finish(d, this, itr->group, itr->target);
+    itr = spellEffect.erase(itr);
+    continue;
+   }
+   else
+   {
+    itr->target = where;
+   }
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (who < where) && (where >= itr->target) && (who < itr->target))
+  {
+   itr->target--;
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (who > where) && (where <= itr->target) && (who > itr->target))
+  {
+   itr->target++;
+  }
+  ++itr;
+ }
+}
+
 void BTCombat::open(const char *filename)
 {
  XMLSerializer parser;
@@ -716,7 +746,7 @@ bool BTCombat::endRound(BTDisplay &d)
   }
  }
  BTParty &party = game->getParty();
- if (party.checkDead())
+ if (party.checkDead(d))
   throw BTSpecialError("dead");
  if ((monsters.empty()) && (xp > 0) && (!won))
  {
