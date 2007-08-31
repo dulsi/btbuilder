@@ -404,7 +404,12 @@ XMLObject *BTSelectRoster::create(const XML_Char *name, const XML_Char **atts)
   if (0 == strcmp(*att, "action"))
    obj->setAction(att[1]);
   else if (0 == strcmp(*att, "screen"))
-   obj->setScreen(atoi(att[1]));
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
   else if (0 == strcmp(*att, "fullscreen"))
    obj->fullscreen = atoi(att[1]);
  }
@@ -432,7 +437,12 @@ XMLObject *BTSelectRace::create(const XML_Char *name, const XML_Char **atts)
   if (0 == strcmp(*att, "action"))
    obj->setAction(att[1]);
   else if (0 == strcmp(*att, "screen"))
-   obj->setScreen(atoi(att[1]));
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
  }
  return obj;
 }
@@ -466,7 +476,12 @@ XMLObject *BTSelectJob::create(const XML_Char *name, const XML_Char **atts)
   if (0 == strcmp(*att, "action"))
    obj->setAction(att[1]);
   else if (0 == strcmp(*att, "screen"))
-   obj->setScreen(atoi(att[1]));
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
  }
  return obj;
 }
@@ -505,7 +520,12 @@ XMLObject *BTSelectGoods::create(const XML_Char *name, const XML_Char **atts)
   if (0 == strcmp(*att, "action"))
    obj->setAction(att[1]);
   else if (0 == strcmp(*att, "screen"))
-   obj->setScreen(atoi(att[1]));
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
   else if (0 == strcmp(*att, "fullscreen"))
    obj->fullscreen = atoi(att[1]);
   else if (0 == strcmp(*att, "shop"))
@@ -568,7 +588,12 @@ XMLObject *BTSelectInventory::create(const XML_Char *name, const XML_Char **atts
   if (0 == strcmp(*att, "action"))
    obj->setAction(att[1]);
   else if (0 == strcmp(*att, "screen"))
-   obj->setScreen(atoi(att[1]));
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
   else if (0 == strcmp(*att, "fullscreen"))
    obj->fullscreen = atoi(att[1]);
   else if (0 == strcmp(*att, "noerror"))
@@ -617,7 +642,12 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
   if (0 == strcmp(*att, "action"))
    act = att[1];
   else if (0 == strcmp(*att, "screen"))
-   s = atoi(att[1]);
+  {
+   if (0 == strcmp(att[1], "exit"))
+    s = BTSCREEN_EXIT;
+   else
+    s = atoi(att[1]);
+  }
  }
  return new BTSelectParty(act, s);
 }
@@ -845,7 +875,12 @@ XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
   if (0 == strcmp(*att, "type"))
    type = att[1];
   else if (0 == strcmp(*att, "screen"))
-   screen = atoi(att[1]);
+  {
+   if (0 == strcmp(att[1], "exit"))
+    screen = BTSCREEN_EXIT;
+   else
+    screen = atoi(att[1]);
+  }
  }
  return new BTError(type, screen);
 }
@@ -856,6 +891,7 @@ BTScreenSet::BTScreenSet()
  actionList["advanceLevel"] = &advanceLevel;
  actionList["addToParty"] = &addToParty;
  actionList["buy"] = &buy;
+ actionList["castNow"] = &castNow;
  actionList["create"] = &create;
  actionList["drop"] = &drop;
  actionList["equip"] = &equip;
@@ -868,6 +904,7 @@ BTScreenSet::BTScreenSet()
  actionList["save"] = &save;
  actionList["sell"] = &sell;
  actionList["selectItem"] = &selectItem;
+ actionList["selectMage"] = &selectMage;
  actionList["selectParty"] = &selectParty;
  actionList["setJob"] = &setJob;
  actionList["setRace"] = &setRace;
@@ -958,8 +995,10 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
  int previous = 0;
  int where = start;
  int partySize = party.size();
- d.drawImage(picture);
- d.drawLabel(label);
+ if (picture != -1)
+  d.drawImage(picture);
+ if (label)
+  d.drawLabel(label);
  while (true)
  {
   d.clearText();
@@ -1152,6 +1191,47 @@ int BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  return 0;
 }
 
+int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTReadString *readString = static_cast<BTReadString*>(item);
+ std::string spellCode = readString->getResponse();
+ for (int i = 0; i < spellList.size(); ++i)
+ {
+  if (0 == strcasecmp(spellCode.c_str(), spellList[i].getCode()))
+  {
+   if (b.getPc()->skill[spellList[i].getCaster()] >= spellList[i].getLevel())
+   {
+    if (b.getPc()->sp < spellList[i].getSp())
+     throw BTSpecialError("nosp");
+    switch (spellList[i].getArea())
+    {
+     case BTAREAEFFECT_FOE:
+      b.getPc()->combat.action = BTPc::BTPcAction::cast;
+      b.getPc()->combat.object = i;
+      b.getPc()->combat.type = BTPc::BTPcAction::spell;
+      return 0; // IMPLEMENT ME
+     case BTAREAEFFECT_GROUP:
+      d.clearText();
+      b.pc->sp -= spellList[i].getSp();
+      spellList[i].cast(d, b.pc->name, NULL, BTTARGET_PARTY);
+      return -1;
+     case BTAREAEFFECT_NONE:
+      d.clearText();
+      b.pc->sp -= spellList[i].getSp();
+      spellList[i].cast(d, b.pc->name, NULL, 0);
+      return -1;
+     case BTAREAEFFECT_ALL:
+      throw BTSpecialError("nocombat");
+     default:
+      return -1;
+    }
+   }
+  }
+ }
+ throw BTSpecialError("nospell");
+}
+
 int BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.setPc(new BTPc);
@@ -1282,6 +1362,19 @@ int BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  return 0;
 }
 
+int BTScreenSet::selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ if ((key >= '1') && (key <= '9'))
+ {
+  if (party[key - '1']->maxSp > 0)
+   b.setPc(party[key - '1']);
+  else
+   throw BTSpecialError("nocaster");
+ }
+ return 0;
+}
+
 int BTScreenSet::selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -1348,4 +1441,14 @@ int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  b.pc->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
  return 0;
+}
+
+int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ if (b.pc->combat.action == BTPc::BTPcAction::cast)
+ {
+  BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+  b.pc->sp -= spellList[b.pc->combat.object].getSp();
+  spellList[b.pc->combat.object].cast(d, b.pc->name, NULL, BTTARGET_PARTY, key - '1');
+ }
 }

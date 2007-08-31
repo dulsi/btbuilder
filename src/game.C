@@ -331,6 +331,19 @@ void BTGame::run(BTDisplay &d)
       combat.clearEncounters();
       combat.run(d, true);
       break;
+     case 'c':
+     {
+      BTScreenSet cast;
+      cast.open("data/cast.xml");
+      try
+      {
+       cast.run(d);
+      }
+      catch(const BTSpecialFlipGoForward& e)
+      {
+      }
+      break;
+     }
      default:
       break;
     }

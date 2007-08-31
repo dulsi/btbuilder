@@ -1,0 +1,21 @@
+<screenset>
+	<screen number="1" escapeScreen="exit">
+		<line />
+		<line>Who do you wish to cast the spell?</line>
+		<selectParty action="selectMage" screen="2" />
+		<choice keys="cC" action="exit">(CANCEL)</choice>
+	</screen>
+	<screen number="2" escapeScreen="exit">
+		<line>Spell to cast:</line>
+		<readString action="castNow" screen="3">&gt;</readString>
+	</screen>
+	<screen number="3" escapeScreen="exit">
+		<line>Use on:</line>
+		<line>Member #[1-<partySize />]</line>
+		<selectParty action="useOn" screen="exit" />
+	</screen>
+	<error type="nocaster" screen="exit">Thou art not a spell caster!</error>
+	<error type="nospell" screen="exit">No spell by that name.</error>
+	<error type="dontknow" screen="exit">You don't know this spell.</error>
+	<error type="nosp" screen="exit">Not enough spell points.</error>
+</screenset>

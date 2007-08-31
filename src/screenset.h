@@ -312,6 +312,7 @@ class BTScreenSet : public ObjectSerializer
   static int advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
@@ -323,11 +324,13 @@ class BTScreenSet : public ObjectSerializer
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
   BTPc *pc;
