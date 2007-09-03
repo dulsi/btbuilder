@@ -338,6 +338,7 @@ class BTScreenSet : public ObjectSerializer
  protected:
   int picture;
   char *label;
+  bool clearMagic;
   XMLVector<BTScreenSetScreen*> screen;
   XMLVector<BTError*> errors;
   std::map<std::string, action> actionList;

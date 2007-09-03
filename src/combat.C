@@ -156,6 +156,16 @@ void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
  group.setMonsterType(monsterType, number);
 }
 
+void BTCombat::clearEffects(BTDisplay &d)
+{
+ BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  spellList[itr->spell].finish(d, this, itr->group, itr->target);
+  itr = spellEffect.erase(itr);
+ }
+}
+
 void BTCombat::clearEncounters()
 {
  monsters.clear();
@@ -370,6 +380,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
  {
  }
  d.clearElements();
+ clearEffects(d);
  clearEncounters();
 }
 

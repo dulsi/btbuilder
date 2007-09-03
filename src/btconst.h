@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #define BT_SPELLTYPES 32
+#define BTSPELLTYPE_HEAL           0
 #define BTSPELLTYPE_RESURRECT      1
 #define BTSPELLTYPE_SCRYSIGHT      21
 #define BTSPELLTYPE_LIGHT          22
@@ -76,6 +77,7 @@ extern char *itemTypes[];
 #define BTCONDITION_GROUPFACING     6
 #define BTCONDITION_MONSTERINPARTY  7
 #define BTCONDITION_JOBINPARTY      8
+#define BTCONDITION_DAYTIME         9
 #define BTCONDITION_COUNTERGREATER  10
 #define BTCONDITION_COUNTEREQUAL    11
 #define BTCONDITION_COMBATWON       12

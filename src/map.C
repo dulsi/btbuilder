@@ -653,6 +653,9 @@ void BTSpecialConditional::run(BTDisplay &d) const
      truth = true;
    break;
   }
+  case BTCONDITION_DAYTIME:
+   truth = BTGame::getGame()->isDaytime();
+   break;
   case BTCONDITION_COUNTERGREATER:
    truth = ((BTGame::getGame()->getCounter() > number) ? true : false);
    break;

@@ -886,7 +886,7 @@ XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
 }
 
 BTScreenSet::BTScreenSet()
- : picture(-1), label(0), pc(0)
+ : picture(-1), label(0), clearMagic(false), pc(0)
 {
  actionList["advanceLevel"] = &advanceLevel;
  actionList["addToParty"] = &addToParty;
@@ -982,6 +982,7 @@ void BTScreenSet::open(const char *filename)
  XMLSerializer parser;
  parser.add("picture", &picture);
  parser.add("label", &label);
+ parser.add("clearMagic", &clearMagic);
  parser.add("screen", &screen, &BTScreenSetScreen::create);
  parser.add("error", &errors, &BTError::create);
  parser.parse(filename, true);
@@ -989,6 +990,8 @@ void BTScreenSet::open(const char *filename)
 
 void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
 {
+ if (clearMagic)
+  BTGame::getGame()->clearEffects(d);
  BTParty &party = BTGame::getGame()->getParty();
  std::string itemName;
  char specialKeys[10];
@@ -1325,6 +1328,7 @@ int BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *ite
  BTParty &party = BTGame::getGame()->getParty();
  if ((key >= '1') && (key <= '9') && (key - '1' < party.size()))
  {
+  BTGame::getGame()->movedPlayer(d, key - '1', BTPARTY_REMOVE);
   // Add monster to save file
   party.erase(party.begin() + (key - '1'));
   d.drawStats();

@@ -164,6 +164,35 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
  text += ".";
  switch(type)
  {
+  case BTSPELLTYPE_HEAL:
+   if (BTTARGET_PARTY == group)
+   {
+    text += " ";
+    text += effect;
+    if (BTTARGET_INDIVIDUAL == target)
+    {
+     text += " the whole party!";
+     for (int i = 0; i < party.size(); ++i)
+     {
+      if (party[i]->isAlive())
+      {
+       party[i]->giveHP(dice.roll());
+      }
+     }
+    }
+    else
+    {
+     text += party[target]->name;
+     if (party[target]->isAlive())
+      party[target]->giveHP(dice.roll());
+    }
+    d.addText(text.c_str());
+    d.addText("");
+    d.process(BTDisplay::allKeys, 1000);
+    d.clearElements();
+    game->addEffect(index, expire, group, target);
+   }
+   break;
   case BTSPELLTYPE_RESURRECT:
    if (BTTARGET_PARTY == group)
    {
@@ -238,6 +267,27 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target /*=
  BTParty &party = game->getParty();
  switch(type)
  {
+  case BTSPELLTYPE_HEAL:
+   if (BTTARGET_PARTY == group)
+   {
+    if (BTTARGET_INDIVIDUAL == target)
+    {
+     for (int i = 0; i < party.size(); ++i)
+     {
+      if (party[i]->isAlive())
+      {
+       party[i]->giveHP(dice.roll());
+      }
+     }
+    }
+    else
+    {
+     if (party[target]->isAlive())
+      party[target]->giveHP(dice.roll());
+    }
+    d.drawStats();
+   }
+   break;
   case BTSPELLTYPE_RESURRECT:
    if (BTTARGET_PARTY == group)
    {

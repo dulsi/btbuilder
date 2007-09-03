@@ -74,9 +74,11 @@ class BTGame : public Psuedo3DMap
   void turnAround(BTDisplay &d);
 
   void addEffect(int spell, unsigned int expire, int group, int target);
+  void clearEffects(BTDisplay &d);
   void movedPlayer(BTDisplay &d, int who, int where);
   unsigned int getExpiration(unsigned int duration);
   bool isExpired(unsigned int expiration);
+  bool isDaytime();
   void nextTurn(BTDisplay &d, BTCombat *combat = NULL);
 
   static BTGame *getGame();

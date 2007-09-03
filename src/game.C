@@ -395,6 +395,16 @@ void BTGame::addEffect(int spell, unsigned int expire, int group, int target)
   spellEffect.push_back(BTSpellEffect(spell, expire, group, target));
 }
 
+void BTGame::clearEffects(BTDisplay &d)
+{
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  spellList[itr->spell].finish(d, NULL, itr->group, itr->target);
+  itr = spellEffect.erase(itr);
+ }
+ combat.clearEffects(d);
+}
+
 void BTGame::movedPlayer(BTDisplay &d, int who, int where)
 {
  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
@@ -443,6 +453,11 @@ bool BTGame::isExpired(unsigned int expiration)
   return true;
  else
   return false;
+}
+
+bool BTGame::isDaytime()
+{
+ return ((gameTime % module->maxTime) < module->nightTime);
 }
 
 void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
