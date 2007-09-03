@@ -1,6 +1,7 @@
 <screenset>
 	<picture>40</picture>
 	<label>The Guild</label>
+	<clearMagic>true</clearMagic>
 	<screen number="1">
 		<line>Thou art in the Guild of Adventurers.</line>
 		<choice keys="aA" screen="2" >Add member</choice>
