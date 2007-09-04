@@ -384,7 +384,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
   }
   case BTSPECIALCOMMAND_ALLMONSTERSLEAVE:
   {
-   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   BTParty &party = BTGame::getGame()->getParty();
    for (int i = party.size(); i > 0; )
    {
     --i;
@@ -393,7 +393,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
      char tmp[100];
      snprintf(tmp, 100, "%s leaves your party.", party[i]->name);
      d.drawText(tmp);
-     party.erase(party.begin() + i);
+     party.remove(i, d);
      d.drawStats();
     }
    }
@@ -447,7 +447,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_MONSTERLEAVE:
   {
-   XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+   BTParty &party = BTGame::getGame()->getParty();
    for (int i = 0; i < party.size(); ++i)
    {
     if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName())))
@@ -455,7 +455,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
      char tmp[100];
      snprintf(tmp, 100, "%s leaves your party.", party[i]->name);
      d.drawText(tmp);
-     party.erase(party.begin() + i);
+     party.remove(i, d);
      d.drawStats();
      break;
     }

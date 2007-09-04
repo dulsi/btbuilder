@@ -397,30 +397,46 @@ void BTGame::addEffect(int spell, unsigned int expire, int group, int target)
 
 void BTGame::clearEffects(BTDisplay &d)
 {
- for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); itr = spellEffect.begin())
  {
-  spellList[itr->spell].finish(d, NULL, itr->group, itr->target);
-  itr = spellEffect.erase(itr);
+  int spell = itr->spell;
+  int group = itr->group;
+  int target = itr->target;
+  int expiration = itr->expiration;
+  spellEffect.erase(itr);
+  if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
+   spellList[spell].finish(d, NULL, group, target);
  }
  combat.clearEffects(d);
 }
 
 void BTGame::movedPlayer(BTDisplay &d, int who, int where)
 {
- for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ if (where == BTPARTY_REMOVE)
  {
-  if ((BTTARGET_PARTY == itr->group) && (who == itr->target))
+  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
   {
-   if (where == BTPARTY_REMOVE)
+   if ((BTTARGET_PARTY == itr->group) && (who == itr->target))
    {
-    spellList[itr->spell].finish(d, NULL, itr->group, itr->target);
+    int spell = itr->spell;
+    int expiration = itr->expiration;
+    int group = itr->group;
+    int target = itr->target;
     itr = spellEffect.erase(itr);
+    int size = spellEffect.size();
+    if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
+     spellList[spell].finish(d, NULL, group, target);
+    if (size != spellEffect.size())
+     itr = spellEffect.begin();
     continue;
    }
-   else
-   {
-    itr->target = where;
-   }
+  }
+ }
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  if ((BTTARGET_PARTY == itr->group) && (who == itr->target) && (where != BTPARTY_REMOVE))
+  {
+   itr->target = where;
   }
   else if ((BTTARGET_PARTY == itr->group) && (who < where) && (where >= itr->target) && (who < itr->target))
   {
@@ -467,17 +483,25 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
  {
   if (isExpired(itr->expiration))
   {
-   spellList[itr->spell].finish(d, combat, itr->group, itr->target);
+   int spell = itr->spell;
+   int group = itr->group;
+   int target = itr->target;
    itr = spellEffect.erase(itr);
+   int size = spellEffect.size();
+   spellList[spell].finish(d, combat, group, target);
+   if (size != spellEffect.size())
+    itr = spellEffect.begin();
   }
   else
-  {
-   if (itr->first)
-    itr->first = false;
-   else if (BTTIME_PERMANENT != itr->expiration)
-    spellList[itr->spell].maintain(d, combat, itr->group, itr->target);
    ++itr;
-  }
+ }
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  if (itr->first)
+   itr->first = false;
+  else if (BTTIME_PERMANENT != itr->expiration)
+   spellList[itr->spell].maintain(d, combat, itr->group, itr->target);
+  ++itr;
  }
 }
 

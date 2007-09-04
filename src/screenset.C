@@ -1217,12 +1217,12 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
      case BTAREAEFFECT_GROUP:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
-      spellList[i].cast(d, b.pc->name, NULL, BTTARGET_PARTY);
+      spellList[i].cast(d, b.pc->name, true, NULL, BTTARGET_PARTY);
       return -1;
      case BTAREAEFFECT_NONE:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
-      spellList[i].cast(d, b.pc->name, NULL, 0);
+      spellList[i].cast(d, b.pc->name, true, NULL, 0);
       return -1;
      case BTAREAEFFECT_ALL:
       throw BTSpecialError("nocombat");
@@ -1330,7 +1330,7 @@ int BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *ite
  {
   BTGame::getGame()->movedPlayer(d, key - '1', BTPARTY_REMOVE);
   // Add monster to save file
-  party.erase(party.begin() + (key - '1'));
+  party.remove(key - '1', d);
   d.drawStats();
  }
  return 0;
@@ -1453,6 +1453,6 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
  {
   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
   b.pc->sp -= spellList[b.pc->combat.object].getSp();
-  spellList[b.pc->combat.object].cast(d, b.pc->name, NULL, BTTARGET_PARTY, key - '1');
+  spellList[b.pc->combat.object].cast(d, b.pc->name, true, NULL, BTTARGET_PARTY, key - '1');
  }
 }

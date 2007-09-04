@@ -422,5 +422,20 @@ bool BTParty::checkDead(BTDisplay &d)
  return false;
 }
 
+bool BTParty::remove(int who, BTDisplay &d)
+{
+ if (!removing.isSet(who))
+ {
+  removing.set(who);
+  BTGame::getGame()->movedPlayer(d, who, BTPARTY_REMOVE);
+  erase(begin() + who);
+  d.drawStats();
+  removing.clear(who);
+  return true;
+ }
+ else
+  return false;
+}
+
 BTStatusLookup BTStatusLookup::lookup;
 char *BTStatusLookup::value[7] = { "Dead", "Poisoned", "Insane", "Aged", "Possessed", "Turned to stone", "Paralyzed" };

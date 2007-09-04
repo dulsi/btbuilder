@@ -56,7 +56,8 @@ class BTSpell
   IShort getType() const;
   void write(BinaryWriteFile &f);
 
-  void cast(BTDisplay &d, const char *caster, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
+  void activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
+  void cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
   void finish(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
   void maintain(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
 

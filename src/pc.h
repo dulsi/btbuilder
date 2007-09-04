@@ -103,6 +103,10 @@ class BTParty : public XMLVector<BTPc*>
 {
  public:
   bool checkDead(BTDisplay &d);
+  bool remove(int who, BTDisplay &d);
+
+ private:
+  BitField removing;
 };
 
 class BTStatusLookup : public ArrayLookup

@@ -120,7 +120,7 @@ void BTSpell::write(BinaryWriteFile &f)
  f.writeUByteArray(22, (IUByte *)effect);
 }
 
-void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
+void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
@@ -158,10 +158,7 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
   default:
    break;
  }
- std::string text = caster;
- text += " casts ";
- text += name;
- text += ".";
+ std::string text = activation;
  switch(type)
  {
   case BTSPELLTYPE_HEAL:
@@ -251,14 +248,97 @@ void BTSpell::cast(BTDisplay &d, const char *caster, BTCombat *combat, int group
    d.process(BTDisplay::allKeys, 1000);
    game->addEffect(index, expire, group, target);
    break;
+  case BTSPELLTYPE_SUMMONMONSTER:
+  case BTSPELLTYPE_SUMMONILLUSION:
+  {
+   BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
+   text += " ";
+   text += effect;
+   d.addText(text.c_str());
+   d.addText("");
+   d.process(BTDisplay::allKeys, 1000);
+   if (party.size() >= BT_PARTYSIZE)
+   {
+    text = "No room in your party. ";
+    text += monsterList[extra].getName();
+    text += " cannot join!";
+    d.clearElements();
+    d.addText(text.c_str());
+    d.addText("");
+    d.process(BTDisplay::allKeys, 1000);
+   }
+   else
+   {
+    BTPc *pc = new BTPc;
+    pc->setName(monsterList[extra].getName());
+    pc->race = -1;
+    pc->job = ((type == BTSPELLTYPE_SUMMONMONSTER) ? BTJOB_MONSTER : BTJOB_ILLUSION);
+    pc->picture = monsterList[extra].getPicture();
+    pc->monster = extra;
+    pc->ac = monsterList[extra].getAc();
+    pc->hp = pc->maxHp = monsterList[extra].getHp().roll();
+    party.push_back(pc);
+    d.drawStats();
+    if ((BTTIME_PERMANENT != expire) && (BTTIME_CONTINUOUS != expire))
+     game->addEffect(index, expire, BTTARGET_PARTY, party.size() - 1);
+   }
+   break;
+  }
   default:
    break;
  }
  d.clearElements();
 }
 
+void BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
+{
+ std::string text = caster;
+ text += " casts ";
+ text += name;
+ text += ".";
+ activate(d, text.c_str(), partySpell, combat, group, target);
+}
+
 void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
 {
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ switch(type)
+ {
+  case BTSPELLTYPE_SUMMONMONSTER:
+  {
+   if (BTTARGET_PARTY == group)
+   {
+    std::string text = party[target]->name;
+    if (party.remove(target, d))
+    {
+     text += " leaves your party.";
+     d.addText(text.c_str());
+     d.addText("");
+     d.process(BTDisplay::allKeys, 1000);
+     d.clearElements();
+    }
+   }
+   break;
+  }
+  case BTSPELLTYPE_SUMMONILLUSION:
+  {
+   if (BTTARGET_PARTY == group)
+   {
+    std::string text = "The illusionary ";
+    text += party[target]->name;
+    if (party.remove(target, d))
+    {
+     text += " disappears!";
+     d.addText(text.c_str());
+     d.addText("");
+     d.process(BTDisplay::allKeys, 1000);
+     d.clearElements();
+    }
+   }
+   break;
+  }
+ }
 }
 
 void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
