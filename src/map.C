@@ -188,34 +188,42 @@ void BTSpecialCommand::run(BTDisplay &d) const
      if (n < party.size())
      {
       char tmp[100];
-      d.drawText(party[n]->name);
-      snprintf(tmp, 100, "%s costs %d gold coins.", itemList[number[0]].getName(), number[1]);
-      d.drawText(tmp);
-      d.drawText("Wilt thou pay?");
-      d.drawText("Yes, or");
-      d.drawText("No");
-      while (true)
+      if (party[n]->isAlive())
       {
-       key = d.readChar();
-       if ((27 == key) || ('Y' == key) || ('y' == key) || ('N' == key) || ('n' == key))
-        break;
-      }
-      if (('Y' == key) || ('y' == key))
-      {
-       if (party[n]->getGold() < number[1])
-        snprintf(tmp, 100, "%s does not have enough gold!", party[n]->name);
-       else if (party[n]->isEquipmentFull())
+       d.drawText(party[n]->name);
+       snprintf(tmp, 100, "%s costs %d gold coins.", itemList[number[0]].getName(), number[1]);
+       d.drawText(tmp);
+       d.drawText("Wilt thou pay?");
+       d.drawText("Yes, or");
+       d.drawText("No");
+       while (true)
        {
-        snprintf(tmp, 100, "%s has no room for %s!", party[n]->name, itemList[number[0]].getName());
+        key = d.readChar();
+        if ((27 == key) || ('Y' == key) || ('y' == key) || ('N' == key) || ('n' == key))
+         break;
+       }
+       if (('Y' == key) || ('y' == key))
+       {
+        if (party[n]->getGold() < number[1])
+         snprintf(tmp, 100, "%s does not have enough gold!", party[n]->name);
+        else if (party[n]->isEquipmentFull())
+        {
+         snprintf(tmp, 100, "%s has no room for %s!", party[n]->name, itemList[number[0]].getName());
+         d.drawText(tmp);
+         snprintf(tmp, 100, "%s does not have room to carry it!", party[n]->name);
+        }
+        else
+        {
+         party[n]->takeGold(number[1]);
+         party[n]->giveItem(number[0], true, itemList[number[0]].getTimesUsable());
+         snprintf(tmp, 100, "%s gets %s.", party[n]->name, itemList[number[0]].getName());
+        }
         d.drawText(tmp);
-        snprintf(tmp, 100, "%s does not have room to carry it!", party[n]->name);
        }
-       else
-       {
-        party[n]->takeGold(number[1]);
-        party[n]->giveItem(number[0], true, itemList[number[0]].getTimesUsable());
-        snprintf(tmp, 100, "%s gets %s.", party[n]->name, itemList[number[0]].getName());
-       }
+      }
+      else
+      {
+       snprintf(tmp, 100, "%s is dead!", party[n]->name);
        d.drawText(tmp);
       }
       break;
@@ -223,6 +231,63 @@ void BTSpecialCommand::run(BTDisplay &d) const
     }
    }
    break;
+  case BTSPECIALCOMMAND_CASTSPELL:
+  {
+   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+   if (0 == number[1])
+   {
+    spellList[number[0]].activate(d, "", true, NULL, BTTARGET_PARTY, ((BTAREAEFFECT_FOE == spellList[number[0]].getArea()) ? 0 : BTTARGET_INDIVIDUAL));
+   }
+   else
+   {
+    char tmp[100];
+    snprintf(tmp, 100, "Who desires %s?", spellList[number[0]].getName());
+    d.drawText(tmp);
+    d.drawText("");
+    d.drawText("Pick a party member:");
+    while (true)
+    {
+     char key = d.readChar();
+     if (27 == key)
+      break;
+     else if (('1' <= key) && ('9' >= key))
+     {
+      XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+      int n =  key - '1';
+      if (n < party.size())
+      {
+       d.drawText(party[n]->name);
+       snprintf(tmp, 100, "%s costs %d gold coins.", spellList[number[0]].getName(), number[1]);
+       d.drawText(tmp);
+       d.drawText("Wilt thou pay?");
+       d.drawText("Yes, or");
+       d.drawText("No");
+       while (true)
+       {
+        key = d.readChar();
+        if ((27 == key) || ('Y' == key) || ('y' == key) || ('N' == key) || ('n' == key))
+         break;
+       }
+       if (('Y' == key) || ('y' == key))
+       {
+        if (party[n]->getGold() < number[1])
+        {
+         snprintf(tmp, 100, "%s does not have enough gold!", party[n]->name);
+         d.drawText(tmp);
+        }
+        else
+        {
+         party[n]->takeGold(number[1]);
+         spellList[number[0]].activate(d, "", true, NULL, BTTARGET_PARTY, ((BTAREAEFFECT_FOE == spellList[number[0]].getArea()) ? n : BTTARGET_INDIVIDUAL));
+        }
+       }
+       break;
+      }
+     }
+    }
+   }
+   break;
+  }
   case BTSPECIALCOMMAND_PRINT:
    d.drawText(text);
    break;

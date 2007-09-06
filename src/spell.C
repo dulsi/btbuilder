@@ -164,7 +164,8 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
   case BTSPELLTYPE_HEAL:
    if (BTTARGET_PARTY == group)
    {
-    text += " ";
+    if (text.length() > 0)
+     text += " ";
     text += effect;
     if (BTTARGET_INDIVIDUAL == target)
     {
@@ -179,7 +180,9 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
     }
     else
     {
+     text += " ";
      text += party[target]->name;
+     text += ".";
      if (party[target]->isAlive())
       party[target]->giveHP(dice.roll());
     }
@@ -188,6 +191,7 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
     d.process(BTDisplay::allKeys, 1000);
     d.clearElements();
     game->addEffect(index, expire, group, target);
+    d.drawStats();
    }
    break;
   case BTSPELLTYPE_RESURRECT:
@@ -195,7 +199,8 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
    {
     if (BTTARGET_INDIVIDUAL == target)
     {
-     text += " ";
+     if (text.length() > 0)
+      text += " ";
      text += effect;
      text += " the whole party!";
     }
@@ -238,10 +243,12 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
       d.process(BTDisplay::allKeys, 1000);
      }
     }
+    d.drawStats();
    }
    break;
   case BTSPELLTYPE_LIGHT:
-   text += " ";
+   if (text.length() > 0)
+    text += " ";
    text += effect;
    d.addText(text.c_str());
    d.addText("");
@@ -252,7 +259,8 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
   case BTSPELLTYPE_SUMMONILLUSION:
   {
    BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
-   text += " ";
+   if (text.length() > 0)
+    text += " ";
    text += effect;
    d.addText(text.c_str());
    d.addText("");
