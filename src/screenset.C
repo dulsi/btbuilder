@@ -886,7 +886,7 @@ XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
 }
 
 BTScreenSet::BTScreenSet()
- : picture(-1), label(0), clearMagic(false), pc(0)
+ : picture(-1), label(0), building(false), clearMagic(false), pc(0)
 {
  actionList["advanceLevel"] = &advanceLevel;
  actionList["addToParty"] = &addToParty;
@@ -909,6 +909,7 @@ BTScreenSet::BTScreenSet()
  actionList["setJob"] = &setJob;
  actionList["setRace"] = &setRace;
  actionList["unequip"] = &unequip;
+ actionList["useOn"] = &useOn;
 }
 
 BTScreenSet::~BTScreenSet()
@@ -982,6 +983,7 @@ void BTScreenSet::open(const char *filename)
  XMLSerializer parser;
  parser.add("picture", &picture);
  parser.add("label", &label);
+ parser.add("building", &building);
  parser.add("clearMagic", &clearMagic);
  parser.add("screen", &screen, &BTScreenSetScreen::create);
  parser.add("error", &errors, &BTError::create);
@@ -1002,105 +1004,39 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   d.drawImage(picture);
  if (label)
   d.drawLabel(label);
- while (true)
+ try
  {
-  d.clearText();
-  initScreen(d);
-  if (pc)
+  while (true)
   {
-   add("pc", pc);
-   add("partySize", &partySize);
-   pc->serialize(this);
-   switch (pc->combat.type)
+   d.clearText();
+   initScreen(d);
+   if (pc)
    {
-    case BTPc::BTPcAction::item:
+    add("pc", pc);
+    add("partySize", &partySize);
+    pc->serialize(this);
+    switch (pc->combat.type)
     {
-     BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-     pc->item[pc->combat.object].serialize(this);
-     if (pc->getItem(pc->combat.object) != BTITEM_NONE)
+     case BTPc::BTPcAction::item:
      {
-      itemName = itemList[pc->getItem(pc->combat.object)].getName();
-      add("itemName", &itemName);
+      BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+      pc->item[pc->combat.object].serialize(this);
+      if (pc->getItem(pc->combat.object) != BTITEM_NONE)
+      {
+       itemName = itemList[pc->getItem(pc->combat.object)].getName();
+       add("itemName", &itemName);
+      }
+      break;
      }
-     break;
+     case BTPc::BTPcAction::spell:
+      break;
+     default:
+      break;
     }
-    case BTPc::BTPcAction::spell:
-     break;
-    default:
-     break;
    }
-  }
-  try
-  {
-   screen[where]->draw(d, this);
-  }
-  catch (const BTSpecialError &e)
-  {
-   removeLevel();
-   displayError(d, e);
-   where = previous;
-   continue;
-  }
-  previous = where;
-  removeLevel();
-  if (status)
-  {
-   for (int i = 0; i < party.size(); ++i)
-    specialKeys[i] = i + '1';
-  }
-  specialKeys[party.size()] = 27;
-  specialKeys[party.size() + 1] = 0;
-  int key = d.process(specialKeys, screen[where]->getTimeout());
-  if (0 == key)
-   key = 27;
-  endScreen(d);
-  BTScreenItem *item = screen[where]->findItem(key);
-  if (item)
-  {
-   int next = 0;
-
    try
    {
-    BTScreenSet::action a = findAction(item->getAction());
-    if (a)
-     next = (*a)(*this, d, item, key);
-   }
-   catch (const BTSpecialError &e)
-   {
-    next = displayError(d, e);
-   }
-   catch (...)
-   {
-    d.clearText();
-    throw;
-   }
-   if (0 == next)
-    next = item->getScreen(pc);
-   where = findScreen(next);
-  }
-  else if (key == 27)
-  {
-   int esc = screen[where]->getEscapeScreen();
-   if (esc == 0)
-    where = start;
-   else
-    where = findScreen(esc);
-  }
-  else if ((key >= '1') && (key <= '9'))
-  {
-   BTGame::getGame()->getStatus().run(d, party[key - '1']);
-   d.drawImage(picture);
-   d.drawLabel(label);
-  }
-  else
-  {
-   where = start;
-  }
-  if (where == -1)
-  {
-   try
-   {
-    exit(*this, d, NULL, 0);
+    screen[where]->draw(d, this);
    }
    catch (const BTSpecialError &e)
    {
@@ -1109,12 +1045,81 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
     where = previous;
     continue;
    }
-   catch (...)
+   previous = where;
+   removeLevel();
+   if (status)
    {
-    d.clearText();
-    throw;
+    for (int i = 0; i < party.size(); ++i)
+     specialKeys[i] = i + '1';
+   }
+   specialKeys[party.size()] = 27;
+   specialKeys[party.size() + 1] = 0;
+   int key = d.process(specialKeys, screen[where]->getTimeout());
+   if (0 == key)
+    key = 27;
+   endScreen(d);
+   BTScreenItem *item = screen[where]->findItem(key);
+   if (item)
+   {
+    int next = 0;
+
+    try
+    {
+     BTScreenSet::action a = findAction(item->getAction());
+     if (a)
+      next = (*a)(*this, d, item, key);
+    }
+    catch (const BTSpecialError &e)
+    {
+     next = displayError(d, e);
+    }
+    if (0 == next)
+     next = item->getScreen(pc);
+    where = findScreen(next);
+   }
+   else if (key == 27)
+   {
+    int esc = screen[where]->getEscapeScreen();
+    if (esc == 0)
+     where = start;
+    else
+     where = findScreen(esc);
+   }
+   else if ((key >= '1') && (key <= '9'))
+   {
+    BTGame::getGame()->getStatus().run(d, party[key - '1']);
+    d.drawImage(picture);
+    d.drawLabel(label);
+   }
+   else
+   {
+    where = start;
+   }
+   if (where == -1)
+   {
+    try
+    {
+     exit(*this, d, NULL, 0);
+    }
+    catch (const BTSpecialError &e)
+    {
+     removeLevel();
+     displayError(d, e);
+     where = previous;
+     continue;
+    }
    }
   }
+ }
+ catch (const BTSpecialStop &e)
+ {
+  if (building)
+  {
+   d.clearText();
+   throw BTSpecialFlipGoForward();
+  }
+  else
+   d.clearElements();
  }
 }
 
@@ -1213,7 +1218,7 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
       b.getPc()->combat.action = BTPc::BTPcAction::cast;
       b.getPc()->combat.object = i;
       b.getPc()->combat.type = BTPc::BTPcAction::spell;
-      return 0; // IMPLEMENT ME
+      return 0;
      case BTAREAEFFECT_GROUP:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
@@ -1266,7 +1271,7 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  if (dead)
   throw BTSpecialError("dead");
  else
-  throw BTSpecialFlipGoForward();
+  throw BTSpecialStop();
 }
 
 int BTScreenSet::exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
@@ -1451,8 +1456,11 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
 {
  if (b.pc->combat.action == BTPc::BTPcAction::cast)
  {
+  d.clearText();
   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
   b.pc->sp -= spellList[b.pc->combat.object].getSp();
   spellList[b.pc->combat.object].cast(d, b.pc->name, true, NULL, BTTARGET_PARTY, key - '1');
+  return -1;
  }
+ return 0;
 }

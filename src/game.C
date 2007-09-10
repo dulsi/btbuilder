@@ -335,13 +335,7 @@ void BTGame::run(BTDisplay &d)
      {
       BTScreenSet cast;
       cast.open("data/cast.xml");
-      try
-      {
-       cast.run(d);
-      }
-      catch(const BTSpecialFlipGoForward& e)
-      {
-      }
+      cast.run(d);
       break;
      }
      default:

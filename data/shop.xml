@@ -1,6 +1,7 @@
 <screenset>
 	<picture>30</picture>
 	<label>The Shoppe</label>
+	<building>true</building>
 	<screen number="1" escapeScreen="exit">
 		<line>Welcome to Garth's Equipment Shoppe, oh wealthy travellers!</line>
 		<line>Which of you is interested in my fine ware?</line>

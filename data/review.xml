@@ -1,6 +1,7 @@
 <screenset>
 	<picture>44</picture>
 	<label>Review Board</label>
+	<building>true</building>
 	<screen number="1" escapeScreen="exit">
 		<line>You are in the Halls of Review. A clerk asks which of you is interested in going before the board?</line>
 		<selectParty action="selectParty" screen="2" />

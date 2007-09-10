@@ -441,6 +441,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
      pc->monster = number[0];
      pc->ac = monsterList[number[0]].getAc();
      pc->hp = pc->maxHp = monsterList[number[0]].getHp().roll();
+     pc->status.set(BTSTATUS_NPC);
      party.push_back(pc);
      d.drawStats();
     }
@@ -459,6 +460,20 @@ void BTSpecialCommand::run(BTDisplay &d) const
      snprintf(tmp, 100, "%s leaves your party.", party[i]->name);
      d.drawText(tmp);
      party.remove(i, d);
+     d.drawStats();
+    }
+   }
+   break;
+  }
+  case BTSPECIALCOMMAND_ALLMONSTERSHOSTILE:
+  {
+   BTParty &party = BTGame::getGame()->getParty();
+   for (int i = party.size(); i > 0; )
+   {
+    --i;
+    if (party[i]->job == BTJOB_MONSTER)
+    {
+     party[i]->status.set(BTSTATUS_INSANE);
      d.drawStats();
     }
    }
@@ -521,6 +536,20 @@ void BTSpecialCommand::run(BTDisplay &d) const
      snprintf(tmp, 100, "%s leaves your party.", party[i]->name);
      d.drawText(tmp);
      party.remove(i, d);
+     d.drawStats();
+     break;
+    }
+   }
+   break;
+  }
+  case BTSPECIALCOMMAND_MONSTERHOSTILE:
+  {
+   BTParty &party = BTGame::getGame()->getParty();
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName())))
+    {
+     party[i]->status.set(BTSTATUS_INSANE);
      d.drawStats();
      break;
     }

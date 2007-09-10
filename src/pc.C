@@ -438,4 +438,4 @@ bool BTParty::remove(int who, BTDisplay &d)
 }
 
 BTStatusLookup BTStatusLookup::lookup;
-char *BTStatusLookup::value[7] = { "Dead", "Poisoned", "Insane", "Aged", "Possessed", "Turned to stone", "Paralyzed" };
+char *BTStatusLookup::value[8] = { "Dead", "Poisoned", "Insane", "Aged", "Possessed", "Turned to stone", "Paralyzed", "NPC" };

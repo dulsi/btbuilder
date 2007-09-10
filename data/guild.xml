@@ -1,6 +1,7 @@
 <screenset>
 	<picture>40</picture>
 	<label>The Guild</label>
+	<building>true</building>
 	<clearMagic>true</clearMagic>
 	<screen number="1">
 		<line>Thou art in the Guild of Adventurers.</line>

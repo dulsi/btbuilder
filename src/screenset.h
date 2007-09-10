@@ -338,6 +338,7 @@ class BTScreenSet : public ObjectSerializer
  protected:
   int picture;
   char *label;
+  bool building;
   bool clearMagic;
   XMLVector<BTScreenSetScreen*> screen;
   XMLVector<BTError*> errors;

@@ -81,8 +81,10 @@ class BTPc : public XMLObject
   class BTPcAction
   {
    public:
-    enum pcAction { advance, attack, partyAttack, defend, useItem, runAway, cast, skill };
+    enum pcAction { advance, attack, partyAttack, defend, useItem, runAway, cast, skill, npc };
     enum objectType { none, item, spell };
+
+    BTPcAction() : active(true) {}
 
     void clearTarget(int group, int member = BTTARGET_INDIVIDUAL);
     void setTarget(int group, int member = BTTARGET_INDIVIDUAL);
@@ -112,12 +114,12 @@ class BTParty : public XMLVector<BTPc*>
 class BTStatusLookup : public ArrayLookup
 {
  public:
-  BTStatusLookup() : ArrayLookup(7, value) {}
+  BTStatusLookup() : ArrayLookup(8, value) {}
 
   static BTStatusLookup lookup;
 
  private:
-  static char *value[7];
+  static char *value[8];
 };
 
 #endif

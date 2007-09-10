@@ -185,30 +185,57 @@ int BTCombat::findScreen(int num)
   BTPc* current = getPc();
   if (current == NULL)
   {
-   setPc(party[0]);
-   canAttack = ((!canAdvance) && (0 < monsters.size()));
+   optionState = false;
+   num = BTCOMBATSCREEN_COMBAT;
+   for (i = 0; i < party.size(); ++i)
+   {
+    if (!party[i]->status.isSet(BTSTATUS_NPC))
+    {
+     setPc(party[i]);
+     canAttack = ((!canAdvance) && (0 < monsters.size()));
+     optionState = true;
+     break;
+    }
+    else
+     party[i]->combat.action = BTPc::BTPcAction::npc;
+   }
   }
   else
   {
    for (i = 0; i < party.size(); ++i)
     if (party[i] == current)
      break;
-   if ((num == BTCOMBATSCREEN_OPTION) && (i != 0))
+   if (num == BTCOMBATSCREEN_OPTION)
    {
-    setPc(party[i - 1]);
-    canAttack = ((!canAdvance) && (i - 1 < BT_BACK) && (!monsters.empty()));
+    for (int prev = i - 1; prev >= 0; --prev)
+    {
+     if (!party[prev]->status.isSet(BTSTATUS_NPC))
+     {
+      setPc(party[prev]);
+      i = prev;
+      break;
+     }
+    }
+    canAttack = ((!canAdvance) && (i < BT_BACK) && (!monsters.empty()));
    }
    else if (num == BTCOMBATSCREEN_COMBAT)
    {
-    if ((i == party.size() - 1) || (!party[i + 1]->isAlive()))
+    optionState = false;
+    setPc(NULL);
+    for (++i; i < party.size(); ++i)
     {
-     setPc(NULL);
-     optionState = false;
-    }
-    else
-    {
-     setPc(party[i + 1]);
-     canAttack = ((!canAdvance) && (i + 1 < BT_BACK) && (!monsters.empty()));
+     if (!party[i]->status.isSet(BTSTATUS_NPC))
+     {
+      if (party[i]->isAlive())
+      {
+       optionState = true;
+       setPc(party[i]);
+       canAttack = ((!canAdvance) && (i < BT_BACK) && (!monsters.empty()));
+      }
+      break;
+     }
+     else
+      party[i]->combat.action = BTPc::BTPcAction::npc;
     }
    }
   }
@@ -222,6 +249,8 @@ int BTCombat::findScreen(int num)
 bool BTCombat::findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target)
 {
  int group = pc.combat.getTargetGroup() - BTTARGET_MONSTER;
+ if (group < 0)
+  pc.combat.setTarget(BTTARGET_MONSTER + (group = BTDice(1, monsters.size(), -1).roll()));
  std::list<BTMonsterGroup>::iterator itr(monsters.begin());
  for (; itr != monsters.end(); ++itr, --group)
  {
@@ -393,10 +422,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
    d.addText(("Unknown Error: " + e.error).c_str());
   d.process(BTDisplay::allKeys, 1000);
  }
- catch (const BTSpecialFlipGoForward &e)
- {
- }
- d.clearElements();
+ d.clearText();
  clearEffects(d);
  clearEncounters();
 }
@@ -584,118 +610,206 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
  std::string text;
  pc.combat.active = false;
  --active;
- switch (pc.combat.action)
+ if (BTPc::BTPcAction::runAway == pc.combat.action)
  {
-  case BTPc::BTPcAction::attack:
-  case BTPc::BTPcAction::partyAttack:
+ }
+ else if (BTPc::BTPcAction::advance == pc.combat.action)
+ {
+ }
+ else
+ {
+  if ((pc.status.isSet(BTSTATUS_INSANE)) || (pc.status.isSet(BTSTATUS_POSSESSED)))
   {
-   int ac;
-   int handWeapon = pc.getHandWeapon();
-   for (int attacks = 0; attacks < pc.rateAttacks; )
+   int group;
+   int target;
+   int opponents = 0;
+   std::list<BTMonsterGroup>::iterator itr(monsters.begin());
+   for (; itr != monsters.end(); ++itr)
+    if (itr->distance == 1)
+     ++opponents;
+   int alive = 0;
+   int who = 0;
+   for (target = 0; target < party.size(); ++target)
    {
-    BTMonsterGroup *grp = NULL;
-    int target = BTTARGET_INDIVIDUAL;
-    if (BTPc::BTPcAction::attack == pc.combat.action)
+    if (party[target]->isAlive())
     {
-     findTarget(pc, 1, grp, target);
-     if (NULL == grp)
-      return;
-     ac = monList[grp->monsterType].getAc();
+     if (party[target] == &pc)
+      who = target;
+     ++alive;
     }
+   }
+   if ((pc.status.isSet(BTSTATUS_POSSESSED)) || (0 == opponents) || (who <= BT_BACK))
+    group = BTTARGET_PARTY;
+   else
+   {
+    opponents = BTDice(1, opponents + ((alive > 1) ? 1 : 0), ((alive > 1) ? 0 : 1)).roll();
+    if (opponents == BTTARGET_PARTY)
+     group = opponents;
     else
     {
-     target = pc.combat.getTargetIndividual();
-     if (!party[target]->isAlive())
-      return;
-     ac = party[target]->ac;
+     --opponents;
+     group = BTTARGET_MONSTER;
+     for (itr = monsters.begin(); itr != monsters.end(); ++itr, ++group)
+     {
+      if ((itr->distance == 1) && (--opponents == 0))
+       break;
+     }
     }
-    text = pc.name;
-    text += " ";
-    if (-1 == handWeapon)
-    {
-     text += "punches at";
-    }
+   }
+   target = BTTARGET_INDIVIDUAL;
+   if (BTTARGET_PARTY == group)
+   {
+    if (1 == alive)
+     alive = 0;
     else
+     alive = BTDice(1, alive - 1).roll();
+    for (target = 0; target < party.size(); ++target)
     {
-     BTItem &item = itemList[handWeapon];
-     text += item.getCause();
+     if ((alive == 0) && (party[target]->isAlive()))
+      break;
+     else if ((party[target]->isAlive()) && (party[target] != &pc) && (--alive == 0))
+      break;
     }
-    text += " ";
-    if (BTPc::BTPcAction::attack == pc.combat.action)
-     text += monList[grp->monsterType].getName();
-    else
-     text += party[target]->name;
-    ++attacks;
-    int roll = BTDice(1, 20).roll();
-    if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= ac)))
+    pc.combat.action = BTPc::BTPcAction::partyAttack;
+    pc.combat.setTarget(group, target);
+   }
+   else
+   {
+    pc.combat.action = BTPc::BTPcAction::attack;
+    pc.combat.setTarget(group);
+   }
+  }
+  if (BTPc::BTPcAction::npc == pc.combat.action)
+  {
+   pc.combat.action = BTPc::BTPcAction::defend;
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i] == &pc)
     {
+     if ((i < BT_BACK) && (0 < monsters.size()))
+     {
+      pc.combat.action = BTPc::BTPcAction::attack;
+      pc.combat.clearTarget(pc.combat.getTargetGroup());
+     }
+     break;
+    }
+   }
+  }
+  switch (pc.combat.action)
+  {
+   case BTPc::BTPcAction::attack:
+   case BTPc::BTPcAction::partyAttack:
+   {
+    int ac;
+    int handWeapon = pc.getHandWeapon();
+    for (int attacks = 0; attacks < pc.rateAttacks; )
+    {
+     BTMonsterGroup *grp = NULL;
+     int target = BTTARGET_INDIVIDUAL;
+     if (BTPc::BTPcAction::attack == pc.combat.action)
+     {
+      findTarget(pc, 1, grp, target);
+      if (NULL == grp)
+       return;
+      ac = monList[grp->monsterType].getAc();
+     }
+     else
+     {
+      target = pc.combat.getTargetIndividual();
+      if (!party[target]->isAlive())
+       return;
+      ac = party[target]->ac;
+      if (party[target]->status.isSet(BTSTATUS_NPC))
+       party[target]->status.set(BTSTATUS_INSANE);
+     }
+     text = pc.name;
      text += " ";
-     int damage = 0;
      if (-1 == handWeapon)
      {
-      text += "and strikes for";
-      damage = BTDice(1, 2).roll();
+      text += "punches at";
      }
      else
      {
       BTItem &item = itemList[handWeapon];
-      text += item.getEffect();
-      damage = item.getDamage().roll();
+      text += item.getCause();
      }
      text += " ";
-     if (pc.stat[BTSTAT_ST] > 14)
-      damage += pc.stat[BTSTAT_ST] - 14;
-     char tmp[20];
-     sprintf(tmp, "%d", damage);
-     text += tmp;
-     text += " points of damage";
      if (BTPc::BTPcAction::attack == pc.combat.action)
+      text += monList[grp->monsterType].getName();
+     else
+      text += party[target]->name;
+     ++attacks;
+     int roll = BTDice(1, 20).roll();
+     if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= ac)))
      {
-      if ((grp->individual[target].hp -= damage) < 0)
+      text += " ";
+      int damage = 0;
+      if (-1 == handWeapon)
       {
-       text += ", killing him!";
-       if (grp->individual[target].active)
-       {
-        grp->individual[target].active = false;
-        grp->active--;
-        --active;
-       }
+       text += "and strikes for";
+       damage = BTDice(1, 2).roll();
       }
       else
-       text += ".";
+      {
+       BTItem &item = itemList[handWeapon];
+       text += item.getEffect();
+       damage = item.getDamage().roll();
+      }
+      text += " ";
+      if (pc.stat[BTSTAT_ST] > 14)
+       damage += pc.stat[BTSTAT_ST] - 14;
+      char tmp[20];
+      sprintf(tmp, "%d", damage);
+      text += tmp;
+      text += " points of damage";
+      if (BTPc::BTPcAction::attack == pc.combat.action)
+      {
+       if ((grp->individual[target].hp -= damage) < 0)
+       {
+        text += ", killing him!";
+        if (grp->individual[target].active)
+        {
+         grp->individual[target].active = false;
+         grp->active--;
+         --active;
+        }
+       }
+       else
+        text += ".";
+      }
+      else
+      {
+       if (party[target]->takeHP(damage))
+        text += ", killing him!";
+       else
+        text += ".";
+       d.drawStats();
+      }
      }
      else
-     {
-      if (party[target]->takeHP(damage))
-       text += ", killing him!";
-      else
-       text += ".";
-      d.drawStats();
-     }
+      text += ", but misses!";
+     d.addText(text.c_str());
+     d.addText(blank);
+     d.process(BTDisplay::allKeys, 1000);
+     d.clearElements();
     }
-    else
-     text += ", but misses!";
-    d.addText(text.c_str());
-    d.addText(blank);
-    d.process(BTDisplay::allKeys, 1000);
-    d.clearElements();
+    break;
    }
-   break;
+   case BTPc::BTPcAction::defend:
+    break;
+   case BTPc::BTPcAction::cast:
+    pc.sp -= spellList[pc.combat.object].getSp();
+    spellList[pc.combat.object].cast(d, pc.name, true, this, pc.combat.getTargetGroup(),  pc.combat.getTargetIndividual());
+    break;
+   case BTPc::BTPcAction::useItem:
+   case BTPc::BTPcAction::skill:
+    // TODO: Implement
+    break;
+   case BTPc::BTPcAction::runAway:
+   case BTPc::BTPcAction::advance:
+   default:
+    break;
   }
-  case BTPc::BTPcAction::defend:
-   break;
-  case BTPc::BTPcAction::cast:
-   pc.sp -= spellList[pc.combat.object].getSp();
-   spellList[pc.combat.object].cast(d, pc.name, true, this, pc.combat.getTargetGroup(),  pc.combat.getTargetIndividual());
-   break;
-  case BTPc::BTPcAction::useItem:
-  case BTPc::BTPcAction::skill:
-   // TODO: Implement
-   break;
-  case BTPc::BTPcAction::runAway:
-  case BTPc::BTPcAction::advance:
-  default:
-   break;
  }
 }
 

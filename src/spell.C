@@ -246,6 +246,50 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
     d.drawStats();
    }
    break;
+  case BTSPELLTYPE_CUREINSANITY:
+   if (BTTARGET_PARTY == group)
+   {
+    if (BTTARGET_INDIVIDUAL == target)
+    {
+     if (text.length() > 0)
+      text += " ";
+     text += effect;
+     text += " the whole party!";
+    }
+    else
+    {
+     if (text.length() > 0)
+      text += " ";
+     text += effect;
+     text += " ";
+     text += party[target]->name;
+     text += ". ";
+    }
+    d.addText(text.c_str());
+    d.addText("");
+    d.process(BTDisplay::allKeys, 1000);
+    d.clearElements();
+    if (BTTARGET_INDIVIDUAL == target)
+    {
+     for (int i = 0; i < party.size(); ++i)
+     {
+      if (party[i]->status.isSet(BTSTATUS_INSANE))
+      {
+       party[i]->status.clear(BTSTATUS_INSANE);
+      }
+     }
+    }
+    else
+    {
+     if (party[target]->status.isSet(BTSTATUS_INSANE))
+     {
+      party[target]->status.clear(BTSTATUS_INSANE);
+     }
+    }
+    game->addEffect(index, expire, group, target);
+    d.drawStats();
+   }
+   break;
   case BTSPELLTYPE_LIGHT:
    if (text.length() > 0)
     text += " ";
@@ -285,6 +329,7 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
     pc->monster = extra;
     pc->ac = monsterList[extra].getAc();
     pc->hp = pc->maxHp = monsterList[extra].getHp().roll();
+    pc->status.set(BTSTATUS_NPC);
     party.push_back(pc);
     d.drawStats();
     if ((BTTIME_PERMANENT != expire) && (BTTIME_CONTINUOUS != expire))
@@ -346,6 +391,8 @@ void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target /*= B
    }
    break;
   }
+  default:
+   break;
  }
 }
 
@@ -415,6 +462,26 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target /*=
      }*/
     }
    }
+   break;
+  case BTSPELLTYPE_CUREINSANITY:
+   if (BTTARGET_INDIVIDUAL == target)
+   {
+    for (int i = 0; i < party.size(); ++i)
+    {
+     if (party[i]->status.isSet(BTSTATUS_INSANE))
+     {
+      party[i]->status.clear(BTSTATUS_INSANE);
+     }
+    }
+   }
+   else
+   {
+    if (party[target]->status.isSet(BTSTATUS_INSANE))
+    {
+     party[target]->status.clear(BTSTATUS_INSANE);
+    }
+   }
+   d.drawStats();
    break;
   default:
    break;

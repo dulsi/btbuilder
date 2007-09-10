@@ -44,13 +44,26 @@
 			</print>
 		</checkBit>
 		<default>
-			<statBlock>
-				<attribute>maxhp</attribute>
-				<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
-				<max>999</max>
-				<overflow>WOW</overflow>
-				<align>right</align>
-			</statBlock>
+			<conditional>
+				<checkBit>
+					<attribute>status</attribute>
+					<bit>3</bit>
+					<print>
+						<text>NUT</text>
+						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
+						<align>right</align>
+					</print>
+				</checkBit>
+				<default>
+					<statBlock>
+						<attribute>maxhp</attribute>
+						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
+						<max>999</max>
+						<overflow>WOW</overflow>
+						<align>right</align>
+					</statBlock>
+				</default>
+			</conditional>
 			<statBlock>
 				<attribute>hp</attribute>
 				<position><x>182</x><y>0</y><w>32</w><h>8</h></position>
