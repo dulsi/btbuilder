@@ -338,6 +338,13 @@ void BTGame::run(BTDisplay &d)
       cast.run(d);
       break;
      }
+     case 'n':
+     {
+      BTScreenSet moveTo;
+      moveTo.open("data/moveTo.xml");
+      moveTo.run(d);
+      break;
+     }
      default:
       break;
     }

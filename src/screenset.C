@@ -898,6 +898,7 @@ BTScreenSet::BTScreenSet()
  actionList["exit"] = &exit;
  actionList["exitAndSave"] = &exitAndSave;
  actionList["give"] = &give;
+ actionList["moveTo"] = &moveTo;
  actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
  actionList["removeFromParty"] = &removeFromParty;
@@ -1305,6 +1306,27 @@ int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
    return screen;
   }
  }
+ return 0;
+}
+
+int BTScreenSet::moveTo(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ if ((key >= '1') && (key <= '9') && (key - '1' < party.size()) && (party[key - '1'] != b.pc))
+ {
+  for (int i = 0; i < party.size(); ++i)
+  {
+   if (party[i] == b.pc)
+   {
+    if (i != key - '1')
+    {
+     party.moveTo(i, key - '1', d);
+    }
+    break;
+   }
+  }
+ } 
+ d.clearText();
  return 0;
 }
 

@@ -1,0 +1,13 @@
+<screenset>
+	<screen number="1" escapeScreen="exit">
+		<line>Move who?</line>
+		<selectParty action="selectParty" screen="2" />
+		<choice keys="cC" action="exit">(CANCEL)</choice>
+	</screen>
+	<screen number="2" escapeScreen="exit">
+		<line />
+		<line />
+		<line>To where?</line>
+		<selectParty action="moveTo" screen="exit" />
+	</screen>
+</screenset>

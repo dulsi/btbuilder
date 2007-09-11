@@ -422,13 +422,37 @@ bool BTParty::checkDead(BTDisplay &d)
  return false;
 }
 
+void BTParty::moveTo(int who, int where, BTDisplay &d)
+{
+ BTPc *pc = (*this)[who];
+ erase(begin() + who);
+ if (where > who)
+ {
+  if (where == size())
+   push_back(pc);
+  else
+   insert(begin() + where, pc);
+ }
+ else
+ {
+  insert(begin() + where, pc);
+ }
+ BTGame::getGame()->movedPlayer(d, who, where);
+}
+
 bool BTParty::remove(int who, BTDisplay &d)
 {
  if (!removing.isSet(who))
  {
+  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
   removing.set(who);
+  BTPc *pc = (*this)[who];
   BTGame::getGame()->movedPlayer(d, who, BTPARTY_REMOVE);
   erase(begin() + who);
+  if (roster.end() == std::find(roster.begin(), roster.end(), pc))
+  {
+   delete pc;
+  }
   d.drawStats();
   removing.clear(who);
   return true;
