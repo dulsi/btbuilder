@@ -590,6 +590,12 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_SUBTRACTCOUNTER:
    game->setCounter(game->getCounter() - number[0]);
    break;
+  case BTSPECIALCOMMAND_TELEPORTRELATIVE:
+   throw BTSpecialTeleport(text, number[0], 21 - number[1] + game->getX(), number[2] + game->getY(), false);
+   break;
+  case BTSPECIALCOMMAND_TELEACTIVATE:
+   throw BTSpecialTeleport(text, number[0], 21 - number[1], number[2], true);
+   break;
   default:
    break;
  }
