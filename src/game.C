@@ -12,7 +12,7 @@
 BTGame *BTGame::game = NULL;
 
 BTGame::BTGame(BTModule *m)
- : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0)
+ : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0), timedSpecial(-1)
 {
  IRandomize();
  if (NULL == game)
@@ -101,6 +101,7 @@ BTMap *BTGame::loadMap(const char *filename)
   delete levelMap;
  }
  local.clearAll();
+ clearTimedSpecial();
  BinaryReadFile levelFile(filename);
  levelMap = new BTMap(levelFile);
  return levelMap;
@@ -246,33 +247,15 @@ void BTGame::run(BTDisplay &d)
     special = false;
     const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
     IShort s = current.getSpecial();
-    try
-    {
-     if (s >= 0)
-      levelMap->getSpecial(s)->run(d);
-    }
-    catch (const BTSpecialTeleport &t)
-    {
-     loadMap(t.map.c_str());
-     xPos = t.x;
-     yPos = t.y;
-     facing = t.facing;
-     d.drawView();
-     special = t.activate;
-    }
-    catch (const BTSpecialBack &)
-    {
-     special = move(d, (facing + 2) % 4);
-    }
-    catch (const BTSpecialFlipGoForward &)
-    {
-     turnAround(d);
-     special = move(d, facing);
-    }
-    catch (const BTSpecialForward &)
-    {
-     special = move(d, facing);
-    }
+    if (s >= 0)
+     special = runSpecial(d, s);
+   }
+   if ((!special) && (timedSpecial >= 0) && (isExpired(timedExpiration)))
+   {
+    IShort s = timedSpecial;
+    clearTimedSpecial();
+    special = runSpecial(d, s);
+    continue;
    }
    d.drawView();
    d.drawLabel(levelMap->getName());
@@ -356,6 +339,37 @@ void BTGame::run(BTDisplay &d)
  }
 }
 
+bool BTGame::runSpecial(BTDisplay &d, IShort special)
+{
+ try
+ {
+  levelMap->getSpecial(special)->run(d);
+ }
+ catch (const BTSpecialTeleport &t)
+ {
+  loadMap(t.map.c_str());
+  xPos = t.x;
+  yPos = t.y;
+  facing = t.facing;
+  d.drawView();
+  return t.activate;
+ }
+ catch (const BTSpecialBack &)
+ {
+  return move(d, (facing + 2) % 4);
+ }
+ catch (const BTSpecialFlipGoForward &)
+ {
+  turnAround(d);
+  return move(d, facing);
+ }
+ catch (const BTSpecialForward &)
+ {
+  return move(d, facing);
+ }
+ return false;
+}
+
 bool BTGame::move(BTDisplay &d, int dir)
 {
  const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
@@ -388,6 +402,17 @@ void BTGame::turnAround(BTDisplay &d)
  facing = facing % 4;
 }
 
+void BTGame::setTimedSpecial(IShort special, unsigned int expire)
+{
+ timedExpiration = expire;
+ timedSpecial = special;
+}
+
+void BTGame::clearTimedSpecial()
+{
+ timedSpecial = -1;
+}
+
 void BTGame::addEffect(int spell, unsigned int expire, int group, int target)
 {
  if (BTTIME_COMBAT == expire)
@@ -409,6 +434,7 @@ void BTGame::clearEffects(BTDisplay &d)
    spellList[spell].finish(d, NULL, group, target);
  }
  combat.clearEffects(d);
+ clearTimedSpecial();
 }
 
 void BTGame::movedPlayer(BTDisplay &d, int who, int where)

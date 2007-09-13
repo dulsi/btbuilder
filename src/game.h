@@ -68,10 +68,14 @@ class BTGame : public Psuedo3DMap
   void setGlobalFlag(int index, bool value);
 
   void run(BTDisplay &d);
+  bool runSpecial(BTDisplay &d, IShort special);
   bool move(BTDisplay &d, int dir);
   void turnLeft(BTDisplay &d);
   void turnRight(BTDisplay &d);
   void turnAround(BTDisplay &d);
+
+  void setTimedSpecial(IShort special, unsigned int expire);
+  void clearTimedSpecial();
 
   void addEffect(int spell, unsigned int expire, int group, int target);
   void clearEffects(BTDisplay &d);
@@ -103,6 +107,8 @@ class BTGame : public Psuedo3DMap
   BitField local;
   BitField global;
   unsigned int gameTime;
+  unsigned int timedExpiration;
+  IShort timedSpecial;
 
   static BTGame *game;
 };

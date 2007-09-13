@@ -584,6 +584,12 @@ void BTSpecialCommand::run(BTDisplay &d) const
    d.drawFullScreen(text, 0);
    d.refresh();
    break;
+  case BTSPECIALCOMMAND_SETTIMESPECIAL:
+   game->setTimedSpecial(number[0], game->getExpiration(number[1] * BTTIME_MINUTE));
+   break;
+  case BTSPECIALCOMMAND_CLEARTIMESPECIAL:
+   game->clearTimedSpecial();
+   break;
   case BTSPECIALCOMMAND_GOTO:
    throw BTSpecialGoto(number[0] - 1);
    break;
