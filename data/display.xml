@@ -47,9 +47,45 @@
 			<conditional>
 				<checkBit>
 					<attribute>status</attribute>
+					<bit>1</bit>
+					<print>
+						<text>PSN</text>
+						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
+						<align>right</align>
+					</print>
+				</checkBit>
+				<checkBit>
+					<attribute>status</attribute>
+					<bit>4</bit>
+					<print>
+						<text>POS</text>
+						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
+						<align>right</align>
+					</print>
+				</checkBit>
+				<checkBit>
+					<attribute>status</attribute>
 					<bit>3</bit>
 					<print>
+						<text>OLD</text>
+						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
+						<align>right</align>
+					</print>
+				</checkBit>
+				<checkBit>
+					<attribute>status</attribute>
+					<bit>2</bit>
+					<print>
 						<text>NUT</text>
+						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
+						<align>right</align>
+					</print>
+				</checkBit>
+				<checkBit>
+					<attribute>status</attribute>
+					<bit>6</bit>
+					<print>
+						<text>PAR</text>
 						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
 						<align>right</align>
 					</print>

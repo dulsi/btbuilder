@@ -993,9 +993,13 @@ void BTScreenSet::open(const char *filename)
 
 void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
 {
+ BTGame *game = BTGame::getGame();
  if (clearMagic)
-  BTGame::getGame()->clearEffects(d);
- BTParty &party = BTGame::getGame()->getParty();
+ {
+  game->clearEffects(d);
+  game->clearTimedSpecial();
+ }
+ BTParty &party = game->getParty();
  std::string itemName;
  char specialKeys[10];
  int previous = 0;

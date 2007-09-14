@@ -61,6 +61,9 @@ class BTSpell
   void finish(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
   void maintain(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
 
+ protected:
+  void cureStatus(BTCombat *combat, int group, int target, int status);
+
  private:
   char name[29];
   char code[5];

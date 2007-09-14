@@ -434,7 +434,6 @@ void BTGame::clearEffects(BTDisplay &d)
    spellList[spell].finish(d, NULL, group, target);
  }
  combat.clearEffects(d);
- clearTimedSpecial();
 }
 
 void BTGame::movedPlayer(BTDisplay &d, int who, int where)
@@ -529,6 +528,19 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
   else if (BTTIME_PERMANENT != itr->expiration)
    spellList[itr->spell].maintain(d, combat, itr->group, itr->target);
   ++itr;
+ }
+ for (int i = 0; i < party.size(); ++i)
+ {
+  if (party[i]->status.isSet(BTSTATUS_POISONED))
+  {
+   if (party[i]->takeHP(1))
+   {
+    bool dead = party.checkDead(d);
+    d.drawStats();
+    if (dead)
+     throw BTSpecialError("dead");
+   }
+  }
  }
 }
 

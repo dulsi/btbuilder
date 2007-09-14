@@ -159,17 +159,37 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
    break;
  }
  std::string text = activation;
+ if (text.length() > 0)
+  text += " ";
+ text += effect;
+ switch(area)
+ {
+  case BTAREAEFFECT_GROUP:
+   if (BTTARGET_PARTY == group)
+    text += " the whole party!";
+   break;
+  case BTAREAEFFECT_FOE:
+   text += " ";
+   if (BTTARGET_PARTY == group)
+   {
+    text += party[target]->name;
+   }
+   text += ".";
+  case BTAREAEFFECT_NONE:
+  default:
+   break;
+ }
+ d.addText(text.c_str());
+ d.addText("");
+ d.process(BTDisplay::allKeys, 1000);
+ d.clearElements();
  switch(type)
  {
   case BTSPELLTYPE_HEAL:
    if (BTTARGET_PARTY == group)
    {
-    if (text.length() > 0)
-     text += " ";
-    text += effect;
     if (BTTARGET_INDIVIDUAL == target)
     {
-     text += " the whole party!";
      for (int i = 0; i < party.size(); ++i)
      {
       if (party[i]->isAlive())
@@ -180,16 +200,9 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
     }
     else
     {
-     text += " ";
-     text += party[target]->name;
-     text += ".";
      if (party[target]->isAlive())
       party[target]->giveHP(dice.roll());
     }
-    d.addText(text.c_str());
-    d.addText("");
-    d.process(BTDisplay::allKeys, 1000);
-    d.clearElements();
     game->addEffect(index, expire, group, target);
     d.drawStats();
    }
@@ -197,17 +210,6 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
   case BTSPELLTYPE_RESURRECT:
    if (BTTARGET_PARTY == group)
    {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     if (text.length() > 0)
-      text += " ";
-     text += effect;
-     text += " the whole party!";
-    }
-    d.addText(text.c_str());
-    d.addText("");
-    d.process(BTDisplay::allKeys, 1000);
-    d.clearElements();
     if (BTTARGET_INDIVIDUAL == target)
     {
      game->addEffect(index, expire, group, target);
@@ -230,94 +232,50 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
     {
      if (!party[target]->isAlive())
      {
-      text = effect;
-      text += " ";
-      text += party[target]->name;
-      text += ". ";
-      text += party[target]->name;
+      text = party[target]->name;
       text += " rises from the dead!";
       party[target]->status.clear(BTSTATUS_DEAD);
       party[target]->hp = 1;
       d.addText(text.c_str());
       d.addText("");
       d.process(BTDisplay::allKeys, 1000);
+      d.clearElements();
      }
     }
     d.drawStats();
    }
+   break;
+  case BTSPELLTYPE_CUREPOISON:
+   cureStatus(combat, group, target, BTSTATUS_POISONED);
+   game->addEffect(index, expire, group, target);
+   d.drawStats();
    break;
   case BTSPELLTYPE_CUREINSANITY:
-   if (BTTARGET_PARTY == group)
-   {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     if (text.length() > 0)
-      text += " ";
-     text += effect;
-     text += " the whole party!";
-    }
-    else
-    {
-     if (text.length() > 0)
-      text += " ";
-     text += effect;
-     text += " ";
-     text += party[target]->name;
-     text += ". ";
-    }
-    d.addText(text.c_str());
-    d.addText("");
-    d.process(BTDisplay::allKeys, 1000);
-    d.clearElements();
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < party.size(); ++i)
-     {
-      if (party[i]->status.isSet(BTSTATUS_INSANE))
-      {
-       party[i]->status.clear(BTSTATUS_INSANE);
-      }
-     }
-    }
-    else
-    {
-     if (party[target]->status.isSet(BTSTATUS_INSANE))
-     {
-      party[target]->status.clear(BTSTATUS_INSANE);
-     }
-    }
-    game->addEffect(index, expire, group, target);
-    d.drawStats();
-   }
+   cureStatus(combat, group, target, BTSTATUS_INSANE);
+   game->addEffect(index, expire, group, target);
+   d.drawStats();
+   break;
+  case BTSPELLTYPE_DISPOSSESS:
+   cureStatus(combat, group, target, BTSTATUS_POSSESSED);
+   game->addEffect(index, expire, group, target);
+   d.drawStats();
    break;
   case BTSPELLTYPE_LIGHT:
-   if (text.length() > 0)
-    text += " ";
-   text += effect;
-   d.addText(text.c_str());
-   d.addText("");
-   d.process(BTDisplay::allKeys, 1000);
    game->addEffect(index, expire, group, target);
    break;
   case BTSPELLTYPE_SUMMONMONSTER:
   case BTSPELLTYPE_SUMMONILLUSION:
   {
    BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
-   if (text.length() > 0)
-    text += " ";
-   text += effect;
-   d.addText(text.c_str());
-   d.addText("");
-   d.process(BTDisplay::allKeys, 1000);
    if (party.size() >= BT_PARTYSIZE)
    {
     text = "No room in your party. ";
     text += monsterList[extra].getName();
     text += " cannot join!";
-    d.clearElements();
     d.addText(text.c_str());
     d.addText("");
     d.process(BTDisplay::allKeys, 1000);
+    d.clearElements();
    }
    else
    {
@@ -340,7 +298,6 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
   default:
    break;
  }
- d.clearElements();
 }
 
 void BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target /*= BTTARGET_INDIVIDUAL*/)
@@ -463,30 +420,48 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target /*=
     }
    }
    break;
+  case BTSPELLTYPE_CUREPOISON:
+   cureStatus(combat, group, target, BTSTATUS_POISONED);
+   d.drawStats();
+   break;
   case BTSPELLTYPE_CUREINSANITY:
-   if (BTTARGET_INDIVIDUAL == target)
-   {
-    for (int i = 0; i < party.size(); ++i)
-    {
-     if (party[i]->status.isSet(BTSTATUS_INSANE))
-     {
-      party[i]->status.clear(BTSTATUS_INSANE);
-     }
-    }
-   }
-   else
-   {
-    if (party[target]->status.isSet(BTSTATUS_INSANE))
-    {
-     party[target]->status.clear(BTSTATUS_INSANE);
-    }
-   }
+   cureStatus(combat, group, target, BTSTATUS_INSANE);
+   d.drawStats();
+   break;
+  case BTSPELLTYPE_DISPOSSESS:
+   cureStatus(combat, group, target, BTSTATUS_POSSESSED);
    d.drawStats();
    break;
   default:
    break;
  }
  d.clearElements();
+}
+
+void BTSpell::cureStatus(BTCombat *combat, int group, int target, int status)
+{
+ if (BTTARGET_PARTY == group)
+ {
+  BTGame *game = BTGame::getGame();
+  BTParty &party = game->getParty();
+  if (BTTARGET_INDIVIDUAL == target)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i]->status.isSet(status))
+    {
+     party[i]->status.clear(status);
+    }
+   }
+  }
+  else
+  {
+   if (party[target]->status.isSet(status))
+   {
+    party[target]->status.clear(status);
+   }
+  }
+ }
 }
 
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
