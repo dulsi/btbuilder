@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include <file.h>
+#include "combatant.h"
 #include "display.h"
 #include "map.h"
 #include "screenset.h"
@@ -20,17 +21,6 @@ class BTCombatError
   BTCombatError(const std::string &e) : error(e) {}
 
   std::string error;
-};
-
-class BTMonsterInstance
-{
- public:
-  BTMonsterInstance() : maxHp(-1), hp(-1), active(true) {}
-  BTMonsterInstance(int startHp) : maxHp(startHp), hp(startHp), active(true) {}
-
-  int maxHp, hp;
-  BitField status;
-  bool active;
 };
 
 class BTMonsterGroup
@@ -47,7 +37,7 @@ class BTMonsterGroup
   int distance;
   int active;
   bool canMove;
-  std::vector<BTMonsterInstance> individual;
+  std::vector<BTCombatant> individual;
 };
 
 class BTCombatScreen : public BTScreenSetScreen
@@ -79,7 +69,7 @@ class BTCombat : public BTScreenSet
   virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
   void runCombat(BTDisplay &d);
-  void runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTMonsterInstance &mon);
+  void runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTCombatant &mon);
   void runPcAction(BTDisplay &d, int &active, BTPc &pc);
 
   // Actions

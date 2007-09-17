@@ -46,6 +46,7 @@ extern char *areaEffect[];
 extern char *durations[];
 
 #define BT_MONSTEREXTRADAMAGE 11
+#define BTEXTRADAMAGE_POSION 1
 extern char *extraDamage[];
 
 #define BT_RANGEDTYPES 4
@@ -148,7 +149,7 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_TELEACTIVATE     60
 extern char *specialCommands[];
 
-#define  BTSPECIAL_NONE -1
+#define BTSPECIAL_NONE -1
 
 #define BT_DIRECTIONS 4
 #define BTDIRECTION_NORTH 0
@@ -171,8 +172,12 @@ extern char *mapTypes[];
 #define BTSTAT_LK 4
 extern char *statAbbrev[];
 
+#define BTSP_REGEN 50
+
 #define BTJOB_MONSTER  11
 #define BTJOB_ILLUSION 12
+
+#define BTMONSTER_NONE -1
 
 #define BT_ITEMS 8
 #define BT_PARTYSIZE 7

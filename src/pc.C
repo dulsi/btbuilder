@@ -17,7 +17,7 @@ void BTEquipment::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), job(0), picture(-1), monster(-1), ac(0), toHit(0), rateAttacks(1), save(0), hp(0), maxHp(0),  sp(0), maxSp(0), level(1), gold(0), xp(0)
+ : race(0), job(0), picture(-1), monster(BTMONSTER_NONE), ac(0), toHit(0), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
@@ -106,11 +106,6 @@ int BTPc::incrementStat()
   }
  }
  return -1; // Can't get here
-}
-
-bool BTPc::isAlive() const
-{
- return !status.isSet(BTSTATUS_DEAD);
 }
 
 bool BTPc::isEquipped(int index) const
@@ -304,17 +299,6 @@ unsigned int BTPc::takeGold(unsigned int amount)
  }
 }
 
-bool BTPc::takeHP(int amount)
-{
- if (!status.isSet(BTSTATUS_DEAD))
- {
-  hp -= amount;
-  if (hp < 0)
-   status.set(BTSTATUS_DEAD);
- }
- return hp < 0;
-}
-
 bool BTPc::takeItem(int id)
 {
  for (int i = 0; i < BT_ITEMS; ++i)
@@ -393,7 +377,7 @@ bool BTParty::checkDead(BTDisplay &d)
  {
   if (operator[](who)->status.isSet(BTSTATUS_DEAD))
   {
-   operator[](who)->combat.active = false;
+   operator[](who)->active = false;
    restDead = who;
   }
   else
@@ -408,14 +392,14 @@ bool BTParty::checkDead(BTDisplay &d)
   {
    game->movedPlayer(d, who, size() - 1);
    BTPc *pc = operator[](who);
-   pc->combat.active = false;
+   pc->active = false;
    erase(begin() + who);
    push_back(pc);
    --restDead;
   }
   else
   {
-   operator[](who)->combat.active = true;
+   operator[](who)->active = true;
    ++who;
   }
  }

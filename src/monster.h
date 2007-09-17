@@ -67,6 +67,7 @@ class BTMonster
   IShort getStartDistance() const;
   unsigned int getXp() const;
   IBool isIllusion() const;
+  bool savingThrow(int difficulty) const;
   void write(BinaryWriteFile &f);
 
  private:

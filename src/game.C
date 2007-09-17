@@ -529,19 +529,30 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
    spellList[itr->spell].maintain(d, combat, itr->group, itr->target);
   ++itr;
  }
+ bool died = false;
+ bool spRegen = false;
+ if ((0 == gameTime % BTSP_REGEN) && (isDaytime()) && (0 < levelMap->getLight()))
+  spRegen = true;
  for (int i = 0; i < party.size(); ++i)
  {
-  if (party[i]->status.isSet(BTSTATUS_POISONED))
+  if (!party[i]->status.isSet(BTSTATUS_DEAD))
   {
-   if (party[i]->takeHP(1))
+   if (party[i]->status.isSet(BTSTATUS_POISONED))
    {
-    bool dead = party.checkDead(d);
-    d.drawStats();
-    if (dead)
-     throw BTSpecialError("dead");
+    if (party[i]->takeHP(1))
+    {
+     died = true;
+    }
    }
+   if ((spRegen) && (party[i]->sp < party[i]->maxSp))
+    party[i]->sp += 1;
   }
  }
+ if (died)
+  died = party.checkDead(d);
+ d.drawStats();
+ if (died)
+  throw BTSpecialError("dead");
 }
 
 BTGame *BTGame::getGame()

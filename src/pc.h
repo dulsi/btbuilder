@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "btconst.h"
+#include "combatant.h"
 #include "display.h"
 #include "xmlserializer.h"
 
@@ -23,7 +24,7 @@ class BTEquipment : public XMLObject
   int charges;
 };
 
-class BTPc : public XMLObject
+class BTPc : public XMLObject, public BTCombatant
 {
  public:
   BTPc();
@@ -32,7 +33,6 @@ class BTPc : public XMLObject
   bool advanceLevel();
   void equip(int index);
   int incrementStat();
-  bool isAlive() const;
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
   bool isEquipmentFull() const;
@@ -49,7 +49,6 @@ class BTPc : public XMLObject
   virtual void serialize(ObjectSerializer* s);
   void setName(const char *nm);
   unsigned int takeGold(unsigned int amount);
-  bool takeHP(int amount);
   bool takeItem(int id);
   bool takeItemFromIndex(int index);
   void unequip(int index);
@@ -68,8 +67,6 @@ class BTPc : public XMLObject
   int toHit;
   int rateAttacks;
   int save;
-  BitField status;
-  int hp, maxHp;
   int sp, maxSp;
   int level;
   unsigned int xp;
@@ -84,14 +81,11 @@ class BTPc : public XMLObject
     enum pcAction { advance, attack, partyAttack, defend, useItem, runAway, cast, skill, npc };
     enum objectType { none, item, spell };
 
-    BTPcAction() : active(true) {}
-
     void clearTarget(int group, int member = BTTARGET_INDIVIDUAL);
     void setTarget(int group, int member = BTTARGET_INDIVIDUAL);
     int getTargetGroup() const { return target >> BTTARGET_GROUPSHIFT; }
     int getTargetIndividual() const { return target & BTTARGET_INDIVIDUAL; }
 
-    bool active;
     pcAction action;
     objectType type;
     int object;

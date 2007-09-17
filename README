@@ -9,8 +9,8 @@ to compile.  The programs found in the util directory need the Identical
 Software Graphics Library to build.
 
 The program can read the BTCS files.  The core game engine is still a
-work in progress.  Some specials have been implemented but not enough
-to run a complete game.  It can also print information about
+work in progress.  Most specials have been implemented but combat and
+spells are still not complete.  It can also print information about
 monsters, spells, items and maps.
 
 To run the sample game, run:

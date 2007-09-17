@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "monster.h"
+#include "game.h"
 
 #define MONSTER_RANGEDTYPENONE   0
 #define MONSTER_RANGEDTYPEONEFOE 1
@@ -169,6 +170,20 @@ unsigned int BTMonster::getXp() const
 IBool BTMonster::isIllusion() const
 {
  return illusion;
+}
+
+bool BTMonster::savingThrow(int difficulty) const
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ int job = (isIllusion() ? BTJOB_ILLUSION : BTJOB_MONSTER);
+ int save = jobList[job]->save + (level / jobList[job]->improveSave);
+ int roll = BTDice(1, 20, save).roll();
+ if (roll == 20 + save)
+  return true;
+ else if (roll == 1 + save)
+  return false;
+ else
+  return (roll >= difficulty);
 }
 
 void BTMonster::write(BinaryWriteFile &f)
