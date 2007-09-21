@@ -7,21 +7,27 @@
   03/24/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#include <string>
-
 class BitField
 {
  public:
   BitField();
+  BitField(const BitField &b);
+  ~BitField();
 
   void clearAll();
   void clear(int index);
   bool isSet(int index) const;
   int getMaxSet() const;
+  void move(int index, int where);
+  void remove(int index);
   void set(int index);
 
  private:
-  int bits;
+  void expand(int newSize);
+
+ private:
+  unsigned int size;
+  unsigned int *bits;
 };
 
 #endif

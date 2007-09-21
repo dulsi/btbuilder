@@ -1227,12 +1227,12 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
      case BTAREAEFFECT_GROUP:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
-      spellList[i].cast(d, b.pc->name, true, NULL, BTTARGET_PARTY);
+      spellList[i].cast(d, b.pc->name, true, NULL, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
       return -1;
      case BTAREAEFFECT_NONE:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
-      spellList[i].cast(d, b.pc->name, true, NULL, 0);
+      spellList[i].cast(d, b.pc->name, true, NULL, 0, BTTARGET_INDIVIDUAL);
       return -1;
      case BTAREAEFFECT_ALL:
       throw BTSpecialError("nocombat");

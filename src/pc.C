@@ -219,7 +219,7 @@ bool BTPc::hasItem(int id) const
  return false;
 }
 
-bool BTPc::savingThrow(int difficulty) const
+bool BTPc::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  int roll = BTDice(1, 20, save).roll();
  if (roll == 20 + save)

@@ -56,13 +56,16 @@ class BTSpell
   IShort getType() const;
   void write(BinaryWriteFile &f);
 
-  void activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
-  void cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
-  void finish(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
-  void maintain(BTDisplay &d, BTCombat *combat, int group, int target = BTTARGET_INDIVIDUAL);
+  void activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target);
+  void cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target);
+  void finish(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists);
+  void maintain(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists);
 
  protected:
+  bool checkResists(BTCombat *combat, int group, int target, BitField &resists);
   void cureStatus(BTCombat *combat, int group, int target, int status);
+  void displayResists(BTDisplay &d, BTCombat *combat, int group, int target);
+  void setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, int status, bool first = false);
 
  private:
   char name[29];

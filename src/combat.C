@@ -143,9 +143,9 @@ BTCombat::~BTCombat()
  free(partyLabel);
 }
 
-void BTCombat::addEffect(int spell, unsigned int expire, int group, int target)
+void BTCombat::addEffect(int spell, unsigned int expire, int group, int target, BitField& resist)
 {
- spellEffect.push_back(BTSpellEffect(spell, expire, group, target));
+ spellEffect.push_back(BTSpellEffect(spell, expire, group, target, resist));
 }
 
 void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
@@ -165,9 +165,10 @@ void BTCombat::clearEffects(BTDisplay &d)
   int group = itr->group;
   int target = itr->target;
   int expiration = itr->expiration;
+  BitField resists = itr->resists;
   spellEffect.erase(itr);
   if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-   spellList[spell].finish(d, this, group, target);
+   spellList[spell].finish(d, this, group, target, resists);
  }
 }
 
@@ -282,6 +283,16 @@ bool BTCombat::findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target
  return false;
 }
 
+BTMonsterGroup *BTCombat::getMonsterGroup(int group)
+{
+ std::list<BTMonsterGroup>::iterator itr(monsters.begin());
+ for (; itr != monsters.end(); ++itr, --group)
+ {
+  if (0 == group)
+   return &(*itr);
+ }
+ return NULL;
+}
 
 void BTCombat::initScreen(BTDisplay &d)
 {
@@ -351,10 +362,11 @@ void BTCombat::movedPlayer(BTDisplay &d, int who, int where)
     int expiration = itr->expiration;
     int group = itr->group;
     int target = itr->target;
+    BitField resists = itr->resists;
     itr = spellEffect.erase(itr);
     int size = spellEffect.size();
     if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-     spellList[spell].finish(d, this, group, target);
+     spellList[spell].finish(d, this, group, target, resists);
     if (size != spellEffect.size())
      itr = spellEffect.begin();
    }
@@ -858,9 +870,10 @@ bool BTCombat::endRound(BTDisplay &d)
    int spell = effect->spell;
    group = effect->group;
    int target = effect->target;
+   BitField resists = effect->resists;
    effect = spellEffect.erase(effect);
    int size = spellEffect.size();
-   spellList[effect->spell].finish(d, this, effect->group, effect->target);
+   spellList[effect->spell].finish(d, this, group, target, resists);
    if (size != spellEffect.size())
     effect = spellEffect.begin();
   }
@@ -874,7 +887,7 @@ bool BTCombat::endRound(BTDisplay &d)
    if (effect->first)
     effect->first = false;
    else if (BTTIME_PERMANENT != effect->expiration)
-    spellList[effect->spell].maintain(d, this, effect->group, effect->target);
+    spellList[effect->spell].maintain(d, this, effect->group, effect->target, effect->resists);
   }
  }
  group = BTTARGET_MONSTER;
@@ -911,10 +924,11 @@ bool BTCombat::endRound(BTDisplay &d)
      {
       int spell = effect->spell;
       int expiration = effect->expiration;
+      BitField resists = effect->resists;
       effect = spellEffect.erase(effect);
       int size = spellEffect.size();
       if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-       spellList[spell].finish(d, this, group, monster - itr->individual.begin());
+       spellList[spell].finish(d, this, group, monster - itr->individual.begin(), resists);
       if (size != spellEffect.size())
        effect = spellEffect.begin();
      }
@@ -945,10 +959,11 @@ bool BTCombat::endRound(BTDisplay &d)
     {
      int spell = effect->spell;
      int expiration = effect->expiration;
+     BitField resists = effect->resists;
      effect = spellEffect.erase(effect);
      int size = spellEffect.size();
      if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-      spellList[spell].finish(d, this, group);
+      spellList[spell].finish(d, this, group, BTTARGET_INDIVIDUAL, resists);
      if (size != spellEffect.size())
       effect = spellEffect.begin();
     }
@@ -981,9 +996,10 @@ bool BTCombat::endRound(BTDisplay &d)
    int expiration = effect->expiration;
    group = effect->group;
    int target = effect->target;
+   BitField resists = effect->resists;
    spellEffect.erase(effect);
    if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-    spellList[spell].finish(d, this, group, target);
+    spellList[spell].finish(d, this, group, target, resists);
   }
   int alive = 0;
   int i;

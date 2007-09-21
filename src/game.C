@@ -413,12 +413,12 @@ void BTGame::clearTimedSpecial()
  timedSpecial = -1;
 }
 
-void BTGame::addEffect(int spell, unsigned int expire, int group, int target)
+void BTGame::addEffect(int spell, unsigned int expire, int group, int target, BitField &resists)
 {
- if (BTTIME_COMBAT == expire)
-  combat.addEffect(spell, expire, group, target);
+ if ((BTTIME_COMBAT == expire) || (group >= BTTARGET_MONSTER))
+  combat.addEffect(spell, expire, group, target, resists);
  else
-  spellEffect.push_back(BTSpellEffect(spell, expire, group, target));
+  spellEffect.push_back(BTSpellEffect(spell, expire, group, target, resists));
 }
 
 void BTGame::clearEffects(BTDisplay &d)
@@ -429,9 +429,10 @@ void BTGame::clearEffects(BTDisplay &d)
   int group = itr->group;
   int target = itr->target;
   int expiration = itr->expiration;
+  BitField resists = itr->resists;
   spellEffect.erase(itr);
   if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-   spellList[spell].finish(d, NULL, group, target);
+   spellList[spell].finish(d, NULL, group, target, resists);
  }
  combat.clearEffects(d);
 }
@@ -448,16 +449,19 @@ void BTGame::movedPlayer(BTDisplay &d, int who, int where)
     int expiration = itr->expiration;
     int group = itr->group;
     int target = itr->target;
+    BitField resists = itr->resists;
     itr = spellEffect.erase(itr);
     int size = spellEffect.size();
     if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-     spellList[spell].finish(d, NULL, group, target);
+     spellList[spell].finish(d, NULL, group, target, resists);
     if (size != spellEffect.size())
      itr = spellEffect.begin();
     continue;
    }
   }
  }
+ // Must finish combat spells before fixing targets
+ combat.movedPlayer(d, who, where);
  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
  {
   if ((BTTARGET_PARTY == itr->group) && (who == itr->target) && (where != BTPARTY_REMOVE))
@@ -474,7 +478,6 @@ void BTGame::movedPlayer(BTDisplay &d, int who, int where)
   }
   ++itr;
  }
- combat.movedPlayer(d, who, where);
 }
 
 unsigned int BTGame::getExpiration(unsigned int duration)
@@ -512,9 +515,10 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
    int spell = itr->spell;
    int group = itr->group;
    int target = itr->target;
+   BitField resists = itr->resists;
    itr = spellEffect.erase(itr);
    int size = spellEffect.size();
-   spellList[spell].finish(d, combat, group, target);
+   spellList[spell].finish(d, combat, group, target, resists);
    if (size != spellEffect.size())
     itr = spellEffect.begin();
   }
@@ -526,7 +530,7 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
   if (itr->first)
    itr->first = false;
   else if (BTTIME_PERMANENT != itr->expiration)
-   spellList[itr->spell].maintain(d, combat, itr->group, itr->target);
+   spellList[itr->spell].maintain(d, combat, itr->group, itr->target, itr->resists);
   ++itr;
  }
  bool died = false;

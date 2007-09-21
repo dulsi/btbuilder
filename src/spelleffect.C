@@ -7,8 +7,8 @@
 
 #include "spelleffect.h"
 
-BTSpellEffect::BTSpellEffect(int s, int x, int g, int t)
- : spell(s), expiration(x), first(true), group(g), target(t)
+BTSpellEffect::BTSpellEffect(int s, int x, int g, int t, BitField &r)
+ : spell(s), expiration(x), first(true), group(g), target(t), resists(r)
 {
 }
 

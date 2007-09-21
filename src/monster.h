@@ -10,6 +10,7 @@
 #include "istdlib.h"
 #include <file.h>
 #include "dice.h"
+#include "btconst.h"
 
 /*
  [monster]
@@ -67,7 +68,7 @@ class BTMonster
   IShort getStartDistance() const;
   unsigned int getXp() const;
   IBool isIllusion() const;
-  bool savingThrow(int difficulty) const;
+  bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
   void write(BinaryWriteFile &f);
 
  private:

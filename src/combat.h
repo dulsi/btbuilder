@@ -57,12 +57,13 @@ class BTCombat : public BTScreenSet
   BTCombat();
   ~BTCombat();
 
-  void addEffect(int spell, unsigned int expire, int group, int target);
+  void addEffect(int spell, unsigned int expire, int group, int target, BitField &resist);
   void addEncounter(int monsterType, int number = 0);
   void clearEffects(BTDisplay &d);
   void clearEncounters();
   int findScreen(int num);
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
+  BTMonsterGroup *getMonsterGroup(int group);
   void initScreen(BTDisplay &d);
   bool isWinner() { return won; }
   void movedPlayer(BTDisplay &d, int who, int where);

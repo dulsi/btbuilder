@@ -172,7 +172,7 @@ IBool BTMonster::isIllusion() const
  return illusion;
 }
 
-bool BTMonster::savingThrow(int difficulty) const
+bool BTMonster::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
  int job = (isIllusion() ? BTJOB_ILLUSION : BTJOB_MONSTER);

@@ -14,7 +14,7 @@
 class BTSpellEffect : public XMLObject
 {
  public:
-  BTSpellEffect(int s, int x, int g, int t);
+  BTSpellEffect(int s, int x, int g, int t, BitField &r);
 
   virtual void serialize(ObjectSerializer *s);
 
@@ -23,6 +23,7 @@ class BTSpellEffect : public XMLObject
   bool first;
   int group;
   int target;
+  BitField resists;
 };
 
 #endif
