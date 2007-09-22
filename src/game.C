@@ -12,7 +12,7 @@
 BTGame *BTGame::game = NULL;
 
 BTGame::BTGame(BTModule *m)
- : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0), timedSpecial(-1)
+ : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0), timedSpecial(-1), delay(1000)
 {
  IRandomize();
  if (NULL == game)
@@ -163,7 +163,7 @@ void BTGame::setFacing(int f)
  facing = f;
 }
 
-std::string BTGame::getLastInput(void) const
+std::string BTGame::getLastInput() const
 {
  return lastInput;
 }
@@ -173,7 +173,7 @@ void BTGame::setLastInput(std::string input)
  lastInput = input;
 }
 
-int BTGame::getCounter(void) const
+int BTGame::getCounter() const
 {
  return counter;
 }
@@ -225,6 +225,7 @@ void BTGame::run(BTDisplay &d)
  try
  {
   d.drawFullScreen(module->title, 5000);
+  d.refresh();
   d.setPsuedo3DConfig(module->wall);
   d.setWallGraphics(0);
   unsigned char key = ' ';
@@ -557,6 +558,11 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
  d.drawStats();
  if (died)
   throw BTSpecialError("dead");
+}
+
+int BTGame::getDelay() const
+{
+ return delay;
 }
 
 BTGame *BTGame::getGame()

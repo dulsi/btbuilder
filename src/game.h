@@ -53,10 +53,10 @@ class BTGame : public Psuedo3DMap
   int getWallType(int x, int y, int direction);
   void setFacing(int f);
 
-  std::string getLastInput(void) const;
+  std::string getLastInput() const;
   void setLastInput(std::string input);
 
-  int getCounter(void) const;
+  int getCounter() const;
   void setCounter(int val);
 
   BTCombat &getCombat();
@@ -85,6 +85,8 @@ class BTGame : public Psuedo3DMap
   bool isDaytime();
   void nextTurn(BTDisplay &d, BTCombat *combat = NULL);
 
+  int getDelay() const;
+
   static BTGame *getGame();
 
  private:
@@ -109,6 +111,7 @@ class BTGame : public Psuedo3DMap
   unsigned int gameTime;
   unsigned int timedExpiration;
   IShort timedSpecial;
+  int delay;
 
   static BTGame *game;
 };

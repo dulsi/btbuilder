@@ -56,8 +56,8 @@ class BTSpell
   IShort getType() const;
   void write(BinaryWriteFile &f);
 
-  void activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target);
-  void cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target);
+  int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target);
+  int cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target);
   void finish(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists);
   void maintain(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists);
 
@@ -65,7 +65,7 @@ class BTSpell
   bool checkResists(BTCombat *combat, int group, int target, BitField &resists);
   void cureStatus(BTCombat *combat, int group, int target, int status);
   void displayResists(BTDisplay &d, BTCombat *combat, int group, int target);
-  void setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, int status, bool first = false);
+  int setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, int status, const char *statusText, bool first = false);
 
  private:
   char name[29];

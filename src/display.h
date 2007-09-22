@@ -64,6 +64,7 @@ class BTDisplay
   void drawImage(int pic);
   void drawLabel(const char *name);
   void drawLast(const char *keys, const char *words, alignment a = left);
+  void drawMessage(const char *words, int delay);
   void drawText(const char *words, alignment a = left);
   void drawView();
   void drawStats();

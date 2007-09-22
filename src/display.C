@@ -307,6 +307,14 @@ void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= le
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
 }
 
+void BTDisplay::drawMessage(const char *words, int delay)
+{
+ addText(words);
+ addText("");
+ process(BTDisplay::allKeys, delay);
+ clearElements();
+}
+
 void BTDisplay::drawText(const char *words, alignment a /*= left*/)
 {
  int w, h;

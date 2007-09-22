@@ -35,7 +35,7 @@ int BTMonsterGroup::findTarget(int ind /*= BTTARGET_INDIVIDUAL*/)
  std::vector<BTCombatant>::iterator monster(individual.begin());
  for (; monster != individual.end(); ++monster)
  {
-  if (monster->hp >= 0)
+  if (monster->isAlive())
   {
    ++alive;
   }
@@ -45,7 +45,7 @@ int BTMonsterGroup::findTarget(int ind /*= BTTARGET_INDIVIDUAL*/)
   alive = BTDice(1, alive).roll();
   for (monster = individual.begin(); monster != individual.end(); ++monster)
   {
-   if (monster->hp >= 0)
+   if (monster->isAlive())
    {
     if (0 == --alive)
      return monster - individual.begin();
@@ -615,10 +615,11 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, 
 
 void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
 {
- BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
- BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
- BTParty &party = BTGame::getGame()->getParty();
- BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTGame *game = BTGame::getGame();
+ BTFactory<BTItem> &itemList = game->getItemList();
+ BTFactory<BTMonster> &monList = game->getMonsterList();
+ BTParty &party = game->getParty();
+ BTFactory<BTSpell> &spellList = game->getSpellList();
  std::string text;
  pc.active = false;
  --active;
@@ -830,10 +831,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
      }
      else
       text += ", but misses!";
-     d.addText(text.c_str());
-     d.addText(blank);
-     d.process(BTDisplay::allKeys, 1000);
-     d.clearElements();
+     d.drawMessage(text.c_str(), game->getDelay());
     }
     break;
    }
@@ -841,7 +839,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
     break;
    case BTPc::BTPcAction::cast:
     pc.sp -= spellList[pc.combat.object].getSp();
-    spellList[pc.combat.object].cast(d, pc.name, true, this, pc.combat.getTargetGroup(),  pc.combat.getTargetIndividual());
+    active -= spellList[pc.combat.object].cast(d, pc.name, true, this, pc.combat.getTargetGroup(),  pc.combat.getTargetIndividual());
     break;
    case BTPc::BTPcAction::useItem:
    case BTPc::BTPcAction::skill:
@@ -880,15 +878,12 @@ bool BTCombat::endRound(BTDisplay &d)
   else
    ++effect;
  }
- for (; effect != spellEffect.end(); ++effect)
+ for (effect = spellEffect.begin(); effect != spellEffect.end(); ++effect)
  {
-  if (!game->isExpired(effect->expiration))
-  {
-   if (effect->first)
-    effect->first = false;
-   else if (BTTIME_PERMANENT != effect->expiration)
-    spellList[effect->spell].maintain(d, this, effect->group, effect->target, effect->resists);
-  }
+  if (effect->first)
+   effect->first = false;
+  else if (BTTIME_PERMANENT != effect->expiration)
+   spellList[effect->spell].maintain(d, this, effect->group, effect->target, effect->resists);
  }
  group = BTTARGET_MONSTER;
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end();)
@@ -907,10 +902,7 @@ bool BTCombat::endRound(BTDisplay &d)
       std::string text;
       text = monList[itr->monsterType].getName();
       text += " dies!";
-      d.addText(text.c_str());
-      d.addText(blank);
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
     }
    }
@@ -937,7 +929,7 @@ bool BTCombat::endRound(BTDisplay &d)
     }
     for (std::list<BTSpellEffect>::iterator effect = spellEffect.begin(); effect != spellEffect.end(); ++effect)
     {
-     if ((group == effect->group) && (effect->target > monster - itr->individual.begin()))
+     if ((group == effect->group) && (effect->target != BTTARGET_INDIVIDUAL) && (effect->target > monster - itr->individual.begin()))
      {
       effect->target--;
      }

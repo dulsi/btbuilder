@@ -120,14 +120,14 @@ void BTSpell::write(BinaryWriteFile &f)
  f.writeUByteArray(22, (IUByte *)effect);
 }
 
-void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target)
+int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
  BTFactory<BTSpell> &spellList = game->getSpellList();
  int index = spellList.find(this);
  if (index >= spellList.size())
-  return;
+  return 0;
  unsigned int expire = 0;
  switch(duration)
  {
@@ -179,10 +179,7 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
   default:
    break;
  }
- d.addText(text.c_str());
- d.addText("");
- d.process(BTDisplay::allKeys, 1000);
- d.clearElements();
+ d.drawMessage(text.c_str(), game->getDelay());
  BitField resists;
  switch(type)
  {
@@ -220,10 +217,7 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
       {
        text = party[i]->name;
        text += " rises from the dead!";
-       d.addText(text.c_str());
-       d.addText("");
-       d.process(BTDisplay::allKeys, 1000);
-       d.clearElements();
+       d.drawMessage(text.c_str(), game->getDelay());
        party[i]->status.clear(BTSTATUS_DEAD);
        party[i]->hp = 1;
       }
@@ -237,10 +231,7 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
       text += " rises from the dead!";
       party[target]->status.clear(BTSTATUS_DEAD);
       party[target]->hp = 1;
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
     }
     d.drawStats();
@@ -261,6 +252,20 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
    game->addEffect(index, expire, group, target, resists);
    d.drawStats();
    break;
+  case BTSPELLTYPE_KILL:
+   if (checkResists(combat, group, target, resists))
+   {
+    displayResists(d, combat, group, target);
+   }
+   else
+   {
+    int killed = setStatus(d, combat, group, target, resists, BTSTATUS_DEAD, " is killed.", true);
+    game->addEffect(index, expire, group, target, resists);
+    if (BTTARGET_PARTY == group)
+     d.drawStats();
+    return killed;
+   }
+   break;
   case BTSPELLTYPE_POISON:
    if (checkResists(combat, group, target, resists))
    {
@@ -268,7 +273,33 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
    }
    else
    {
-    setStatus(d, combat, group, target, resists, BTSTATUS_POISONED, true);
+    setStatus(d, combat, group, target, resists, BTSTATUS_POISONED, " is poisoned.", true);
+    game->addEffect(index, expire, group, target, resists);
+    if (BTTARGET_PARTY == group)
+     d.drawStats();
+   }
+   break;
+  case BTSPELLTYPE_CAUSEINSANITY:
+   if (checkResists(combat, group, target, resists))
+   {
+    displayResists(d, combat, group, target);
+   }
+   else
+   {
+    setStatus(d, combat, group, target, resists, BTSTATUS_INSANE, " has gone insane.", true);
+    game->addEffect(index, expire, group, target, resists);
+    if (BTTARGET_PARTY == group)
+     d.drawStats();
+   }
+   break;
+  case BTSPELLTYPE_POSSESS:
+   if (checkResists(combat, group, target, resists))
+   {
+    displayResists(d, combat, group, target);
+   }
+   else
+   {
+    setStatus(d, combat, group, target, resists, BTSTATUS_POSSESSED, " is possessed.", true);
     game->addEffect(index, expire, group, target, resists);
     if (BTTARGET_PARTY == group)
      d.drawStats();
@@ -286,10 +317,7 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
     text = "No room in your party. ";
     text += monsterList[extra].getName();
     text += " cannot join!";
-    d.addText(text.c_str());
-    d.addText("");
-    d.process(BTDisplay::allKeys, 1000);
-    d.clearElements();
+    d.drawMessage(text.c_str(), game->getDelay());
    }
    else
    {
@@ -312,15 +340,16 @@ void BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BT
   default:
    break;
  }
+ return 0;
 }
 
-void BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target)
+int BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target)
 {
  std::string text = caster;
  text += " casts ";
  text += name;
  text += ".";
- activate(d, text.c_str(), partySpell, combat, group, target);
+ return activate(d, text.c_str(), partySpell, combat, group, target);
 }
 
 void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists)
@@ -337,10 +366,7 @@ void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target, BitF
     if (party.remove(target, d))
     {
      text += " leaves your party.";
-     d.addText(text.c_str());
-     d.addText("");
-     d.process(BTDisplay::allKeys, 1000);
-     d.clearElements();
+     d.drawMessage(text.c_str(), game->getDelay());
     }
    }
    break;
@@ -354,14 +380,26 @@ void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target, BitF
     if (party.remove(target, d))
     {
      text += " disappears!";
-     d.addText(text.c_str());
-     d.addText("");
-     d.process(BTDisplay::allKeys, 1000);
-     d.clearElements();
+     d.drawMessage(text.c_str(), game->getDelay());
     }
    }
    break;
   }
+  case BTSPELLTYPE_POISON:
+   cureStatus(combat, group, target, BTSTATUS_POISONED);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
+  case BTSPELLTYPE_CAUSEINSANITY:
+   cureStatus(combat, group, target, BTSTATUS_INSANE);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
+  case BTSPELLTYPE_POSSESS:
+   cureStatus(combat, group, target, BTSTATUS_POSSESSED);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
   default:
    break;
  }
@@ -405,10 +443,7 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target, Bi
       {
        std::string text = party[i]->name;
        text += " rises from the dead!";
-       d.addText(text.c_str());
-       d.addText("");
-       d.process(BTDisplay::allKeys, 1000);
-       d.clearElements();
+       d.drawMessage(text.c_str(), game->getDelay());
        party[i]->status.clear(BTSTATUS_DEAD);
        party[i]->hp = 1;
       }
@@ -417,20 +452,6 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target, Bi
     else
     {
      // BTCS either cancels spells on death or doesn't implement this
-/*     if (!party[target]->isAlive())
-     {
-      text = effect;
-      text += " ";
-      text += party[target]->name;
-      text += ". ";
-      text += party[target]->name;
-      text += " rises from the dead!";
-      party[target]->status.clear(BTSTATUS_DEAD);
-      party[target]->hp = 1;
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-     }*/
     }
    }
    break;
@@ -446,8 +467,23 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target, Bi
    cureStatus(combat, group, target, BTSTATUS_POSSESSED);
    d.drawStats();
    break;
+  case BTSPELLTYPE_KILL:
+   setStatus(d, combat, group, target, resists, BTSTATUS_DEAD, " is killed.");
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
   case BTSPELLTYPE_POISON:
-   setStatus(d, combat, group, target, resists, BTSTATUS_POISONED);
+   setStatus(d, combat, group, target, resists, BTSTATUS_POISONED, " is poisoned.");
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
+  case BTSPELLTYPE_CAUSEINSANITY:
+   setStatus(d, combat, group, target, resists, BTSTATUS_INSANE, " has gone insane.");
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
+  case BTSPELLTYPE_POSSESS:
+   setStatus(d, combat, group, target, resists, BTSTATUS_POSSESSED, " is possessed.");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
@@ -637,14 +673,12 @@ void BTSpell::displayResists(BTDisplay &d, BTCombat *combat, int group, int targ
    text += "(s)";
  }
  text += " repelled the spell!";
- d.addText(text.c_str());
- d.addText("");
- d.process(BTDisplay::allKeys, 1000);
- d.clearElements();
+ d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
 }
 
-void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, int status, bool first /*= false*/)
+int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, int status, const char *statusText, bool first /*= false*/)
 {
+ int killed = 0;
  BTGame *game = BTGame::getGame();
  BTFactory<BTMonster> &monList = game->getMonsterList();
  if (BTTARGET_PARTY == group)
@@ -660,10 +694,7 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
      {
       std::string text = party[i]->name;
       text += " repelled the spell!";
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
     }
     else if ((party[i]->isAlive()) && (!party[i]->status.isSet(status)))
@@ -672,14 +703,19 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
      {
       std::string text = party[i]->name;
       text += " save!";
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
      else
      {
+      std::string text = party[i]->name;
+      text += statusText;
+      d.drawMessage(text.c_str(), game->getDelay());
       party[i]->status.set(status);
+      if ((status == BTSTATUS_DEAD) && (party[i]->active))
+      {
+       ++killed;
+       party[i]->active = false;
+      }
      }
     }
    }
@@ -692,14 +728,19 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
     {
      std::string text = party[target]->name;
      text += " save!";
-     d.addText(text.c_str());
-     d.addText("");
-     d.process(BTDisplay::allKeys, 1000);
-     d.clearElements();
+     d.drawMessage(text.c_str(), game->getDelay());
     }
     else
     {
+     std::string text = party[target]->name;
+     text += statusText;
+     d.drawMessage(text.c_str(), game->getDelay());
      party[target]->status.set(status);
+     if ((status == BTSTATUS_DEAD) && (party[target]->active))
+     {
+      ++killed;
+      party[target]->active = false;
+     }
     }
    }
   }
@@ -719,10 +760,7 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
      {
       std::string text = monList[grp->monsterType].getName();
       text += " repelled the spell!";
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
     }
     else if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
@@ -731,14 +769,20 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
      {
       std::string text = monList[grp->monsterType].getName();
       text += " save!";
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
      else
      {
+      std::string text = monList[grp->monsterType].getName();
+      text += statusText;
+      d.drawMessage(text.c_str(), game->getDelay());
       grp->individual[k].status.set(status);
+      if ((status == BTSTATUS_DEAD) && (grp->individual[k].active))
+      {
+       ++killed;
+       grp->individual[k].active = false;
+       grp->active--;
+      }
      }
     }
    }
@@ -757,10 +801,7 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
      {
       std::string text = monList[grp->monsterType].getName();
       text += " repelled the spell!";
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
     }
     else if ((grp->individual[i].isAlive()) && (!grp->individual[i].status.isSet(status)))
@@ -769,14 +810,20 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
      {
       std::string text = monList[grp->monsterType].getName();
       text += " save!";
-      d.addText(text.c_str());
-      d.addText("");
-      d.process(BTDisplay::allKeys, 1000);
-      d.clearElements();
+      d.drawMessage(text.c_str(), game->getDelay());
      }
      else
      {
+      std::string text = monList[grp->monsterType].getName();
+      text += statusText;
+      d.drawMessage(text.c_str(), game->getDelay());
       grp->individual[i].status.set(status);
+      if ((status == BTSTATUS_DEAD) && (grp->individual[i].active))
+      {
+       ++killed;
+       grp->individual[i].active = false;
+       grp->active--;
+      }
      }
     }
    }
@@ -789,18 +836,25 @@ void BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, B
     {
      std::string text = monList[grp->monsterType].getName();
      text += " save!";
-     d.addText(text.c_str());
-     d.addText("");
-     d.process(BTDisplay::allKeys, 1000);
-     d.clearElements();
+     d.drawMessage(text.c_str(), game->getDelay());
     }
     else
     {
+     std::string text = monList[grp->monsterType].getName();
+     text += statusText;
+     d.drawMessage(text.c_str(), game->getDelay());
      grp->individual[target].status.set(status);
+     if ((status == BTSTATUS_DEAD) && (grp->individual[target].active))
+     {
+      ++killed;
+      grp->individual[target].active = false;
+      grp->active--;
+     }
     }
    }
   }
  }
+ return killed;
 }
 
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
