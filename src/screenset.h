@@ -154,6 +154,8 @@ class BTSelectCommon : public BTScreenItem
 class BTSelectRoster : public BTSelectCommon
 {
  public:
+  BTSelectRoster();
+
   virtual int buildList(ObjectSerializer *obj);
   virtual int getScreen(BTPc *pc);
 
@@ -323,11 +325,13 @@ class BTScreenSet : public ObjectSerializer
   static int poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int selectRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

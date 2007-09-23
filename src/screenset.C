@@ -370,13 +370,18 @@ void BTSelectCommon::draw(BTDisplay &d, ObjectSerializer *obj)
  d.addSelection(list, size, start, select, (numbered ? getNumber() : 0));
 }
 
+BTSelectRoster::BTSelectRoster()
+ : fullscreen(0)
+{
+}
+
 int BTSelectRoster::buildList(ObjectSerializer *obj)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTParty &party = BTGame::getGame()->getParty();
  if (0 == roster.size())
   throw BTSpecialError("noroster");
- else if (party.size() >= BT_PARTYSIZE)
+ else if ((fullscreen != 0) && (party.size() >= BT_PARTYSIZE))
   throw BTSpecialError("fullparty");
  list = new BTDisplay::selectItem[roster.size()];
  for (int i = 0; i < roster.size(); ++i)
@@ -902,11 +907,13 @@ BTScreenSet::BTScreenSet()
  actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
  actionList["removeFromParty"] = &removeFromParty;
+ actionList["removeRoster"] = &removeRoster;
  actionList["save"] = &save;
  actionList["sell"] = &sell;
  actionList["selectItem"] = &selectItem;
  actionList["selectMage"] = &selectMage;
  actionList["selectParty"] = &selectParty;
+ actionList["selectRoster"] = &selectRoster;
  actionList["setJob"] = &setJob;
  actionList["setRace"] = &setRace;
  actionList["unequip"] = &unequip;
@@ -998,6 +1005,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
  {
   game->clearEffects(d);
   game->clearTimedSpecial();
+  game->resetTime();
  }
  BTParty &party = game->getParty();
  std::string itemName;
@@ -1274,7 +1282,14 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  bool dead = BTGame::getGame()->getParty().checkDead(d);
  d.drawStats();
  if (dead)
-  throw BTSpecialError("dead");
+ {
+  // The guild needs to display a message if you have a dead party but
+  // everything else wants out of the BTScreenSet handling.
+  if (b.building)
+   throw BTSpecialError("dead");
+  else
+   throw BTSpecialDead();
+ }
  else
   throw BTSpecialStop();
 }
@@ -1367,6 +1382,30 @@ int BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *ite
  return 0;
 }
 
+int BTScreenSet::removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
+ BTParty &party = BTGame::getGame()->getParty();
+ for (XMLVector<BTPc*>::iterator itr = roster.begin(); itr != roster.end(); ++itr)
+ {
+  if ((*itr) == b.pc)
+  {
+   roster.erase(itr);
+   bool found = false;
+   for (int i = 0; i < party.size(); ++i)
+    if (party[i] == b.pc)
+     found = true;
+   if (!found)
+   {
+    b.pc->setName("");
+    b.setPc(NULL);
+   }
+   break;
+  }
+ }
+ return 0;
+}
+
 int BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
@@ -1423,6 +1462,14 @@ int BTScreenSet::selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
  b.pc->combat.object = select->select;
  b.pc->combat.type = BTPc::BTPcAction::item;
+ return 0;
+}
+
+int BTScreenSet::selectRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
+ BTSelectRoster *select = static_cast<BTSelectRoster*>(item);
+ b.setPc(roster[select->select]);
  return 0;
 }
 

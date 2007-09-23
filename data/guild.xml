@@ -15,6 +15,7 @@
 	</screen>
 	<screen number="2">
 		<selectRoster action="addToParty" fullscreen="1" screen="2" />
+		<choice keys="cC" screen="1" align="center">(CANCEL)</choice>
 	</screen>
 	<screen number="3">
 		<line>Pick a party member to remove.</line>
@@ -44,7 +45,7 @@
 		<readString action="save" screen="1">&gt;</readString>
 	</screen>
 	<screen number="8">
-		<choice keys="dD" >Delete a member</choice>
+		<choice keys="dD" screen="10" >Delete a member</choice>
 		<choice keys="rR" >Rename a member</choice>
 		<choice keys="eE" screen="1" >Exit disk options</choice>
 	</screen>
@@ -52,6 +53,16 @@
 		<line>What name do you want to use?</line>
 		<readString action="saveParty" screen="1">&gt;</readString>
 	</screen>
+	<screen number="10">
+		<selectRoster action="selectRoster" screen="11" />
+		<choice keys="cC" screen="8" align="center">(CANCEL)</choice>
+	</screen>
+        <screen number="11">
+		<line>This will permanently remove <name /> from the disk! Do you wish to do this?</line>
+		<line></line>
+		<choice keys="yY" action="removeRoster" screen="8" >Yes</choice>
+		<choice keys="nN" screen="8" >No</choice>
+        </screen>
 	<error type="dead">You must have a live party to enter the city.</error>
 	<error type="noparty" screen="1">The party is empty!</error>
 	<error type="noroster">No adventurers available.</error>

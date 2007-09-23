@@ -44,6 +44,7 @@ class BTGame : public Psuedo3DMap
   BTXpChartList &getXpChartList();
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
+  void loadStart();
   BTParty &getParty();
 
   int getLight();
@@ -84,6 +85,7 @@ class BTGame : public Psuedo3DMap
   bool isExpired(unsigned int expiration);
   bool isDaytime();
   void nextTurn(BTDisplay &d, BTCombat *combat = NULL);
+  void resetTime();
 
   int getDelay() const;
 

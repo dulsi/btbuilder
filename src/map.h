@@ -82,6 +82,12 @@ class BTSpecialBack
   BTSpecialBack() {}
 };
 
+class BTSpecialDead
+{
+ public:
+  BTSpecialDead() {}
+};
+
 class BTSpecialFlipGoForward
 {
  public:

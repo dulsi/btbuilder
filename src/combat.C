@@ -979,7 +979,7 @@ bool BTCombat::endRound(BTDisplay &d)
  }
  BTParty &party = game->getParty();
  if (party.checkDead(d))
-  throw BTSpecialError("dead");
+  throw BTSpecialDead();
  if ((monsters.empty()) && (xp > 0) && (!won))
  {
   for (effect = spellEffect.begin(); effect != spellEffect.end(); effect = spellEffect.begin())

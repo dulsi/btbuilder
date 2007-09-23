@@ -23,17 +23,7 @@ BTGame::BTGame(BTModule *m)
  BTXpChart::readXML(m->xpChart, xpChartList);
  BTJob::readXML(m->job, jobList);
  BTPc::readXML("roster.xml", roster);
- PHYSFS_file *start = PHYSFS_openRead(m->start);
- char levelName[14];
- PHYSFS_read(start, levelName, 1, 14);
- loadMap(levelName);
- PHYSFS_uint16 tmp;
- PHYSFS_readULE16(start, &tmp);
- xPos = tmp;
- PHYSFS_readULE16(start, &tmp);
- yPos = 21 - tmp;
- PHYSFS_readULE16(start, &tmp);
- facing = tmp;
+ loadStart();
  combat.open("data/combat.xml");
  status.open("data/status.xml");
 }
@@ -105,6 +95,21 @@ BTMap *BTGame::loadMap(const char *filename)
  BinaryReadFile levelFile(filename);
  levelMap = new BTMap(levelFile);
  return levelMap;
+}
+
+void BTGame::loadStart()
+{
+ PHYSFS_file *start = PHYSFS_openRead(module->start);
+ char levelName[14];
+ PHYSFS_read(start, levelName, 1, 14);
+ loadMap(levelName);
+ PHYSFS_uint16 tmp;
+ PHYSFS_readULE16(start, &tmp);
+ xPos = tmp;
+ PHYSFS_readULE16(start, &tmp);
+ yPos = 21 - tmp;
+ PHYSFS_readULE16(start, &tmp);
+ facing = tmp;
 }
 
 BTParty &BTGame::getParty()
@@ -240,97 +245,113 @@ void BTGame::run(BTDisplay &d)
   }
   while (true)
   {
-   nextTurn(d);
-   d.drawView();
-   d.drawLabel(levelMap->getName());
-   if (special)
+   try
    {
-    special = false;
-    const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
-    IShort s = current.getSpecial();
-    if (s >= 0)
-     special = runSpecial(d, s);
-   }
-   if ((!special) && (timedSpecial >= 0) && (isExpired(timedExpiration)))
-   {
-    IShort s = timedSpecial;
-    clearTimedSpecial();
-    special = runSpecial(d, s);
-    continue;
-   }
-   d.drawView();
-   d.drawLabel(levelMap->getName());
-   if (!special)
-   {
-    key = d.readChar(6000);
-    switch (key)
+    nextTurn(d);
+    d.drawView();
+    d.drawLabel(levelMap->getName());
+    if (special)
     {
-     case BTKEY_UP:
-      special = move(d, facing);
-      break;
-     case BTKEY_LEFT:
-      turnLeft(d);
-      break;
-     case BTKEY_DOWN:
-      turnAround(d);
-      break;
-     case BTKEY_RIGHT:
-      turnRight(d);
-      break;
-     case 'q':
-      d.clearText();
-      d.drawText("Your game will not be saved. Do you want to quit?");
-      d.drawText("Yes, or");
-      d.drawText("No");
-      while (true)
-      {
-       unsigned char response = d.readChar();
-       if (('y' == response) || ('Y' == response))
-        throw BTSpecialQuit();
-       else if (('n' == response) || ('N' == response))
+     special = false;
+     const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
+     IShort s = current.getSpecial();
+     if (s >= 0)
+      special = runSpecial(d, s);
+    }
+    if ((!special) && (timedSpecial >= 0) && (isExpired(timedExpiration)))
+    {
+     IShort s = timedSpecial;
+     clearTimedSpecial();
+     special = runSpecial(d, s);
+     continue;
+    }
+    d.drawView();
+    d.drawLabel(levelMap->getName());
+    if (!special)
+    {
+     key = d.readChar(6000);
+     switch (key)
+     {
+      case BTKEY_UP:
+       special = move(d, facing);
+       break;
+      case BTKEY_LEFT:
+       turnLeft(d);
+       break;
+      case BTKEY_DOWN:
+       turnAround(d);
+       break;
+      case BTKEY_RIGHT:
+       turnRight(d);
+       break;
+      case 'q':
+       d.clearText();
+       d.drawText("Your game will not be saved. Do you want to quit?");
+       d.drawText("Yes, or");
+       d.drawText("No");
+       while (true)
        {
-        d.clearText();
-        break;
+        unsigned char response = d.readChar();
+        if (('y' == response) || ('Y' == response))
+         throw BTSpecialQuit();
+        else if (('n' == response) || ('N' == response))
+        {
+         d.clearText();
+         break;
+        }
        }
-      }
-      break;
-     case '1':
-     case '2':
-     case '3':
-     case '4':
-     case '5':
-     case '6':
-     case '7':
-     case '8':
-     case '9':
-     {
-      int n =  key - '1';
-      if (n < party.size())
+       break;
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
       {
-       status.run(d, party[n]);
+       int n =  key - '1';
+       if (n < party.size())
+       {
+        status.run(d, party[n]);
+       }
+       break;
       }
-      break;
+      case 'p':
+       combat.clearEncounters();
+       combat.run(d, true);
+       break;
+      case 'c':
+      {
+       BTScreenSet cast;
+       cast.open("data/cast.xml");
+       cast.run(d);
+       break;
+      }
+      case 'n':
+      {
+       BTScreenSet moveTo;
+       moveTo.open("data/moveTo.xml");
+       moveTo.run(d);
+       break;
+      }
+      default:
+       break;
      }
-     case 'p':
-      combat.clearEncounters();
-      combat.run(d, true);
-      break;
-     case 'c':
-     {
-      BTScreenSet cast;
-      cast.open("data/cast.xml");
-      cast.run(d);
-      break;
-     }
-     case 'n':
-     {
-      BTScreenSet moveTo;
-      moveTo.open("data/moveTo.xml");
-      moveTo.run(d);
-      break;
-     }
-     default:
-      break;
+    }
+   }
+   catch (const BTSpecialDead &)
+   {
+    loadStart();
+    try
+    {
+     BTSpecialCommand::Guild.run(d);
+    }
+    catch (const BTSpecialFlipGoForward &)
+    {
+     turnAround(d);
+     special = move(d, facing);
     }
    }
   }
@@ -534,7 +555,6 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
    spellList[itr->spell].maintain(d, combat, itr->group, itr->target, itr->resists);
   ++itr;
  }
- bool died = false;
  bool spRegen = false;
  if ((0 == gameTime % BTSP_REGEN) && (isDaytime()) && (0 < levelMap->getLight()))
   spRegen = true;
@@ -544,20 +564,21 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
   {
    if (party[i]->status.isSet(BTSTATUS_POISONED))
    {
-    if (party[i]->takeHP(1))
-    {
-     died = true;
-    }
+    party[i]->takeHP(1);
    }
    if ((spRegen) && (party[i]->sp < party[i]->maxSp))
     party[i]->sp += 1;
   }
  }
- if (died)
-  died = party.checkDead(d);
+ bool died = party.checkDead(d);
  d.drawStats();
  if (died)
-  throw BTSpecialError("dead");
+  throw BTSpecialDead();
+}
+
+void BTGame::resetTime()
+{
+ gameTime = 0;
 }
 
 int BTGame::getDelay() const
