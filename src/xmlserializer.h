@@ -101,7 +101,7 @@ class ObjectSerializer
 
   void add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL);
   void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, int16_t *p, std::vector<XMLAttribute> *atts = NULL);

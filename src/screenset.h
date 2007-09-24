@@ -226,7 +226,6 @@ class BTSelectParty : public BTScreenItem
   int screen;
 };
 
-
 class BTCan : public BTScreenItem
 {
  public:

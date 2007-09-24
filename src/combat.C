@@ -179,6 +179,7 @@ void BTCombat::clearEncounters()
 
 int BTCombat::findScreen(int num)
 {
+ static int lastScreen(0);
  int i;
  if ((optionState) && ((num == BTCOMBATSCREEN_OPTION) || (num == BTCOMBATSCREEN_COMBAT)))
  {
@@ -206,7 +207,7 @@ int BTCombat::findScreen(int num)
    for (i = 0; i < party.size(); ++i)
     if (party[i] == current)
      break;
-   if (num == BTCOMBATSCREEN_OPTION)
+   if ((num == BTCOMBATSCREEN_OPTION) && (lastScreen == num))
    {
     for (int prev = i - 1; prev >= 0; --prev)
     {
@@ -242,9 +243,15 @@ int BTCombat::findScreen(int num)
   }
  }
  if ((optionState) && (num == BTCOMBATSCREEN_COMBAT))
+ {
+  lastScreen = BTCOMBATSCREEN_OPTION;
   return BTScreenSet::findScreen(BTCOMBATSCREEN_OPTION);
+ }
  else
+ {
+  lastScreen = num;
   return BTScreenSet::findScreen(num);
+ }
 }
 
 bool BTCombat::findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target)
@@ -308,6 +315,12 @@ void BTCombat::initScreen(BTDisplay &d)
  int len = monsters.size();
  canAdvance = (len > 0);
  int i = 1;
+ unsigned int range = 1;
+ XMLAction* rangeXML = find("range", NULL);
+ if ((rangeXML) && (rangeXML->getType() == XMLTYPE_UINT))
+ {
+  range = *(reinterpret_cast<unsigned int*>(rangeXML->object));
+ }
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end(); ++itr, ++i)
  {
   if ((NULL == first) || (first->distance > itr->distance))
@@ -323,6 +336,9 @@ void BTCombat::initScreen(BTDisplay &d)
   attrib = new std::vector<XMLAttribute>;
   attrib->push_back(XMLAttribute("number", tmp));
   add("distance", &itr->distance, attrib);
+  attrib = new std::vector<XMLAttribute>;
+  attrib->push_back(XMLAttribute("number", tmp));
+  add("inRange", new bool(range >= itr->distance), attrib, true);
   if (itr->distance == 1)
    canAdvance = false;
   if (itr != monsters.begin())
@@ -1063,6 +1079,7 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
     switch (spellList[i].getArea())
     {
      case BTAREAEFFECT_FOE:
+      b.add("range", new unsigned int(spellList[i].getRange() * (1 + spellList[i].getEffectiveRange())), NULL, true);
       return BTCOMBATSCREEN_TARGETSINGLE;
      case BTAREAEFFECT_GROUP:
       if (c.monsters.empty())
@@ -1071,7 +1088,10 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
        return 0;
       }
       else
+      {
+       b.add("range", new unsigned int(spellList[i].getRange() * (1 + spellList[i].getEffectiveRange())), NULL, true);
        return BTCOMBATSCREEN_TARGETGROUP;
+      }
      case BTAREAEFFECT_NONE:
       b.getPc()->combat.clearTarget(b.getPc()->combat.getTargetGroup());
       return 0;

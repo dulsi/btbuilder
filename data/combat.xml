@@ -34,10 +34,10 @@
 	</screen>
 	<screen number="7" escapeScreen="2">
 		<line>Attack:</line>
-		<can option="distance" number="1" value="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
-		<can option="distance" number="2" value="1"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
-		<can option="distance" number="3" value="1"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
-		<can option="distance" number="4" value="1"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
+		<can option="inRange" number="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
+		<can option="inRange" number="2"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
+		<can option="inRange" number="3"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
+		<can option="inRange" number="4"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
 	</screen>
 	<screen number="8" escapeScreen="2">
 		<line>Spell to cast:</line>
@@ -52,19 +52,19 @@
 	<screen number="10" escapeScreen="2">
 		<line>Use on:</line>
 		<line>Member #[1-<partySize />]</line>
-		<can option="distance" number="1" value="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
-		<can option="distance" number="2" value="1"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
-		<can option="distance" number="3" value="1"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
-		<can option="distance" number="4" value="1"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
+		<can option="inRange" number="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
+		<can option="inRange" number="2"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
+		<can option="inRange" number="3"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
+		<can option="inRange" number="4"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
 		<selectParty action="target" screen="3" />
 	</screen>
 	<screen number="11" escapeScreen="2">
 		<line>Use on:</line>
 		<choice keys="pP" action="target" screen="3">[p] Party</choice>
-		<can option="distance" number="1" value="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
-		<can option="distance" number="2" value="1"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
-		<can option="distance" number="3" value="1"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
-		<can option="distance" number="4" value="1"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
+		<can option="inRange" number="1"><choice keys="aA" action="target" screen="3">[a] <monsterNumber number="1" /> <monsterName number="1" /> (<distance number="1" />0')</choice></can>
+		<can option="inRange" number="2"><choice keys="bB" action="target" screen="3">[b] <monsterNumber number="2" /> <monsterName number="2" /> (<distance number="2" />0')</choice></can>
+		<can option="inRange" number="3"><choice keys="cC" action="target" screen="3">[c] <monsterNumber number="3" /> <monsterName number="3" /> (<distance number="3" />0')</choice></can>
+		<can option="inRange" number="4"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
 		<selectParty action="target" screen="3" />
 	</screen>
 	<error type="runAway">You are attempting to run away.

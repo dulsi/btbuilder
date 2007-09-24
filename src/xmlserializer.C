@@ -78,12 +78,14 @@ void ObjectSerializer::add(const char *name, XMLObject *p, std::vector<XMLAttrib
  action.push_back(act);
 }
 
-void ObjectSerializer::add(const char *name, bool *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, bool *p, std::vector<XMLAttribute> *atts /*= NULL*/, bool delFlg /*= false*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
  act->attrib = atts;
  act->type = XMLTYPE_BOOL;
+ if (delFlg)
+  act->type |= XMLTYPE_DELETE;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
@@ -190,9 +192,12 @@ XMLAction* ObjectSerializer::find(const char *name, const char **atts)
  {
   if (0 == strcmp((*itr)->name.c_str(), name))
   {
-   if ((*itr)->attrib)
+   bool found(true);
+   if ((NULL == atts) && ((*itr)->attrib))
+    found = false;
+   else if ((*itr)->attrib)
    {
-    bool found(false);
+    found = false;
     for (std::vector<XMLAttribute>::iterator itrAttrib((*itr)->attrib->begin()); itrAttrib != (*itr)->attrib->end(); itrAttrib++)
     {
      found = false;
@@ -207,10 +212,9 @@ XMLAction* ObjectSerializer::find(const char *name, const char **atts)
      if (!found)
       break;
     }
-    if (!found)
-     continue;
    }
-   return *itr;
+   if (found)
+    return *itr;
   }
  }
  return NULL;
