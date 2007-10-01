@@ -211,11 +211,12 @@ class BTSelectInventory : public BTSelectCommon
 class BTSelectParty : public BTScreenItem
 {
  public:
-  BTSelectParty(const char *a, int s) : action(a), screen(s) {}
+  BTSelectParty(const char *a, int s, BitField d) : action(a), screen(s), disallow(d) {}
 
   virtual std::string getKeys();
   virtual std::string getAction();
   virtual int getScreen(BTPc *pc);
+  void checkDisallow(BTPc *pc);
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj);
 
@@ -224,6 +225,7 @@ class BTSelectParty : public BTScreenItem
  private:
   std::string action;
   int screen;
+  BitField disallow;
 };
 
 class BTCan : public BTScreenItem

@@ -490,6 +490,13 @@ void BTGame::movedPlayer(BTDisplay &d, int who, int where)
   {
    itr->target = where;
   }
+  else if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
+  {
+   if (BTPARTY_REMOVE == where)
+    itr->resists.remove(where);
+   else
+    itr->resists.move(who, where);
+  }
   else if ((BTTARGET_PARTY == itr->group) && (who < where) && (where >= itr->target) && (who < itr->target))
   {
    itr->target--;

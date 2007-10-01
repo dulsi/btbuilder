@@ -626,6 +626,17 @@ int BTSelectParty::getScreen(BTPc *pc)
  return screen;
 }
 
+void BTSelectParty::checkDisallow(BTPc *pc)
+{
+ BitField found = pc->status & disallow;
+ int num = found.getMaxSet();
+ for (int i = 0; i <= num; ++i)
+ {
+  if (found.isSet(i))
+   throw BTSpecialError(BTStatusLookup::lookup.getName(i));
+ }
+}
+
 void BTSelectParty::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -642,6 +653,7 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
 {
  const char *act = "";
  int s = 0;
+ BitField d;
  for (const char **att = atts; *att; att += 2)
  {
   if (0 == strcmp(*att, "action"))
@@ -653,8 +665,28 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
    else
     s = atoi(att[1]);
   }
+  else if (0 == strcmp(*att, "disallow"))
+  {
+   int start = 0;
+   for (int i = 0; att[1][i]; ++i)
+   {
+    if (',' == att[1][i])
+    {
+     int bit = BTStatusLookup::lookup.getIndex(std::string(att[1] + start, i - start));
+     if (-1 != bit)
+      d.set(bit);
+     start = i + 1;
+    }
+   }
+   if (att[1][start])
+   {
+    int bit = BTStatusLookup::lookup.getIndex(att[1] + start);
+    if (-1 != bit)
+     d.set(bit);
+   }
+  }
  }
- return new BTSelectParty(act, s);
+ return new BTSelectParty(act, s, d);
 }
 
 BTCan::BTCan(const char *o, char_ptr *a, const char *v)
@@ -1442,7 +1474,11 @@ int BTScreenSet::selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  if ((key >= '1') && (key <= '9'))
  {
   if (party[key - '1']->maxSp > 0)
+  {
    b.setPc(party[key - '1']);
+   BTSelectParty *select = static_cast<BTSelectParty*>(item);
+   select->checkDisallow(b.pc);
+  }
   else
    throw BTSpecialError("nocaster");
  }
@@ -1453,7 +1489,11 @@ int BTScreenSet::selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, i
 {
  BTParty &party = BTGame::getGame()->getParty();
  if ((key >= '1') && (key <= '9'))
+ {
   b.setPc(party[key - '1']);
+  BTSelectParty *select = static_cast<BTSelectParty*>(item);
+  select->checkDisallow(b.pc);
+ }
  return 0;
 }
 

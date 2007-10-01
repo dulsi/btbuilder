@@ -22,6 +22,8 @@ class BitField
   void remove(int index);
   void set(int index);
 
+  BitField operator&(const BitField &other) const;
+
  private:
   void expand(int newSize);
 

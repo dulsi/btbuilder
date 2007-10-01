@@ -396,6 +396,13 @@ void BTCombat::movedPlayer(BTDisplay &d, int who, int where)
   {
    itr->target = where;
   }
+  else if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
+  {
+   if (BTPARTY_REMOVE == where)
+    itr->resists.remove(where);
+   else
+    itr->resists.move(who, where);
+  }
   else if ((BTTARGET_PARTY == itr->group) && (who < where) && (where >= itr->target) && (who < itr->target))
   {
    itr->target--;
@@ -902,6 +909,7 @@ bool BTCombat::endRound(BTDisplay &d)
    spellList[effect->spell].maintain(d, this, effect->group, effect->target, effect->resists);
  }
  group = BTTARGET_MONSTER;
+ int alive = 0;
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end();)
  {
   itr->canMove = true;
@@ -945,7 +953,15 @@ bool BTCombat::endRound(BTDisplay &d)
     }
     for (std::list<BTSpellEffect>::iterator effect = spellEffect.begin(); effect != spellEffect.end(); ++effect)
     {
-     if ((group == effect->group) && (effect->target != BTTARGET_INDIVIDUAL) && (effect->target > monster - itr->individual.begin()))
+     if ((group == effect->group) && (effect->target == BTTARGET_INDIVIDUAL))
+     {
+      effect->resists.remove(monster - itr->individual.begin());
+     }
+     if (group == BTTARGET_ALLMONSTERS)
+     {
+      effect->resists.remove(alive + (monster - itr->individual.begin()));
+     }
+     else if ((group == effect->group) && (effect->target != BTTARGET_INDIVIDUAL) && (effect->target > monster - itr->individual.begin()))
      {
       effect->target--;
      }
@@ -989,6 +1005,7 @@ bool BTCombat::endRound(BTDisplay &d)
   }
   else
   {
+   alive += itr->active;
    ++itr;
    ++group;
   }
@@ -1009,7 +1026,7 @@ bool BTCombat::endRound(BTDisplay &d)
    if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
     spellList[spell].finish(d, this, group, target, resists);
   }
-  int alive = 0;
+  alive = 0;
   int i;
   for (i = 0; i < party.size(); ++i)
   {

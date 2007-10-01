@@ -2,7 +2,7 @@
 	<screen number="1" escapeScreen="exit">
 		<line />
 		<line>Who do you wish to cast the spell?</line>
-		<selectParty action="selectMage" screen="2" />
+		<selectParty action="selectMage" disallow="dead,paralyzed,stoned" screen="2" />
 		<choice keys="cC" action="exit">(CANCEL)</choice>
 	</screen>
 	<screen number="2" escapeScreen="exit">
@@ -18,4 +18,6 @@
 	<error type="nospell" screen="exit">No spell by that name.</error>
 	<error type="dontknow" screen="exit">You don't know this spell.</error>
 	<error type="nosp" screen="exit">Not enough spell points.</error>
+	<error type="dead" screen="exit"><name /> is dead!</error>
+	<error type="paralyzed" screen="exit"><name /> has been paralyzed and cannot move!</error>
 </screenset>

@@ -280,3 +280,31 @@ void BitField::expand(int newSize)
  }
  size = newSize;
 }
+
+BitField BitField::operator&(const BitField &other) const
+{
+ BitField ans;
+ if (bits)
+ {
+  if (other.bits)
+  {
+   int i = size;
+   if (other.size < i)
+    i = other.size;
+   ans.expand(size);
+   for (--i; i >= 0; --i)
+    ans.bits[i] = bits[i] & other.bits[i];
+  }
+  else
+   ans.size = bits[0] & other.size;
+ }
+ else if (other.bits)
+ {
+  ans.size = size & other.bits[0];
+ }
+ else
+ {
+  ans.size = size & other.size;
+ }
+ return ans;
+}

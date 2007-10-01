@@ -183,6 +183,22 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
  BitField resists;
  switch(type)
  {
+  case BTSPELLTYPE_KILL:
+  case BTSPELLTYPE_POISON:
+  case BTSPELLTYPE_CAUSEINSANITY:
+  case BTSPELLTYPE_POSSESS:
+  case BTSPELLTYPE_PARALYZE:
+   if (checkResists(combat, group, target, resists))
+   {
+    displayResists(d, combat, group, target);
+    return 0;
+   }
+   break;
+  default:
+   break;
+ }
+ switch(type)
+ {
   case BTSPELLTYPE_HEAL:
    if (BTTARGET_PARTY == group)
    {
@@ -253,57 +269,36 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    d.drawStats();
    break;
   case BTSPELLTYPE_KILL:
-   if (checkResists(combat, group, target, resists))
-   {
-    displayResists(d, combat, group, target);
-   }
-   else
-   {
-    int killed = setStatus(d, combat, group, target, resists, BTSTATUS_DEAD, " is killed.", true);
-    game->addEffect(index, expire, group, target, resists);
-    if (BTTARGET_PARTY == group)
-     d.drawStats();
-    return killed;
-   }
-   break;
+  {
+   int killed = setStatus(d, combat, group, target, resists, BTSTATUS_DEAD, " is killed.", true);
+   game->addEffect(index, expire, group, target, resists);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   return killed;
+  }
   case BTSPELLTYPE_POISON:
-   if (checkResists(combat, group, target, resists))
-   {
-    displayResists(d, combat, group, target);
-   }
-   else
-   {
-    setStatus(d, combat, group, target, resists, BTSTATUS_POISONED, " is poisoned.", true);
-    game->addEffect(index, expire, group, target, resists);
-    if (BTTARGET_PARTY == group)
-     d.drawStats();
-   }
+   setStatus(d, combat, group, target, resists, BTSTATUS_POISONED, " is poisoned.", true);
+   game->addEffect(index, expire, group, target, resists);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
    break;
   case BTSPELLTYPE_CAUSEINSANITY:
-   if (checkResists(combat, group, target, resists))
-   {
-    displayResists(d, combat, group, target);
-   }
-   else
-   {
-    setStatus(d, combat, group, target, resists, BTSTATUS_INSANE, " has gone insane.", true);
-    game->addEffect(index, expire, group, target, resists);
-    if (BTTARGET_PARTY == group)
-     d.drawStats();
-   }
+   setStatus(d, combat, group, target, resists, BTSTATUS_INSANE, " has gone insane.", true);
+   game->addEffect(index, expire, group, target, resists);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
    break;
   case BTSPELLTYPE_POSSESS:
-   if (checkResists(combat, group, target, resists))
-   {
-    displayResists(d, combat, group, target);
-   }
-   else
-   {
-    setStatus(d, combat, group, target, resists, BTSTATUS_POSSESSED, " is possessed.", true);
-    game->addEffect(index, expire, group, target, resists);
-    if (BTTARGET_PARTY == group)
-     d.drawStats();
-   }
+   setStatus(d, combat, group, target, resists, BTSTATUS_POSSESSED, " is possessed.", true);
+   game->addEffect(index, expire, group, target, resists);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
+  case BTSPELLTYPE_PARALYZE:
+   setStatus(d, combat, group, target, resists, BTSTATUS_PARALYZED, " is paralyzed.", true);
+   game->addEffect(index, expire, group, target, resists);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
    break;
   case BTSPELLTYPE_LIGHT:
    game->addEffect(index, expire, group, target, resists);
@@ -400,6 +395,11 @@ void BTSpell::finish(BTDisplay &d, BTCombat *combat, int group, int target, BitF
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
+  case BTSPELLTYPE_PARALYZE:
+   cureStatus(combat, group, target, BTSTATUS_PARALYZED);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
   default:
    break;
  }
@@ -484,6 +484,11 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int group, int target, Bi
    break;
   case BTSPELLTYPE_POSSESS:
    setStatus(d, combat, group, target, resists, BTSTATUS_POSSESSED, " is possessed.");
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
+  case BTSPELLTYPE_PARALYZE:
+   setStatus(d, combat, group, target, resists, BTSTATUS_PARALYZED, " is paralyzed.");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;

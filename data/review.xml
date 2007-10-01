@@ -4,7 +4,7 @@
 	<building>true</building>
 	<screen number="1" escapeScreen="exit">
 		<line>You are in the Halls of Review. A clerk asks which of you is interested in going before the board?</line>
-		<selectParty action="selectParty" screen="2" />
+		<selectParty action="selectParty" disallow="dead,paralyzed,stoned" screen="2" />
 		<choice keys="eE" screen="exit" align="center">(EXIT)</choice>
 	</screen>
 	<screen number="2">

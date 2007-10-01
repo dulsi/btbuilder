@@ -5,7 +5,7 @@
 	<screen number="1" escapeScreen="exit">
 		<line>Welcome to Garth's Equipment Shoppe, oh wealthy travellers!</line>
 		<line>Which of you is interested in my fine ware?</line>
-		<selectParty action="selectParty" screen="2" />
+		<selectParty action="selectParty" disallow="dead,paralyzed,stoned" screen="2" />
 		<choice keys="eE" screen="exit" align="center">(EXIT)</choice>
 	</screen>
 	<screen number="2">
@@ -27,4 +27,6 @@
 	<error type="fullinventory">Your pockets are full.</error>
 	<error type="noinventory">You have no items.</error>
 	<error type="notenoughgold">Not enough gold.</error>
+	<error type="dead" screen="1"><name /> is dead!</error>
+	<error type="paralyzed" screen="1"><name /> has been paralyzed and cannot move!</error>
 </screenset>
