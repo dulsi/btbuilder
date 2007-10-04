@@ -654,6 +654,8 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
  }
  else
  {
+  if (pc.status.isSet(BTSTATUS_PARALYZED))
+   return;
   if ((pc.status.isSet(BTSTATUS_INSANE)) || (pc.status.isSet(BTSTATUS_POSSESSED)))
   {
    int group;
@@ -842,6 +844,18 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
          case BTEXTRADAMAGE_POSION:
           defender->status.set(BTSTATUS_POISONED);
           text += " and poisons";
+          break;
+         case BTEXTRADAMAGE_INSANITY:
+          defender->status.set(BTSTATUS_INSANE);
+          text += " and inflicts insanity";
+          break;
+         case BTEXTRADAMAGE_POSSESSION:
+          defender->status.set(BTSTATUS_POSSESSED);
+          text += " and possesses";
+          break;
+         case BTEXTRADAMAGE_PARALYSIS:
+          defender->status.set(BTSTATUS_PARALYZED);
+          text += " and paralyzes";
           break;
          default:
           break;

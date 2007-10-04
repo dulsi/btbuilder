@@ -51,7 +51,10 @@ extern char *areaEffect[];
 extern char *durations[];
 
 #define BT_MONSTEREXTRADAMAGE 11
-#define BTEXTRADAMAGE_POSION 1
+#define BTEXTRADAMAGE_POSION     1
+#define BTEXTRADAMAGE_INSANITY   3
+#define BTEXTRADAMAGE_POSSESSION 5
+#define BTEXTRADAMAGE_PARALYSIS  7
 extern char *extraDamage[];
 
 #define BT_RANGEDTYPES 4
