@@ -176,7 +176,7 @@ bool BTMonster::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
  int job = (isIllusion() ? BTJOB_ILLUSION : BTJOB_MONSTER);
- int save = jobList[job]->save + (level / jobList[job]->improveSave);
+ int save = jobList[job]->calcSave(level);
  int roll = BTDice(1, 20, save).roll();
  if (roll == 20 + save)
   return true;

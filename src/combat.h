@@ -59,6 +59,7 @@ class BTCombat : public BTScreenSet
 
   void addEffect(int spell, unsigned int expire, int group, int target, BitField &resist);
   void addEncounter(int monsterType, int number = 0);
+  void addPlayer(BTDisplay &d, int who);
   void clearEffects(BTDisplay &d);
   void clearEncounters();
   int findScreen(int num);

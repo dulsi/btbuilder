@@ -57,14 +57,16 @@ class BTSpell
   void write(BinaryWriteFile &f);
 
   int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int group, int target);
+  int apply(BTDisplay &d, bool partySpell, BTCombat *combat, int group, int target, BitField &resists);
   int cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int group, int target);
   void finish(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists);
   void maintain(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists);
 
- protected:
   bool checkResists(BTCombat *combat, int group, int target, BitField &resists);
-  void cureStatus(BTCombat *combat, int group, int target, int status);
   void displayResists(BTDisplay &d, BTCombat *combat, int group, int target);
+
+ protected:
+  void cureStatus(BTCombat *combat, int group, int target, int status);
   int setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, int status, const char *statusText, bool first = false);
 
  private:

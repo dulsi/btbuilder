@@ -459,6 +459,26 @@ void BTGame::clearEffects(BTDisplay &d)
  combat.clearEffects(d);
 }
 
+void BTGame::addPlayer(BTDisplay &d, int who)
+{
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
+  {
+   BitField resists;
+   if (spellList[itr->spell].checkResists(NULL, itr->group, who, resists))
+   {
+    itr->resists.set(who);
+    spellList[itr->spell].displayResists(d, NULL, itr->group, who);
+   }
+   else
+    spellList[itr->spell].apply(d, false, NULL, itr->group, who, itr->resists);
+  }
+  ++itr;
+ }
+ combat.addPlayer(d, who);
+}
+
 void BTGame::movedPlayer(BTDisplay &d, int who, int where)
 {
  if (where == BTPARTY_REMOVE)
@@ -480,22 +500,28 @@ void BTGame::movedPlayer(BTDisplay &d, int who, int where)
      itr = spellEffect.begin();
     continue;
    }
+   else
+    ++itr;
   }
  }
  // Must finish combat spells before fixing targets
  combat.movedPlayer(d, who, where);
  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
  {
-  if ((BTTARGET_PARTY == itr->group) && (who == itr->target) && (where != BTPARTY_REMOVE))
-  {
-   itr->target = where;
-  }
-  else if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
+  if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
   {
    if (BTPARTY_REMOVE == where)
     itr->resists.remove(where);
    else
     itr->resists.move(who, where);
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (where != BTPARTY_REMOVE) && (who == itr->target))
+  {
+   itr->target = where;
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (where == BTPARTY_REMOVE) && (who < itr->target))
+  {
+   itr->target--;
   }
   else if ((BTTARGET_PARTY == itr->group) && (who < where) && (where >= itr->target) && (who < itr->target))
   {

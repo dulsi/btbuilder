@@ -425,7 +425,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    }
    if (('Y' == key) || ('y' == key))
    {
-    XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
+    BTParty &party = BTGame::getGame()->getParty();
     if (party.size() >= BT_PARTYSIZE)
     {
      snprintf(tmp, 100, "No room in your party. %s cannot join!", monsterList[number[0]].getName());
@@ -433,16 +433,8 @@ void BTSpecialCommand::run(BTDisplay &d) const
     }
     else
     {
-     BTPc *pc = new BTPc;
-     pc->setName(monsterList[number[0]].getName());
-     pc->race = -1;
-     pc->job = BTJOB_MONSTER; // Illusions become monster for some reason
-     pc->picture = monsterList[number[0]].getPicture();
-     pc->monster = number[0];
-     pc->ac = monsterList[number[0]].getAc();
-     pc->hp = pc->maxHp = monsterList[number[0]].getHp().roll();
-     pc->status.set(BTSTATUS_NPC);
-     party.push_back(pc);
+     BTPc *pc = new BTPc(number[0], BTJOB_MONSTER); // Illusions become monster for some reason
+     party.add(d, pc);
      d.drawStats();
     }
    }

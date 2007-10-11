@@ -8,6 +8,16 @@
 #include "job.h"
 #include "game.h"
 
+int BTJob::calcToHit(int level)
+{
+ return toHit + (level / improveToHit);
+}
+
+int BTJob::calcSave(int level)
+{
+ return save + (level / improveSave);
+}
+
 bool BTJob::isAllowed(BTPc *pc, bool starting)
 {
  if (starting)

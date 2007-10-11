@@ -28,6 +28,7 @@ class BTPc : public XMLObject, public BTCombatant
 {
  public:
   BTPc();
+  BTPc(int monsterType, int job);
   ~BTPc() { delete [] name; delete [] skill; }
 
   bool advanceLevel();
@@ -63,8 +64,6 @@ class BTPc : public XMLObject, public BTCombatant
   int picture;
   int monster;
   int stat[BT_STATS];
-  int ac;
-  int toHit;
   int rateAttacks;
   int save;
   int sp, maxSp;
@@ -98,6 +97,7 @@ class BTPc : public XMLObject, public BTCombatant
 class BTParty : public XMLVector<BTPc*>
 {
  public:
+  void add(BTDisplay &d, BTPc *pc);
   bool checkDead(BTDisplay &d);
   void moveTo(int who, int where, BTDisplay &d);
   bool remove(int who, BTDisplay &d);

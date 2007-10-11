@@ -12,12 +12,14 @@
 class BTCombatant
 {
  public:
-  BTCombatant() : maxHp(-1), hp(-1), active(true) {}
-  BTCombatant(int startHp) : maxHp(startHp), hp(startHp), active(true) {}
+  BTCombatant() : ac(0), toHit(0), maxHp(-1), hp(-1), active(true) {}
+  BTCombatant(int startAc, int startHp) : ac(startAc), maxHp(startHp), hp(startHp), active(true) {}
 
   bool isAlive() const;
   bool takeHP(int amount);
 
+  int ac;
+  int toHit;
   int maxHp, hp;
   BitField status;
   bool active;

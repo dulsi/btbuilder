@@ -17,10 +17,34 @@ void BTEquipment::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), job(0), picture(-1), monster(BTMONSTER_NONE), ac(0), toHit(0), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
+ : race(0), job(0), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
+ int i;
+ for (i = 0; i < BT_STATS; ++i)
+  stat[i] = 10;
+ int jobs = BTGame::getGame()->getJobList().size();
+ skill = new int[jobs];
+ for (i = 0; i < jobs; ++i)
+  skill[i] = 0;
+}
+
+BTPc::BTPc(int monsterType, int j)
+ : race(-1), job(j), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
+{
+ // TO DO: Modify to accept combatant as an optional argument so that
+ // spell bind can be implemented.
+ BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ name = new char[strlen(monsterList[monster].getName()) + 1];
+ strcpy(name, monsterList[monster].getName());
+ picture = monsterList[monster].getPicture();
+ ac = monsterList[monster].getAc();
+ toHit = jobList[job]->calcToHit(level);
+ save = jobList[job]->calcSave(level);
+ hp = maxHp = monsterList[monster].getHp().roll();
+ status.set(BTSTATUS_NPC);
  int i;
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
@@ -367,6 +391,12 @@ void BTPc::BTPcAction::setTarget(int group, int member /*= BTTARGET_INDIVIDUAL*/
   target = (group << BTTARGET_GROUPSHIFT) + member;
 // else if (member != BTTARGET_INDIVIDUAL)
 //  target = (group << BTTARGET_GROUPSHIFT) + member;
+}
+
+void BTParty::add(BTDisplay &d, BTPc *pc)
+{
+ push_back(pc);
+ BTGame::getGame()->addPlayer(d, size() - 1);
 }
 
 bool BTParty::checkDead(BTDisplay &d)

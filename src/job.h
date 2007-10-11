@@ -24,6 +24,8 @@ class BTJob : public XMLObject
 
   ~BTJob() { delete [] name; delete [] abbrev; }
 
+  int calcToHit(int level);
+  int calcSave(int level);
   bool isAllowed(BTPc *pc, bool starting);
   virtual void serialize(ObjectSerializer* s);
 

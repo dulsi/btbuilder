@@ -64,7 +64,7 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
   number = BTDice(1, monList[monsterType].getMaxAppearing()).roll();
  while (number > 0)
  {
-  individual.push_back(BTCombatant(monList[monsterType].getHp().roll()));
+  individual.push_back(BTCombatant(monList[monsterType].getAc(), monList[monsterType].getHp().roll()));
   --number;
  }
  active = individual.size();
@@ -154,6 +154,26 @@ void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
  monsters.push_back(BTMonsterGroup());
  BTMonsterGroup &group = monsters.back();
  group.setMonsterType(monsterType, number);
+}
+
+void BTCombat::addPlayer(BTDisplay &d, int who)
+{
+ BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
+ {
+  if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
+  {
+   BitField resists;
+   if (spellList[itr->spell].checkResists(this, itr->group, who, resists))
+   {
+    itr->resists.set(who);
+    spellList[itr->spell].displayResists(d, this, itr->group, who);
+   }
+   else
+    spellList[itr->spell].apply(d, false, this, itr->group, who, itr->resists);
+  }
+  ++itr;
+ }
 }
 
 void BTCombat::clearEffects(BTDisplay &d)
@@ -392,16 +412,20 @@ void BTCombat::movedPlayer(BTDisplay &d, int who, int where)
  }
  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)
  {
-  if ((BTTARGET_PARTY == itr->group) && (who == itr->target) && (where != BTPARTY_REMOVE))
-  {
-   itr->target = where;
-  }
-  else if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
+  if ((BTTARGET_PARTY == itr->group) && (BTTARGET_INDIVIDUAL == itr->target))
   {
    if (BTPARTY_REMOVE == where)
     itr->resists.remove(where);
    else
     itr->resists.move(who, where);
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (where != BTPARTY_REMOVE) && (who == itr->target))
+  {
+   itr->target = where;
+  }
+  else if ((BTTARGET_PARTY == itr->group) && (where == BTPARTY_REMOVE) && (who < itr->target))
+  {
+   itr->target--;
   }
   else if ((BTTARGET_PARTY == itr->group) && (who < where) && (where >= itr->target) && (who < itr->target))
   {
@@ -547,6 +571,7 @@ void BTCombat::runCombat(BTDisplay &d)
 void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTCombatant &mon)
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
  mon.active = false;
  --active;
  int action = monList[grp.monsterType].getCombatAction(round);
@@ -560,7 +585,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, 
     action = BTCOMBATACTION_MOVEANDATTACK;
    else if (grp.canMove)
    {
-    if (BTRANGEDTYPE_MAGIC == rangedType) // WRONG check range of spell
+    if ((BTRANGEDTYPE_MAGIC == rangedType) && ((grp.distance > (spellList[monList[grp.monsterType].getRangedSpell()].getRange() * (1 + spellList[monList[grp.monsterType].getRangedSpell()].getEffectiveRange()))) || (BTDice(1, 2).roll() == 1)))
      action = BTCOMBATACTION_MOVEANDATTACK;
     else if (((BTRANGEDTYPE_FOE == rangedType) || (BTRANGEDTYPE_GROUP == rangedType)) && ((grp.distance > monList[grp.monsterType].getRange()) || (BTDice(1, 2).roll() == 1)))
      action = BTCOMBATACTION_MOVEANDATTACK;
@@ -738,7 +763,6 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
    case BTPc::BTPcAction::attack:
    case BTPc::BTPcAction::partyAttack:
    {
-    int ac;
     int handWeapon = pc.getHandWeapon();
     for (int attacks = 0; attacks < pc.rateAttacks; )
     {
@@ -750,7 +774,6 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
       findTarget(pc, 1, grp, target);
       if (NULL == grp)
        return;
-      ac = monList[grp->monsterType].getAc();
       defender = &grp->individual[target];
      }
      else
@@ -758,7 +781,6 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
       target = pc.combat.getTargetIndividual();
       if (!party[target]->isAlive())
        return;
-      ac = party[target]->ac;
       if (party[target]->status.isSet(BTSTATUS_NPC))
        party[target]->status.set(BTSTATUS_INSANE);
       defender = party[target];
@@ -784,7 +806,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
       text += party[target]->name;
      ++attacks;
      int roll = BTDice(1, 20).roll();
-     if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= ac)))
+     if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= defender->ac)))
      {
       text += " ";
       int damage = 0;
