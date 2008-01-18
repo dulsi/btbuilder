@@ -64,6 +64,7 @@ class BTCombat : public BTScreenSet
   void clearEncounters();
   int findScreen(int num);
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
+  bool findTargetPC(int range, int &target, int ignore = BT_PARTYSIZE);
   BTMonsterGroup *getMonsterGroup(int group);
   void initScreen(BTDisplay &d);
   bool isWinner() { return won; }

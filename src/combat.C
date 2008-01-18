@@ -62,9 +62,13 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
  distance = BTDice(1, monList[monsterType].getStartDistance()).roll();
  if (number == 0)
   number = BTDice(1, monList[monsterType].getMaxAppearing()).roll();
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ int toHit = jobList[((monList[type].isIllusion() == 1) ? BTJOB_ILLUSION : BTJOB_MONSTER)]->toHit;
+ if (monList[type].getLevel() > 0)
+  toHit += (monList[type].getLevel() - 1) / jobList[((monList[type].isIllusion() == 1) ? BTJOB_ILLUSION : BTJOB_MONSTER)]->improveToHit;
  while (number > 0)
  {
-  individual.push_back(BTCombatant(monList[monsterType].getAc(), monList[monsterType].getHp().roll()));
+  individual.push_back(BTCombatant(monList[monsterType].getAc(), toHit, monList[monsterType].getHp().roll()));
   --number;
  }
  active = individual.size();
@@ -307,6 +311,36 @@ bool BTCombat::findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target
    }
   }
  }
+ return false;
+}
+
+bool BTCombat::findTargetPC(int range, int &target, int ignore /*= BT_PARTYSIZE*/)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ int alive = 0;
+ for (target = 0; (target < party.size()) && (target < range); ++target)
+ {
+  if ((party[target]->isAlive()) && (target != ignore))
+  {
+   ++alive;
+  }
+ }
+ if (!alive)
+  return false;
+ alive = BTDice(1, alive).roll();
+ for (target = 0; target < party.size(); ++target)
+ {
+  if (target != ignore)
+  {
+   if ((alive == 0) && (party[target]->isAlive()))
+    return true;
+   else if ((party[target]->isAlive()) && (--alive == 0))
+   {
+    return true;
+   }
+  }
+ }
+printf("%d\n", alive);
  return false;
 }
 
@@ -570,10 +604,14 @@ void BTCombat::runCombat(BTDisplay &d)
 
 void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTCombatant &mon)
 {
- BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
- BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTGame *game = BTGame::getGame();
+ BTFactory<BTMonster> &monList = game->getMonsterList();
+ BTFactory<BTSpell> &spellList = game->getSpellList();
+ BTParty &party = game->getParty();
  mon.active = false;
  --active;
+ if (mon.status.isSet(BTSTATUS_PARALYZED))
+  return;
  int action = monList[grp.monsterType].getCombatAction(round);
  if (BTCOMBATACTION_RANDOM == action)
  {
@@ -643,12 +681,84 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, 
  }
  if (BTCOMBATACTION_ATTACK == action)
  {
-  std::string text = monList[grp.monsterType].getName();
-  text += " is attacking";
-  d.addText(text.c_str());
-  d.addText(blank);
-  d.process(BTDisplay::allKeys, 1000);
-  d.clearElements();
+  BTCombatant *defender = NULL;
+  int target;
+  if (grp.distance <= 1)
+  {
+   for (int attacks = 0; attacks < monList[grp.monsterType].getRateAttacks(); )
+   {
+    if (findTargetPC(BT_BACK, target))
+    {
+     defender = party[target];
+     std::string text = monList[grp.monsterType].getName();
+     text += " ";
+     text += monList[grp.monsterType].getMeleeMessage();
+     text += " ";
+     text += party[target]->name;
+     ++attacks;
+     int roll = BTDice(1, 20).roll();
+     if ((1 != roll) && ((20 == roll) || (roll + mon.toHit >= defender->ac)))
+     {
+      text += " ";
+      int damage = 0;
+      int special = 0;
+      text += "and hits for";
+      damage = monList[grp.monsterType].getMeleeDamage().roll();
+      special = monList[grp.monsterType].getMeleeExtra();
+      text += " ";
+      char tmp[20];
+      sprintf(tmp, "%d", damage);
+      text += tmp;
+      text += " points of damage";
+      if (defender->takeHP(damage))
+      {
+       text += ", killing him!";
+       if (defender->active)
+       {
+        defender->active = false;
+        --active;
+       }
+      }
+      else
+      {
+       if (special)
+       {
+        if (party[target]->savingThrow(BTSAVE_DIFFICULTY))
+         special = 0;
+        switch(special)
+        {
+         case BTEXTRADAMAGE_POSION:
+          defender->status.set(BTSTATUS_POISONED);
+          text += " and poisons";
+          break;
+         case BTEXTRADAMAGE_INSANITY:
+          defender->status.set(BTSTATUS_INSANE);
+          text += " and inflicts insanity";
+          break;
+         case BTEXTRADAMAGE_POSSESSION:
+          defender->status.set(BTSTATUS_POSSESSED);
+          text += " and possesses";
+          break;
+         case BTEXTRADAMAGE_PARALYSIS:
+          defender->status.set(BTSTATUS_PARALYZED);
+          text += " and paralyzes";
+          break;
+         default:
+          break;
+        }
+       }
+       text += ".";
+      }
+      d.drawStats();
+     }
+     else
+      text += ", but misses!";
+     d.drawMessage(text.c_str(), game->getDelay());
+    }
+    else
+     break;
+   }
+  }
  }
  else if (BTCOMBATACTION_SPECIALATTACK == action)
  {
@@ -722,17 +832,8 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
    target = BTTARGET_INDIVIDUAL;
    if (BTTARGET_PARTY == group)
    {
-    if (1 == alive)
-     alive = 0;
-    else
-     alive = BTDice(1, alive - 1).roll();
-    for (target = 0; target < party.size(); ++target)
-    {
-     if ((alive == 0) && (party[target]->isAlive()))
-      break;
-     else if ((party[target]->isAlive()) && (party[target] != &pc) && (--alive == 0))
-      break;
-    }
+    if (!findTargetPC(BT_PARTYSIZE, target, who))
+     target = who;
     pc.combat.action = BTPc::BTPcAction::partyAttack;
     pc.combat.setTarget(group, target);
    }
