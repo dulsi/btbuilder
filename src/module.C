@@ -7,6 +7,7 @@
 
 #include "module.h"
 #include "xmlserializer.h"
+#include <string.h>
 
 BTModule::BTModule()
  : name(NULL), author(NULL), content(NULL), maxTime(14400), nightTime(7200)

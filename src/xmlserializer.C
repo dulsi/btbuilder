@@ -7,6 +7,7 @@
 
 #include "xmlserializer.h"
 #include <physfs.h>
+#include <string.h>
 
 XMLAction::~XMLAction()
 {

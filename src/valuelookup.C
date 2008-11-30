@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "valuelookup.h"
+#include <string.h>
 
 std::string ArrayLookup::getName(int index)
 {

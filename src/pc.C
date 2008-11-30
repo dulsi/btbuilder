@@ -7,6 +7,7 @@
 
 #include "pc.h"
 #include "game.h"
+#include <algorithm>
 
 void BTEquipment::serialize(ObjectSerializer* s)
 {
