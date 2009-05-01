@@ -102,6 +102,11 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
  config = configNew;
  std::string imagePath("image/");
  SDL_Surface *img = IMG_Load((imagePath + config->background).c_str());
+ if (NULL == img)
+ {
+  printf((std::string("Failed - Loading ") + imagePath + config->background + std::string("\n")).c_str());
+  exit(0);
+ }
  if ((xMult > 1) || (yMult > 1))
  {
   background = simpleZoomSurface(img, xMult, yMult);
@@ -117,6 +122,11 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
    if (config->wallType[i]->walls[j])
    {
     img = IMG_Load((imagePath + config->wallType[i]->walls[j]).c_str());
+    if (NULL == img)
+    {
+     printf((std::string("Failed - Loading ") + imagePath + config->wallType[i]->walls[j] + std::string("\n")).c_str());
+     exit(0);
+    }
     if ((xMult > 1) || (yMult > 1))
     {
      walls[i][j] = simpleZoomSurface(img, xMult, yMult);
