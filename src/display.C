@@ -704,7 +704,10 @@ void BTDisplay::setPsuedo3DConfig(const char *file)
 
 void BTDisplay::setWallGraphics(int type)
 {
- p3d.setConfig(p3dConfig[type]);
+ if (p3dConfig.size() > type)
+  p3d.setConfig(p3dConfig[type]);
+ else
+  p3d.setConfig(p3dConfig[0]);
 }
 
 bool BTDisplay::sizeFont(const char *text, int &w, int &h)

@@ -232,7 +232,7 @@ void BTGame::run(BTDisplay &d)
   d.drawFullScreen(module->title, 5000);
   d.refresh();
   d.setPsuedo3DConfig(module->wall);
-  d.setWallGraphics(0);
+  d.setWallGraphics(levelMap->getType());
   unsigned char key = ' ';
   try
   {
@@ -370,6 +370,7 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
  catch (const BTSpecialTeleport &t)
  {
   loadMap(t.map.c_str());
+  d.setWallGraphics(levelMap->getType());
   xPos = t.x;
   yPos = t.y;
   facing = t.facing;
