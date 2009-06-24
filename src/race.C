@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "race.h"
+#include <stdio.h>
 
 void BTRace::serialize(ObjectSerializer* s)
 {

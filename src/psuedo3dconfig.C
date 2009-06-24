@@ -7,6 +7,7 @@
 
 #include "psuedo3dconfig.h"
 #include "xmlserializer.h"
+#include <stdio.h>
 
 void Psuedo3DWallType::serialize(ObjectSerializer* s)
 {
