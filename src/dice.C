@@ -7,10 +7,13 @@
 
 #include "dice.h"
 
+#include <ctime>
+
 #define DICE_NUMBERMASK 0x1F
 #define DICE_TYPEMASK   0xE0
 
 IShort BTDice::validType[DICE_VALIDTYPES] = {2, 4, 6, 8, 10, 12, 20, 100};
+base_generator_type BTDice::generator(42u);
 
 BTDice::BTDice(BinaryReadFile &f)
 {
@@ -53,9 +56,11 @@ void BTDice::read(BinaryReadFile &f)
 
 int BTDice::roll() const
 {
- int r = modifier + number;
+ boost::uniform_int<> ran_dist(1, type);
+ boost::variate_generator<base_generator_type&, boost::uniform_int<> > ran(generator, ran_dist);
+ int r = modifier;
  for (int i = 0; i < number; ++i)
-  r += IRandom(type);
+  r += ran();
  return r;
 }
 
@@ -98,5 +103,10 @@ void BTDice::write(BinaryWriteFile &f)
  }
  b = (b << 5) + number;
  f.writeUByte(b);
+}
+
+void BTDice::Init()
+{
+ generator.seed(static_cast<unsigned int>(std::time(0)));
 }
 

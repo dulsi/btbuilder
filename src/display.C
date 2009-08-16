@@ -42,11 +42,13 @@ BTDisplay::BTDisplay(BTDisplayConfig *c)
  text.y = config->text.y * yMult;
  text.w = config->text.w * xMult;
  text.h = config->text.h * yMult;
+#ifndef BTBUILDER_NOTTF
  if (TTF_Init() == -1)
  {
   printf("Failed - TTF_Init\n");
   exit(0);
  }
+#endif
  mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
    SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
  if (mainScreen == NULL)
@@ -220,9 +222,8 @@ void BTDisplay::drawFullScreen(const char *file, int delay)
 void BTDisplay::drawImage(int pic)
 {
  char filename[50];
- const char *dir = PHYSFS_getDirSeparator();
  SDL_Surface *img = NULL;
- snprintf(filename, 50, "image%sslot%d.png", dir, pic);
+ snprintf(filename, 50, "image/slot%d.png", /*dir,*/ pic);
  if (PHYSFS_exists(filename))
  {
   SDL_RWops *f = PHYSFSRWOPS_openRead(filename);
@@ -230,7 +231,7 @@ void BTDisplay::drawImage(int pic)
  }
  if ((pic >= 45) && (img == NULL))
  {
-  snprintf(filename, 50, "PICS%sSLOT%d.PIC", dir, pic);
+  snprintf(filename, 50, "PICS/SLOT%d.PIC", pic);
   if (PHYSFS_exists(filename))
   {
    img = SDL_CreateRGBSurface(SDL_SWSURFACE, 112, 88, 8, 0, 0, 0, 0);
@@ -243,7 +244,7 @@ void BTDisplay::drawImage(int pic)
    }
    SDL_Color *colors = img->format->palette->colors;
    img->format->palette->ncolors = 256;
-   snprintf(filename, 50, "PICS%sSLOT%d.PAC", dir, pic);
+   snprintf(filename, 50, "PICS/SLOT%d.PAC", pic);
    BTCompressorReadFile palFile(filename);
    for (int c = 0; c < 256; ++c)
    {
@@ -712,6 +713,7 @@ void BTDisplay::setWallGraphics(int type)
 
 bool BTDisplay::sizeFont(const char *text, int &w, int &h)
 {
+#ifndef BTBUILDER_NOTTF
  if (ttffont)
  {
   if (0 == *text)
@@ -723,6 +725,7 @@ bool BTDisplay::sizeFont(const char *text, int &w, int &h)
     return false;
  }
  else
+#endif
  {
   w = strlen(text) * sfont->w;
   h = sfont->h;
@@ -740,9 +743,11 @@ void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment
  if (0 == *text)
   return;
  SDL_Surface *img;
+#ifndef BTBUILDER_NOTTF
  if (ttffont)
   img = TTF_RenderUTF8_Solid(ttffont, text, c);
  else
+#endif
   img = simpleRender_Solid(sfont, text, c);
  if ((xMult != yMult) || ((ttffont == NULL) && ((xMult > 1) || (yMult > 1))))
  {

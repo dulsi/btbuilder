@@ -558,7 +558,8 @@ void BTCombat::runCombat(BTDisplay &d)
 
  while (active > 0)
  {
-  int who = IRandom(active);
+  BTDice whoDie(1, active, -1);
+  int who = whoDie.roll();
   for (itr = monsters.begin(); itr != monsters.end(); ++itr)
   {
    if (who < itr->active)

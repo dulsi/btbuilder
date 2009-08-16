@@ -10,8 +10,10 @@
 #include "psuedo3d.h"
 #include "displayconfig.h"
 #include "statusbar.h"
-#include <SDL_ttf.h>
 #include "sdlextend.h"
+#ifndef BTBUILDER_NOTTF
+#include <SDL_ttf.h>
+#endif
 
 #define BTUI_CHOICE 1
 #define BTUI_SELECT 2
@@ -103,7 +105,11 @@ class BTDisplay
   XMLVector<Psuedo3DConfig*> p3dConfig;
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
+#ifdef BTBUILDER_NOTTF
+  void *ttffont;
+#else
   TTF_Font *ttffont;
+#endif
   simpleFont *sfont;
   SDL_Color white, black;
   std::vector<BTUIElement*> element;

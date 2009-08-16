@@ -82,6 +82,36 @@ void testDisplay()
  BTGame::getGame()->run(display);
 }
 
+int Alternative_setSaneConfig(std::string appName)
+{
+ const char *basedir = PHYSFS_getBaseDir();
+ std::string userdir = PHYSFS_getUserDir();
+ std::string writedir = userdir + appName;
+
+ if (!PHYSFS_setWriteDir(writedir.c_str()))
+ {
+  int no_write = 0;
+  if ( (PHYSFS_setWriteDir(userdir.c_str())) && (PHYSFS_mkdir(appName.c_str())) )
+  {
+   if (!PHYSFS_setWriteDir(writedir.c_str()))
+    no_write = 1;
+  } /* if */
+  else
+  {
+   no_write = 1;
+  } /* else */
+
+  if (no_write)
+  {
+   PHYSFS_setWriteDir(NULL);   /* just in case. */
+   return 0;
+  } /* if */
+ } /* if */
+ PHYSFS_addToSearchPath(writedir.c_str(), 0);
+ PHYSFS_addToSearchPath(basedir, 1);
+ return 1;
+}
+
 #define MODE_STANDARD 1
 #define MODE_ITEM     2
 #define MODE_MONSTER  3
@@ -146,7 +176,11 @@ int main(int argc, char *argv[])
  appName += PHYSFS_getDirSeparator();
  appName += argv[optind];
  if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
-  return 0;
+ {
+  // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
+  if (0 == Alternative_setSaneConfig("btbsave"))
+   return 0;
+ }
  std::string contentPath("module");
  contentPath += PHYSFS_getDirSeparator();
  contentPath += "content";

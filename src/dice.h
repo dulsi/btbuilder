@@ -11,6 +11,11 @@
 #include <file.h>
 #include "xmlserializer.h"
 
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_int.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <boost/random/variate_generator.hpp>
+
 /*
  [dice]
  number: bits[5] (add 1)
@@ -18,6 +23,8 @@
 */
 
 #define DICE_VALIDTYPES 8
+
+typedef boost::minstd_rand base_generator_type;
 
 class BTDice : public XMLObject
 {
@@ -36,12 +43,15 @@ class BTDice : public XMLObject
   void setType(IShort val);
   void write(BinaryWriteFile &f);
 
+  static void Init();
+
  private:
   int number;
   int type;
   int modifier;
 
   static IShort validType[DICE_VALIDTYPES];
+  static base_generator_type generator;
 };
 
 #endif

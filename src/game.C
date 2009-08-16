@@ -14,7 +14,7 @@ BTGame *BTGame::game = NULL;
 BTGame::BTGame(BTModule *m)
  : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0), timedSpecial(-1), delay(1000)
 {
- IRandomize();
+ BTDice::Init();
  if (NULL == game)
  {
   game = this;
