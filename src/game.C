@@ -157,6 +157,17 @@ int BTGame::getWallType(int x, int y, int direction)
  IShort w = levelMap->getSquare(y, x).getWall(direction);
  if (w == 2)
   return 2;
+ else if (w == 3)
+ {
+  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+  {
+   if (BTSPELLTYPE_DOORDETECT == spellList[itr->spell].getType())
+   {
+    return 2;
+   }
+  }
+  return 1;
+ }
  else if (w)
   return 1;
  else

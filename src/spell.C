@@ -319,6 +319,7 @@ int BTSpell::apply(BTDisplay &d, bool partySpell, BTCombat *combat, int group, i
     d.drawStats();
    break;
   case BTSPELLTYPE_LIGHT:
+  case BTSPELLTYPE_DOORDETECT:
    break;
   case BTSPELLTYPE_ARMORBONUS:
    if (BTTARGET_PARTY == group)
