@@ -223,7 +223,7 @@ void BTDisplay::drawImage(int pic)
 {
  char filename[50];
  SDL_Surface *img = NULL;
- snprintf(filename, 50, "image/slot%d.png", /*dir,*/ pic);
+ snprintf(filename, 50, "image/slot%d.png", pic);
  if (PHYSFS_exists(filename))
  {
   SDL_RWops *f = PHYSFSRWOPS_openRead(filename);
@@ -552,14 +552,12 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    {
     if (key == BTKEY_UP)
     {
-     if (select->select > 0)
-      --select->select;
+     select->moveUp(*this);
      continue;
     }
     else if (key == BTKEY_DOWN)
     {
-     if (select->select + 1 < select->size)
-      ++select->select;
+     select->moveDown(*this);
      continue;
     }
     else if ((key == 13) && (select->select >= 0))
@@ -913,6 +911,29 @@ void BTUISelect::draw(BTDisplay &d)
     d.drawFont(list[i].name, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
    dst.y += h;
   }
+ }
+}
+
+void BTUISelect::moveDown(BTDisplay &d)
+{
+ int wFirst, h, lines;
+ d.sizeFont("", wFirst, h);
+ lines = position.h / h;
+ if (select + 1 < size)
+ {
+  ++select;
+  if (start + lines <= select)
+   start = select - lines + 1;
+ }
+}
+
+void BTUISelect::moveUp(BTDisplay &d)
+{
+ if (select > 0)
+ {
+  --select;
+  if (start > select)
+   start = select;
  }
 }
 

@@ -168,6 +168,9 @@ class BTUISelect : public BTUIElement
 
   void draw(BTDisplay &d);
 
+  void moveDown(BTDisplay &d);
+  void moveUp(BTDisplay &d);
+
   BTDisplay::selectItem *list;
   int size;
   int &start;
