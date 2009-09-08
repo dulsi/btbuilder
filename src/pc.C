@@ -261,6 +261,7 @@ void BTPc::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("race", &race, NULL, &BTGame::getGame()->getRaceList());
  s->add("job", &job, NULL, &BTGame::getGame()->getJobList());
+ s->add("jobAbbrev", &job, NULL, &BTGame::getGame()->getJobAbbrevList());
  s->add("picture", &picture);
  s->add("monster", &monster);
  for (i = 0; i < BT_STATS; ++i)

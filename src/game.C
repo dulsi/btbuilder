@@ -12,7 +12,7 @@
 BTGame *BTGame::game = NULL;
 
 BTGame::BTGame(BTModule *m)
- : module(m), itemList(m->item), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0), timedSpecial(-1), delay(1000)
+ : module(m), itemList(m->item), jobAbbrevList(&jobList), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0), timedSpecial(-1), delay(1000)
 {
  BTDice::Init();
  if (NULL == game)
@@ -48,6 +48,11 @@ BTFactory<BTItem> &BTGame::getItemList()
 BTJobList &BTGame::getJobList()
 {
  return jobList;
+}
+
+BTJobAbbrevList &BTGame::getJobAbbrevList()
+{
+ return jobAbbrevList;
 }
 
 BTFactory<BTMonster> &BTGame::getMonsterList()
@@ -149,11 +154,11 @@ int BTGame::getY()
 int BTGame::getWallType(int x, int y, int direction)
 {
  if (x < 0)
-  x += 22;
- x = x % 22;
+  x += levelMap->getXSize();
+ x = x % levelMap->getXSize();
  if (y < 0)
-  y += 22;
- y = y % 22;
+  y += levelMap->getYSize();
+ y = y % levelMap->getYSize();
  IShort w = levelMap->getSquare(y, x).getWall(direction);
  if (w == 2)
   return 2;
@@ -409,10 +414,10 @@ bool BTGame::move(BTDisplay &d, int dir)
  const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
  if (current.getWall(dir) != 1)
  {
-  xPos += Psuedo3D::changeXY[dir][0] + 22;
-  xPos = xPos % 22;
-  yPos += Psuedo3D::changeXY[dir][1] + 22;
-  yPos = yPos % 22;
+  xPos += Psuedo3D::changeXY[dir][0] + levelMap->getXSize();
+  xPos = xPos % levelMap->getXSize();
+  yPos += Psuedo3D::changeXY[dir][1] + levelMap->getYSize();
+  yPos = yPos % levelMap->getYSize();
   return true;
  }
  return false;

@@ -57,4 +57,16 @@ class BTJobList : public ValueLookup, public XMLVector<BTJob*>
   virtual int getIndex(std::string name);
 };
 
+class BTJobAbbrevList : public ValueLookup
+{
+ public:
+  BTJobAbbrevList(BTJobList *l);
+
+  virtual std::string getName(int index);
+  virtual int getIndex(std::string name);
+
+ private:
+  BTJobList *jbList;
+};
+
 #endif

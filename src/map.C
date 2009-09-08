@@ -974,3 +974,14 @@ IShort BTMap::getType() const
 {
  return type;
 }
+
+IShort BTMap::getXSize() const
+{
+ return 22;
+}
+
+IShort BTMap::getYSize() const
+{
+ return 22;
+}
+

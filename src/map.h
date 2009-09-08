@@ -200,6 +200,8 @@ class BTMap
   const BTSpecial *getSpecial(IShort num) const;
   const BTMapSquare &getSquare(IShort y, IShort x) const;
   IShort getType() const;
+  IShort getXSize() const;
+  IShort getYSize() const;
 
  private:
   char name[25];

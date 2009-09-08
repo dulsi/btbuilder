@@ -78,3 +78,25 @@ int BTJobList::getIndex(std::string name)
    return i;
  return -1;
 }
+
+BTJobAbbrevList::BTJobAbbrevList(BTJobList *l)
+ : jbList(l)
+{
+}
+
+std::string BTJobAbbrevList::getName(int index)
+{
+ if (jbList->size() > index)
+  return (*jbList)[index]->abbrev;
+ else
+  return "";
+}
+
+int BTJobAbbrevList::getIndex(std::string name)
+{
+ for (int i = 0; i < jbList->size(); ++i)
+  if (strcmp(name.c_str(), (*jbList)[i]->abbrev) == 0)
+   return i;
+ return -1;
+}
+
