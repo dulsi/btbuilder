@@ -241,6 +241,23 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    }
    break;
   }
+  case BTSPELLTYPE_PHASEDOOR:
+  {
+   int x = game->getX();
+   int y = game->getY();
+   int f = game->getFacing();
+   for (int i = 0; i < 4; ++i)
+   {
+    int testX = (x + (Psuedo3D::changeXY[f][0] * i) + game->getMap()->getXSize()) % game->getMap()->getXSize();
+    int testY = (y + (Psuedo3D::changeXY[f][1] * i) + game->getMap()->getYSize()) % game->getMap()->getYSize();
+    if (game->getWallType(testX, testY, f))
+    {
+     game->addEffect(index, BTTIME_MAP, BTTARGET_PARTY, ((testY * game->getMap()->getXSize()) + testX) * BT_DIRECTIONS + f, resists);
+     break;
+    }
+   }
+   break;
+  }
   default:
    apply(d, partySpell, combat, group, target, resists);
    game->addEffect(index, expire, group, target, resists);

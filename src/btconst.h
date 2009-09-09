@@ -26,6 +26,7 @@
 #define BTSPELLTYPE_HITBONUS       24
 #define BTSPELLTYPE_TRAPDESTROY    25
 #define BTSPELLTYPE_DOORDETECT     26
+#define BTSPELLTYPE_PHASEDOOR      27
 #define BTSPELLTYPE_REGENBARD      29
 extern char *spellTypes[];
 
@@ -220,6 +221,7 @@ extern char *statAbbrev[];
 #define BTTIME_CONTINUOUS 0x04000000U
 #define BTTIME_INDEFINITE 0x02000000U
 #define BTTIME_COMBAT     0x01000000U
+#define BTTIME_MAP        0x10000000U
 
 #define BTTIME_ONETURN 6000 /*ms*/
 #define BTTIME_MINUTE ((60 /*sec*/ * 1000 /*ms/sec*/) / BTTIME_ONETURN)

@@ -97,6 +97,7 @@ BTMap *BTGame::loadMap(const char *filename)
  }
  local.clearAll();
  clearTimedSpecial();
+ clearMapEffects();
  BinaryReadFile levelFile(filename);
  levelMap = new BTMap(levelFile);
  return levelMap;
@@ -160,23 +161,33 @@ int BTGame::getWallType(int x, int y, int direction)
   y += levelMap->getYSize();
  y = y % levelMap->getYSize();
  IShort w = levelMap->getSquare(y, x).getWall(direction);
+ bool bHasDoorDetect = false;
+ if (w == 0)
+  return 0;
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+ {
+  if (BTSPELLTYPE_DOORDETECT == spellList[itr->spell].getType())
+   bHasDoorDetect = true;
+  else if (BTSPELLTYPE_PHASEDOOR == spellList[itr->spell].getType())
+  {
+   int phaseY = itr->target / (levelMap->getXSize() * BT_DIRECTIONS);
+   int phaseX = (itr->target % (levelMap->getXSize() * BT_DIRECTIONS)) / BT_DIRECTIONS;
+   int phaseDir = itr->target % BT_DIRECTIONS;
+   if ((phaseX == x) && (phaseY == y) && (phaseDir == direction))
+    return 0;
+  }
+ }
  if (w == 2)
   return 2;
  else if (w == 3)
  {
-  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+  if (bHasDoorDetect)
   {
-   if (BTSPELLTYPE_DOORDETECT == spellList[itr->spell].getType())
-   {
-    return 2;
-   }
+   return 2;
   }
   return 1;
  }
- else if (w)
-  return 1;
- else
-  return 0;
+ return 1;
 }
 
 void BTGame::setFacing(int f)
@@ -412,7 +423,26 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
 bool BTGame::move(BTDisplay &d, int dir)
 {
  const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
- if (current.getWall(dir) != 1)
+ int w = current.getWall(dir);
+ if (w != 0)
+ {
+  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+  {
+   if (BTSPELLTYPE_PHASEDOOR == spellList[itr->spell].getType())
+   {
+    int phaseY = itr->target / (levelMap->getXSize() * BT_DIRECTIONS);
+    int phaseX = (itr->target % (levelMap->getXSize() * BT_DIRECTIONS)) / BT_DIRECTIONS;
+    int phaseDir = itr->target % BT_DIRECTIONS;
+    if ((phaseX == xPos) && (phaseY == yPos) && (phaseDir == dir))
+    {
+     w = 0;
+     spellEffect.erase(itr);
+     break;
+    }
+   }
+  }
+ }
+ if (w != 1)
  {
   xPos += Psuedo3D::changeXY[dir][0] + levelMap->getXSize();
   xPos = xPos % levelMap->getXSize();
@@ -474,6 +504,23 @@ void BTGame::clearEffects(BTDisplay &d)
    spellList[spell].finish(d, NULL, group, target, resists);
  }
  combat.clearEffects(d);
+}
+
+void BTGame::clearMapEffects()
+{
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); itr = spellEffect.begin())
+ {
+  int expiration = itr->expiration;
+  if (BTTIME_MAP == expiration)
+  {
+   int spell = itr->spell;
+   int group = itr->group;
+   int target = itr->target;
+   BitField resists = itr->resists;
+   spellEffect.erase(itr);
+//   spellList[spell].finish(d, NULL, group, target, resists);
+  }
+ }
 }
 
 void BTGame::addPlayer(BTDisplay &d, int who)
