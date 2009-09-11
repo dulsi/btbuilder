@@ -62,6 +62,8 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
   SDL_BlitSurface(background, &src, display, &dest);
  else
  {
+  dest.h = src.h;
+  dest.w = src.w;
   SDL_FillRect(display, &dest, SDL_MapRGB(display->format, 0, 0, 0));
   return;
  }

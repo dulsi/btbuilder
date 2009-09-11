@@ -506,19 +506,51 @@ void BTGame::clearEffects(BTDisplay &d)
  combat.clearEffects(d);
 }
 
-void BTGame::clearMapEffects()
+void BTGame::clearEffectsByType(BTDisplay &d, int type)
 {
- for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); itr = spellEffect.begin())
+ bool bFound = true;
+ while (bFound)
  {
-  int expiration = itr->expiration;
-  if (BTTIME_MAP == expiration)
+  bFound = false;
+  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
   {
    int spell = itr->spell;
-   int group = itr->group;
-   int target = itr->target;
-   BitField resists = itr->resists;
-   spellEffect.erase(itr);
-//   spellList[spell].finish(d, NULL, group, target, resists);
+   if (spellList[spell].getType() == type)
+   {
+    int group = itr->group;
+    int target = itr->target;
+    int expiration = itr->expiration;
+    BitField resists = itr->resists;
+    spellEffect.erase(itr);
+    if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
+     spellList[spell].finish(d, NULL, group, target, resists);
+    bFound = true;
+    break;
+   }
+  }
+ }
+}
+
+void BTGame::clearMapEffects()
+{
+ bool bFound = true;
+ while (bFound)
+ {
+  bFound = false;
+  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+  {
+   int expiration = itr->expiration;
+   if (BTTIME_MAP == expiration)
+   {
+    int spell = itr->spell;
+    int group = itr->group;
+    int target = itr->target;
+    BitField resists = itr->resists;
+    spellEffect.erase(itr);
+//    spellList[spell].finish(d, NULL, group, target, resists);
+    bFound = true;
+    break;
+   }
   }
  }
 }

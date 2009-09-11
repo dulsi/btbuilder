@@ -131,6 +131,9 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_SPIN:
    game->setFacing(BTDice(1, 4, 0).roll() % 4);
    break;
+  case BTSPECIALCOMMAND_DARKNESS:
+   game->clearEffectsByType(d, BTSPELLTYPE_LIGHT);
+   break;
   case BTSPECIALCOMMAND_GETINPUT:
    game->setLastInput(d.readString("", 13));
    break;
