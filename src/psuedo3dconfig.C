@@ -28,7 +28,6 @@ int Psuedo3DConfig::findWallType(int type, int position)
 {
  if (type)
  {
-  printf("%d, %d\n", type, position);
   int modulus = position % divide;
   for (int i = 0; i < wallType.size(); ++i)
   {
@@ -53,10 +52,4 @@ void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &c
  XMLSerializer parser;
  parser.add("psuedo3d", &cfg, &Psuedo3DConfig::create);
  parser.parse(filename, true);
-  for (int i = 0; i < cfg[0]->wallType.size(); ++i)
-  {
-  for (std::vector<unsigned int>::iterator it = cfg[0]->wallType[i]->modulus.begin(); it != cfg[0]->wallType[i]->modulus.end(); ++it) printf("%d,", *it);
-  printf("  %d\n", cfg[0]->wallType[i]->type);
-  }
-  printf("%d\n", cfg[0]->divide);
 }
