@@ -56,6 +56,8 @@ class Psuedo3DWallType : public XMLObject
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DWallType; }
 
+  int type;
+  std::vector<unsigned int> modulus;
   char *walls[WALL_DIRECTIONS];
 };
 
@@ -73,12 +75,14 @@ class Psuedo3DConfig : public XMLObject
     delete [] background;
   }
 
+  int findWallType(int type, int position);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DConfig; }
   static void readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg);
 
   int height, width;
+  int divide;
   char *background;
   XMLVector<Psuedo3DWallType*> wallType;
 };

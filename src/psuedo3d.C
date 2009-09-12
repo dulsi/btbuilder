@@ -164,9 +164,12 @@ void Psuedo3D::drawEdge(Psuedo3DMap *map, int x, int y, int direction, int image
 {
  SDL_Rect src, dest;
  int type;
+ int curX, curY;
  for (int i = radius; i >= 0; --i)
  {
-  type = map->getWallType(x + (changeXY[(direction + 3) % 4][0] * i), y + (changeXY[(direction + 3) % 4][1] * i), (direction + 3) % 4);
+  curX = x + (changeXY[(direction + 3) % 4][0] * i);
+  curY = y + (changeXY[(direction + 3) % 4][1] * i);
+  type = config->findWallType(map->getWallType(curX, curY, (direction + 3) % 4), (((direction == 0) || (direction == 2)) ? curY : curX));
   if ((type > 0) && (walls[type - 1][image - i]))
   {
    src.x = 0;
@@ -180,7 +183,9 @@ void Psuedo3D::drawEdge(Psuedo3DMap *map, int x, int y, int direction, int image
  }
  for (int i = radius; i >= 0; --i)
  {
-  type = map->getWallType(x + (changeXY[(direction + 1) % 4][0] * i), y + (changeXY[(direction + 1) % 4][1] * i), (direction + 1) % 4);
+  curX = x + (changeXY[(direction + 1) % 4][0] * i);
+  curY = y + (changeXY[(direction + 1) % 4][1] * i);
+  type = config->findWallType(map->getWallType(curX, curY, (direction + 1) % 4), (((direction == 0) || (direction == 2)) ? curY : curX));
   if ((type > 0) && (walls[type - 1][image + 1 + i]))
   {
    src.x = 0;
@@ -198,9 +203,12 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
 {
  SDL_Rect src, dest;
  int type;
+ int curX, curY;
  for (int i = -1 * radius; i <= radius; ++i)
  {
-  type = map->getWallType(x + (changeXY[(direction + 1) % 4][0] * i), y + (changeXY[(direction + 1) % 4][1] * i), direction);
+  curX = x + (changeXY[(direction + 1) % 4][0] * i);
+  curY = y + (changeXY[(direction + 1) % 4][1] * i);
+  type = config->findWallType(map->getWallType(curX, curY, direction), (((direction == 0) || (direction == 2)) ? curX : curY));
   if ((type > 0) && (walls[type - 1][image]))
   {
    int w = ((config->width * xMult) - walls[type - 1][image]->w) / 2;

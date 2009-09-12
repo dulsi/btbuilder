@@ -3,7 +3,10 @@
   <width>112</width>
   <height>88</height>
   <background>dungeon_horizon.png</background>
-  <walltype type="0">
+  <divide>1</divide>
+  <walltype>
+   <type>1</type>
+   <modulus>0</modulus>
    <wall direction="0">dungeon_front1.png</wall>
    <wall direction="1">dungeon_front2.png</wall>
    <wall direction="2">dungeon_front3.png</wall>
@@ -29,7 +32,9 @@
    <wall direction="22">dungeon_right5_2.png</wall>
    <wall direction="23">dungeon_right5_3.png</wall>
   </walltype>
-  <walltype type="1">
+  <walltype>
+   <type>2</type>
+   <modulus>0</modulus>
    <wall direction="0">dungeon_door1.png</wall>
    <wall direction="1">dungeon_door2.png</wall>
    <wall direction="2">dungeon_door3.png</wall>
