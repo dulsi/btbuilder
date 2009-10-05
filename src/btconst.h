@@ -13,6 +13,7 @@
 #define BTSPELLTYPE_CUREPOISON     2
 #define BTSPELLTYPE_CUREINSANITY   3
 #define BTSPELLTYPE_DISPOSSESS     5
+#define BTSPELLTYPE_DAMAGE         9
 #define BTSPELLTYPE_KILL           10
 #define BTSPELLTYPE_POISON         11
 #define BTSPELLTYPE_CAUSEINSANITY  12
@@ -202,6 +203,7 @@ extern char *statAbbrev[];
 
 #define BTSAVE_DIFFICULTY 20
 
+#define BTSTATUS_NONE      -1
 #define BTSTATUS_DEAD      0
 #define BTSTATUS_POISONED  1
 #define BTSTATUS_INSANE    2
@@ -226,5 +228,7 @@ extern char *statAbbrev[];
 
 #define BTTIME_ONETURN 6000 /*ms*/
 #define BTTIME_MINUTE ((60 /*sec*/ * 1000 /*ms/sec*/) / BTTIME_ONETURN)
+
+#define BTDISTANCE_MAX 9
 
 #endif

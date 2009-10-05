@@ -79,6 +79,12 @@ bool BTPc::advanceLevel()
    int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
    hp += moreHp;
    maxHp += moreHp;
+   if (jobList[job]->spells)
+   {
+    int moreSp = BTDice(1, 4).roll() + ((stat[BTSTAT_IQ] > 14) ? stat[BTSTAT_IQ] - 14 : 0);
+    sp += moreSp;
+    maxSp += moreSp;
+   }
    return true;
   }
  }

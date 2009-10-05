@@ -57,7 +57,7 @@ class BTCombat : public BTScreenSet
   BTCombat();
   ~BTCombat();
 
-  void addEffect(int spell, unsigned int expire, int group, int target, BitField &resist);
+  void addEffect(int spell, unsigned int expire, int casterLevel, int group, int target, BitField &resist);
   void addEncounter(int monsterType, int number = 0);
   void addPlayer(BTDisplay &d, int who);
   void clearEffects(BTDisplay &d);
@@ -87,6 +87,7 @@ class BTCombat : public BTScreenSet
   static int useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
+  void debugActive();
   bool endRound(BTDisplay &d);
 
  private:

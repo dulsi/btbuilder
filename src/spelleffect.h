@@ -14,13 +14,14 @@
 class BTSpellEffect : public XMLObject
 {
  public:
-  BTSpellEffect(int s, int x, int g, int t, BitField &r);
+  BTSpellEffect(int s, int x, int cl, int g, int t, BitField &r);
 
   virtual void serialize(ObjectSerializer *s);
 
   int spell;
   int expiration;
   bool first;
+  int casterLevel;
   int group;
   int target;
   BitField resists;
