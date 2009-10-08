@@ -79,7 +79,7 @@ class BTGame : public Psuedo3DMap
   void setTimedSpecial(IShort special, unsigned int expire);
   void clearTimedSpecial();
 
-  void addEffect(int spell, unsigned int expire, int casterLevel, int group, int target, BitField &resists);
+  void addEffect(int spell, unsigned int expire, int casterLevel, int distance, int group, int target, BitField &resists);
   void clearEffects(BTDisplay &d);
   void clearEffectsByType(BTDisplay &d, int type);
   void clearMapEffects();

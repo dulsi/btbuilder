@@ -147,9 +147,9 @@ BTCombat::~BTCombat()
  free(partyLabel);
 }
 
-void BTCombat::addEffect(int spell, unsigned int expire, int casterLevel, int group, int target, BitField& resist)
+void BTCombat::addEffect(int spell, unsigned int expire, int casterLevel, int distance, int group, int target, BitField& resist)
 {
- spellEffect.push_back(BTSpellEffect(spell, expire, casterLevel, group, target, resist));
+ spellEffect.push_back(BTSpellEffect(spell, expire, casterLevel, distance, group, target, resist));
 }
 
 void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
@@ -174,7 +174,7 @@ void BTCombat::addPlayer(BTDisplay &d, int who)
     spellList[itr->spell].displayResists(d, this, itr->group, who);
    }
    else
-    spellList[itr->spell].apply(d, false, this, itr->casterLevel, itr->group, who, itr->resists);
+    spellList[itr->spell].apply(d, false, this, itr->casterLevel, itr->distance, itr->group, who, itr->resists);
   }
   ++itr;
  }
@@ -187,13 +187,14 @@ void BTCombat::clearEffects(BTDisplay &d)
  {
   int spell = itr->spell;
   int casterLevel = itr->casterLevel;
+  int distance = itr->distance;
   int group = itr->group;
   int target = itr->target;
   int expiration = itr->expiration;
   BitField resists = itr->resists;
   spellEffect.erase(itr);
   if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-   spellList[spell].finish(d, this, casterLevel, group, target, resists);
+   spellList[spell].finish(d, this, casterLevel, distance, group, target, resists);
  }
 }
 
@@ -431,13 +432,14 @@ void BTCombat::movedPlayer(BTDisplay &d, int who, int where)
     int spell = itr->spell;
     int expiration = itr->expiration;
     int casterLevel = itr->casterLevel;
+    int distance = itr->distance;
     int group = itr->group;
     int target = itr->target;
     BitField resists = itr->resists;
     itr = spellEffect.erase(itr);
     int size = spellEffect.size();
     if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-     spellList[spell].finish(d, this, casterLevel, group, target, resists);
+     spellList[spell].finish(d, this, casterLevel, distance, group, target, resists);
     if (size != spellEffect.size())
      itr = spellEffect.begin();
    }
@@ -1014,7 +1016,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
     int target = pc.combat.getTargetIndividual();
     if ((spellList[pc.combat.object].getArea() == BTAREAEFFECT_FOE) && (target == BTTARGET_INDIVIDUAL))
      findTarget(pc, BTDISTANCE_MAX, grp, target);
-    active -= spellList[pc.combat.object].cast(d, pc.name, true, this, pc.level, pc.combat.getTargetGroup(), target);
+    active -= spellList[pc.combat.object].cast(d, pc.name, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
     break;
    }
    case BTPc::BTPcAction::useItem:
@@ -1066,12 +1068,13 @@ bool BTCombat::endRound(BTDisplay &d)
   {
    int spell = effect->spell;
    int casterLevel = effect->casterLevel;
+   int distance = effect->distance;
    group = effect->group;
    int target = effect->target;
    BitField resists = effect->resists;
    effect = spellEffect.erase(effect);
    int size = spellEffect.size();
-   spellList[spell].finish(d, this, casterLevel, group, target, resists);
+   spellList[spell].finish(d, this, casterLevel, distance, group, target, resists);
    if (size != spellEffect.size())
     effect = spellEffect.begin();
   }
@@ -1083,7 +1086,7 @@ bool BTCombat::endRound(BTDisplay &d)
   if (effect->first)
    effect->first = false;
   else if (BTTIME_PERMANENT != effect->expiration)
-   spellList[effect->spell].maintain(d, this, effect->casterLevel, effect->group, effect->target, effect->resists);
+   spellList[effect->spell].maintain(d, this, effect->casterLevel, effect->distance, effect->group, effect->target, effect->resists);
  }
  group = BTTARGET_MONSTER;
  int alive = 0;
@@ -1117,12 +1120,13 @@ bool BTCombat::endRound(BTDisplay &d)
      {
       int spell = effect->spell;
       int casterLevel = effect->casterLevel;
+      int distance = itr->distance;
       int expiration = effect->expiration;
       BitField resists = effect->resists;
       effect = spellEffect.erase(effect);
       int size = spellEffect.size();
       if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-       spellList[spell].finish(d, this, casterLevel, group, monster - itr->individual.begin(), resists);
+       spellList[spell].finish(d, this, casterLevel, distance, group, monster - itr->individual.begin(), resists);
       if (size != spellEffect.size())
        effect = spellEffect.begin();
      }
@@ -1161,12 +1165,13 @@ bool BTCombat::endRound(BTDisplay &d)
     {
      int spell = effect->spell;
      int casterLevel = effect->casterLevel;
+     int distance = itr->distance;
      int expiration = effect->expiration;
      BitField resists = effect->resists;
      effect = spellEffect.erase(effect);
      int size = spellEffect.size();
      if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-      spellList[spell].finish(d, this, casterLevel, group, BTTARGET_INDIVIDUAL, resists);
+      spellList[spell].finish(d, this, casterLevel, distance, group, BTTARGET_INDIVIDUAL, resists);
      if (size != spellEffect.size())
       effect = spellEffect.begin();
     }
@@ -1198,13 +1203,14 @@ bool BTCombat::endRound(BTDisplay &d)
   {
    int spell = effect->spell;
    int casterLevel = effect->casterLevel;
+   int distance = effect->distance;
    int expiration = effect->expiration;
    group = effect->group;
    int target = effect->target;
    BitField resists = effect->resists;
    spellEffect.erase(effect);
    if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-    spellList[spell].finish(d, this, casterLevel, group, target, resists);
+    spellList[spell].finish(d, this, casterLevel, distance, group, target, resists);
   }
   alive = 0;
   int i;

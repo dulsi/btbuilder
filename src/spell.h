@@ -56,19 +56,19 @@ class BTSpell
   IShort getType() const;
   void write(BinaryWriteFile &f);
 
-  int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int group, int target);
-  int apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLevel, int group, int target, BitField &resists);
-  int cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int group, int target);
-  void finish(BTDisplay &d, BTCombat *combat, int casterLevel, int group, int target, BitField &resists);
-  void maintain(BTDisplay &d, BTCombat *combat, int casterLevel, int group, int target, BitField &resists);
+  int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
+  int apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists);
+  int cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
+  void finish(BTDisplay &d, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists);
+  void maintain(BTDisplay &d, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists);
 
   bool checkResists(BTCombat *combat, int group, int target, BitField &resists);
   void displayResists(BTDisplay &d, BTCombat *combat, int group, int target);
 
  protected:
   void cureStatus(BTCombat *combat, int group, int target, int status);
-  int setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, const BTDice &dam, int status, const char *statusText, bool first = false);
-  std::string message(const char *name, const char *text, int damage, const char *status, bool killed);
+  int setStatus(BTDisplay &d, BTCombat *combat, int distance, int group, int target, BitField &resists, const BTDice &dam, int status, const char *statusText, bool first = false);
+  std::string message(const char *name, const char *text, int damage, const char *status, const BitField &flags);
 
  private:
   char name[29];

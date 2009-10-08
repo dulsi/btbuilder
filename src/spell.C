@@ -8,6 +8,10 @@
 #include "spell.h"
 #include "game.h"
 
+#define BTSPELLFLG_DAMAGE 0
+#define BTSPELLFLG_KILLED 1
+#define BTSPELLFLG_EXCLAMATION 2
+
 BTSpell::BTSpell(BinaryReadFile &f)
 {
  IUByte unknown;
@@ -120,7 +124,7 @@ void BTSpell::write(BinaryWriteFile &f)
  f.writeUByteArray(22, (IUByte *)effect);
 }
 
-int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int group, int target)
+int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target)
 {
  int killed = 0;
  BTGame *game = BTGame::getGame();
@@ -194,7 +198,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    {
     if (BTTARGET_INDIVIDUAL == target)
     {
-     game->addEffect(index, expire, casterLevel, group, target, resists);
+     game->addEffect(index, expire, casterLevel, distance, group, target, resists);
      for (int i = 0; i < party.size(); ++i)
      {
       if (!party[i]->isAlive())
@@ -238,7 +242,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
     party.add(d, pc);
     d.drawStats();
     if ((BTTIME_PERMANENT != expire) && (BTTIME_CONTINUOUS != expire))
-     game->addEffect(index, expire, casterLevel, BTTARGET_PARTY, party.size() - 1, resists);
+     game->addEffect(index, expire, casterLevel, distance, BTTARGET_PARTY, party.size() - 1, resists);
    }
    break;
   }
@@ -253,21 +257,21 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
     int testY = (y + (Psuedo3D::changeXY[f][1] * i) + game->getMap()->getYSize()) % game->getMap()->getYSize();
     if (game->getWallType(testX, testY, f))
     {
-     game->addEffect(index, BTTIME_MAP, casterLevel, BTTARGET_PARTY, ((testY * game->getMap()->getXSize()) + testX) * BT_DIRECTIONS + f, resists);
+     game->addEffect(index, BTTIME_MAP, casterLevel, distance, BTTARGET_PARTY, ((testY * game->getMap()->getXSize()) + testX) * BT_DIRECTIONS + f, resists);
      break;
     }
    }
    break;
   }
   default:
-   killed = apply(d, partySpell, combat, casterLevel, group, target, resists);
-   game->addEffect(index, expire, casterLevel, group, target, resists);
+   killed = apply(d, partySpell, combat, casterLevel, distance, group, target, resists);
+   game->addEffect(index, expire, casterLevel, distance, group, target, resists);
    break;
  }
  return killed;
 }
 
-int BTSpell::apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLevel, int group, int target, BitField &resists)
+int BTSpell::apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
@@ -311,35 +315,35 @@ int BTSpell::apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLe
    break;
   case BTSPELLTYPE_DAMAGE:
   {
-   int killed = setStatus(d, combat, group, target, resists, dice, BTSTATUS_NONE, "", true);
+   int killed = setStatus(d, combat, distance, group, target, resists, dice, BTSTATUS_NONE, "", true);
    if (BTTARGET_PARTY == group)
     d.drawStats();
    return killed;
   }
   case BTSPELLTYPE_KILL:
   {
-   int killed = setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_DEAD, " is killed", true);
+   int killed = setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_DEAD, " is killed", true);
    if (BTTARGET_PARTY == group)
     d.drawStats();
    return killed;
   }
   case BTSPELLTYPE_POISON:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned", true);
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned", true);
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_CAUSEINSANITY:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_INSANE, " has gone insane", true);
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_INSANE, " has gone insane", true);
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_POSSESS:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_POSSESSED, " is possessed", true);
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POSSESSED, " is possessed", true);
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_PARALYZE:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_PARALYZED, " is paralyzed", true);
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_PARALYZED, " is paralyzed", true);
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
@@ -397,16 +401,16 @@ int BTSpell::apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLe
  return 0;
 }
 
-int BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int group, int target)
+int BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target)
 {
  std::string text = caster;
  text += " casts ";
  text += name;
  text += ".";
- return activate(d, text.c_str(), partySpell, combat, casterLevel, group, target);
+ return activate(d, text.c_str(), partySpell, combat, casterLevel, distance, group, target);
 }
 
-void BTSpell::finish(BTDisplay &d, BTCombat *combat, int casterLevel, int group, int target, BitField &resists)
+void BTSpell::finish(BTDisplay &d, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
@@ -509,7 +513,7 @@ void BTSpell::finish(BTDisplay &d, BTCombat *combat, int casterLevel, int group,
  }
 }
 
-void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int casterLevel, int group, int target, BitField &resists)
+void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
@@ -572,32 +576,32 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int casterLevel, int grou
    d.drawStats();
    break;
   case BTSPELLTYPE_DAMAGE:
-   setStatus(d, combat, group, target, resists, dice, BTSTATUS_NONE, "");
+   setStatus(d, combat, distance, group, target, resists, dice, BTSTATUS_NONE, "");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_KILL:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_DEAD, " is killed.");
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_DEAD, " is killed.");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_POISON:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned.");
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned.");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_CAUSEINSANITY:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_INSANE, " has gone insane.");
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_INSANE, " has gone insane.");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_POSSESS:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_POSSESSED, " is possessed.");
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POSSESSED, " is possessed.");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
   case BTSPELLTYPE_PARALYZE:
-   setStatus(d, combat, group, target, resists, BTDice(0, 2), BTSTATUS_PARALYZED, " is paralyzed.");
+   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_PARALYZED, " is paralyzed.");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;
@@ -802,7 +806,7 @@ void BTSpell::displayResists(BTDisplay &d, BTCombat *combat, int group, int targ
  d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
 }
 
-int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, BitField &resists, const BTDice &dam, int status, const char *statusText, bool first /*= false*/)
+int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int distance, int group, int target, BitField &resists, const BTDice &dam, int status, const char *statusText, bool first /*= false*/)
 {
  int killed = 0;
  BTGame *game = BTGame::getGame();
@@ -810,19 +814,30 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
  if (BTTARGET_PARTY == group)
  {
   BTParty &party = game->getParty();
+  if (distance > (range * (1 + getEffectiveRange())))
+   return 0;
   if (BTTARGET_INDIVIDUAL == target)
   {
    for (int i = 0; i < party.size(); ++i)
    {
     int damage = dam.roll();
+    if (distance > range)
+     damage = damage / 2;
+    BitField flags;
     if ((party[i]->isAlive()) && (resists.isSet(i)))
     {
      if (first)
      {
       damage = damage / 2;
-      bool dead = party[i]->takeHP(damage);
-      std::string text = message(party[i]->name, ((damage > 0) ? "saves and takes" : "repealed the spell!"), damage, "", dead);
-      if ((dead) && (party[i]->active))
+      if (party[i]->takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      if (damage == 0)
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      std::string text = message(party[i]->name, ((damage > 0) ? "saves and takes" : "repealed the spell"), damage, "", flags);
+      if ((flags.isSet(BTSPELLFLG_KILLED)) && (party[i]->active))
       {
        ++killed;
        party[i]->active = false;
@@ -835,9 +850,15 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
      if (party[i]->savingThrow())
      {
       damage = damage / 2;
-      bool dead = party[i]->takeHP(damage);
-      std::string text = message(party[i]->name, ((damage > 0) ? "saves and takes" : "saves!"), damage, "", dead);
-      if ((dead) && (party[i]->active))
+      if (party[i]->takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      if (damage == 0)
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      std::string text = message(party[i]->name, ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
+      if ((flags.isSet(BTSPELLFLG_KILLED)) && (party[i]->active))
       {
        ++killed;
        party[i]->active = false;
@@ -846,8 +867,14 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
      }
      else
      {
-      bool dead = party[i]->takeHP(damage);
-      std::string text = message(party[i]->name, ((damage > 0) ? "takes" : ""), damage, statusText, dead);
+      if (dam.getNumber())
+       flags.set(BTSPELLFLG_DAMAGE);
+      if (party[i]->takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      std::string text = message(party[i]->name, ((damage > 0) ? "takes" : ""), damage, statusText, flags);
       d.drawMessage(text.c_str(), game->getDelay());
       if (status != BTSTATUS_NONE)
        party[i]->status.set(status);
@@ -865,12 +892,21 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
    if ((party[target]->isAlive()) && (!party[target]->status.isSet(status)))
    {
     int damage = dam.roll();
+    if (distance > range)
+     damage = damage / 2;
+    BitField flags;
     if (party[target]->savingThrow())
     {
      damage = damage / 2;
-     bool dead = party[target]->takeHP(damage);
-     std::string text = message(party[target]->name, ((damage > 0) ? "saves and takes" : "saves!"), damage, "", dead);
-     if ((dead) && (party[target]->active))
+     if (party[target]->takeHP(damage))
+     {
+      flags.set(BTSPELLFLG_KILLED);
+      flags.set(BTSPELLFLG_EXCLAMATION);
+     }
+     if (damage == 0)
+      flags.set(BTSPELLFLG_EXCLAMATION);
+     std::string text = message(party[target]->name, ((damage > 0) ? "saves and takes" : "saves!"), damage, "", flags);
+     if ((flags.isSet(BTSPELLFLG_KILLED)) && (party[target]->active))
      {
       ++killed;
       party[target]->active = false;
@@ -879,8 +915,14 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
     }
     else
     {
-     bool dead = party[target]->takeHP(damage);
-     std::string text = message(party[target]->name, ((damage > 0) ? "takes" : ""), damage, statusText, dead);
+     if (dam.getNumber())
+      flags.set(BTSPELLFLG_DAMAGE);
+     if (party[target]->takeHP(damage))
+     {
+      flags.set(BTSPELLFLG_KILLED);
+      flags.set(BTSPELLFLG_EXCLAMATION);
+     }
+     std::string text = message(party[target]->name, ((damage > 0) ? "takes" : ""), damage, statusText, flags);
      d.drawMessage(text.c_str(), game->getDelay());
      if (status != BTSTATUS_NONE)
       party[target]->status.set(status);
@@ -900,17 +942,28 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
+   if (abs(grp->distance - distance) > (range * (1 + getEffectiveRange())))
+    continue;
    for (int k = 0; k < grp->individual.size(); ++k)
    {
     int damage = dam.roll();
+    if (abs(grp->distance - distance) > range)
+     damage = damage / 2;
+    BitField flags;
     if ((grp->individual[k].isAlive()) && (resists.isSet(k)))
     {
      if (first)
      {
       damage = damage / 2;
-      bool dead = grp->individual[k].takeHP(damage);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "repelled the spell"), damage, "", dead);
-      if ((dead) && (grp->individual[k].active))
+      if (grp->individual[k].takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      if (damage == 0)
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "repelled the spell"), damage, "", flags);
+      if ((flags.isSet(BTSPELLFLG_KILLED)) && (grp->individual[k].active))
       {
        ++killed;
        grp->individual[k].active = false;
@@ -924,9 +977,15 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
      if (monList[grp->monsterType].savingThrow())
      {
       damage = damage / 2;
-      bool dead = grp->individual[k].takeHP(damage);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", dead);
-      if ((dead) && (grp->individual[k].active))
+      if (grp->individual[k].takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      if (damage == 0)
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
+      if ((flags.isSet(BTSPELLFLG_KILLED)) && (grp->individual[k].active))
       {
        ++killed;
        grp->individual[k].active = false;
@@ -936,8 +995,14 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
      }
      else
      {
-      bool dead = grp->individual[k].takeHP(damage);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, dead);
+      if (dam.getNumber())
+       flags.set(BTSPELLFLG_DAMAGE);
+      if (grp->individual[k].takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, flags);
       if (status != BTSTATUS_NONE)
        grp->individual[k].status.set(status);
       if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
@@ -955,19 +1020,30 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
  else if (group >= BTTARGET_MONSTER)
  {
   BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
+  if (abs(grp->distance - distance) > (range * (1 + getEffectiveRange())))
+   return 0;
   if (BTTARGET_INDIVIDUAL == target)
   {
    for (int i = 0; i < grp->individual.size(); ++i)
    {
     int damage = dam.roll();
+    if (abs(grp->distance - distance) > range)
+     damage = damage / 2;
+    BitField flags;
     if ((grp->individual[i].isAlive()) && (resists.isSet(i)))
     {
      if (first)
      {
       damage = damage / 2;
-      bool dead = grp->individual[i].takeHP(damage);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "repelled the spell"), damage, "", dead);
-      if ((dead) && (grp->individual[i].active))
+      if (grp->individual[i].takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      if (damage == 0)
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "repelled the spell"), damage, "", flags);
+      if ((flags.isSet(BTSPELLFLG_KILLED)) && (grp->individual[i].active))
       {
        ++killed;
        grp->individual[i].active = false;
@@ -981,9 +1057,15 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
      if (monList[grp->monsterType].savingThrow())
      {
       damage = damage / 2;
-      bool dead = grp->individual[i].takeHP(damage);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", dead);
-      if ((dead) && (grp->individual[i].active))
+      if (grp->individual[i].takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      if (damage == 0)
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
+      if ((flags.isSet(BTSPELLFLG_KILLED)) && (grp->individual[i].active))
       {
        ++killed;
        grp->individual[i].active = false;
@@ -993,8 +1075,14 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
      }
      else
      {
-      bool dead = grp->individual[i].takeHP(damage);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, dead);
+      if (dam.getNumber())
+       flags.set(BTSPELLFLG_DAMAGE);
+      if (grp->individual[i].takeHP(damage))
+      {
+       flags.set(BTSPELLFLG_KILLED);
+       flags.set(BTSPELLFLG_EXCLAMATION);
+      }
+      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, flags);
       if (status != BTSTATUS_NONE)
        grp->individual[i].status.set(status);
       if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
@@ -1013,12 +1101,21 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
    if ((grp->individual[target].isAlive()) && (!grp->individual[target].status.isSet(status)))
    {
     int damage = dam.roll();
+    if (abs(grp->distance - distance) > range)
+     damage = damage / 2;
+    BitField flags;
     if (monList[grp->monsterType].savingThrow())
     {
      damage = damage / 2;
-     bool dead = grp->individual[target].takeHP(damage);
-     std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", dead);
-     if ((dead) && (grp->individual[target].active))
+     if (grp->individual[target].takeHP(damage))
+     {
+      flags.set(BTSPELLFLG_KILLED);
+      flags.set(BTSPELLFLG_EXCLAMATION);
+     }
+     if (damage == 0)
+      flags.set(BTSPELLFLG_EXCLAMATION);
+     std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
+     if ((flags.isSet(BTSPELLFLG_KILLED)) && (grp->individual[target].active))
      {
       ++killed;
       grp->individual[target].active = false;
@@ -1028,8 +1125,14 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
     }
     else
     {
-     bool dead = grp->individual[target].takeHP(damage);
-     std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, dead);
+     if (dam.getNumber())
+      flags.set(BTSPELLFLG_DAMAGE);
+     if (grp->individual[target].takeHP(damage))
+     {
+      flags.set(BTSPELLFLG_KILLED);
+      flags.set(BTSPELLFLG_EXCLAMATION);
+     }
+     std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, flags);
      if (status != BTSTATUS_NONE)
       grp->individual[target].status.set(status);
      if ((!grp->individual[target].isAlive()) && (grp->individual[target].active))
@@ -1046,13 +1149,13 @@ int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int group, int target, Bi
  return killed;
 }
 
-std::string BTSpell::message(const char *name, const char *text, int damage, const char *status, bool killed)
+std::string BTSpell::message(const char *name, const char *text, int damage, const char *status, const BitField &flags)
 {
  std::string msg = name;
  if ((msg.length() > 0) && (text[0] != 0))
   msg += " ";
  msg += text;
- if (0 != damage)
+ if ((damage > 0 ) || (flags.isSet(BTSPELLFLG_DAMAGE)))
  {
   if (msg.length() > 0)
    msg += " ";
@@ -1060,7 +1163,7 @@ std::string BTSpell::message(const char *name, const char *text, int damage, con
   sprintf(tmp, "%d", damage);
   msg += tmp;
   msg += " points of damage";
-  if (killed)
+  if (flags.isSet(BTSPELLFLG_KILLED))
    msg += ", killing him";
   if (status[0] != 0)
    msg += " and";
@@ -1068,7 +1171,7 @@ std::string BTSpell::message(const char *name, const char *text, int damage, con
  if ((msg.length() > 0) && (status[0] != 0))
   msg += " ";
  msg += status;
- if (killed)
+ if (flags.isSet(BTSPELLFLG_EXCLAMATION))
   msg += "!";
  else
   msg += ".";

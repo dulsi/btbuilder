@@ -482,12 +482,12 @@ void BTGame::clearTimedSpecial()
  timedSpecial = -1;
 }
 
-void BTGame::addEffect(int spell, unsigned int expire, int casterLevel, int group, int target, BitField &resists)
+void BTGame::addEffect(int spell, unsigned int expire, int casterLevel, int distance, int group, int target, BitField &resists)
 {
  if ((BTTIME_COMBAT == expire) || (group >= BTTARGET_MONSTER))
-  combat.addEffect(spell, expire, casterLevel, group, target, resists);
+  combat.addEffect(spell, expire, casterLevel, distance, group, target, resists);
  else
-  spellEffect.push_back(BTSpellEffect(spell, expire, casterLevel, group, target, resists));
+  spellEffect.push_back(BTSpellEffect(spell, expire, casterLevel, distance, group, target, resists));
 }
 
 void BTGame::clearEffects(BTDisplay &d)
@@ -496,13 +496,14 @@ void BTGame::clearEffects(BTDisplay &d)
  {
   int spell = itr->spell;
   int casterLevel = itr->casterLevel;
+  int distance = itr->distance;
   int group = itr->group;
   int target = itr->target;
   int expiration = itr->expiration;
   BitField resists = itr->resists;
   spellEffect.erase(itr);
   if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-   spellList[spell].finish(d, NULL, casterLevel, group, target, resists);
+   spellList[spell].finish(d, NULL, casterLevel, distance, group, target, resists);
  }
  combat.clearEffects(d);
 }
@@ -519,13 +520,14 @@ void BTGame::clearEffectsByType(BTDisplay &d, int type)
    if (spellList[spell].getType() == type)
    {
     int casterLevel = itr->casterLevel;
+    int distance = itr->distance;
     int group = itr->group;
     int target = itr->target;
     int expiration = itr->expiration;
     BitField resists = itr->resists;
     spellEffect.erase(itr);
     if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-     spellList[spell].finish(d, NULL, casterLevel, group, target, resists);
+     spellList[spell].finish(d, NULL, casterLevel, distance, group, target, resists);
     bFound = true;
     break;
    }
@@ -570,7 +572,7 @@ void BTGame::addPlayer(BTDisplay &d, int who)
     spellList[itr->spell].displayResists(d, NULL, itr->group, who);
    }
    else
-    spellList[itr->spell].apply(d, false, NULL, itr->casterLevel, itr->group, who, itr->resists);
+    spellList[itr->spell].apply(d, false, NULL, itr->casterLevel, itr->distance, itr->group, who, itr->resists);
   }
   ++itr;
  }
@@ -588,13 +590,14 @@ void BTGame::movedPlayer(BTDisplay &d, int who, int where)
     int spell = itr->spell;
     int expiration = itr->expiration;
     int casterLevel = itr->casterLevel;
+    int distance = itr->distance;
     int group = itr->group;
     int target = itr->target;
     BitField resists = itr->resists;
     itr = spellEffect.erase(itr);
     int size = spellEffect.size();
     if ((BTTIME_PERMANENT != expiration) && (BTTIME_CONTINUOUS != expiration))
-     spellList[spell].finish(d, NULL, casterLevel, group, target, resists);
+     spellList[spell].finish(d, NULL, casterLevel, distance, group, target, resists);
     if (size != spellEffect.size())
      itr = spellEffect.begin();
     continue;
@@ -668,12 +671,13 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
   {
    int spell = itr->spell;
    int casterLevel = itr->casterLevel;
+   int distance = itr->distance;
    int group = itr->group;
    int target = itr->target;
    BitField resists = itr->resists;
    itr = spellEffect.erase(itr);
    int size = spellEffect.size();
-   spellList[spell].finish(d, combat, casterLevel, group, target, resists);
+   spellList[spell].finish(d, combat, casterLevel, distance, group, target, resists);
    if (size != spellEffect.size())
     itr = spellEffect.begin();
   }
@@ -685,7 +689,7 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
   if (itr->first)
    itr->first = false;
   else if (BTTIME_PERMANENT != itr->expiration)
-   spellList[itr->spell].maintain(d, combat, itr->casterLevel, itr->group, itr->target, itr->resists);
+   spellList[itr->spell].maintain(d, combat, itr->casterLevel, itr->distance, itr->group, itr->target, itr->resists);
   ++itr;
  }
  bool spRegen = false;
