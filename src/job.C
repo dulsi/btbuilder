@@ -50,6 +50,7 @@ void BTJob::serialize(ObjectSerializer* s)
  s->add("ac", &ac);
  s->add("improveAc", &improveAc);
  s->add("hp", &hp);
+ s->add("criticalHit", &criticalHit);
  s->add("xpChart", &xpChart, NULL, &BTGame::getGame()->getXpChartList());
  s->add("spells", &spells);
  s->add("advanced", &advanced);

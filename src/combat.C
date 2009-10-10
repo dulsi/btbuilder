@@ -996,7 +996,22 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
           break;
         }
        }
-       text += ".";
+       if ((pc.criticalHit > 0) && (BTDice(1, 100).roll() <= pc.criticalHit))
+       {
+        text += " and critically hits!";
+        defender->status.set(BTSTATUS_DEAD);
+        if (defender->active)
+        {
+         defender->active = false;
+         if (grp)
+         {
+          grp->active--;
+         }
+         --active;
+        }
+       }
+       else
+        text += ".";
       }
       if (!grp)
        d.drawStats();

@@ -14,7 +14,7 @@ class BTJob : public XMLObject
 {
  public:
   BTJob()
-   : picture(-1), toHit(0), improveToHit(0), improveRateAttacks(0), maxRateAttacks(0), save(0), improveSave(0), ac(0), improveAc(0), hp(0), xpChart(-1), spells(false), advanced(false)
+   : picture(-1), toHit(0), improveToHit(0), improveRateAttacks(0), maxRateAttacks(0), save(0), improveSave(0), ac(0), improveAc(0), hp(0), criticalHit(0), xpChart(-1), spells(false), advanced(false)
   {
    name = new char[1];
    name[0] = 0;
@@ -44,6 +44,7 @@ class BTJob : public XMLObject
   int ac;
   int improveAc;
   int hp;
+  int criticalHit;
   int xpChart;
   bool spells;
   bool advanced;

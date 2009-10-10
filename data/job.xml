@@ -78,6 +78,7 @@
 		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<criticalHit>5</criticalHit>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Dwarf</allowedRace>

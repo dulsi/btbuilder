@@ -395,6 +395,13 @@ int BTSpell::apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLe
     }
    }
    break;
+  case BTSPELLTYPE_DAMAGEBYLEVEL:
+  {
+   int killed = setStatus(d, combat, distance, group, target, resists, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "", true);
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   return killed;
+  }
   default:
    break;
  }
@@ -602,6 +609,11 @@ void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int casterLevel, int dist
    break;
   case BTSPELLTYPE_PARALYZE:
    setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_PARALYZED, " is paralyzed.");
+   if (BTTARGET_PARTY == group)
+    d.drawStats();
+   break;
+  case BTSPELLTYPE_DAMAGEBYLEVEL:
+   setStatus(d, combat, distance, group, target, resists, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
    if (BTTARGET_PARTY == group)
     d.drawStats();
    break;

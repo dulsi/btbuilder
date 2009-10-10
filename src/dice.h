@@ -34,6 +34,7 @@ class BTDice : public XMLObject
   BTDice();
 
   int getMax() const;
+  int getModifier() const;
   int getNumber() const;
   int getType() const;
   void read(BinaryReadFile &f);
