@@ -774,12 +774,28 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, 
  }
  else if (BTCOMBATACTION_SPECIALATTACK == action)
  {
-  std::string text = monList[grp.monsterType].getName();
-  text += " is special attacking";
-  d.addText(text.c_str());
-  d.addText(blank);
-  d.process(BTDisplay::allKeys, 1000);
-  d.clearElements();
+  switch (monList[grp.monsterType].getRangedType())
+  {
+   case BTRANGEDTYPE_MAGIC:
+   {
+    int target = BTTARGET_INDIVIDUAL;
+    if (spellList[monList[grp.monsterType].getRangedSpell()].getArea() == BTAREAEFFECT_FOE)
+     if (!findTargetPC(BT_PARTYSIZE, target))
+      break;
+    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName(), true, this, monList[grp.monsterType].getLevel(), grp.distance, BTTARGET_PARTY, target);
+    break;
+   }
+   default:
+   {
+    std::string text = monList[grp.monsterType].getName();
+    text += " is special attacking";
+    d.addText(text.c_str());
+    d.addText(blank);
+    d.process(BTDisplay::allKeys, 1000);
+    d.clearElements();
+    break;
+   }
+  }
  }
 }
 
