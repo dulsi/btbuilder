@@ -448,6 +448,39 @@ bool BTParty::checkDead(BTDisplay &d)
    ++who;
   }
  }
+ int restStoned = restDead;
+ for (who = restStoned - 1; who >= 0; --who)
+ {
+  if (operator[](who)->status.isSet(BTSTATUS_STONED))
+  {
+   operator[](who)->active = false;
+   restStoned = who;
+  }
+  else
+   break;
+ }
+ if (restStoned == 0)
+  return true;
+ for (who = 0; who < restStoned; )
+ {
+  if (operator[](who)->status.isSet(BTSTATUS_STONED))
+  {
+   game->movedPlayer(d, who, restStoned - 1);
+   BTPc *pc = operator[](who);
+   pc->active = false;
+   erase(begin() + who);
+   if (size() == restStoned - 1)
+    push_back(pc);
+   else
+    insert(begin() + restStoned, pc);
+   --restStoned;
+  }
+  else
+  {
+   operator[](who)->active = true;
+   ++who;
+  }
+ }
  return false;
 }
 

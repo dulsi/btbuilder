@@ -1008,6 +1008,19 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
           defender->status.set(BTSTATUS_PARALYZED);
           text += " and paralyzes";
           break;
+         case BTEXTRADAMAGE_STONED:
+          defender->status.set(BTSTATUS_STONED);
+          text += " and stones";
+          if (defender->active)
+          {
+           defender->active = false;
+           if (grp)
+           {
+            grp->active--;
+           }
+           --active;
+          }
+          break;
          default:
           break;
         }

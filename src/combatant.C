@@ -10,7 +10,7 @@
 
 bool BTCombatant::isAlive() const
 {
- return !status.isSet(BTSTATUS_DEAD);
+ return (!status.isSet(BTSTATUS_DEAD)) && (!status.isSet(BTSTATUS_STONED));
 }
 
 bool BTCombatant::takeHP(int amount)
