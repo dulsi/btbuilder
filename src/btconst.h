@@ -7,7 +7,9 @@
   11/20/00  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
-#define BT_SPELLTYPES 32
+class ArrayLookup;
+
+#define BT_SPELLTYPES 31
 #define BTSPELLTYPE_HEAL           0
 #define BTSPELLTYPE_RESURRECT      1
 #define BTSPELLTYPE_CUREPOISON     2
@@ -57,11 +59,12 @@ extern char *areaEffect[];
 extern char *durations[];
 
 #define BT_MONSTEREXTRADAMAGE 11
-#define BTEXTRADAMAGE_POSION     1
-#define BTEXTRADAMAGE_INSANITY   3
-#define BTEXTRADAMAGE_POSSESSION 5
-#define BTEXTRADAMAGE_STONED     6
-#define BTEXTRADAMAGE_PARALYSIS  7
+#define BTEXTRADAMAGE_POSION      1
+#define BTEXTRADAMAGE_INSANITY    3
+#define BTEXTRADAMAGE_POSSESSION  5
+#define BTEXTRADAMAGE_STONED      6
+#define BTEXTRADAMAGE_PARALYSIS   7
+#define BTEXTRADAMAGE_CRITICALHIT 8
 extern char *extraDamage[];
 
 #define BT_RANGEDTYPES 4
@@ -144,6 +147,7 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_SETENCOUNTER     37
 #define BTSPECIALCOMMAND_SETNUMENCOUNTER  38
 #define BTSPECIALCOMMAND_BEGINCOMBAT      39
+#define BTSPECIALCOMMAND_CHEST            40
 #define BTSPECIALCOMMAND_SETGLOBALFLAG    41
 #define BTSPECIALCOMMAND_CLEARGLOBALFLAG  42
 #define BTSPECIALCOMMAND_GIVEGOLD         43
@@ -187,6 +191,7 @@ extern char *mapTypes[];
 #define BTSTAT_CN 3
 #define BTSTAT_LK 4
 extern char *statAbbrev[];
+extern ArrayLookup statLookup;
 
 #define BTSP_REGEN 50
 

@@ -310,9 +310,9 @@ void XMLSerializer::endElement(const XML_Char *name)
   {
    removeLevel();
    XMLLevel *oldLevel = level.back();
-   level.pop_back();
    if (XMLTYPE_CREATE == oldLevel->state->getType())
     reinterpret_cast<XMLArray*>(oldLevel->state->object)->push_back(oldLevel->object);
+   level.pop_back();
    delete oldLevel;
   }
  }

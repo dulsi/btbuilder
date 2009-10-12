@@ -44,6 +44,18 @@
 		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+		<skill>
+			<name>Disarm trap</name>
+			<value>15</value>
+			<modifier>Dx</modifier>
+			<improve>3</improve>
+		</skill>
+		<skill>
+			<name>Hide in shadows</name>
+			<value>10</value>
+			<modifier>Dx</modifier>
+			<improve>3</improve>
+		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
@@ -78,7 +90,12 @@
 		<save>5</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
-		<criticalHit>5</criticalHit>
+		<skill>
+			<name>Critical hit</name>
+			<value>5</value>
+			<modifier>Dx</modifier>
+			<improve>3</improve>
+		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Dwarf</allowedRace>
@@ -115,6 +132,10 @@
 		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
+		<skill>
+			<name>Conjurer spell</name>
+			<value>1</value>
+		</skill>
                 <spells>true</spells>
 		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
@@ -133,6 +154,10 @@
 		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>4</hp>
+		<skill>
+			<name>Magician spell</name>
+			<value>1</value>
+		</skill>
                 <spells>true</spells>
 		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
@@ -151,6 +176,10 @@
 		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+		<skill>
+			<name>Sorcerer spell</name>
+			<value>1</value>
+		</skill>
                 <spells>true</spells>
 		<xpChart>Sorcerer</xpChart>
                 <advanced>true</advanced>
@@ -170,6 +199,10 @@
 		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+		<skill>
+			<name>Wizard spell</name>
+			<value>1</value>
+		</skill>
                 <spells>true</spells>
 		<xpChart>Wizard</xpChart>
                 <advanced>true</advanced>
@@ -189,6 +222,10 @@
 		<save>8</save>
 		<improveSave>2</improveSave>
 		<hp>8</hp>
+		<skill>
+			<name>Archmage spell</name>
+			<value>1</value>
+		</skill>
                 <spells>true</spells>
 		<xpChart>Archmage</xpChart>
                 <advanced>true</advanced>

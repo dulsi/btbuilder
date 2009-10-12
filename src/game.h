@@ -16,6 +16,7 @@
 #include "module.h"
 #include "monster.h"
 #include "race.h"
+#include "skill.h"
 #include "spell.h"
 #include "spelleffect.h"
 #include "status.h"
@@ -41,6 +42,7 @@ class BTGame : public Psuedo3DMap
   BTFactory<BTMonster> &getMonsterList();
   BTRaceList &getRaceList();
   XMLVector<BTPc*> &getRoster();
+  BTSkillList &getSkillList();
   BTFactory<BTSpell> &getSpellList();
   BTXpChartList &getXpChartList();
   BTMap *getMap();
@@ -103,6 +105,7 @@ class BTGame : public Psuedo3DMap
   BTFactory<BTMonster> monsterList;
   BTRaceList raceList;
   XMLVector<BTPc*> roster;
+  BTSkillList skillList;
   BTFactory<BTSpell> spellList;
   BTXpChartList xpChartList;
   BTMap *levelMap;

@@ -81,7 +81,7 @@ int BitField::getMaxSet() const
   }
   return i - 1;
  }
- return 0;
+ return -1;
 }
 
 bool BitField::isSet(int index) const

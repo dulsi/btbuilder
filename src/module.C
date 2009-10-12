@@ -20,6 +20,8 @@ BTModule::BTModule()
  strcpy(spell, "DEFAULT.SPL");
  race = new char[strlen("data/race.xml") + 1];
  strcpy(race, "data/race.xml");
+ skill = new char[strlen("data/skill.xml") + 1];
+ strcpy(skill, "data/skill.xml");
  xpChart = new char[strlen("data/experience.xml") + 1];
  strcpy(xpChart, "data/experience.xml");
  job = new char[strlen("data/job.xml") + 1];
@@ -48,6 +50,8 @@ BTModule::~BTModule()
   delete [] spell;
  if (race)
   delete [] race;
+ if (skill)
+  delete [] skill;
  if (job)
   delete [] job;
  if (start)
@@ -67,6 +71,7 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("monster", &monster);
  s->add("spell", &spell);
  s->add("race", &race);
+ s->add("skill", &skill);
  s->add("xpChart", &xpChart);
  s->add("job", &job);
  s->add("start", &start);

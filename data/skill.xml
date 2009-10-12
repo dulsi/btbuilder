@@ -1,0 +1,43 @@
+<data>
+	<skill>
+		<name>Conjurer spell</name>
+		<use>magic</use>
+	</skill>
+	<skill>
+		<name>Magician spell</name>
+		<use>magic</use>
+	</skill>
+	<skill>
+		<name>Sorcerer spell</name>
+		<use>magic</use>
+	</skill>
+	<skill>
+		<name>Wizard spell</name>
+		<use>magic</use>
+	</skill>
+	<skill>
+		<name>Archmage spell</name>
+		<use>magic</use>
+	</skill>
+	<skill>
+		<name>Critical hit</name>
+		<use>autocombat</use>
+		<effect>Critical hit</effect>
+	</skill>
+	<skill>
+		<name>Hide in shadows</name>
+		<use>combat</use>
+		<special>hide</special>
+	</skill>
+	<skill>
+		<name>Disarm trap</name>
+		<use>special</use>
+		<special>disarm</special>
+	</skill>
+	<skill>
+		<name>Bard song</name>
+		<use>any</use>
+		<special>song</special>
+	</skill>
+</data>
+

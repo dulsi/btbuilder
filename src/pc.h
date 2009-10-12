@@ -68,7 +68,6 @@ class BTPc : public XMLObject, public BTCombatant
   int save;
   int sp, maxSp;
   int level;
-  int criticalHit;
   unsigned int xp;
   unsigned int gold;
   int *skill;

@@ -489,6 +489,9 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_BEGINCOMBAT:
    game->getCombat().run(d);
    break;
+  case BTSPECIALCOMMAND_CHEST:
+   // TODO
+   break;
   case BTSPECIALCOMMAND_SETGLOBALFLAG:
    game->setGlobalFlag(number[0], true);
    break;

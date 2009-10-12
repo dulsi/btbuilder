@@ -1530,11 +1530,15 @@ int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
     b.pc->toHit = job[i]->toHit;
     b.pc->save = job[i]->save + ((b.pc->stat[BTSTAT_LK] > 14) ? b.pc->stat[BTSTAT_LK] - 14 : 0);
     b.pc->ac = job[i]->ac + ((b.pc->stat[BTSTAT_DX] > 14) ? b.pc->stat[BTSTAT_DX] - 14 : 0);
-    b.pc->criticalHit = job[i]->criticalHit + ((b.pc->stat[BTSTAT_DX] > 14) ? b.pc->stat[BTSTAT_DX] - 14 : 0);
+    for (int k = 0; k < job[i]->skill.size(); ++k)
+    {
+     b.pc->skill[job[i]->skill[k]->skill] = job[i]->skill[k]->value;
+     if ((job[i]->skill[k]->modifier >= 0) && (b.pc->stat[job[i]->skill[k]->modifier] > 14))
+      b.pc->skill[job[i]->skill[k]->skill] += b.pc->stat[job[i]->skill[k]->modifier] - 14;
+    }
     b.pc->gold = BTDice(1, 61, 110).roll();
     if (job[i]->spells)
     {
-     b.pc->skill[i] = 1;
      b.pc->sp = b.pc->maxSp = BTDice(1, 8, 9).roll() + ((b.pc->stat[BTSTAT_IQ] > 14) ? b.pc->stat[BTSTAT_IQ] - 14 : 0);
     }
     break;

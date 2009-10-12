@@ -20,6 +20,7 @@ BTGame::BTGame(BTModule *m)
   game = this;
  }
  BTRace::readXML(m->race, raceList);
+ BTSkill::readXML(m->skill, skillList);
  BTXpChart::readXML(m->xpChart, xpChartList);
  BTJob::readXML(m->job, jobList);
  BTPc::readXML("roster.xml", roster);
@@ -68,6 +69,11 @@ BTRaceList &BTGame::getRaceList()
 XMLVector<BTPc*> &BTGame::getRoster()
 {
  return roster;
+}
+
+BTSkillList &BTGame::getSkillList()
+{
+ return skillList;
 }
 
 BTFactory<BTSpell> &BTGame::getSpellList()

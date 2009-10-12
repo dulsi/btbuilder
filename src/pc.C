@@ -18,21 +18,21 @@ void BTEquipment::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), job(0), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), criticalHit(0), gold(0), xp(0)
+ : race(0), job(0), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
  int i;
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
- int jobs = BTGame::getGame()->getJobList().size();
- skill = new int[jobs];
- for (i = 0; i < jobs; ++i)
+ int skills = BTGame::getGame()->getSkillList().size();
+ skill = new int[skills];
+ for (i = 0; i < skills; ++i)
   skill[i] = 0;
 }
 
 BTPc::BTPc(int monsterType, int j)
- : race(-1), job(j), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), criticalHit(0), gold(0), xp(0)
+ : race(-1), job(j), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
 {
  // TO DO: Modify to accept combatant as an optional argument so that
  // spell bind can be implemented.
@@ -49,9 +49,9 @@ BTPc::BTPc(int monsterType, int j)
  int i;
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
- int jobs = BTGame::getGame()->getJobList().size();
- skill = new int[jobs];
- for (i = 0; i < jobs; ++i)
+ int skills = BTGame::getGame()->getSkillList().size();
+ skill = new int[skills];
+ for (i = 0; i < skills; ++i)
   skill[i] = 0;
 }
 
@@ -79,11 +79,16 @@ bool BTPc::advanceLevel()
    int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
    hp += moreHp;
    maxHp += moreHp;
-   if (jobList[job]->criticalHit > 0)
+   for (int i = 0; i < jobList[job]->skill.size(); ++i)
    {
-    criticalHit += BTDice(1, 3).roll() + ((stat[BTSTAT_DX] > 14) ? stat[BTSTAT_DX] - 14 : 0);
-    if (criticalHit > 99)
-     criticalHit = 99;
+    if (jobList[job]->skill[i]->improve > 0)
+    {
+     skill[jobList[job]->skill[i]->skill] += BTDice(1, jobList[job]->skill[i]->improve).roll();
+     if ((jobList[job]->skill[i]->modifier >= 0) && (stat[jobList[job]->skill[i]->modifier] > 14))
+      skill[jobList[job]->skill[i]->skill] += stat[jobList[job]->skill[i]->modifier] - 14;
+     if (skill[jobList[job]->skill[i]->skill] > 99)
+      skill[jobList[job]->skill[i]->skill] = 99;
+    }
    }
    if (jobList[job]->spells)
    {
@@ -294,11 +299,10 @@ void BTPc::serialize(ObjectSerializer* s)
  s->add("maxsp", &maxSp);
  s->add("sp", &sp);
  s->add("level", &level);
- s->add("criticalHit", &criticalHit);
  s->add("xp", &xp);
  s->add("gold", &gold);
- int jobs = BTGame::getGame()->getJobList().size();
- for (i = 0; i < jobs; ++i)
+ int skills = BTGame::getGame()->getSkillList().size();
+ for (i = 0; i < skills; ++i)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
   char tmp[10];

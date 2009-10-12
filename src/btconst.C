@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "btconst.h"
+#include "valuelookup.h"
 
 char *spellTypes[] =
 {
@@ -229,3 +230,4 @@ char *statAbbrev[] =
  "Cn",
  "Lk"
 };
+ArrayLookup statLookup(BT_STATS, statAbbrev);

@@ -19,7 +19,6 @@ BTSpell::BTSpell(BinaryReadFile &f)
  f.readUByteArray(29, (IUByte *)name);
  f.readUByteArray(5, (IUByte *)code);
  f.readShort(caster);
- caster += 6;
  f.readShort(level);
  f.readShort(sp);
  f.readShort(range);
@@ -105,12 +104,10 @@ IShort BTSpell::getType() const
 void BTSpell::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
- IShort casterReal;
 
  f.writeUByteArray(29, (IUByte *)name);
  f.writeUByteArray(5, (IUByte *)code);
- casterReal = caster - 6;
- f.writeShort(casterReal);
+ f.writeShort(caster);
  f.writeShort(level);
  f.writeShort(sp);
  f.writeShort(range);

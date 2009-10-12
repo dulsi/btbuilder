@@ -8,6 +8,14 @@
 #include "job.h"
 #include "game.h"
 
+void BTJobSkill::serialize(ObjectSerializer* s)
+{
+ s->add("name", &skill, NULL, &BTGame::getGame()->getSkillList());
+ s->add("value", &value);
+ s->add("modifier", &modifier, NULL, &statLookup);
+ s->add("improve", &improve);
+}
+
 int BTJob::calcToHit(int level)
 {
  return toHit + (level / improveToHit);
@@ -50,7 +58,7 @@ void BTJob::serialize(ObjectSerializer* s)
  s->add("ac", &ac);
  s->add("improveAc", &improveAc);
  s->add("hp", &hp);
- s->add("criticalHit", &criticalHit);
+ s->add("skill", &skill, &BTJobSkill::create);
  s->add("xpChart", &xpChart, NULL, &BTGame::getGame()->getXpChartList());
  s->add("spells", &spells);
  s->add("advanced", &advanced);

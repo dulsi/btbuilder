@@ -803,6 +803,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
 {
  BTGame *game = BTGame::getGame();
  BTFactory<BTItem> &itemList = game->getItemList();
+ BTSkillList &skillList = game->getSkillList();
  BTFactory<BTMonster> &monList = game->getMonsterList();
  BTParty &party = game->getParty();
  BTFactory<BTSpell> &spellList = game->getSpellList();
@@ -939,7 +940,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
      {
       text += " ";
       int damage = 0;
-      int special = 0;
+      BitField special;
       if (-1 == handWeapon)
       {
        if (BTMONSTER_NONE == pc.monster)
@@ -951,7 +952,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
        {
         text += "and hits for";
         damage = monList[pc.monster].getMeleeDamage().roll();
-        special = monList[pc.monster].getMeleeExtra();
+        special.set(monList[pc.monster].getMeleeExtra());
        }
       }
       else
@@ -960,7 +961,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
        text += item.getEffect();
        damage = item.getDamage().roll();
        if (BTDice(1, 100).roll() <= item.getChanceXSpecial())
-        special = item.getXSpecial();
+        special.set(item.getXSpecial());
       }
       text += " ";
       if (pc.stat[BTSTAT_ST] > 14)
@@ -984,63 +985,86 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
       }
       else
       {
-       if (special)
+       for (int i = 0; i < skillList.size(); ++i)
        {
-        if ((grp) && (monList[grp->monsterType].savingThrow(BTSAVE_DIFFICULTY)))
-         special = 0;
-        else if ((!grp) && (party[target]->savingThrow(BTSAVE_DIFFICULTY)))
-         special = 0;
-        switch(special)
+        if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) && (pc.skill[i] > 0) && (BTDice(1, 100).roll() <= pc.skill[i]))
         {
-         case BTEXTRADAMAGE_POSION:
-          defender->status.set(BTSTATUS_POISONED);
-          text += " and poisons";
-          break;
-         case BTEXTRADAMAGE_INSANITY:
-          defender->status.set(BTSTATUS_INSANE);
-          text += " and inflicts insanity";
-          break;
-         case BTEXTRADAMAGE_POSSESSION:
-          defender->status.set(BTSTATUS_POSSESSED);
-          text += " and possesses";
-          break;
-         case BTEXTRADAMAGE_PARALYSIS:
-          defender->status.set(BTSTATUS_PARALYZED);
-          text += " and paralyzes";
-          break;
-         case BTEXTRADAMAGE_STONED:
-          defender->status.set(BTSTATUS_STONED);
-          text += " and stones";
-          if (defender->active)
-          {
-           defender->active = false;
-           if (grp)
-           {
-            grp->active--;
-           }
-           --active;
-          }
-          break;
-         default:
-          break;
+         special.set(skillList[i]->effect);
         }
        }
-       if ((pc.criticalHit > 0) && (BTDice(1, 100).roll() <= pc.criticalHit))
+       int maxSpecial = special.getMaxSet();
+       if (maxSpecial > -1)
        {
-        text += " and critically hits!";
-        defender->status.set(BTSTATUS_DEAD);
-        if (defender->active)
+        std::string specialText;
+        for (int i = 0; i <= maxSpecial; ++i)
         {
-         defender->active = false;
-         if (grp)
+         if (!special.isSet(i))
+          continue;
+         if (i != BTEXTRADAMAGE_CRITICALHIT)
          {
-          grp->active--;
+//          if ((grp) && (monList[grp->monsterType].savingThrow(BTSAVE_DIFFICULTY)))
+  //         continue;
+    //      else if ((!grp) && (party[target]->savingThrow(BTSAVE_DIFFICULTY)))
+      //     continue;
          }
-         --active;
+         if ((specialText == "") || (maxSpecial == i))
+          specialText = " and";
+         else
+          specialText += ",";
+         switch(i)
+         {
+          case BTEXTRADAMAGE_POSION:
+           defender->status.set(BTSTATUS_POISONED);
+           specialText += " poisons";
+           break;
+          case BTEXTRADAMAGE_INSANITY:
+           defender->status.set(BTSTATUS_INSANE);
+           specialText += " inflicts insanity";
+           break;
+          case BTEXTRADAMAGE_POSSESSION:
+           defender->status.set(BTSTATUS_POSSESSED);
+           specialText += " possesses";
+           break;
+          case BTEXTRADAMAGE_PARALYSIS:
+           defender->status.set(BTSTATUS_PARALYZED);
+           specialText += " paralyzes";
+           break;
+          case BTEXTRADAMAGE_STONED:
+           defender->status.set(BTSTATUS_STONED);
+           specialText += " stones";
+           if (defender->active)
+           {
+            defender->active = false;
+            if (grp)
+            {
+             grp->active--;
+            }
+            --active;
+           }
+           break;
+          case BTEXTRADAMAGE_CRITICALHIT:
+           specialText += " critically hits";
+           defender->status.set(BTSTATUS_DEAD);
+           if (defender->active)
+           {
+            defender->active = false;
+            if (grp)
+            {
+             grp->active--;
+            }
+            --active;
+           }
+           break;
+          default:
+           break;
+         }
         }
+        text += specialText;
        }
-       else
+       if (defender->isAlive())
         text += ".";
+       else
+        text += "!";
       }
       if (!grp)
        d.drawStats();
