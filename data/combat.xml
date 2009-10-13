@@ -15,8 +15,8 @@
 		<choice keys="dD" action="defend" screen="3">Defend</choice>
 		<can option="maxsp"><choice keys="cC" screen="8">Cast a spell</choice></can>
 		<choice keys="uU" screen="9">Use an item</choice>
-		<can option="skill" number="4"><choice keys="bB" screen="3">Bard song</choice></can>
-		<can option="skill" number="3"><choice keys="hH" screen="3">Hide in shadows</choice></can>
+		<can option="skill" number="9"><choice keys="bB" screen="3">Bard song</choice></can>
+		<can option="skill" number="7"><choice keys="hH" screen="3">Hide in shadows</choice></can>
 	</screen>
 	<combat number="3" escapeScreen="0" timeout="1000">
 	</combat>

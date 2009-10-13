@@ -1002,13 +1002,13 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
           continue;
          if (i != BTEXTRADAMAGE_CRITICALHIT)
          {
-//          if ((grp) && (monList[grp->monsterType].savingThrow(BTSAVE_DIFFICULTY)))
-  //         continue;
-    //      else if ((!grp) && (party[target]->savingThrow(BTSAVE_DIFFICULTY)))
-      //     continue;
+          if ((grp) && (monList[grp->monsterType].savingThrow(BTSAVE_DIFFICULTY)))
+           continue;
+          else if ((!grp) && (party[target]->savingThrow(BTSAVE_DIFFICULTY)))
+           continue;
          }
          if ((specialText == "") || (maxSpecial == i))
-          specialText = " and";
+          specialText += " and";
          else
           specialText += ",";
          switch(i)
