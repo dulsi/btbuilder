@@ -138,6 +138,7 @@ class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
  private:
   std::list<XMLLevel*> level;
   XMLAction *state;
+  std::string content;
 };
 
 #endif

@@ -292,6 +292,7 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
  else
  {
   state = act;
+  content = "";
  }
 }
 
@@ -301,6 +302,70 @@ void XMLSerializer::endElement(const XML_Char *name)
  {
   if (0 == strcmp(state->name.c_str(), name))
   {
+   switch(state->getType())
+   {
+    case XMLTYPE_BOOL:
+     *(reinterpret_cast<bool*>(state->object)) = ((strncmp(content.c_str(), "true", 4) == 0) ? true : false);
+     break;
+    case XMLTYPE_INT:
+     if (state->data)
+     {
+      *(reinterpret_cast<int*>(state->object)) = reinterpret_cast<ValueLookup*>(state->data)->getIndex(content);
+     }
+     else
+      *(reinterpret_cast<int*>(state->object)) = atoi(content.c_str());
+     break;
+    case XMLTYPE_UINT:
+    {
+     sscanf(content.c_str(), "%u", reinterpret_cast<unsigned int*>(state->object));
+     break;
+    }
+    case XMLTYPE_INT16:
+     *(reinterpret_cast<int16_t*>(state->object)) = atoi(content.c_str());
+     break;
+    case XMLTYPE_UINT16:
+    {
+     unsigned int u;
+     sscanf(content.c_str(), "%u", &u);
+     *(reinterpret_cast<uint16_t*>(state->object)) = u;
+     break;
+    }
+    case XMLTYPE_STRING:
+    {
+     char *str = *(reinterpret_cast<char**>(state->object));
+     if (str)
+     {
+      delete [] str;
+     }
+     int len = content.length();
+     str = new char[len + 1];
+     strncpy(str, content.c_str(), len);
+     str[len] = 0;
+     *(reinterpret_cast<char**>(state->object)) = str;
+     break;
+    }
+    case XMLTYPE_STDSTRING:
+    {
+     *(reinterpret_cast<std::string*>(state->object)) = content;
+     break;
+    }
+    case XMLTYPE_BITFIELD:
+    {
+     int index = reinterpret_cast<ValueLookup*>(state->data)->getIndex(content);
+     if (-1 != index)
+      reinterpret_cast<BitField*>(state->object)->set(index);
+     break;
+    }
+    case XMLTYPE_VECTORUINT:
+    {
+     unsigned int u;
+     sscanf(content.c_str(), "%u", &u);
+     reinterpret_cast<std::vector<unsigned int> *>(state->object)->push_back(u);
+     break;
+    }
+    default:
+     break;
+   };
    state = 0;
   }
  }
@@ -322,73 +387,8 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
 {
  if (state)
  {
-  switch(state->getType())
-  {
-   case XMLTYPE_BOOL:
-    *(reinterpret_cast<bool*>(state->object)) = ((strncmp(s, "true", 4) == 0) ? true : false);
-    break;
-   case XMLTYPE_INT:
-    if (state->data)
-    {
-     std::string str(s, len);
-     *(reinterpret_cast<int*>(state->object)) = reinterpret_cast<ValueLookup*>(state->data)->getIndex(str);
-    }
-    else
-     *(reinterpret_cast<int*>(state->object)) = atoi(s);
-    break;
-   case XMLTYPE_UINT:
-   {
-    std::string str(s, len);
-    sscanf(str.c_str(), "%u", reinterpret_cast<unsigned int*>(state->object));
-    break;
-   }
-   case XMLTYPE_INT16:
-    *(reinterpret_cast<int16_t*>(state->object)) = atoi(s);
-    break;
-   case XMLTYPE_UINT16:
-   {
-    std::string str(s, len);
-    unsigned int u;
-    sscanf(str.c_str(), "%u", &u);
-    *(reinterpret_cast<uint16_t*>(state->object)) = u;
-    break;
-   }
-   case XMLTYPE_STRING:
-   {
-    char *str = *(reinterpret_cast<char**>(state->object));
-    if (str)
-     delete [] str;
-    str = new char[len + 1];
-    strncpy(str, s, len);
-    str[len] = 0;
-    *(reinterpret_cast<char**>(state->object)) = str;
-    break;
-   }
-   case XMLTYPE_STDSTRING:
-   {
-    std::string str(s, len);
-    *(reinterpret_cast<std::string*>(state->object)) = str;
-    break;
-   }
-   case XMLTYPE_BITFIELD:
-   {
-    std::string str(s, len);
-    int index = reinterpret_cast<ValueLookup*>(state->data)->getIndex(str);
-    if (-1 != index)
-     reinterpret_cast<BitField*>(state->object)->set(index);
-    break;
-   }
-   case XMLTYPE_VECTORUINT:
-   {
-    std::string str(s, len);
-    unsigned int u;
-    sscanf(str.c_str(), "%u", &u);
-    reinterpret_cast<std::vector<unsigned int> *>(state->object)->push_back(u);
-    break;
-   }
-   default:
-    break;
-  };
+  std::string str(s, len);
+  content += str;
  }
  else if ((!level.empty()) && ((XMLTYPE_CREATE == level.back()->state->getType()) || (XMLTYPE_OBJECT == level.back()->state->getType())))
  {

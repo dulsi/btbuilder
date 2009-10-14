@@ -61,4 +61,190 @@
    <wall direction="23">dungeon_door_right5_3.png</wall>
   </walltype>
  </psuedo3d>
+ <psuedo3d>
+  <width>112</width>
+  <height>88</height>
+  <background>dungeon_horizon.png</background>
+  <divide>1</divide>
+  <walltype>
+   <type>1</type>
+   <modulus>0</modulus>
+   <wall direction="0">dungeon_front1.png</wall>
+   <wall direction="1">dungeon_front2.png</wall>
+   <wall direction="2">dungeon_front3.png</wall>
+   <wall direction="3">dungeon_front4.png</wall>
+   <wall direction="4">dungeon_left1.png</wall>
+   <wall direction="5">dungeon_right1.png</wall>
+   <wall direction="6">dungeon_left2.png</wall>
+   <wall direction="7">dungeon_right2.png</wall>
+   <wall direction="8">dungeon_left3_2.png</wall>
+   <wall direction="9">dungeon_left3_1.png</wall>
+   <wall direction="10">dungeon_right3_1.png</wall>
+   <wall direction="11">dungeon_right3_2.png</wall>
+   <wall direction="12">dungeon_left4_3.png</wall>
+   <wall direction="13">dungeon_left4_2.png</wall>
+   <wall direction="14">dungeon_left4_1.png</wall>
+   <wall direction="15">dungeon_right4_1.png</wall>
+   <wall direction="16">dungeon_right4_2.png</wall>
+   <wall direction="17">dungeon_right4_3.png</wall>
+   <wall direction="18">dungeon_left5_3.png</wall>
+   <wall direction="19">dungeon_left5_2.png</wall>
+   <wall direction="20">dungeon_left5_1.png</wall>
+   <wall direction="21">dungeon_right5_1.png</wall>
+   <wall direction="22">dungeon_right5_2.png</wall>
+   <wall direction="23">dungeon_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>2</type>
+   <modulus>0</modulus>
+   <wall direction="0">dungeon_door1.png</wall>
+   <wall direction="1">dungeon_door2.png</wall>
+   <wall direction="2">dungeon_door3.png</wall>
+   <wall direction="3">dungeon_door4.png</wall>
+   <wall direction="4">dungeon_left1.png</wall>
+   <wall direction="5">dungeon_right1.png</wall>
+   <wall direction="6">dungeon_door_left2.png</wall>
+   <wall direction="7">dungeon_door_right2.png</wall>
+   <wall direction="8">dungeon_left3_2.png</wall>
+   <wall direction="9">dungeon_door_left3_1.png</wall>
+   <wall direction="10">dungeon_door_right3_1.png</wall>
+   <wall direction="11">dungeon_right3_2.png</wall>
+   <wall direction="12">dungeon_door_left4_3.png</wall>
+   <wall direction="13">dungeon_door_left4_2.png</wall>
+   <wall direction="14">dungeon_door_left4_1.png</wall>
+   <wall direction="15">dungeon_door_right4_1.png</wall>
+   <wall direction="16">dungeon_door_right4_2.png</wall>
+   <wall direction="17">dungeon_door_right4_3.png</wall>
+   <wall direction="18">dungeon_door_left5_3.png</wall>
+   <wall direction="19">dungeon_door_left5_2.png</wall>
+   <wall direction="20">dungeon_door_left5_1.png</wall>
+   <wall direction="21">dungeon_door_right5_1.png</wall>
+   <wall direction="22">dungeon_door_right5_2.png</wall>
+   <wall direction="23">dungeon_door_right5_3.png</wall>
+  </walltype>
+ </psuedo3d>
+ <psuedo3d>
+  <width>112</width>
+  <height>88</height>
+  <background>dungeon_horizon.png</background>
+  <divide>1</divide>
+  <walltype>
+   <type>1</type>
+   <modulus>0</modulus>
+   <wall direction="0">dungeon_front1.png</wall>
+   <wall direction="1">dungeon_front2.png</wall>
+   <wall direction="2">dungeon_front3.png</wall>
+   <wall direction="3">dungeon_front4.png</wall>
+   <wall direction="4">dungeon_left1.png</wall>
+   <wall direction="5">dungeon_right1.png</wall>
+   <wall direction="6">dungeon_left2.png</wall>
+   <wall direction="7">dungeon_right2.png</wall>
+   <wall direction="8">dungeon_left3_2.png</wall>
+   <wall direction="9">dungeon_left3_1.png</wall>
+   <wall direction="10">dungeon_right3_1.png</wall>
+   <wall direction="11">dungeon_right3_2.png</wall>
+   <wall direction="12">dungeon_left4_3.png</wall>
+   <wall direction="13">dungeon_left4_2.png</wall>
+   <wall direction="14">dungeon_left4_1.png</wall>
+   <wall direction="15">dungeon_right4_1.png</wall>
+   <wall direction="16">dungeon_right4_2.png</wall>
+   <wall direction="17">dungeon_right4_3.png</wall>
+   <wall direction="18">dungeon_left5_3.png</wall>
+   <wall direction="19">dungeon_left5_2.png</wall>
+   <wall direction="20">dungeon_left5_1.png</wall>
+   <wall direction="21">dungeon_right5_1.png</wall>
+   <wall direction="22">dungeon_right5_2.png</wall>
+   <wall direction="23">dungeon_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>2</type>
+   <modulus>0</modulus>
+   <wall direction="0">dungeon_door1.png</wall>
+   <wall direction="1">dungeon_door2.png</wall>
+   <wall direction="2">dungeon_door3.png</wall>
+   <wall direction="3">dungeon_door4.png</wall>
+   <wall direction="4">dungeon_left1.png</wall>
+   <wall direction="5">dungeon_right1.png</wall>
+   <wall direction="6">dungeon_door_left2.png</wall>
+   <wall direction="7">dungeon_door_right2.png</wall>
+   <wall direction="8">dungeon_left3_2.png</wall>
+   <wall direction="9">dungeon_door_left3_1.png</wall>
+   <wall direction="10">dungeon_door_right3_1.png</wall>
+   <wall direction="11">dungeon_right3_2.png</wall>
+   <wall direction="12">dungeon_door_left4_3.png</wall>
+   <wall direction="13">dungeon_door_left4_2.png</wall>
+   <wall direction="14">dungeon_door_left4_1.png</wall>
+   <wall direction="15">dungeon_door_right4_1.png</wall>
+   <wall direction="16">dungeon_door_right4_2.png</wall>
+   <wall direction="17">dungeon_door_right4_3.png</wall>
+   <wall direction="18">dungeon_door_left5_3.png</wall>
+   <wall direction="19">dungeon_door_left5_2.png</wall>
+   <wall direction="20">dungeon_door_left5_1.png</wall>
+   <wall direction="21">dungeon_door_right5_1.png</wall>
+   <wall direction="22">dungeon_door_right5_2.png</wall>
+   <wall direction="23">dungeon_door_right5_3.png</wall>
+  </walltype>
+ </psuedo3d>
+ <psuedo3d>
+  <width>112</width>
+  <height>88</height>
+  <background>wilderness_horizon.png</background>
+  <divide>1</divide>
+  <walltype>
+   <type>1</type>
+   <modulus>0</modulus>
+   <wall direction="0">wilderness_front1.png</wall>
+   <wall direction="1">wilderness_front2.png</wall>
+   <wall direction="2">wilderness_front3.png</wall>
+   <wall direction="3">wilderness_front4.png</wall>
+   <wall direction="4">wilderness_left1.png</wall>
+   <wall direction="5">wilderness_right1.png</wall>
+   <wall direction="6">wilderness_left2.png</wall>
+   <wall direction="7">wilderness_right2.png</wall>
+   <wall direction="8">wilderness_left3_2.png</wall>
+   <wall direction="9">wilderness_left3_1.png</wall>
+   <wall direction="10">wilderness_right3_1.png</wall>
+   <wall direction="11">wilderness_right3_2.png</wall>
+   <wall direction="12">wilderness_left4_3.png</wall>
+   <wall direction="13">wilderness_left4_2.png</wall>
+   <wall direction="14">wilderness_left4_1.png</wall>
+   <wall direction="15">wilderness_right4_1.png</wall>
+   <wall direction="16">wilderness_right4_2.png</wall>
+   <wall direction="17">wilderness_right4_3.png</wall>
+   <wall direction="18">wilderness_left5_3.png</wall>
+   <wall direction="19">wilderness_left5_2.png</wall>
+   <wall direction="20">wilderness_left5_1.png</wall>
+   <wall direction="21">wilderness_right5_1.png</wall>
+   <wall direction="22">wilderness_right5_2.png</wall>
+   <wall direction="23">wilderness_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>2</type>
+   <modulus>0</modulus>
+   <wall direction="0">wilderness_door1.png</wall>
+   <wall direction="1">wilderness_door2.png</wall>
+   <wall direction="2">wilderness_door3.png</wall>
+   <wall direction="3">wilderness_door4.png</wall>
+   <wall direction="4">wilderness_left1.png</wall>
+   <wall direction="5">wilderness_right1.png</wall>
+   <wall direction="6">wilderness_door_left2.png</wall>
+   <wall direction="7">wilderness_door_right2.png</wall>
+   <wall direction="8">wilderness_left3_2.png</wall>
+   <wall direction="9">wilderness_door_left3_1.png</wall>
+   <wall direction="10">wilderness_door_right3_1.png</wall>
+   <wall direction="11">wilderness_right3_2.png</wall>
+   <wall direction="12">wilderness_door_left4_3.png</wall>
+   <wall direction="13">wilderness_door_left4_2.png</wall>
+   <wall direction="14">wilderness_door_left4_1.png</wall>
+   <wall direction="15">wilderness_door_right4_1.png</wall>
+   <wall direction="16">wilderness_door_right4_2.png</wall>
+   <wall direction="17">wilderness_door_right4_3.png</wall>
+   <wall direction="18">wilderness_door_left5_3.png</wall>
+   <wall direction="19">wilderness_door_left5_2.png</wall>
+   <wall direction="20">wilderness_door_left5_1.png</wall>
+   <wall direction="21">wilderness_door_right5_1.png</wall>
+   <wall direction="22">wilderness_door_right5_2.png</wall>
+   <wall direction="23">wilderness_door_right5_3.png</wall>
+  </walltype>
+ </psuedo3d>
 </configs>
