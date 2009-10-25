@@ -399,6 +399,35 @@ void BTSpecialCommand::run(BTDisplay &d) const
    b.run(d);
    break;
   }
+  case BTSPECIALCOMMAND_TRAP:
+  {
+   if (game->hasEffectOfType(BTSPELLTYPE_TRAPDESTROY))
+   {
+    d.drawText("A trap is magically disabled!");
+    throw BTSpecialStop();
+   }
+   else
+   {
+    BTParty &party = BTGame::getGame()->getParty();
+    BTSkillList &skillList = game->getSkillList();
+    for (int i = 0; i < skillList.size(); ++i)
+    {
+     if (skillList[i]->special == BTSKILLSPECIAL_DISARM)
+     {
+      for (int k = 0; k < party.size(); ++k)
+      {
+       if ((party[k]->skill[i] > 0) && (BTDice(1, 100).roll() < party[k]->skill[i]))
+       {
+        char tmp[100];
+        snprintf(tmp, 100, "%s finds and disarms a trap!", party[k]->name);
+        d.drawText(tmp);
+        throw BTSpecialStop();
+       }
+      }
+     }
+    }
+   }
+  }
   case BTSPECIALCOMMAND_DRAWPICTURE:
    d.drawImage(number[0]);
    break;

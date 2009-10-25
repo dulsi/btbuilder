@@ -565,6 +565,19 @@ void BTGame::clearMapEffects()
  }
 }
 
+bool BTGame::hasEffectOfType(int type)
+{
+ for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end(); ++itr)
+ {
+  int spell = itr->spell;
+  if (spellList[spell].getType() == type)
+  {
+   return true;
+  }
+ }
+ return false;
+}
+
 void BTGame::addPlayer(BTDisplay &d, int who)
 {
  for (std::list<BTSpellEffect>::iterator itr = spellEffect.begin(); itr != spellEffect.end();)

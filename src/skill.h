@@ -13,6 +13,8 @@
 
 #define BTSKILLUSE_AUTOCOMBAT 0
 
+#define BTSKILLSPECIAL_DISARM 0
+
 class BTSkill : public XMLObject
 {
  public:
