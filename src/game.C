@@ -23,7 +23,7 @@ BTGame::BTGame(BTModule *m)
  BTSkill::readXML(m->skill, skillList);
  BTXpChart::readXML(m->xpChart, xpChartList);
  BTJob::readXML(m->job, jobList);
- BTPc::readXML("roster.xml", roster);
+ BTPc::readXML("roster.xml", group, roster);
  loadStart();
  combat.open("data/combat.xml");
  status.open("data/status.xml");
@@ -39,6 +39,11 @@ BTGame::~BTGame()
  {
   game = NULL;
  }
+}
+
+XMLVector<BTGroup*> &BTGame::getGroup()
+{
+ return group;
 }
 
 BTFactory<BTItem> &BTGame::getItemList()

@@ -187,6 +187,17 @@ void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, std::
  action.push_back(act);
 }
 
+void ObjectSerializer::add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = name;
+ act->attrib = atts;
+ act->type = XMLTYPE_VECTORSTRING;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
 XMLAction* ObjectSerializer::find(const char *name, const char **atts)
 {
  int curLevel = getLevel();
@@ -363,6 +374,11 @@ void XMLSerializer::endElement(const XML_Char *name)
      reinterpret_cast<std::vector<unsigned int> *>(state->object)->push_back(u);
      break;
     }
+    case XMLTYPE_VECTORSTRING:
+    {
+     reinterpret_cast<std::vector<std::string> *>(state->object)->push_back(content);
+     break;
+    }
     default:
      break;
    };
@@ -537,7 +553,16 @@ void XMLSerializer::write(const char *filename, bool physfs)
      for (int i = 0; i < v->size(); ++i)
      {
       sprintf(convert, "%u", (*v)[i]);
-      content = "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
+      content += "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
+     }
+     break;
+    }
+    case XMLTYPE_VECTORSTRING:
+    {
+     std::vector<std::string> *v = reinterpret_cast<std::vector<std::string> *>((*itr)->object);
+     for (int i = 0; i < v->size(); ++i)
+     {
+      content += "<" + (*itr)->createTag() + ">" + (*v)[i] + "</" + (*itr)->name + ">";
      }
      break;
     }

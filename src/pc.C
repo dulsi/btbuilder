@@ -379,16 +379,18 @@ void BTPc::unequip(int index)
  item[index].equipped = BTITEM_NOTEQUIPPED;
 }
 
-void BTPc::readXML(const char *filename, XMLVector<BTPc*> &pc)
+void BTPc::readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc)
 {
  XMLSerializer parser;
+ parser.add("party", &group, &BTGroup::create);
  parser.add("pc", &pc, &BTPc::create);
  parser.parse(filename, true);
 }
 
-void BTPc::writeXML(const char *filename, XMLVector<BTPc*> &pc)
+void BTPc::writeXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc)
 {
  XMLSerializer parser;
+ parser.add("party", &group, &BTGroup::create);
  parser.add("pc", &pc, &BTPc::create);
  parser.write(filename, true);
 }

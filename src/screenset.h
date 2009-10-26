@@ -308,6 +308,7 @@ class BTScreenSet : public ObjectSerializer
   virtual void initScreen(BTDisplay &d) {}
   virtual void open(const char *filename);
   void run(BTDisplay &d, int start = 0, bool status = true);
+  void setGroup(BTGroup *g);
   void setPc(BTPc *c);
   void setPicture(BTDisplay &d, int pic, char *l);
 
@@ -328,6 +329,7 @@ class BTScreenSet : public ObjectSerializer
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int saveParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
@@ -340,6 +342,7 @@ class BTScreenSet : public ObjectSerializer
 
  private:
   BTPc *pc;
+  BTGroup *grp;
 
  protected:
   int picture;

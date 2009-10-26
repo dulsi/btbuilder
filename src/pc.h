@@ -10,6 +10,7 @@
 #include "btconst.h"
 #include "combatant.h"
 #include "display.h"
+#include "group.h"
 #include "xmlserializer.h"
 
 class BTEquipment : public XMLObject
@@ -55,8 +56,8 @@ class BTPc : public XMLObject, public BTCombatant
   void unequip(int index);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }
-  static void readXML(const char *filename, XMLVector<BTPc*> &pc);
-  static void writeXML(const char *filename, XMLVector<BTPc*> &pc);
+  static void readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc);
+  static void writeXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc);
 
   char *name;
   int race;

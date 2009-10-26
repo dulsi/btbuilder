@@ -70,6 +70,7 @@ class XMLAttribute
 #define XMLTYPE_UINT16     9
 #define XMLTYPE_STDSTRING  10
 #define XMLTYPE_VECTORUINT 11
+#define XMLTYPE_VECTORSTRING 12
 
 class XMLAction
 {
@@ -111,6 +112,7 @@ class ObjectSerializer
   void add(const char *name, std::string *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::vector<unsigned int> *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts = NULL);
 
   XMLAction* find(const char *name, const char **atts);
   void findAll(const char *name, std::list<XMLAction*> &list);

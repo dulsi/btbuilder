@@ -21,6 +21,7 @@
 #include "spelleffect.h"
 #include "status.h"
 #include "map.h"
+#include "group.h"
 #include "pc.h"
 #include "xpchart.h"
 
@@ -36,6 +37,7 @@ class BTGame : public Psuedo3DMap
   BTGame(BTModule *m);
   ~BTGame();
 
+  XMLVector<BTGroup*> &getGroup();
   BTFactory<BTItem> &getItemList();
   BTJobList &getJobList();
   BTJobAbbrevList &getJobAbbrevList();
@@ -105,6 +107,7 @@ class BTGame : public Psuedo3DMap
   BTJobAbbrevList jobAbbrevList;
   BTFactory<BTMonster> monsterList;
   BTRaceList raceList;
+  XMLVector<BTGroup*> group;
   XMLVector<BTPc*> roster;
   BTSkillList skillList;
   BTFactory<BTSpell> spellList;

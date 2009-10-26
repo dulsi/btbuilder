@@ -377,16 +377,24 @@ BTSelectRoster::BTSelectRoster()
 
 int BTSelectRoster::buildList(ObjectSerializer *obj)
 {
+ XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTParty &party = BTGame::getGame()->getParty();
  if (0 == roster.size())
   throw BTSpecialError("noroster");
  else if ((fullscreen != 0) && (party.size() >= BT_PARTYSIZE))
   throw BTSpecialError("fullparty");
- list = new BTDisplay::selectItem[roster.size()];
- for (int i = 0; i < roster.size(); ++i)
+ int groupSize = group.size();
+ list = new BTDisplay::selectItem[groupSize + roster.size()];
+ int i;
+ for (i = 0; i < group.size(); ++i)
  {
-  list[i].name = roster[i]->name;
+  list[i].first = '*';
+  list[i].name = group[i]->name.c_str();
+ }
+ for (i = 0; i < roster.size(); ++i)
+ {
+  list[groupSize + i].name = roster[i]->name;
  }
  return roster.size();
 }
@@ -923,7 +931,7 @@ XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
 }
 
 BTScreenSet::BTScreenSet()
- : picture(-1), label(0), building(false), clearMagic(false), pc(0)
+ : picture(-1), label(0), building(false), clearMagic(false), pc(0), grp(0)
 {
  actionList["advanceLevel"] = &advanceLevel;
  actionList["addToParty"] = &addToParty;
@@ -941,6 +949,7 @@ BTScreenSet::BTScreenSet()
  actionList["removeFromParty"] = &removeFromParty;
  actionList["removeRoster"] = &removeRoster;
  actionList["save"] = &save;
+ actionList["saveParty"] = &saveParty;
  actionList["sell"] = &sell;
  actionList["selectItem"] = &selectItem;
  actionList["selectMage"] = &selectMage;
@@ -1055,6 +1064,11 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   {
    d.clearText();
    initScreen(d);
+   if (grp)
+   {
+    add("party", grp);
+    grp->serialize(this);
+   }
    if (pc)
    {
     add("pc", pc);
@@ -1168,6 +1182,14 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
  }
 }
 
+void BTScreenSet::setGroup(BTGroup *g)
+{
+ if ((pc) && (0 == pc->name[0]))
+  delete pc;
+ pc = 0;
+ grp = g;
+}
+
 void BTScreenSet::setPc(BTPc *c)
 {
  if ((pc) && (0 == pc->name[0]))
@@ -1178,6 +1200,7 @@ void BTScreenSet::setPc(BTPc *c)
   pc->combat.object = -1;
   pc->combat.type = BTPc::BTPcAction::none;
  }
+ grp = 0;
 }
 
 void BTScreenSet::setPicture(BTDisplay &d, int pic, char *l)
@@ -1207,22 +1230,52 @@ int BTScreenSet::advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
 
 int BTScreenSet::addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTParty &party = BTGame::getGame()->getParty();
  BTSelectRoster *select = static_cast<BTSelectRoster*>(item);
- int found;
- for (found = 0; found < party.size(); ++found)
-  if (0 == strcmp(roster[select->select]->name, party[found]->name))
-  {
-   b.setPc(party[found]);
-   throw BTSpecialError("inparty");
-  }
- if (found >= party.size())
+ if (select->select < group.size())
  {
-  party.push_back(roster[select->select]);
-  d.drawStats();
+  for (int i = 0; i < group[select->select]->member.size(); ++i)
+  {
+   int found;
+   for (found = 0; found < party.size(); ++found)
+    if (0 == strcmp(group[select->select]->member[i].c_str(), party[found]->name))
+    {
+     break;
+    }
+   if (found >= party.size())
+   {
+    for (int k = 0; k < roster.size(); ++k)
+    {
+     if (0 == strcmp(roster[k]->name, group[select->select]->member[i].c_str()))
+     {
+      party.push_back(roster[k]);
+      d.drawStats();
+      if (party.size() >= BT_PARTYSIZE)
+       return 0;
+     }
+    }
+   }
+  }
  }
- select->clear();
+ else
+ {
+  select->select -= group.size();
+  int found;
+  for (found = 0; found < party.size(); ++found)
+   if (0 == strcmp(roster[select->select]->name, party[found]->name))
+   {
+    b.setPc(party[found]);
+    throw BTSpecialError("inparty");
+   }
+  if (found >= party.size())
+  {
+   party.push_back(roster[select->select]);
+   d.drawStats();
+  }
+  select->clear();
+ }
  return 0;
 }
 
@@ -1328,8 +1381,9 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 
 int BTScreenSet::exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
- BTPc::writeXML("roster.xml", roster);
+ BTPc::writeXML("roster.xml", group, roster);
  exit(b, d, item, key);
 }
 
@@ -1396,8 +1450,9 @@ int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
 
 int BTScreenSet::quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
- BTPc::writeXML("roster.xml", roster);
+ BTPc::writeXML("roster.xml", group, roster);
  throw BTSpecialQuit();
 }
 
@@ -1416,8 +1471,19 @@ int BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *ite
 
 int BTScreenSet::removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTParty &party = BTGame::getGame()->getParty();
+ for (XMLVector<BTGroup*>::iterator itr = group.begin(); itr != group.end(); ++itr)
+ {
+  if ((*itr) == b.grp)
+  {
+   group.erase(itr);
+   delete b.grp;
+   b.setGroup(NULL);
+   return 0;
+  }
+ }
  for (XMLVector<BTPc*>::iterator itr = roster.begin(); itr != roster.end(); ++itr)
  {
   if ((*itr) == b.pc)
@@ -1455,6 +1521,29 @@ int BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  b.pc->setName(readString->getResponse().c_str());
  roster.push_back(b.pc);
  b.pc = NULL;
+ return 0;
+}
+
+int BTScreenSet::saveParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
+ BTParty &party = BTGame::getGame()->getParty();
+ BTReadString *readString = static_cast<BTReadString*>(item);
+ if (readString->getResponse().empty())
+  return 0;
+ int found;
+ for (found = 0; found < group.size(); ++found)
+ {
+  if (group[found]->name == readString->getResponse())
+  {
+   throw BTSpecialError("exists");
+  }
+ }
+ BTGroup *grp = new BTGroup;
+ grp->name = readString->getResponse();
+ for (int i = 0; i < party.size(); ++i)
+  grp->member.push_back(party[i]->name);
+ group.push_back(grp);
  return 0;
 }
 
@@ -1507,9 +1596,13 @@ int BTScreenSet::selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
 
 int BTScreenSet::selectRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTSelectRoster *select = static_cast<BTSelectRoster*>(item);
- b.setPc(roster[select->select]);
+ if (select->select < group.size())
+  b.setGroup(group[select->select]);
+ else
+  b.setPc(roster[select->select - group.size()]);
  return 0;
 }
 
