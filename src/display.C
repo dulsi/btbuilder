@@ -157,9 +157,9 @@ void BTDisplay::addText(const char *words, alignment a /*= left*/)
  addChoice(NULL, words, a);
 }
 
-void BTDisplay::add2Column(const char *col1, const char *col2)
+void BTDisplay::addColumns(const std::list<std::string>& c)
 {
- element.push_back(new BTUI2Column(col1, col2));
+ element.push_back(new BTUIMultiColumn(c));
 }
 
 void BTDisplay::addReadString(const char *prompt, int maxLen, std::string &response)
@@ -444,9 +444,9 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
   {
    break;
   }
-  else if (BTUI_2COLUMN == (*top)->getType())
+  else if (BTUI_MULTICOLUMN == (*top)->getType())
   {
-   BTUI2Column *item = static_cast<BTUI2Column*>(*top);
+   BTUIMultiColumn *item = static_cast<BTUIMultiColumn*>(*top);
    int maxH = item->maxHeight(*this);
    if (0 == maxH)
     continue;
@@ -480,9 +480,9 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
   int bottomPos = text.h;
   for (; bottom != top; --bottom)
   {
-   if (BTUI_2COLUMN == (*bottom)->getType())
+   if (BTUI_MULTICOLUMN == (*bottom)->getType())
    {
-    BTUI2Column* item = static_cast<BTUI2Column*>(*bottom);
+    BTUIMultiColumn* item = static_cast<BTUIMultiColumn*>(*bottom);
     int maxH = item->maxHeight(*this);
     if (0 == maxH)
      continue;
@@ -937,25 +937,29 @@ void BTUISelect::moveUp(BTDisplay &d)
  }
 }
 
-void BTUI2Column::draw(int x, int y, int w, int h, BTDisplay& d)
+void BTUIMultiColumn::draw(int x, int y, int w, int h, BTDisplay& d)
 {
  SDL_Rect dst;
  dst.x = x;
  dst.y = y;
- dst.w = w / 2;
+ dst.w = w / col.size();
  dst.h = h;
- d.drawFont(col1.c_str(), dst, d.getBlack(), BTDisplay::left);
- dst.x = x + w / 2;
- dst.y = y;
- dst.w = w / 2;
- dst.h = h;
- d.drawFont(col2.c_str(), dst, d.getBlack(), BTDisplay::left);
+ for (std::list<std::string>::iterator itr = col.begin(); itr != col.end(); ++itr)
+ {
+  d.drawFont(itr->c_str(), dst, d.getBlack(), BTDisplay::left);
+  dst.x += w / col.size();
+ }
 }
 
-int BTUI2Column::maxHeight(BTDisplay &d)
+int BTUIMultiColumn::maxHeight(BTDisplay &d)
 {
- int w[2], h[2];
- if ((!d.sizeFont(col1.c_str(), w[0], h[0])) || (!d.sizeFont(col2.c_str(), w[1], h[1])))
-  return 0;
- return ((h[0] > h[1]) ? h[0] : h[1]);
+ int w, h;
+ int hFinal = 0;
+ for (std::list<std::string>::iterator itr = col.begin(); itr != col.end(); ++itr)
+ {
+  if ((d.sizeFont(itr->c_str(), w, h)) && (h > hFinal))
+   hFinal = h;
+ }
+ return hFinal;
 }
+

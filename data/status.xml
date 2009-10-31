@@ -16,8 +16,8 @@
 	<screen number="2" escapeScreen="exit">
 		<line><name /></line>
 		<selectInventory action="selectItem" screen="3" noerror="1" numbered="1"/>
-		<line><col>Conj: <skill number="1" /></col><col>Sorc: <skill number="3" /></col></line>
-		<line><col>Magi: <skill number="2" /></col><col>Wizd: <skill number="4" /></col></line>
+		<line><col>Con:<skill number="1" /></col><col>Src:<skill number="3" /></col><col></col></line>
+		<line><col>Mag:<skill number="2" /></col><col>Wiz:<skill number="4" /></col><col>Amg:<skill number="5" /></col></line>
 		<choice keys="cCdD" screen="exit" align="center">(DONE)</choice>
 	</screen>
 	<screen number="3" escapeScreen="2">

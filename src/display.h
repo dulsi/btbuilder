@@ -18,7 +18,7 @@
 #define BTUI_CHOICE 1
 #define BTUI_SELECT 2
 #define BTUI_TEXT 3
-#define BTUI_2COLUMN 4
+#define BTUI_MULTICOLUMN 4
 #define BTUI_READSTRING 5
 #define BTUI_BARRIER 6
 
@@ -56,7 +56,7 @@ class BTDisplay
   void addBarrier(const char *keys);
   void addChoice(const char *keys, const char *words, alignment a = left);
   void addText(const char *words, alignment a = left);
-  void add2Column(const char *col1, const char *col2);
+  void addColumns(const std::list<std::string>& c);
   void addReadString(const char *prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
   void clear(SDL_Rect &r);
@@ -178,18 +178,17 @@ class BTUISelect : public BTUIElement
   int numbered;
 };
 
-class BTUI2Column : public BTUIElement
+class BTUIMultiColumn : public BTUIElement
 {
  public:
-  BTUI2Column(const std::string &c1, const std::string &c2) : col1(c1), col2(c2) {}
+  BTUIMultiColumn(const std::list<std::string> &c) : col(c) {}
 
-  virtual int getType() const { return BTUI_2COLUMN; }
+  virtual int getType() const { return BTUI_MULTICOLUMN; }
 
   void draw(int x, int y, int w, int h, BTDisplay& d);
   int maxHeight(BTDisplay &d);
 
-  std::string col1;
-  std::string col2;
+  std::list<std::string> col;
 };
 
 #endif

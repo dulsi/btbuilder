@@ -101,8 +101,8 @@ void BTLine::draw(BTDisplay &d, ObjectSerializer *obj)
   d.addText(line.front().c_str(), align);
  else if (line.size() == 0)
   d.addText("");
- else if (line.size() == 2)
-  d.add2Column(line.front().c_str(), line.back().c_str());
+ else
+  d.addColumns(line);
 }
 
 void BTLine::elementData(const XML_Char *name, const XML_Char **atts)
