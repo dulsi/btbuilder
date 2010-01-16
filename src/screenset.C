@@ -352,7 +352,7 @@ void BTSelectCommon::setScreen(int s)
 
 void BTSelectCommon::draw(BTDisplay &d, ObjectSerializer *obj)
 {
- if (!list)
+ if (list)
  {
   delete [] list;
   list = NULL;
