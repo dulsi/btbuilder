@@ -42,10 +42,25 @@ template<class T>
 class XMLVector : public XMLArray, public std::vector<T>
 {
  public:
+  XMLVector(bool c = true) : clear(c) {}
+  ~XMLVector()
+  {
+   if (clear)
+   {
+    for (int i = 0; i < size(); ++i)
+    {
+     delete std::vector<T>::operator[](i);
+    }
+   }
+  }
+
   virtual XMLObject *get(size_t i) { return (*this)[i]; }
   virtual void push_back(XMLObject *obj) { std::vector<T>::push_back(static_cast<T>(obj)); }
   void push_back(T obj) { std::vector<T>::push_back(obj); }
   virtual size_t size() const { return std::vector<T>::size(); }
+
+ private:
+  bool clear;
 };
 
 class XMLAttribute

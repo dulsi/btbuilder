@@ -24,6 +24,7 @@ class BTStatBlock : public BTStatusInfo
 {
  public:
   BTStatBlock() : attribute(0), modifier(0), negate(false), maxValue(-1), overflow(0), align(0) {}
+  ~BTStatBlock() { if (attribute) delete [] attribute; if (overflow) delete [] overflow; }
 
   virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
@@ -44,6 +45,7 @@ class BTPrint : public BTStatusInfo
 {
  public:
   BTPrint() : text(0), align(0) {}
+  ~BTPrint() { if (text) delete [] text; }
 
   virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
@@ -73,6 +75,7 @@ class BTCheckBit : public BTCondition
 {
  public:
   BTCheckBit() : attribute(0) {}
+  ~BTCheckBit() { if (attribute) delete [] attribute; }
 
   virtual bool compare(ObjectSerializer *pc) const;
   virtual void serialize(ObjectSerializer* s);

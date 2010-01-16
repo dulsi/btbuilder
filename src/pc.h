@@ -98,6 +98,8 @@ class BTPc : public XMLObject, public BTCombatant
 class BTParty : public XMLVector<BTPc*>
 {
  public:
+  BTParty() : XMLVector<BTPc*>(false) {}
+
   void add(BTDisplay &d, BTPc *pc);
   bool checkDead(BTDisplay &d);
   void moveTo(int who, int where, BTDisplay &d);

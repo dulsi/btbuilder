@@ -4,9 +4,11 @@
 
 Bt Builder is the beginnings of an open source Bard's Tale Construction
 Set.  It is extremely early in development.  To build it you will need
-the source code, SDL, SDL_ttf, SDL_Image, expat and PhysFS.  Run make
-to compile.  The programs found in the util directory need the Identical
-Software Graphics Library to build.
+the source code, SDL, SDL_Image, boost, expat and PhysFS.  SDL_ttf is
+optional and not built in the windows version.  It will only be usable
+in Bt Builder modules instead of BTCS modules.  Run make to compile.
+The programs found in the util directory need the Identical Software
+Graphics Library to build.
 
 The program can read the BTCS files.  The core game engine is still a
 work in progress.  Most specials have been implemented but combat and
@@ -36,4 +38,28 @@ btbuilder -pCITYBUIL.MAP sample
 The program is made available under the GPL.
 
 Questions or comments can be sent to dulsi@identicalsoftware.com
+
+BTCS Incomplete Functionality
+
+Special Commands
+* silence zone
+* anti-magic zone
+* play sound $!
+* chest holding $I,trap $T,damage $#,message $$
+* force a random encounter
+
+Spells
+* Youth
+* Restore Lost Levels
+* Age
+* Drain Level
+* Scry Sight
+* Dispel Magic
+* Regenerate Bard Songs
+
+Other features
+* Monster special attacks except magic
+* Bard songs
+* Hide in shadows
+* Level drain, item-zot, aging, and point phaze
 

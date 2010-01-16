@@ -79,6 +79,10 @@ BTDisplay::~BTDisplay()
  {
   delete (*elementItr);
  }
+ if (mainBackground)
+ {
+  SDL_FreeSurface(mainBackground);
+ }
  element.clear();
  SDL_Quit();
 }

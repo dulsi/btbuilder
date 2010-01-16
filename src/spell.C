@@ -137,13 +137,13 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    expire = game->getExpiration(1);
    break;
   case BTDURATION_SHORT:
-   expire = game->getExpiration(BTDice(1, 21, 19).roll());
+   expire = game->getExpiration(BTDice(1, 121, 119).roll());
    break;
   case BTDURATION_MEDIUM:
-   expire = game->getExpiration(BTDice(1, 31, 29).roll());
+   expire = game->getExpiration(BTDice(1, 181, 179).roll());
    break;
   case BTDURATION_LONG:
-   expire = game->getExpiration(BTDice(1, 41, 39).roll());
+   expire = game->getExpiration(BTDice(1, 241, 239).roll());
    break;
   case BTDURATION_COMBAT:
    expire = BTTIME_COMBAT;

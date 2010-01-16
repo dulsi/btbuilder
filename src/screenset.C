@@ -15,7 +15,7 @@
 #define BTSCREEN_XPNEEDED     3
 
 BTElement::BTElement(const char *name, const char **a)
- : isText(false), text(name)
+ : isText(false), text(name), atts(0)
 {
  int size = 0;
  if (a)
@@ -396,7 +396,7 @@ int BTSelectRoster::buildList(ObjectSerializer *obj)
  {
   list[groupSize + i].name = roster[i]->name;
  }
- return roster.size();
+ return groupSize + roster.size();
 }
 
 int BTSelectRoster::getScreen(BTPc *pc)
@@ -965,6 +965,8 @@ BTScreenSet::~BTScreenSet()
 {
  if ((pc) && (0 == pc->name[0]))
   delete pc;
+ if (label)
+  delete [] label;
 }
 
 int BTScreenSet::getLevel()
@@ -1261,17 +1263,17 @@ int BTScreenSet::addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  }
  else
  {
-  select->select -= group.size();
+  int roosterSelect = select->select - group.size();
   int found;
   for (found = 0; found < party.size(); ++found)
-   if (0 == strcmp(roster[select->select]->name, party[found]->name))
+   if (0 == strcmp(roster[roosterSelect]->name, party[found]->name))
    {
     b.setPc(party[found]);
     throw BTSpecialError("inparty");
    }
   if (found >= party.size())
   {
-   party.push_back(roster[select->select]);
+   party.push_back(roster[roosterSelect]);
    d.drawStats();
   }
   select->clear();

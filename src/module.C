@@ -52,6 +52,8 @@ BTModule::~BTModule()
   delete [] race;
  if (skill)
   delete [] skill;
+ if (xpChart)
+  delete [] xpChart;
  if (job)
   delete [] job;
  if (start)
