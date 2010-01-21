@@ -53,7 +53,7 @@ text: char[26] (text)
 number: short[3]
 */
 
-class BTMapSquare
+class BTMapSquare : public XMLObject
 {
  public:
   BTMapSquare();
@@ -62,9 +62,12 @@ class BTMapSquare
   IShort getSpecial() const;
   void read(BinaryReadFile &f);
   void setSpecial(IShort s);
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTMapSquare; }
 
  private:
-  IUByte wallInfo;
+  int wallInfo[4];
   IShort special;
 };
 
@@ -130,29 +133,32 @@ class BTSpecialStop
   BTSpecialStop() {}
 };
 
-class BTSpecialCommand
+class BTSpecialCommand : public XMLObject
 {
  public:
   BTSpecialCommand();
-  BTSpecialCommand(IShort t) : type(t) {}
+  BTSpecialCommand(IShort t) : type(t) { text = new char[1]; text[0] = 0; }
+  ~BTSpecialCommand();
 
   IShort getType() const;
   void print(FILE *f) const;
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
+  virtual void serialize(ObjectSerializer* s);
 
   static BTSpecialCommand Guild;
 
  private:
   IShort type;
-  char text[26];
+  char *text;
   IUShort number[3];
 };
 
-class BTSpecialConditional
+class BTSpecialConditional : public XMLObject
 {
  public:
   BTSpecialConditional();
+  ~BTSpecialConditional();
 
   IShort getType() const;
   IBool isNothing() const;
@@ -160,34 +166,42 @@ class BTSpecialConditional
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
   void setType(IShort val);
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialConditional; }
 
  private:
   IShort type;
-  char text[26];
+  char *text;
   IShort number;
   BTSpecialCommand thenClause;
   BTSpecialCommand elseClause;
 };
 
-class BTSpecial
+class BTSpecial : public XMLObject
 {
  public:
   BTSpecial();
   BTSpecial(BinaryReadFile &f);
+  ~BTSpecial();
 
   const char *getName() const;
   void print(FILE *f) const;
   void run(BTDisplay &d) const;
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecial; }
 
  private:
-  char name[25];
-  BTSpecialConditional operation[20];
+  char *name;
+  XMLVector<BTSpecialConditional*> operation;
 };
 
-class BTMap
+class BTMap : public XMLObject
 {
  public:
   BTMap(BinaryReadFile &f);
+  BTMap();
   ~BTMap();
 
   void setSpecial(IShort x, IShort y, IShort special);
@@ -202,16 +216,20 @@ class BTMap
   IShort getType() const;
   IShort getXSize() const;
   IShort getYSize() const;
+  void setFilename(const char *f);
+  virtual void serialize(ObjectSerializer* s);
 
  private:
-  char name[25];
+  char *name;
   IShort type;
   IShort level;
+  IShort xSize;
+  IShort ySize;
   IShort monsterChance;
   IShort monsterLevel;
-  char filename[9];
-  BTMapSquare square[22][22];
-  BTSpecial *specials[30];
+  char *filename;
+  XMLVector<BTMapSquare*> square;
+  XMLVector<BTSpecial*> specials;
 };
 
 #endif

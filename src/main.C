@@ -339,11 +339,11 @@ int main(int argc, char *argv[])
   printf("Name: %s\n", gameMap.getName());
   printf("Type: %s   Level: %d\n", mapTypes[gameMap.getType()], gameMap.getLevel());
   printf("Monster difficulty: %d   Chance of encounter: %d%%\n", gameMap.getMonsterLevel(), gameMap.getMonsterChance());
-  printf("File: %s.map\n\n", gameMap.getFilename());
-  for (y = 0; y < 22; y++)
+  printf("File: %s\n\n", gameMap.getFilename());
+  for (y = 0; y < gameMap.getYSize(); y++)
   {
    printf(" ");
-   for (x = 0; x < 22; x++)
+   for (x = 0; x < gameMap.getXSize(); x++)
    {
     index = 0;
     if ((y > 0) && (gameMap.getSquare(y - 1, x).getWall(BTDIRECTION_WEST) > 0))
@@ -368,15 +368,15 @@ int main(int argc, char *argv[])
      printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
    }
    index = 0;
-   if ((y > 0) && (gameMap.getSquare(y - 1, 21).getWall(BTDIRECTION_EAST) > 0))
+   if ((y > 0) && (gameMap.getSquare(y - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0))
    {
     index += 1 << BTDIRECTION_NORTH;
    }
-   if (gameMap.getSquare(y, 21).getWall(BTDIRECTION_NORTH) > 0)
+   if (gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_NORTH) > 0)
    {
     index += 1 << BTDIRECTION_WEST;
    }
-   if (gameMap.getSquare(y, 21).getWall(BTDIRECTION_EAST) > 0)
+   if (gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0)
    {
     index += 1 << BTDIRECTION_SOUTH;
    }
@@ -385,7 +385,7 @@ int main(int argc, char *argv[])
    else
     printf("%c \n", cornerWalls[index]);
    printf(" ");
-   for (x = 0; x < 22; x++)
+   for (x = 0; x < gameMap.getXSize(); x++)
    {
     index = gameMap.getSquare(y, x).getSpecial();
     if (utf8)
@@ -396,37 +396,37 @@ int main(int argc, char *argv[])
        (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
    }
    if (utf8)
-    printf("%s \n", sideWallsUTF8[gameMap.getSquare(y, 21).getWall(BTDIRECTION_EAST)]);
+    printf("%s \n", sideWallsUTF8[gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST)]);
    else
-    printf("%c \n", sideWalls[gameMap.getSquare(y, 21).getWall(BTDIRECTION_EAST)]);
+    printf("%c \n", sideWalls[gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST)]);
   }
   printf(" ");
-  for (x = 0; x < 22; x++)
+  for (x = 0; x < gameMap.getXSize(); x++)
   {
    index = 0;
-   if (gameMap.getSquare(21, x).getWall(BTDIRECTION_WEST) > 0)
+   if (gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_WEST) > 0)
    {
     index += 1 << BTDIRECTION_NORTH;
    }
-   if ((x > 0) && (gameMap.getSquare(21, x - 1).getWall(BTDIRECTION_SOUTH) > 0))
+   if ((x > 0) && (gameMap.getSquare(gameMap.getYSize() - 1, x - 1).getWall(BTDIRECTION_SOUTH) > 0))
    {
     index += 1 << BTDIRECTION_WEST;
    }
-   if (gameMap.getSquare(21, x).getWall(BTDIRECTION_SOUTH) > 0)
+   if (gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH) > 0)
    {
     index += 1 << BTDIRECTION_EAST;
    }
    if (utf8)
-    printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(21, x).getWall(BTDIRECTION_SOUTH)]);
+    printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH)]);
    else
-    printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(21, x).getWall(BTDIRECTION_SOUTH)]);
+    printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH)]);
   }
   index = 0;
-  if (gameMap.getSquare(21, 21).getWall(BTDIRECTION_EAST) > 0)
+  if (gameMap.getSquare(gameMap.getYSize() - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0)
   {
    index += 1 << BTDIRECTION_NORTH;
   }
-  if (gameMap.getSquare(21, 21).getWall(BTDIRECTION_SOUTH) > 0)
+  if (gameMap.getSquare(gameMap.getYSize() - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_SOUTH) > 0)
   {
    index += 1 << BTDIRECTION_WEST;
   }

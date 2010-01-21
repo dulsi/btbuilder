@@ -101,7 +101,6 @@ BTMap *BTGame::loadMap(const char *filename)
  if (levelMap)
  {
   std::string name = levelMap->getFilename();
-  name += ".MAP";
   if (name == filename)
    return levelMap;
   delete levelMap;
@@ -109,8 +108,20 @@ BTMap *BTGame::loadMap(const char *filename)
  local.clearAll();
  clearTimedSpecial();
  clearMapEffects();
- BinaryReadFile levelFile(filename);
- levelMap = new BTMap(levelFile);
+ int len = strlen(filename);
+ if ((len > 4) && (strcmp(".MAP", filename + (len - 4)) == 0))
+ {
+  BinaryReadFile levelFile(filename);
+  levelMap = new BTMap(levelFile);
+ }
+ else
+ {
+  levelMap = new BTMap;
+  XMLSerializer parser;
+  levelMap->serialize(&parser);
+  parser.parse(filename, true);
+ }
+ levelMap->setFilename(filename);
  return levelMap;
 }
 
@@ -124,7 +135,7 @@ void BTGame::loadStart()
  PHYSFS_readULE16(start, &tmp);
  xPos = tmp;
  PHYSFS_readULE16(start, &tmp);
- yPos = 21 - tmp;
+ yPos = levelMap->getYSize() - 1 - tmp;
  PHYSFS_readULE16(start, &tmp);
  facing = tmp;
 }
@@ -411,6 +422,16 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
   d.setWallGraphics(levelMap->getType());
   xPos = t.x;
   yPos = t.y;
+  while (xPos < 0)
+  {
+   xPos += levelMap->getXSize();
+  }
+  xPos = xPos % levelMap->getXSize();
+  while (yPos < 0)
+  {
+   yPos += levelMap->getYSize();
+  }
+  yPos = yPos % levelMap->getYSize();
   facing = t.facing;
   d.drawView();
   return t.activate;

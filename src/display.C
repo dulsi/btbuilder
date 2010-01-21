@@ -102,6 +102,7 @@ void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= l
   do
   {
    memcpy(tmp, words, partial - words);
+   tmp[partial - words] = 0;
    words = partial + 1;
    addChoice(keys, tmp, a);
   }
@@ -616,13 +617,13 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     SDL_RemoveTimer(timer);
    if (sdlevent.key.keysym.unicode)
     return sdlevent.key.keysym.unicode;
-   else if (sdlevent.key.keysym.sym == SDLK_UP)
+   else if ((sdlevent.key.keysym.sym == SDLK_UP) || (sdlevent.key.keysym.sym == SDLK_KP8))
     return BTKEY_UP;
-   else if (sdlevent.key.keysym.sym == SDLK_DOWN)
+   else if ((sdlevent.key.keysym.sym == SDLK_DOWN) || (sdlevent.key.keysym.sym == SDLK_KP2))
     return BTKEY_DOWN;
-   else if (sdlevent.key.keysym.sym == SDLK_LEFT)
+   else if ((sdlevent.key.keysym.sym == SDLK_LEFT) || (sdlevent.key.keysym.sym == SDLK_KP4))
     return BTKEY_LEFT;
-   else if (sdlevent.key.keysym.sym == SDLK_RIGHT)
+   else if ((sdlevent.key.keysym.sym == SDLK_RIGHT) || (sdlevent.key.keysym.sym == SDLK_KP6))
     return BTKEY_RIGHT;
    if (delay)
     timer = SDL_AddTimer(delay, timerCallback, NULL);

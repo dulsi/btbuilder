@@ -12,13 +12,17 @@
 #include "pc.h"
 
 BTMapSquare::BTMapSquare()
- : wallInfo(0), special(-1)
+ : special(-1)
 {
+ for (int i = 0; i < BT_DIRECTIONS; ++i)
+ {
+  wallInfo[i] = 0;
+ }
 }
 
 IShort BTMapSquare::getWall(IShort dir) const
 {
- return ((wallInfo >> (dir * 2)) & 0x03);
+ return wallInfo[dir];
 }
 
 IShort BTMapSquare::getSpecial() const
@@ -28,10 +32,12 @@ IShort BTMapSquare::getSpecial() const
 
 void BTMapSquare::read(BinaryReadFile &f)
 {
- IUByte unknown;
+ IUByte tmp;
 
- f.readUByte(wallInfo);
- f.readUByte(unknown);
+ f.readUByte(tmp);
+ for (int i = 0; i < BT_DIRECTIONS; ++i)
+  wallInfo[i] = ((tmp >> (i * 2)) & 0x03);
+ f.readUByte(tmp); // Unknown
  f.readShort(special);
 }
 
@@ -40,9 +46,26 @@ void BTMapSquare::setSpecial(IShort s)
  special = s;
 }
 
+void BTMapSquare::serialize(ObjectSerializer* s)
+{
+ s->add("northgfx", &wallInfo[BTDIRECTION_NORTH]);
+ s->add("eastgfx", &wallInfo[BTDIRECTION_EAST]);
+ s->add("southgfx", &wallInfo[BTDIRECTION_SOUTH]);
+ s->add("westgfx", &wallInfo[BTDIRECTION_WEST]);
+ s->add("special", &special);
+}
+
 BTSpecialCommand::BTSpecialCommand()
 {
  type = 0;
+ text = new char[1];
+ text[0] = 0;
+}
+
+BTSpecialCommand::~BTSpecialCommand()
+{
+ if (text)
+  delete [] text;
 }
 
 IShort BTSpecialCommand::getType() const
@@ -115,8 +138,14 @@ void BTSpecialCommand::print(FILE *f) const
 
 void BTSpecialCommand::read(BinaryReadFile &f)
 {
+ char tmp[27];
  f.readShort(type);
- f.readUByteArray(26, (IUByte *)text);
+ f.readUByteArray(26, (IUByte *)tmp);
+ tmp[26] = 0;
+ if (text)
+  delete [] text;
+ text = new char[strlen(tmp) + 1];
+ strcpy(text, tmp);
  f.readShortArray(3, (IShort *)number);
 }
 
@@ -376,7 +405,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    throw BTSpecialForward();
    break;
   case BTSPECIALCOMMAND_TELEPORT:
-   throw BTSpecialTeleport(text, number[0], 21 - number[1], number[2], false);
+   throw BTSpecialTeleport(text, number[0], -number[1] - 1, number[2], false);
    break;
   case BTSPECIALCOMMAND_GUILD:
   {
@@ -432,11 +461,17 @@ void BTSpecialCommand::run(BTDisplay &d) const
    d.drawImage(number[0]);
    break;
   case BTSPECIALCOMMAND_CLEARSPECIALAT:
-   game->getMap()->setSpecial(number[0], 21 - number[1], BTSPECIAL_NONE);
+  {
+   BTMap *map = game->getMap();
+   game->getMap()->setSpecial(number[0], map->getYSize() - 1 - number[1], BTSPECIAL_NONE);
    break;
+  }
   case BTSPECIALCOMMAND_SETSPECIALAT:
-   game->getMap()->setSpecial(number[1], 21 - number[2], number[0]);
+  {
+   BTMap *map = game->getMap();
+   map->setSpecial(number[1], map->getYSize() - 1 - number[2], number[0]);
    break;
+  }
   case BTSPECIALCOMMAND_PRINTLABEL:
    d.drawLabel(text);
    break;
@@ -624,13 +659,27 @@ void BTSpecialCommand::run(BTDisplay &d) const
    game->setCounter(game->getCounter() - number[0]);
    break;
   case BTSPECIALCOMMAND_TELEPORTRELATIVE:
-   throw BTSpecialTeleport(text, number[0], 21 - number[1] + game->getX(), number[2] + game->getY(), false);
+   throw BTSpecialTeleport(text, number[0] + game->getX(), game->getY() - 1 - number[1], number[2], false);
    break;
   case BTSPECIALCOMMAND_TELEACTIVATE:
-   throw BTSpecialTeleport(text, number[0], 21 - number[1], number[2], true);
+   throw BTSpecialTeleport(text, number[0], -number[1] - 1, number[2], true);
    break;
   default:
    break;
+ }
+}
+
+void BTSpecialCommand::serialize(ObjectSerializer* s)
+{
+ s->add("type", &type);
+ s->add("text", &text);
+ for (int i = 0; i < 3; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  snprintf(tmp, 10, "%d", i + 1);
+  attrib->push_back(XMLAttribute("index", tmp));
+  s->add("number", &number[i], attrib);
  }
 }
 
@@ -639,6 +688,14 @@ BTSpecialCommand BTSpecialCommand::Guild(BTSPECIALCOMMAND_GUILD);
 BTSpecialConditional::BTSpecialConditional()
 {
  type = -1;
+ text = new char[1];
+ text[0] = 0;
+}
+
+BTSpecialConditional::~BTSpecialConditional()
+{
+ if (text)
+  delete [] text;
 }
 
 IShort BTSpecialConditional::getType() const
@@ -712,8 +769,14 @@ void BTSpecialConditional::print(FILE *f) const
 
 void BTSpecialConditional::read(BinaryReadFile &f)
 {
+ char tmp[27];
  f.readShort(type);
- f.readUByteArray(26, (IUByte *)text);
+ f.readUByteArray(26, (IUByte *)tmp);
+ tmp[26] = 0;
+ if (text)
+  delete [] text;
+ text = new char[strlen(tmp) + 1];
+ strcpy(text, tmp);
  f.readShort(number);
  thenClause.read(f);
  elseClause.read(f);
@@ -841,27 +904,48 @@ void BTSpecialConditional::setType(IShort val)
  type = val;
 }
 
+void BTSpecialConditional::serialize(ObjectSerializer* s)
+{
+ s->add("type", &type);
+ s->add("text", &text);
+ s->add("number", &number);
+ s->add("then", &thenClause);
+ s->add("else", &elseClause);
+}
+
 BTSpecial::BTSpecial()
 {
+ name = new char[1];
  name[0] = 0;
 }
 
 BTSpecial::BTSpecial(BinaryReadFile &f)
 {
- IUShort conditionType;
- IUByte unknown[96];
+ char tmp[26];
+ IUByte unknown;
 
- f.readUByteArray(25, (IUByte *)name);
- f.readUByte(unknown[0]);
+ f.readUByteArray(25, (IUByte *)tmp);
+ tmp[25] = 0;
+ name = new char[strlen(tmp) + 1];
+ strcpy(name, tmp);
+ f.readUByte(unknown);
  for (int i = 0; i < 20; i++)
  {
-  operation[i].read(f);
-  if (-99 == operation[i].getType())
+  BTSpecialConditional *op = new BTSpecialConditional;
+  operation.push_back(op);
+  op->read(f);
+  if (-99 == op->getType())
   {
-   operation[i].setType(-1);
+   op->setType(-1);
    break;
   }
  }
+}
+
+BTSpecial::~BTSpecial()
+{
+ if (name)
+  delete [] name;
 }
 
 const char *BTSpecial::getName() const
@@ -874,9 +958,9 @@ void BTSpecial::print(FILE *f) const
  int i, last;
 
  fprintf(f, "%s\n", name);
- for (last = 20; last > 1; last--)
+ for (last = operation.size(); last > 1; last--)
  {
-  if (!operation[last - 1].isNothing())
+  if (!operation[last - 1]->isNothing())
   {
    break;
   }
@@ -884,7 +968,7 @@ void BTSpecial::print(FILE *f) const
  for (i = 0; i < last; i++)
  {
   fprintf(f, "%2d. ",i + 1);
-  operation[i].print(f);
+  operation[i]->print(f);
  }
 }
 
@@ -893,11 +977,11 @@ void BTSpecial::run(BTDisplay &d) const
  try
  {
   int i = 0;
-  while (i < 20)
+  while (i < operation.size())
   {
    try
    {
-    operation[i].run(d);
+    operation[i]->run(d);
     ++i;
    }
    catch (const BTSpecialGoto &g)
@@ -911,55 +995,69 @@ void BTSpecial::run(BTDisplay &d) const
  }
 }
 
+void BTSpecial::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("operation", &operation, &BTSpecialConditional::create);
+}
+
 BTMap::BTMap(BinaryReadFile &f)
+ : filename(0)
 {
  IUByte unknown;
+ char tmp[26];
 
- f.readUByteArray(25, (IUByte *)name);
+ f.readUByteArray(25, (IUByte *)tmp);
+ tmp[25] = 0;
+ name = new char[strlen(tmp) + 1];
+ strcpy(name, tmp);
  f.readUByte(unknown);
  f.readShort(type);
  f.readShort(level);
  f.readShort(monsterLevel);
  f.readShort(monsterChance);
- f.readUByteArray(9, (IUByte *)filename);
+ // Ignore filename
+ f.readUByteArray(9, (IUByte *)tmp);
  f.readUByte(unknown);
+ xSize = 22;
+ ySize = 22;
  for (int y = 0; y < 22; y++)
  {
   for (int x = 0; x < 22; x++)
   {
-   square[y][x].read(f);
+   BTMapSquare *sq = new BTMapSquare;
+   square.push_back(sq);
+   sq->read(f);
   }
  }
  int i;
  try {
   for (i = 0; i < 30; i++)
   {
-   specials[i] = new BTSpecial(f);
+   specials.push_back(new BTSpecial(f));
   }
  }
  catch (FileException e)
  {
-  for (; i < 30; i++)
-  {
-   specials[i] = NULL;
-  }
  }
+}
+
+BTMap::BTMap()
+ : name(NULL), filename(NULL)
+{
 }
 
 BTMap::~BTMap()
 {
- for (int i = 0; i < 30; i++)
- {
-  if (specials[i])
-  {
-   delete specials[i];
-  }
- }
+ if (name)
+  delete [] name;
+ if (filename)
+  delete [] filename;
 }
 
 void BTMap::setSpecial(IShort x, IShort y, IShort special)
 {
- square[y][x].setSpecial(special);
+ square[y * xSize + x]->setSpecial(special);
 }
 
 const char *BTMap::getFilename() const
@@ -997,12 +1095,12 @@ const char *BTMap::getName() const
 
 const BTSpecial *BTMap::getSpecial(IShort num) const
 {
- return specials[num];
+ return ((specials.size() > num) ? specials[num] : NULL);
 }
 
 const BTMapSquare &BTMap::getSquare(IShort y, IShort x) const
 {
- return square[y][x];
+ return *square[y * xSize + x];
 }
 
 IShort BTMap::getType() const
@@ -1012,11 +1110,30 @@ IShort BTMap::getType() const
 
 IShort BTMap::getXSize() const
 {
- return 22;
+ return xSize;
 }
 
 IShort BTMap::getYSize() const
 {
- return 22;
+ return ySize;
+}
+
+void BTMap::setFilename(const char *f)
+{
+ filename = new char[strlen(f) + 1];
+ strcpy(filename, f);
+}
+
+void BTMap::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("type", &type);
+ s->add("level", &level);
+ s->add("xSize", &xSize);
+ s->add("ySize", &ySize);
+ s->add("monsterChance", &monsterChance);
+ s->add("monsterLevel", &monsterLevel);
+ s->add("square", &square, &BTMapSquare::create);
+ s->add("special", &specials, &BTSpecial::create);
 }
 

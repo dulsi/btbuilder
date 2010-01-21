@@ -3,10 +3,15 @@
   <width>112</width>
   <height>88</height>
   <background>dungeon_horizon.png</background>
-  <divide>1</divide>
+  <divide>8</divide>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
    <wall direction="0">dungeon_front1.png</wall>
    <wall direction="1">dungeon_front2.png</wall>
    <wall direction="2">dungeon_front3.png</wall>
@@ -33,8 +38,71 @@
    <wall direction="23">dungeon_right5_3.png</wall>
   </walltype>
   <walltype>
+   <type>1</type>
+   <modulus>3</modulus>
+   <wall direction="0">dungeonw1_front1.png</wall>
+   <wall direction="1">dungeonw1_front2.png</wall>
+   <wall direction="2">dungeonw1_front3.png</wall>
+   <wall direction="3">dungeonw1_front4.png</wall>
+   <wall direction="4">dungeonw1_left1.png</wall>
+   <wall direction="5">dungeonw1_right1.png</wall>
+   <wall direction="6">dungeonw1_left2.png</wall>
+   <wall direction="7">dungeonw1_right2.png</wall>
+   <wall direction="8">dungeonw1_left3_2.png</wall>
+   <wall direction="9">dungeonw1_left3_1.png</wall>
+   <wall direction="10">dungeonw1_right3_1.png</wall>
+   <wall direction="11">dungeonw1_right3_2.png</wall>
+   <wall direction="12">dungeonw1_left4_3.png</wall>
+   <wall direction="13">dungeonw1_left4_2.png</wall>
+   <wall direction="14">dungeonw1_left4_1.png</wall>
+   <wall direction="15">dungeonw1_right4_1.png</wall>
+   <wall direction="16">dungeonw1_right4_2.png</wall>
+   <wall direction="17">dungeonw1_right4_3.png</wall>
+   <wall direction="18">dungeonw1_left5_3.png</wall>
+   <wall direction="19">dungeonw1_left5_2.png</wall>
+   <wall direction="20">dungeonw1_left5_1.png</wall>
+   <wall direction="21">dungeonw1_right5_1.png</wall>
+   <wall direction="22">dungeonw1_right5_2.png</wall>
+   <wall direction="23">dungeonw1_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>7</modulus>
+   <wall direction="0">dungeonw2_front1.png</wall>
+   <wall direction="1">dungeonw2_front2.png</wall>
+   <wall direction="2">dungeonw2_front3.png</wall>
+   <wall direction="3">dungeonw2_front4.png</wall>
+   <wall direction="4">dungeonw2_left1.png</wall>
+   <wall direction="5">dungeonw2_right1.png</wall>
+   <wall direction="6">dungeonw2_left2.png</wall>
+   <wall direction="7">dungeonw2_right2.png</wall>
+   <wall direction="8">dungeonw2_left3_2.png</wall>
+   <wall direction="9">dungeonw2_left3_1.png</wall>
+   <wall direction="10">dungeonw2_right3_1.png</wall>
+   <wall direction="11">dungeonw2_right3_2.png</wall>
+   <wall direction="12">dungeonw2_left4_3.png</wall>
+   <wall direction="13">dungeonw2_left4_2.png</wall>
+   <wall direction="14">dungeonw2_left4_1.png</wall>
+   <wall direction="15">dungeonw2_right4_1.png</wall>
+   <wall direction="16">dungeonw2_right4_2.png</wall>
+   <wall direction="17">dungeonw2_right4_3.png</wall>
+   <wall direction="18">dungeonw2_left5_3.png</wall>
+   <wall direction="19">dungeonw2_left5_2.png</wall>
+   <wall direction="20">dungeonw2_left5_1.png</wall>
+   <wall direction="21">dungeonw2_right5_1.png</wall>
+   <wall direction="22">dungeonw2_right5_2.png</wall>
+   <wall direction="23">dungeonw2_right5_3.png</wall>
+  </walltype>
+  <walltype>
    <type>2</type>
    <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>3</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
+   <modulus>7</modulus>
    <wall direction="0">dungeon_door1.png</wall>
    <wall direction="1">dungeon_door2.png</wall>
    <wall direction="2">dungeon_door3.png</wall>
@@ -65,10 +133,15 @@
   <width>112</width>
   <height>88</height>
   <background>dungeon_horizon.png</background>
-  <divide>1</divide>
+  <divide>8</divide>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
    <wall direction="0">dungeon_front1.png</wall>
    <wall direction="1">dungeon_front2.png</wall>
    <wall direction="2">dungeon_front3.png</wall>
@@ -95,8 +168,71 @@
    <wall direction="23">dungeon_right5_3.png</wall>
   </walltype>
   <walltype>
+   <type>1</type>
+   <modulus>3</modulus>
+   <wall direction="0">dungeonw1_front1.png</wall>
+   <wall direction="1">dungeonw1_front2.png</wall>
+   <wall direction="2">dungeonw1_front3.png</wall>
+   <wall direction="3">dungeonw1_front4.png</wall>
+   <wall direction="4">dungeonw1_left1.png</wall>
+   <wall direction="5">dungeonw1_right1.png</wall>
+   <wall direction="6">dungeonw1_left2.png</wall>
+   <wall direction="7">dungeonw1_right2.png</wall>
+   <wall direction="8">dungeonw1_left3_2.png</wall>
+   <wall direction="9">dungeonw1_left3_1.png</wall>
+   <wall direction="10">dungeonw1_right3_1.png</wall>
+   <wall direction="11">dungeonw1_right3_2.png</wall>
+   <wall direction="12">dungeonw1_left4_3.png</wall>
+   <wall direction="13">dungeonw1_left4_2.png</wall>
+   <wall direction="14">dungeonw1_left4_1.png</wall>
+   <wall direction="15">dungeonw1_right4_1.png</wall>
+   <wall direction="16">dungeonw1_right4_2.png</wall>
+   <wall direction="17">dungeonw1_right4_3.png</wall>
+   <wall direction="18">dungeonw1_left5_3.png</wall>
+   <wall direction="19">dungeonw1_left5_2.png</wall>
+   <wall direction="20">dungeonw1_left5_1.png</wall>
+   <wall direction="21">dungeonw1_right5_1.png</wall>
+   <wall direction="22">dungeonw1_right5_2.png</wall>
+   <wall direction="23">dungeonw1_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>7</modulus>
+   <wall direction="0">dungeonw2_front1.png</wall>
+   <wall direction="1">dungeonw2_front2.png</wall>
+   <wall direction="2">dungeonw2_front3.png</wall>
+   <wall direction="3">dungeonw2_front4.png</wall>
+   <wall direction="4">dungeonw2_left1.png</wall>
+   <wall direction="5">dungeonw2_right1.png</wall>
+   <wall direction="6">dungeonw2_left2.png</wall>
+   <wall direction="7">dungeonw2_right2.png</wall>
+   <wall direction="8">dungeonw2_left3_2.png</wall>
+   <wall direction="9">dungeonw2_left3_1.png</wall>
+   <wall direction="10">dungeonw2_right3_1.png</wall>
+   <wall direction="11">dungeonw2_right3_2.png</wall>
+   <wall direction="12">dungeonw2_left4_3.png</wall>
+   <wall direction="13">dungeonw2_left4_2.png</wall>
+   <wall direction="14">dungeonw2_left4_1.png</wall>
+   <wall direction="15">dungeonw2_right4_1.png</wall>
+   <wall direction="16">dungeonw2_right4_2.png</wall>
+   <wall direction="17">dungeonw2_right4_3.png</wall>
+   <wall direction="18">dungeonw2_left5_3.png</wall>
+   <wall direction="19">dungeonw2_left5_2.png</wall>
+   <wall direction="20">dungeonw2_left5_1.png</wall>
+   <wall direction="21">dungeonw2_right5_1.png</wall>
+   <wall direction="22">dungeonw2_right5_2.png</wall>
+   <wall direction="23">dungeonw2_right5_3.png</wall>
+  </walltype>
+  <walltype>
    <type>2</type>
    <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>3</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
+   <modulus>7</modulus>
    <wall direction="0">dungeon_door1.png</wall>
    <wall direction="1">dungeon_door2.png</wall>
    <wall direction="2">dungeon_door3.png</wall>
@@ -127,10 +263,15 @@
   <width>112</width>
   <height>88</height>
   <background>dungeon_horizon.png</background>
-  <divide>1</divide>
+  <divide>8</divide>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
    <wall direction="0">dungeon_front1.png</wall>
    <wall direction="1">dungeon_front2.png</wall>
    <wall direction="2">dungeon_front3.png</wall>
@@ -157,8 +298,71 @@
    <wall direction="23">dungeon_right5_3.png</wall>
   </walltype>
   <walltype>
+   <type>1</type>
+   <modulus>3</modulus>
+   <wall direction="0">dungeonw1_front1.png</wall>
+   <wall direction="1">dungeonw1_front2.png</wall>
+   <wall direction="2">dungeonw1_front3.png</wall>
+   <wall direction="3">dungeonw1_front4.png</wall>
+   <wall direction="4">dungeonw1_left1.png</wall>
+   <wall direction="5">dungeonw1_right1.png</wall>
+   <wall direction="6">dungeonw1_left2.png</wall>
+   <wall direction="7">dungeonw1_right2.png</wall>
+   <wall direction="8">dungeonw1_left3_2.png</wall>
+   <wall direction="9">dungeonw1_left3_1.png</wall>
+   <wall direction="10">dungeonw1_right3_1.png</wall>
+   <wall direction="11">dungeonw1_right3_2.png</wall>
+   <wall direction="12">dungeonw1_left4_3.png</wall>
+   <wall direction="13">dungeonw1_left4_2.png</wall>
+   <wall direction="14">dungeonw1_left4_1.png</wall>
+   <wall direction="15">dungeonw1_right4_1.png</wall>
+   <wall direction="16">dungeonw1_right4_2.png</wall>
+   <wall direction="17">dungeonw1_right4_3.png</wall>
+   <wall direction="18">dungeonw1_left5_3.png</wall>
+   <wall direction="19">dungeonw1_left5_2.png</wall>
+   <wall direction="20">dungeonw1_left5_1.png</wall>
+   <wall direction="21">dungeonw1_right5_1.png</wall>
+   <wall direction="22">dungeonw1_right5_2.png</wall>
+   <wall direction="23">dungeonw1_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>7</modulus>
+   <wall direction="0">dungeonw2_front1.png</wall>
+   <wall direction="1">dungeonw2_front2.png</wall>
+   <wall direction="2">dungeonw2_front3.png</wall>
+   <wall direction="3">dungeonw2_front4.png</wall>
+   <wall direction="4">dungeonw2_left1.png</wall>
+   <wall direction="5">dungeonw2_right1.png</wall>
+   <wall direction="6">dungeonw2_left2.png</wall>
+   <wall direction="7">dungeonw2_right2.png</wall>
+   <wall direction="8">dungeonw2_left3_2.png</wall>
+   <wall direction="9">dungeonw2_left3_1.png</wall>
+   <wall direction="10">dungeonw2_right3_1.png</wall>
+   <wall direction="11">dungeonw2_right3_2.png</wall>
+   <wall direction="12">dungeonw2_left4_3.png</wall>
+   <wall direction="13">dungeonw2_left4_2.png</wall>
+   <wall direction="14">dungeonw2_left4_1.png</wall>
+   <wall direction="15">dungeonw2_right4_1.png</wall>
+   <wall direction="16">dungeonw2_right4_2.png</wall>
+   <wall direction="17">dungeonw2_right4_3.png</wall>
+   <wall direction="18">dungeonw2_left5_3.png</wall>
+   <wall direction="19">dungeonw2_left5_2.png</wall>
+   <wall direction="20">dungeonw2_left5_1.png</wall>
+   <wall direction="21">dungeonw2_right5_1.png</wall>
+   <wall direction="22">dungeonw2_right5_2.png</wall>
+   <wall direction="23">dungeonw2_right5_3.png</wall>
+  </walltype>
+  <walltype>
    <type>2</type>
    <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>3</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
+   <modulus>7</modulus>
    <wall direction="0">dungeon_door1.png</wall>
    <wall direction="1">dungeon_door2.png</wall>
    <wall direction="2">dungeon_door3.png</wall>

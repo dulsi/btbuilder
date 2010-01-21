@@ -49,7 +49,10 @@ class XMLVector : public XMLArray, public std::vector<T>
    {
     for (int i = 0; i < size(); ++i)
     {
-     delete std::vector<T>::operator[](i);
+     if (std::vector<T>::operator[](i))
+     {
+      delete std::vector<T>::operator[](i);
+     }
     }
    }
   }
