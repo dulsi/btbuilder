@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "xmlserializer.h"
+#include "icon.h"
 #include "serialrect.h"
 #include "statusinfo.h"
 #include "btconst.h"
@@ -29,6 +30,7 @@ class BTDisplayConfig : public XMLObject
   char *background;
   char *font;
   XMLVector<BTStatusInfo*> statusInfo;
+  XMLVector<BTIcon*> icon;
 };
 
 #endif

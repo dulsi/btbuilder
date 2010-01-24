@@ -1100,6 +1100,10 @@ const BTSpecial *BTMap::getSpecial(IShort num) const
 
 const BTMapSquare &BTMap::getSquare(IShort y, IShort x) const
 {
+ while (y < 0)
+  y += ySize;
+ while (x < 0)
+  x += xSize;
  return *square[y * xSize + x];
 }
 

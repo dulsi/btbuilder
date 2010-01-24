@@ -59,7 +59,7 @@ class BTDisplay
   void addColumns(const std::list<std::string>& c);
   void addReadString(const char *prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
-  void clear(SDL_Rect &r);
+  void clear(SDL_Rect &r, bool update = false);
   void clearElements();
   void clearText();
   void drawFullScreen(const char *file, int delay);
@@ -69,6 +69,7 @@ class BTDisplay
   void drawMessage(const char *words, int delay);
   void drawText(const char *words, alignment a = left);
   void drawView();
+  void drawIcons();
   void drawStats();
   SDL_Color &getBlack();
   BTDisplayConfig *getConfig();
@@ -84,6 +85,7 @@ class BTDisplay
 
   void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a);
   bool sizeFont(const char *text, int &w, int &h);
+  void drawImage(SDL_Rect &dst, SDL_Surface *img);
   void drawRect(SDL_Rect &dst, SDL_Color c);
 
  private:

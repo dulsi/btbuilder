@@ -754,6 +754,7 @@ void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
  }
  bool died = party.checkDead(d);
  d.drawStats();
+ d.drawIcons();
  if (died)
   throw BTSpecialDead();
 }

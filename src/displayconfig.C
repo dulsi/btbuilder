@@ -42,4 +42,6 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("statBlock", &statusInfo, &BTStatBlock::create);
  s->add("conditional", &statusInfo, &BTConditional::create);
  s->add("print", &statusInfo, &BTPrint::create);
+ s->add("icon", &icon, &BTIcon::create);
 }
+

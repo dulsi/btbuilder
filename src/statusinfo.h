@@ -31,7 +31,7 @@ class BTStatBlock : public BTStatusInfo
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTStatBlock; }
 
- public:
+ private:
   char *attribute;
   SerialRect position;
   int modifier;
@@ -52,7 +52,7 @@ class BTPrint : public BTStatusInfo
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPrint; }
 
- public:
+ private:
   char *text;
   SerialRect position;
   /*BTDisplay::alignment*/int align;

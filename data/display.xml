@@ -128,4 +128,9 @@
 		<position><x>278</x><y>0</y><w>24</w><h>8</h></position>
 		<align>right</align>
 	</statBlock>
+	<icon>
+		<image>image/light.png</image>
+		<position><x>174</x><y>120</y><w>20</w><h>12</h></position>
+		<effect>22</effect>
+	</icon>
 </display>

@@ -177,9 +177,10 @@ void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select
  element.push_back(new BTUISelect(list, size, start, select, num));
 }
 
-void BTDisplay::clear(SDL_Rect &r)
+void BTDisplay::clear(SDL_Rect &r, bool update /*= false*/)
 {
  SDL_BlitSurface(mainBackground, &r, mainScreen, &r);
+ SDL_UpdateRect(mainScreen, r.x, r.y, r.w, r.h);
 }
 
 void BTDisplay::clearElements()
@@ -397,6 +398,18 @@ void BTDisplay::drawView()
  dst.h = p3d.config->height * yMult;
  SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+}
+
+void BTDisplay::drawIcons()
+{
+ for (int i = 0; i < config->icon.size(); ++i)
+ {
+  // Should cache this to not constantly redraw.
+  if (config->icon[i]->isActive())
+   config->icon[i]->draw(*this);
+  else
+   config->icon[i]->clear(*this);
+ }
 }
 
 void BTDisplay::drawStats()
@@ -786,6 +799,17 @@ void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment
  }
  SDL_BlitSurface(img, &src, mainScreen, &final);
  SDL_FreeSurface(img);
+}
+
+void BTDisplay::drawImage(SDL_Rect &dst, SDL_Surface *img)
+{
+ SDL_Rect src;
+ src.x = 0;
+ src.y = 0;
+ src.w = dst.w;
+ src.h = dst.h;
+ SDL_BlitSurface(img, &src, mainScreen, &dst);
+ SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 
 void BTDisplay::drawRect(SDL_Rect &dst, SDL_Color c)

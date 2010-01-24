@@ -612,6 +612,7 @@ void BTCombat::runCombat(BTDisplay &d)
  if (endRound(d))
   won = true;
  d.drawStats(); // In case check dead move people around
+ d.drawIcons();
 }
 
 void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTCombatant &mon)
