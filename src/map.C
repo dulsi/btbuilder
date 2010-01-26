@@ -1102,8 +1102,10 @@ const BTMapSquare &BTMap::getSquare(IShort y, IShort x) const
 {
  while (y < 0)
   y += ySize;
+ y = y % ySize;
  while (x < 0)
   x += xSize;
+ x = x % xSize;
  return *square[y * xSize + x];
 }
 

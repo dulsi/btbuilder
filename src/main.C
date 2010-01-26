@@ -1,4 +1,5 @@
 #include "btconst.h"
+#include "mainscreen.h"
 #include "file.h"
 #include "monster.h"
 #include "spell.h"
@@ -131,7 +132,6 @@ int main(int argc, char *argv[])
   {0, 0, 0, 0}
  };
 
- PHYSFS_init(argv[0]);
  bool utf8 = true;
  int mode = MODE_STANDARD;
  char *mapFile = NULL;
@@ -164,7 +164,14 @@ int main(int argc, char *argv[])
  }
 
  if (optind >= argc)
+ {
+  if (mode != MODE_STANDARD)
+   return 0;
+  BTMainScreen mainScreen(argv[0]);
+  mainScreen.run();
   return 0;
+ }
+ PHYSFS_init(argv[0]);
  std::string moduleFile("module/");
  moduleFile += argv[optind];
  moduleFile += ".xml";

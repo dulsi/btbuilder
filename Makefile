@@ -4,7 +4,7 @@ SDL_LDFLAGS := $(shell sdl-config --libs)
 CXX = g++
 CC = gcc
 CXXFLAGS = -g -DSDLLIB $(SDL_CFLAGS) -Isrc/
-LIBS = $(SDL_LDFLAGS) -lSDL_image -lexpat -lSDL_ttf -lphysfs
+LIBS = $(SDL_LDFLAGS) -lSDL_image -lexpat -lSDL_ttf -lphysfs -lboost_filesystem
 
 BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/map.o src/main.o src/btconst.o src/game.o src/psuedo3d.o \
@@ -14,7 +14,7 @@ BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/serialrect.o src/displayconfig.o src/skill.o src/statusbar.o \
 	src/statusinfo.o src/valuelookup.o src/screenset.o src/combat.o \
 	src/xpchart.o src/spelleffect.o src/combatant.o src/group.o \
-	src/icon.o
+	src/icon.o src/mainscreen.o
 BTBUILDER_EXE = btbuilder
 
 all: $(BTBUILDER_EXE)

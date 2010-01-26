@@ -13,7 +13,7 @@
 
 const char *BTDisplay::allKeys = "allKeys";
 
-BTDisplay::BTDisplay(BTDisplayConfig *c)
+BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
  : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), ttffont(0), sfont(&simple8x8)
 {
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
@@ -64,7 +64,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c)
  black.r = 0;
  black.g = 0;
  black.b = 0;
- setBackground(config->background);
+ setBackground(config->background, physfs);
 
  SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
  SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
@@ -699,9 +699,18 @@ void BTDisplay::refresh()
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
 }
 
-void BTDisplay::setBackground(const char *file)
+void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
 {
- SDL_RWops *f = PHYSFSRWOPS_openRead(file);
+ if (mainBackground)
+ {
+  SDL_FreeSurface(mainBackground);
+  mainBackground = NULL;
+ }
+ SDL_RWops *f = NULL;
+ if (physfs)
+  f = PHYSFSRWOPS_openRead(file);
+ else
+  f = SDL_RWFromFile(file, "rb");
  SDL_Surface *img = IMG_Load_RW(f, 1);
  if ((xMult > 1) || (yMult > 1))
  {
@@ -712,6 +721,41 @@ void BTDisplay::setBackground(const char *file)
   mainBackground = img;
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+}
+
+void BTDisplay::setConfig(BTDisplayConfig *c)
+{
+ int newXMult = (xFull - 10) / c->width; // Allow for window decoration
+ int newYMult = (yFull - 10) / c->height; // Allow for window decoration
+ if (newXMult > newYMult)
+  newXMult = newYMult;
+ else
+  newYMult = newXMult;
+ p3d.setMultiplier(newXMult, newYMult);
+ label.x = c->label.x * newXMult;
+ label.y = c->label.y * newYMult;
+ label.w = c->label.w * newXMult;
+ label.h = c->label.h * newYMult;
+ text.x = c->text.x * newXMult;
+ text.y = c->text.y * newYMult;
+ text.w = c->text.w * newXMult;
+ text.h = c->text.h * newYMult;
+ if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
+ {
+  mainScreen = SDL_SetVideoMode(c->width * newXMult, c->height * newYMult, 32,
+    SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
+  if (mainScreen == NULL)
+  {
+   printf("Failed - SDL_SetVideoMode\n");
+   exit(0);
+  }
+ }
+ config = c;
+ xMult = newXMult;
+ yMult = newYMult;
+/* if (config->font)
+  ttffont = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));*/
+ setBackground(c->background);
 }
 
 void BTDisplay::setPsuedo3DConfig(const char *file)

@@ -40,7 +40,7 @@ class BTUIElement
 class BTDisplay
 {
  public:
-  BTDisplay(BTDisplayConfig *c);
+  BTDisplay(BTDisplayConfig *c, bool physfs = true);
   ~BTDisplay();
 
   enum alignment { left, center, right };
@@ -79,7 +79,8 @@ class BTDisplay
   unsigned int readChar(int delay = 0);
   std::string readString(const char *prompt, int max);
   void refresh();
-  void setBackground(const char *file);
+  void setBackground(const char *file, bool physfs = true);
+  void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(const char *file);
   void setWallGraphics(int type);
 
