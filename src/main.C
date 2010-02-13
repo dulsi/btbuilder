@@ -72,47 +72,6 @@ IUByte sideWallsUTF8[4][4] =
  {/*11*/0xE2, 0x95, 0x91, 0x00}
 };
 
-void testDisplay()
-{
- BTDisplayConfig config;
- BTModule module;
- XMLSerializer parser;
- config.serialize(&parser);
- parser.parse("data/display.xml", true);
- BTDisplay display(&config);
- BTGame::getGame()->run(display);
-}
-
-int Alternative_setSaneConfig(std::string appName)
-{
- const char *basedir = PHYSFS_getBaseDir();
- std::string userdir = PHYSFS_getUserDir();
- std::string writedir = userdir + appName;
-
- if (!PHYSFS_setWriteDir(writedir.c_str()))
- {
-  int no_write = 0;
-  if ( (PHYSFS_setWriteDir(userdir.c_str())) && (PHYSFS_mkdir(appName.c_str())) )
-  {
-   if (!PHYSFS_setWriteDir(writedir.c_str()))
-    no_write = 1;
-  } /* if */
-  else
-  {
-   no_write = 1;
-  } /* else */
-
-  if (no_write)
-  {
-   PHYSFS_setWriteDir(NULL);   /* just in case. */
-   return 0;
-  } /* if */
- } /* if */
- PHYSFS_addToSearchPath(writedir.c_str(), 0);
- PHYSFS_addToSearchPath(basedir, 1);
- return 1;
-}
-
 #define MODE_STANDARD 1
 #define MODE_ITEM     2
 #define MODE_MONSTER  3
@@ -171,6 +130,15 @@ int main(int argc, char *argv[])
   mainScreen.run();
   return 0;
  }
+ else if (mode == MODE_STANDARD)
+ {
+  BTMainScreen mainScreen(argv[0]);
+  std::string moduleFile("module/");
+  moduleFile += argv[optind];
+  moduleFile += ".xml";
+  mainScreen.runModule(moduleFile);
+  return 0;
+ }
  PHYSFS_init(argv[0]);
  std::string moduleFile("module/");
  moduleFile += argv[optind];
@@ -185,8 +153,8 @@ int main(int argc, char *argv[])
  if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
  {
   // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
-  if (0 == Alternative_setSaneConfig("btbsave"))
-   return 0;
+  const char *basedir = PHYSFS_getBaseDir();
+  PHYSFS_addToSearchPath(basedir, 1);
  }
  std::string contentPath("module");
  contentPath += PHYSFS_getDirSeparator();
@@ -452,10 +420,6 @@ int main(int argc, char *argv[])
     printf("\n");
    }
   }
- }
- else if (mode == MODE_STANDARD)
- {
-  testDisplay();
  }
 /* catch (FileException e)
  {

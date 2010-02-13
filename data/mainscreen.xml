@@ -2,6 +2,6 @@
 	<width>320</width>
 	<height>200</height>
 	<background>image/mainscreen.png</background>
-	<label><x>16</x><y>103</y><w>112</w><h>13</h></label>
-	<text><x>168</x><y>8</y><w>136</w><h>96</h></text>
+	<label><x>0</x><y>0</y><w>1</w><h>1</h></label>
+	<text><x>48</x><y>36</y><w>215</w><h>133</h></text>
 </display>

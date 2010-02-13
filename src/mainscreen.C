@@ -20,7 +20,7 @@
 namespace fs = boost::filesystem;
 
 BTMainScreen::BTMainScreen(const char *a0)
- : argv0(a0), display(0)
+ : argv0(a0), mainConfig(0), display(0)
 {
 }
 

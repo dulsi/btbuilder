@@ -14,7 +14,7 @@
 const char *BTDisplay::allKeys = "allKeys";
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), ttffont(0), sfont(&simple8x8)
+ : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), mainBackground(0), ttffont(0), sfont(&simple8x8)
 {
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
  {

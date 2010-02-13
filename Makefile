@@ -4,7 +4,8 @@ SDL_LDFLAGS := $(shell sdl-config --libs)
 CXX = g++
 CC = gcc
 CXXFLAGS = -g -DSDLLIB $(SDL_CFLAGS) -Isrc/
-LIBS = $(SDL_LDFLAGS) -lSDL_image -lexpat -lSDL_ttf -lphysfs -lboost_filesystem
+LIBS = $(SDL_LDFLAGS) -lSDL_image -lexpat -lSDL_ttf -lphysfs \
+	-lboost_filesystem-mt
 
 BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/map.o src/main.o src/btconst.o src/game.o src/psuedo3d.o \
