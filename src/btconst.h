@@ -9,7 +9,7 @@
 
 class ArrayLookup;
 
-#define BT_SPELLTYPES 31
+#define BT_SPELLTYPES 32
 #define BTSPELLTYPE_HEAL           0
 #define BTSPELLTYPE_RESURRECT      1
 #define BTSPELLTYPE_CUREPOISON     2
@@ -35,6 +35,7 @@ class ArrayLookup;
 #define BTSPELLTYPE_PHASEDOOR      27
 #define BTSPELLTYPE_REGENBARD      29
 #define BTSPELLTYPE_DAMAGEBYLEVEL  30
+#define BTSPELLTYPE_COMPASS        31
 extern char *spellTypes[];
 
 #define BT_EFFECTIVERANGES 2

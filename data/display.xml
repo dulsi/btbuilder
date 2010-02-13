@@ -138,4 +138,9 @@
 		<position><x>253</x><y>121</y><w>20</w><h>13</h></position>
 		<effect>25</effect>
 	</icon>
+	<facingIcon>
+		<image>image/compass.png</image>
+		<position><x>225</x><y>120</y><w>20</w><h>12</h></position>
+		<effect>31</effect>
+	</facingIcon>
 </display>

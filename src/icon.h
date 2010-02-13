@@ -9,6 +9,7 @@
 
 #include "xmlserializer.h"
 #include "serialrect.h"
+#include "btconst.h"
 #include <SDL.h>
 
 class BTDisplay;
@@ -20,17 +21,31 @@ class BTIcon : public XMLObject
   ~BTIcon();
 
   void clear(BTDisplay &d);
-  void draw(BTDisplay &d);
+  virtual void draw(BTDisplay &d);
   bool isActive();
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTIcon; }
 
- private:
+ protected:
   char *image;
   SerialRect position;
   int effect;
   SDL_Surface *img;
+};
+
+class BTFacingIcon : public BTIcon
+{
+ public:
+  BTFacingIcon();
+  ~BTFacingIcon();
+
+  void draw(BTDisplay &d);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTFacingIcon; }
+
+ private:
+  SDL_Surface *dirImg[BT_DIRECTIONS];
 };
 
 #endif

@@ -40,7 +40,8 @@ char *spellTypes[] =
  "Phase Door",
  "Dispel Magic",
  "Regenerate Bard Songs",
- "Damage By Level"
+ "Damage By Level",
+ "Compass"
 };
 
 char *effectiveRanges[] =

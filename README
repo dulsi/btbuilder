@@ -15,7 +15,10 @@ work in progress.  Most specials have been implemented but combat and
 spells are still not complete.  It can also print information about
 monsters, spells, items and maps.
 
-To run the sample game, run:
+Running Bt Builder will bring up the module selection screen.  A sample
+game is included.
+
+To directly run the sample game, run:
 
 btbuilder sample
 
