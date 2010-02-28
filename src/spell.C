@@ -8,10 +8,6 @@
 #include "spell.h"
 #include "game.h"
 
-#define BTSPELLFLG_DAMAGE 0
-#define BTSPELLFLG_KILLED 1
-#define BTSPELLFLG_EXCLAMATION 2
-
 BTSpell::BTSpell(BinaryReadFile &f)
 {
  IUByte unknown;
@@ -182,12 +178,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    break;
  }
  d.drawMessage(text.c_str(), game->getDelay());
- BitField resists;
- if (checkResists(combat, group, target, resists))
- {
-  displayResists(d, combat, group, target);
-  return 0;
- }
+ BTBaseEffect *effect = NULL;
  switch(type)
  {
   case BTSPELLTYPE_RESURRECT:
@@ -195,18 +186,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    {
     if (BTTARGET_INDIVIDUAL == target)
     {
-     game->addEffect(index, expire, casterLevel, distance, group, target, resists);
-     for (int i = 0; i < party.size(); ++i)
-     {
-      if (!party[i]->isAlive())
-      {
-       text = party[i]->name;
-       text += " rises from the dead!";
-       d.drawMessage(text.c_str(), game->getDelay());
-       party[i]->status.clear(BTSTATUS_DEAD);
-       party[i]->hp = 1;
-      }
-     }
+     effect = new BTResurrectEffect(type, expire, group, target);
     }
     else
     {
@@ -217,9 +197,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
       party[target]->status.clear(BTSTATUS_DEAD);
       party[target]->hp = 1;
       d.drawMessage(text.c_str(), game->getDelay());
+      d.drawStats();
      }
     }
-    d.drawStats();
    }
    break;
   case BTSPELLTYPE_SUMMONMONSTER:
@@ -239,7 +219,12 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
     party.add(d, pc);
     d.drawStats();
     if ((BTTIME_PERMANENT != expire) && (BTTIME_CONTINUOUS != expire))
-     game->addEffect(index, expire, casterLevel, distance, BTTARGET_PARTY, party.size() - 1, resists);
+    {
+     if (type == BTSPELLTYPE_SUMMONMONSTER)
+      effect = new BTSummonMonsterEffect(index, expire, BTTARGET_PARTY, party.size() - 1);
+     else
+      effect = new BTSummonIllusionEffect(index, expire, BTTARGET_PARTY, party.size() - 1);
+    }
    }
    break;
   }
@@ -254,172 +239,79 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
     int testY = (y + (Psuedo3D::changeXY[f][1] * i) + game->getMap()->getYSize()) % game->getMap()->getYSize();
     if (game->getWallType(testX, testY, f))
     {
-     game->addEffect(index, BTTIME_MAP, casterLevel, distance, BTTARGET_PARTY, ((testY * game->getMap()->getXSize()) + testX) * BT_DIRECTIONS + f, resists);
+     effect = new BTPhaseDoorEffect(type, BTTIME_MAP, testX, testY, f);
      break;
     }
    }
    break;
   }
-  default:
-   killed = apply(d, partySpell, combat, casterLevel, distance, group, target, resists);
-   game->addEffect(index, expire, casterLevel, distance, group, target, resists);
-   break;
- }
- return killed;
-}
-
-int BTSpell::apply(BTDisplay &d, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists)
-{
- BTGame *game = BTGame::getGame();
- BTParty &party = game->getParty();
- switch(type)
- {
-  case BTSPELLTYPE_HEAL:
-   if (BTTARGET_PARTY == group)
-   {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < party.size(); ++i)
-     {
-      if (party[i]->isAlive())
-      {
-       party[i]->giveHP(dice.roll());
-      }
-     }
-    }
-    else
-    {
-     if (party[target]->isAlive())
-      party[target]->giveHP(dice.roll());
-    }
-    d.drawStats();
-   }
-   break;
-  case BTSPELLTYPE_CUREPOISON:
-   cureStatus(combat, group, target, BTSTATUS_POISONED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_CUREINSANITY:
-   cureStatus(combat, group, target, BTSTATUS_INSANE);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_DISPOSSESS:
-   cureStatus(combat, group, target, BTSTATUS_POSSESSED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_STONETOFLESH:
-   cureStatus(combat, group, target, BTSTATUS_STONED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_CUREPARALYZE:
-   cureStatus(combat, group, target, BTSTATUS_PARALYZED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_DAMAGE:
-  {
-   int killed = setStatus(d, combat, distance, group, target, resists, dice, BTSTATUS_NONE, "", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   return killed;
-  }
-  case BTSPELLTYPE_KILL:
-  {
-   int killed = setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_DEAD, " is killed", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   return killed;
-  }
-  case BTSPELLTYPE_POISON:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_CAUSEINSANITY:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_INSANE, " has gone insane", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_POSSESS:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POSSESSED, " is possessed", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_FLESHTOSTONE:
-  {
-   int killed = setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_STONED, " is stoned", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   return killed;
-  }
-  case BTSPELLTYPE_PARALYZE:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_PARALYZED, " is paralyzed", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
   case BTSPELLTYPE_LIGHT:
   case BTSPELLTYPE_DOORDETECT:
+  case BTSPELLTYPE_TRAPDESTROY:
+  case BTSPELLTYPE_COMPASS:
+   effect = new BTBaseEffect(type, expire);
    break;
-  case BTSPELLTYPE_ARMORBONUS:
-   if (BTTARGET_PARTY == group)
-   {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < party.size(); ++i)
-     {
-      party[i]->ac += getExtra();
-     }
-    }
-    else
-    {
-     party[target]->ac += getExtra();
-    }
-    d.drawStats();
-   }
-   else if (BTTARGET_ALLMONSTERS == group)
-   {
-    for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
-    {
-     BTMonsterGroup *grp = combat->getMonsterGroup(i);
-     if (NULL == grp)
-      break;
-     for (int k = 0; k < grp->individual.size(); ++k)
-     {
-      grp->individual[k].ac += getExtra();
-     }
-    }
-   }
-   else if (group >= BTTARGET_MONSTER)
-   {
-    BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < grp->individual.size(); ++i)
-     {
-      grp->individual[i].ac += getExtra();
-     }
-    }
-    else
-    {
-     grp->individual[target].ac += getExtra();
-    }
-   }
+  case BTSPELLTYPE_DAMAGE:
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, dice, BTSTATUS_NONE, "");
+   break;
+  case BTSPELLTYPE_KILL:
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " is killed");
+   break;
+  case BTSPELLTYPE_POISON:
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned");
+   break;
+  case BTSPELLTYPE_CAUSEINSANITY:
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " has gone insane");
+   break;
+  case BTSPELLTYPE_POSSESS:
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POSSESSED, "is possessed");
+   break;
+  case BTSPELLTYPE_FLESHTOSTONE:
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_STONED, "is stoned");
+   break;
+  case BTSPELLTYPE_PARALYZE:
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_PARALYZED, "is paralyzed");
    break;
   case BTSPELLTYPE_DAMAGEBYLEVEL:
-  {
-   int killed = setStatus(d, combat, distance, group, target, resists, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "", true);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   return killed;
-  }
+   effect = new BTAttackEffect(type, expire, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
+   break;
+  case BTSPELLTYPE_CUREPOISON:
+   effect = new BTCureStatusEffect(type, expire, group, target, BTSTATUS_POISONED);
+   break;
+  case BTSPELLTYPE_CUREINSANITY:
+   effect = new BTCureStatusEffect(type, expire, group, target, BTSTATUS_INSANE);
+   break;
+  case BTSPELLTYPE_DISPOSSESS:
+   effect = new BTCureStatusEffect(type, expire, group, target, BTSTATUS_POSSESSED);
+   break;
+  case BTSPELLTYPE_STONETOFLESH:
+   effect = new BTCureStatusEffect(type, expire, group, target, BTSTATUS_STONED);
+   break;
+  case BTSPELLTYPE_CUREPARALYZE:
+   effect = new BTCureStatusEffect(type, expire, group, target, BTSTATUS_PARALYZED);
+   break;
+  case BTSPELLTYPE_HEAL:
+   effect = new BTHealEffect(type, expire, group, target, dice);
+   break;
+  case BTSPELLTYPE_ARMORBONUS:
+   effect = new BTArmorBonusEffect(type, expire, group, target, getExtra());
+   break;
   default:
    break;
  }
- return 0;
+ if (effect)
+ {
+  try
+  {
+   killed = effect->apply(d, combat);
+   game->addEffect(effect);
+  }
+  catch (const BTAllResistException &e)
+  {
+   delete effect;
+  }
+ }
+ return killed;
 }
 
 int BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target)
@@ -429,802 +321,6 @@ int BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *c
  text += name;
  text += ".";
  return activate(d, text.c_str(), partySpell, combat, casterLevel, distance, group, target);
-}
-
-void BTSpell::finish(BTDisplay &d, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists)
-{
- BTGame *game = BTGame::getGame();
- BTParty &party = game->getParty();
- switch(type)
- {
-  case BTSPELLTYPE_SUMMONMONSTER:
-  {
-   if (BTTARGET_PARTY == group)
-   {
-    std::string text = party[target]->name;
-    if (party.remove(target, d))
-    {
-     text += " leaves your party.";
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-   }
-   break;
-  }
-  case BTSPELLTYPE_SUMMONILLUSION:
-  {
-   if (BTTARGET_PARTY == group)
-   {
-    std::string text = "The illusionary ";
-    text += party[target]->name;
-    if (party.remove(target, d))
-    {
-     text += " disappears!";
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-   }
-   break;
-  }
-  case BTSPELLTYPE_POISON:
-   cureStatus(combat, group, target, BTSTATUS_POISONED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_CAUSEINSANITY:
-   cureStatus(combat, group, target, BTSTATUS_INSANE);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_POSSESS:
-   cureStatus(combat, group, target, BTSTATUS_POSSESSED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_FLESHTOSTONE:
-   cureStatus(combat, group, target, BTSTATUS_STONED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_PARALYZE:
-   cureStatus(combat, group, target, BTSTATUS_PARALYZED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_ARMORBONUS:
-   if (BTTARGET_PARTY == group)
-   {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < party.size(); ++i)
-     {
-      party[i]->ac -= getExtra();
-     }
-    }
-    else
-    {
-     party[target]->ac -= getExtra();
-    }
-    d.drawStats();
-   }
-   else if (BTTARGET_ALLMONSTERS == group)
-   {
-    for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
-    {
-     BTMonsterGroup *grp = combat->getMonsterGroup(i);
-     if (NULL == grp)
-      break;
-     for (int k = 0; k < grp->individual.size(); ++k)
-     {
-      grp->individual[k].ac -= getExtra();
-     }
-    }
-   }
-   else if (group >= BTTARGET_MONSTER)
-   {
-    BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < grp->individual.size(); ++i)
-     {
-      grp->individual[i].ac -= getExtra();
-     }
-    }
-    else
-    {
-     grp->individual[target].ac -= getExtra();
-    }
-   }
-   break;
-  default:
-   break;
- }
-}
-
-void BTSpell::maintain(BTDisplay &d, BTCombat *combat, int casterLevel, int distance, int group, int target, BitField &resists)
-{
- BTGame *game = BTGame::getGame();
- BTParty &party = game->getParty();
- switch(type)
- {
-  case BTSPELLTYPE_HEAL:
-   if (BTTARGET_PARTY == group)
-   {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < party.size(); ++i)
-     {
-      if (party[i]->isAlive())
-      {
-       party[i]->giveHP(dice.roll());
-      }
-     }
-    }
-    else
-    {
-     if (party[target]->isAlive())
-      party[target]->giveHP(dice.roll());
-    }
-    d.drawStats();
-   }
-   break;
-  case BTSPELLTYPE_RESURRECT:
-   if (BTTARGET_PARTY == group)
-   {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     for (int i = 0; i < party.size(); ++i)
-     {
-      if (!party[i]->isAlive())
-      {
-       std::string text = party[i]->name;
-       text += " rises from the dead!";
-       d.drawMessage(text.c_str(), game->getDelay());
-       party[i]->status.clear(BTSTATUS_DEAD);
-       party[i]->hp = 1;
-      }
-     }
-    }
-    else
-    {
-     // BTCS either cancels spells on death or doesn't implement this
-    }
-   }
-   break;
-  case BTSPELLTYPE_CUREPOISON:
-   cureStatus(combat, group, target, BTSTATUS_POISONED);
-   d.drawStats();
-   break;
-  case BTSPELLTYPE_CUREINSANITY:
-   cureStatus(combat, group, target, BTSTATUS_INSANE);
-   d.drawStats();
-   break;
-  case BTSPELLTYPE_DISPOSSESS:
-   cureStatus(combat, group, target, BTSTATUS_POSSESSED);
-   d.drawStats();
-   break;
-  case BTSPELLTYPE_STONETOFLESH:
-   cureStatus(combat, group, target, BTSTATUS_STONED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_CUREPARALYZE:
-   cureStatus(combat, group, target, BTSTATUS_PARALYZED);
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_DAMAGE:
-   setStatus(d, combat, distance, group, target, resists, dice, BTSTATUS_NONE, "");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_KILL:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_DEAD, " is killed.");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_POISON:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned.");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_CAUSEINSANITY:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_INSANE, " has gone insane.");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_POSSESS:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_POSSESSED, " is possessed.");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_FLESHTOSTONE:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_STONED, " is stoned.");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_PARALYZE:
-   setStatus(d, combat, distance, group, target, resists, BTDice(0, 2), BTSTATUS_PARALYZED, " is paralyzed.");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  case BTSPELLTYPE_DAMAGEBYLEVEL:
-   setStatus(d, combat, distance, group, target, resists, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
-   if (BTTARGET_PARTY == group)
-    d.drawStats();
-   break;
-  default:
-   break;
- }
- d.clearElements();
-}
-
-bool BTSpell::checkResists(BTCombat *combat, int group, int target, BitField &resists)
-{
- switch(type)
- {
-  case BTSPELLTYPE_DAMAGE:
-  case BTSPELLTYPE_KILL:
-  case BTSPELLTYPE_POISON:
-  case BTSPELLTYPE_CAUSEINSANITY:
-  case BTSPELLTYPE_POSSESS:
-  case BTSPELLTYPE_FLESHTOSTONE:
-  case BTSPELLTYPE_PARALYZE:
-  case BTSPELLTYPE_DAMAGEBYLEVEL:
-   break;
-  default:
-   return false;
-   break;
- }
- BTGame *game = BTGame::getGame();
- BTFactory<BTMonster> &monList = game->getMonsterList();
- if (BTTARGET_ALLMONSTERS == group)
- {
-  int total = 0;
-  bool allResists = true;
-  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
-  {
-   BTMonsterGroup *grp = combat->getMonsterGroup(i);
-   if (NULL == grp)
-    break;
-   int resistance = monList[grp->monsterType].getMagicResistance();
-   if (resistance > 0)
-   {
-    for (int k = 0; k < grp->individual.size(); ++k)
-    {
-     if (BTDice(1, 100).roll() > resistance)
-      resists.set(total + k);
-     else
-      allResists = false;
-    }
-   }
-   else
-    allResists = false;
-   total = grp->individual.size();
-  }
-  if (allResists)
-   return true;
- }
- else if (BTTARGET_PARTY == group)
- {
-  BTParty &party = game->getParty();
-  if (BTTARGET_INDIVIDUAL == target)
-  {
-   bool allResists = true;
-   for (int i = 0; i < party.size(); ++i)
-   {
-    if (BTMONSTER_NONE != party[i]->monster)
-    {
-     if (BTDice(1, 100).roll() > monList[party[i]->monster].getMagicResistance())
-      resists.set(i);
-     else
-      allResists = false;
-    }
-    else
-     allResists = false;
-   }
-   if (allResists)
-    return true;
-  }
-  else
-  {
-   if (BTMONSTER_NONE != party[target]->monster)
-   {
-    if (BTDice(1, 100).roll() > monList[party[target]->monster].getMagicResistance())
-    {
-     resists.set(0);
-     return true;
-    }
-   }
-  }
- }
- else if (group >= BTTARGET_MONSTER)
- {
-  BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
-  int resistance = monList[grp->monsterType].getMagicResistance();
-  if (resistance > 0)
-  {
-   if (BTTARGET_INDIVIDUAL == target)
-   {
-    bool allResists = true;
-    for (int i = 0; i < grp->individual.size(); ++i)
-    {
-     if (BTDice(1, 100).roll() > resistance)
-      resists.set(i);
-     else
-      allResists = false;
-    }
-    if (allResists)
-     return true;
-   }
-   else if (BTDice(1, 100).roll() > resistance)
-   {
-    resists.set(0);
-    return true;
-   }
-  }
- }
- return false;
-}
-
-void BTSpell::cureStatus(BTCombat *combat, int group, int target, int status)
-{
- if (BTTARGET_PARTY == group)
- {
-  BTGame *game = BTGame::getGame();
-  BTParty &party = game->getParty();
-  if (BTTARGET_INDIVIDUAL == target)
-  {
-   for (int i = 0; i < party.size(); ++i)
-   {
-    if (party[i]->status.isSet(status))
-    {
-     party[i]->status.clear(status);
-    }
-   }
-  }
-  else
-  {
-   if (party[target]->status.isSet(status))
-   {
-    party[target]->status.clear(status);
-   }
-  }
- }
- else if (BTTARGET_ALLMONSTERS == group)
- {
-  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
-  {
-   BTMonsterGroup *grp = combat->getMonsterGroup(i);
-   if (NULL == grp)
-    break;
-   for (int k = 0; k < grp->individual.size(); ++k)
-   {
-    if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
-    {
-     grp->individual[k].status.clear(status);
-    }
-   }
-  }
- }
- else if (group >= BTTARGET_MONSTER)
- {
-  BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
-  if (BTTARGET_INDIVIDUAL == target)
-  {
-   for (int i = 0; i < grp->individual.size(); ++i)
-   {
-    if (grp->individual[i].status.isSet(status))
-    {
-     grp->individual[i].status.clear(status);
-    }
-   }
-  }
-  else
-  {
-   if (grp->individual[target].status.isSet(status))
-   {
-    grp->individual[target].status.clear(status);
-   }
-  }
- }
-}
-
-void BTSpell::displayResists(BTDisplay &d, BTCombat *combat, int group, int target)
-{
- std::string text;
- if (BTTARGET_ALLMONSTERS == group)
- {
-  text = "All monsters";
- }
- else if (BTTARGET_PARTY == group)
- {
-  BTParty &party = BTGame::getGame()->getParty();
-  if (BTTARGET_INDIVIDUAL == target)
-   text = "The whole party";
-  else
-   text = party[target]->name;
- }
- else if (group >= BTTARGET_MONSTER)
- {
-  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
-  BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
-  text = monList[grp->monsterType].getName();
-  if ((BTTARGET_INDIVIDUAL == target) && (1 < grp->individual.size()))
-   text += "(s)";
- }
- text += " repelled the spell!";
- d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
-}
-
-int BTSpell::setStatus(BTDisplay &d, BTCombat *combat, int distance, int group, int target, BitField &resists, const BTDice &dam, int status, const char *statusText, bool first /*= false*/)
-{
- int killed = 0;
- BTGame *game = BTGame::getGame();
- BTFactory<BTMonster> &monList = game->getMonsterList();
- if (BTTARGET_PARTY == group)
- {
-  BTParty &party = game->getParty();
-  if (distance > (range * (1 + getEffectiveRange())))
-   return 0;
-  if (BTTARGET_INDIVIDUAL == target)
-  {
-   for (int i = 0; i < party.size(); ++i)
-   {
-    int damage = dam.roll();
-    if (distance > range)
-     damage = damage / 2;
-    BitField flags;
-    if ((party[i]->isAlive()) && (resists.isSet(i)))
-    {
-     if (first)
-     {
-      damage = damage / 2;
-      if (party[i]->takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (damage == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(party[i]->name, ((damage > 0) ? "saves and takes" : "repealed the spell"), damage, "", flags);
-      if ((!party[i]->isAlive()) && (party[i]->active))
-      {
-       ++killed;
-       party[i]->active = false;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-    else if ((party[i]->isAlive()) && (!party[i]->status.isSet(status)))
-    {
-     if (party[i]->savingThrow())
-     {
-      damage = damage / 2;
-      if (party[i]->takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (damage == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(party[i]->name, ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
-      if ((!party[i]->isAlive()) && (party[i]->active))
-      {
-       ++killed;
-       party[i]->active = false;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-     else
-     {
-      if (dam.getNumber())
-       flags.set(BTSPELLFLG_DAMAGE);
-      if (party[i]->takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      std::string text = message(party[i]->name, ((damage > 0) ? "takes" : ""), damage, statusText, flags);
-      d.drawMessage(text.c_str(), game->getDelay());
-      if (status != BTSTATUS_NONE)
-       party[i]->status.set(status);
-      if ((!party[i]->isAlive()) && (party[i]->active))
-      {
-       ++killed;
-       party[i]->active = false;
-      }
-     }
-    }
-   }
-  }
-  else
-  {
-   if ((party[target]->isAlive()) && (!party[target]->status.isSet(status)))
-   {
-    int damage = dam.roll();
-    if (distance > range)
-     damage = damage / 2;
-    BitField flags;
-    if (party[target]->savingThrow())
-    {
-     damage = damage / 2;
-     if (party[target]->takeHP(damage))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     if (damage == 0)
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     std::string text = message(party[target]->name, ((damage > 0) ? "saves and takes" : "saves!"), damage, "", flags);
-     if ((!party[target]->isAlive()) && (party[target]->active))
-     {
-      ++killed;
-      party[target]->active = false;
-     }
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-    else
-    {
-     if (dam.getNumber())
-      flags.set(BTSPELLFLG_DAMAGE);
-     if (party[target]->takeHP(damage))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     std::string text = message(party[target]->name, ((damage > 0) ? "takes" : ""), damage, statusText, flags);
-     d.drawMessage(text.c_str(), game->getDelay());
-     if (status != BTSTATUS_NONE)
-      party[target]->status.set(status);
-     if ((!party[target]->isAlive()) && (party[target]->active))
-     {
-      ++killed;
-      party[target]->active = false;
-     }
-    }
-   }
-  }
- }
- else if (BTTARGET_ALLMONSTERS == group)
- {
-  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
-  {
-   BTMonsterGroup *grp = combat->getMonsterGroup(i);
-   if (NULL == grp)
-    break;
-   if (abs(grp->distance - distance) > (range * (1 + getEffectiveRange())))
-    continue;
-   for (int k = 0; k < grp->individual.size(); ++k)
-   {
-    int damage = dam.roll();
-    if (abs(grp->distance - distance) > range)
-     damage = damage / 2;
-    BitField flags;
-    if ((grp->individual[k].isAlive()) && (resists.isSet(k)))
-    {
-     if (first)
-     {
-      damage = damage / 2;
-      if (grp->individual[k].takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (damage == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "repelled the spell"), damage, "", flags);
-      if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
-      {
-       ++killed;
-       grp->individual[k].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-    else if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
-    {
-     if (monList[grp->monsterType].savingThrow())
-     {
-      damage = damage / 2;
-      if (grp->individual[k].takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (damage == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
-      if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
-      {
-       ++killed;
-       grp->individual[k].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-     else
-     {
-      if (dam.getNumber())
-       flags.set(BTSPELLFLG_DAMAGE);
-      if (grp->individual[k].takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, flags);
-      if (status != BTSTATUS_NONE)
-       grp->individual[k].status.set(status);
-      if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
-      {
-       ++killed;
-       grp->individual[k].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-   }
-  }
- }
- else if (group >= BTTARGET_MONSTER)
- {
-  BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
-  if (abs(grp->distance - distance) > (range * (1 + getEffectiveRange())))
-   return 0;
-  if (BTTARGET_INDIVIDUAL == target)
-  {
-   for (int i = 0; i < grp->individual.size(); ++i)
-   {
-    int damage = dam.roll();
-    if (abs(grp->distance - distance) > range)
-     damage = damage / 2;
-    BitField flags;
-    if ((grp->individual[i].isAlive()) && (resists.isSet(i)))
-    {
-     if (first)
-     {
-      damage = damage / 2;
-      if (grp->individual[i].takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (damage == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "repelled the spell"), damage, "", flags);
-      if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
-      {
-       ++killed;
-       grp->individual[i].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-    else if ((grp->individual[i].isAlive()) && (!grp->individual[i].status.isSet(status)))
-    {
-     if (monList[grp->monsterType].savingThrow())
-     {
-      damage = damage / 2;
-      if (grp->individual[i].takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (damage == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
-      if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
-      {
-       ++killed;
-       grp->individual[i].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-     else
-     {
-      if (dam.getNumber())
-       flags.set(BTSPELLFLG_DAMAGE);
-      if (grp->individual[i].takeHP(damage))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, flags);
-      if (status != BTSTATUS_NONE)
-       grp->individual[i].status.set(status);
-      if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
-      {
-       ++killed;
-       grp->individual[i].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-   }
-  }
-  else
-  {
-   if ((grp->individual[target].isAlive()) && (!grp->individual[target].status.isSet(status)))
-   {
-    int damage = dam.roll();
-    if (abs(grp->distance - distance) > range)
-     damage = damage / 2;
-    BitField flags;
-    if (monList[grp->monsterType].savingThrow())
-    {
-     damage = damage / 2;
-     if (grp->individual[target].takeHP(damage))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     if (damage == 0)
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "saves and takes" : "saves"), damage, "", flags);
-     if ((!grp->individual[target].isAlive()) && (grp->individual[target].active))
-     {
-      ++killed;
-      grp->individual[target].active = false;
-      grp->active--;
-     }
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-    else
-    {
-     if (dam.getNumber())
-      flags.set(BTSPELLFLG_DAMAGE);
-     if (grp->individual[target].takeHP(damage))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     std::string text = message(monList[grp->monsterType].getName(), ((damage > 0) ? "takes" : ""), damage, statusText, flags);
-     if (status != BTSTATUS_NONE)
-      grp->individual[target].status.set(status);
-     if ((!grp->individual[target].isAlive()) && (grp->individual[target].active))
-     {
-      ++killed;
-      grp->individual[target].active = false;
-      grp->active--;
-     }
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-   }
-  }
- }
- return killed;
-}
-
-std::string BTSpell::message(const char *name, const char *text, int damage, const char *status, const BitField &flags)
-{
- std::string msg = name;
- if ((msg.length() > 0) && (text[0] != 0))
-  msg += " ";
- msg += text;
- if ((damage > 0 ) || (flags.isSet(BTSPELLFLG_DAMAGE)))
- {
-  if (msg.length() > 0)
-   msg += " ";
-  char tmp[20];
-  sprintf(tmp, "%d", damage);
-  msg += tmp;
-  msg += " points of damage";
-  if (flags.isSet(BTSPELLFLG_KILLED))
-   msg += ", killing him";
-  if (status[0] != 0)
-   msg += " and";
- }
- if ((msg.length() > 0) && (status[0] != 0))
-  msg += " ";
- msg += status;
- if (flags.isSet(BTSPELLFLG_EXCLAMATION))
-  msg += "!";
- else
-  msg += ".";
- return msg;
 }
 
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const

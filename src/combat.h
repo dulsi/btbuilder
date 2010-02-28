@@ -57,7 +57,7 @@ class BTCombat : public BTScreenSet
   BTCombat();
   ~BTCombat();
 
-  void addEffect(int spell, unsigned int expire, int casterLevel, int distance, int group, int target, BitField &resist);
+  void addEffect(BTBaseEffect *e);
   void addEncounter(int monsterType, int number = 0);
   void addPlayer(BTDisplay &d, int who);
   void clearEffects(BTDisplay &d);
@@ -95,7 +95,7 @@ class BTCombat : public BTScreenSet
   bool optionState;
   int round;
   std::list<BTMonsterGroup> monsters;
-  std::list<BTSpellEffect> spellEffect;
+  XMLVector<BTBaseEffect*> effect;
   char *partyLabel;
   int treasurePic;
   char *treasureLabel;

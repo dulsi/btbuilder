@@ -83,7 +83,7 @@ class BTGame : public Psuedo3DMap
   void setTimedSpecial(IShort special, unsigned int expire);
   void clearTimedSpecial();
 
-  void addEffect(int spell, unsigned int expire, int casterLevel, int distance, int group, int target, BitField &resists);
+  void addEffect(BTBaseEffect *e);
   void clearEffects(BTDisplay &d);
   void clearEffectsByType(BTDisplay &d, int type);
   void clearMapEffects();
@@ -115,7 +115,7 @@ class BTGame : public Psuedo3DMap
   BTMap *levelMap;
   int xPos, yPos, facing;
   BTParty party;
-  std::list<BTSpellEffect> spellEffect;
+  XMLVector<BTBaseEffect*> effect;
   std::string lastInput;
   int counter;
   BTCombat combat;

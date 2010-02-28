@@ -10,22 +10,139 @@
 #include "istdlib.h"
 #include <file.h>
 #include "xmlserializer.h"
+#include "dice.h"
+#include "btconst.h"
 
-class BTSpellEffect : public XMLObject
+class BTDisplay;
+class BTCombat;
+
+class BTAllResistException
 {
  public:
-  BTSpellEffect(int s, int x, int cl, int d, int g, int t, BitField &r);
+  BTAllResistException() {}
+};
 
+class BTBaseEffect : public XMLObject
+{
+ public:
+  BTBaseEffect(int t, int x);
+
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   virtual void serialize(ObjectSerializer *s);
 
-  int spell;
+  virtual bool targets(int g, int who);
+  virtual bool targetsMonsters();
+  virtual void move(int g, int who, int where);
+  virtual void remove(BTCombat *combat, int g, int who);
+
+  int type;
   int expiration;
   bool first;
-  int casterLevel;
-  int distance;
+};
+
+class BTTargetedEffect : public BTBaseEffect
+{
+ public:
+  BTTargetedEffect(int t, int x, int g, int trgt);
+
+  virtual bool targets(int g, int who);
+  virtual bool targetsMonsters();
+  virtual void move(int g, int who, int where);
+  virtual void remove(BTCombat *combat, int g, int who);
+
   int group;
   int target;
+};
+
+class BTAttackEffect : public BTTargetedEffect
+{
+ public:
+  BTAttackEffect(int t, int x, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int s, const char *text);
+
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual void move(int g, int who, int where);
+  virtual void remove(BTCombat *combat, int g, int who);
+
+  bool checkResists(BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  void displayResists(BTDisplay &d, BTCombat *combat);
+  std::string message(const char *name, const char *text, int damage, const std::string& status, const BitField &flags);
+
+  int range;
+  int effectiveRange;
+  int distance;
   BitField resists;
+  BTDice damage;
+  int status;
+  std::string statusText;
+};
+
+class BTCureStatusEffect : public BTTargetedEffect
+{
+ public:
+  BTCureStatusEffect(int t, int x, int g, int trgt, int s);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  int status;
+};
+
+class BTHealEffect : public BTTargetedEffect
+{
+ public:
+  BTHealEffect(int t, int x, int g, int trgt, const BTDice& h);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  BTDice heal;
+};
+
+class BTSummonMonsterEffect : public BTTargetedEffect
+{
+ public:
+  BTSummonMonsterEffect(int t, int x, int g, int trgt);
+
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+};
+
+class BTSummonIllusionEffect : public BTTargetedEffect
+{
+ public:
+  BTSummonIllusionEffect(int t, int x, int g, int trgt);
+
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+};
+
+class BTArmorBonusEffect : public BTTargetedEffect
+{
+ public:
+  BTArmorBonusEffect(int t, int x, int g, int trgt, int b);
+
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+
+  int bonus;
+};
+
+class BTResurrectEffect : public BTTargetedEffect
+{
+ public:
+  BTResurrectEffect(int t, int x, int g, int trgt);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+};
+
+class BTPhaseDoorEffect : public BTBaseEffect
+{
+ public:
+  BTPhaseDoorEffect(int t, int x, int mX, int mY, int f);
+
+  int mapX;
+  int mapY;
+  int facing;
 };
 
 #endif
