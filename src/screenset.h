@@ -310,12 +310,13 @@ class BTScreenSet : public ObjectSerializer
   void run(BTDisplay &d, int start = 0, bool status = true);
   void setGroup(BTGroup *g);
   void setPc(BTPc *c);
-  void setPicture(BTDisplay &d, int pic, char *l);
+  void setPicture(BTDisplay &d, int pic, const char *l);
 
   // Actions
   static int advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int addToParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
@@ -326,6 +327,7 @@ class BTScreenSet : public ObjectSerializer
   static int moveTo(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

@@ -135,6 +135,36 @@
 		<skill>
 			<name>Conjurer spell</name>
 			<value>1</value>
+			<purchase>
+				<minimumLevel>3</minimumLevel>
+				<value>2</value>
+				<cost>2000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>5</minimumLevel>
+				<value>3</value>
+				<cost>4000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>7</minimumLevel>
+				<value>4</value>
+				<cost>7000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>9</minimumLevel>
+				<value>5</value>
+				<cost>10000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>11</minimumLevel>
+				<value>6</value>
+				<cost>20000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>13</minimumLevel>
+				<value>7</value>
+				<cost>40000</cost>
+			</purchase>
 		</skill>
                 <spells>true</spells>
 		<xpChart>Caster</xpChart>
@@ -157,6 +187,36 @@
 		<skill>
 			<name>Magician spell</name>
 			<value>1</value>
+			<purchase>
+				<minimumLevel>3</minimumLevel>
+				<value>2</value>
+				<cost>2000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>5</minimumLevel>
+				<value>3</value>
+				<cost>4000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>7</minimumLevel>
+				<value>4</value>
+				<cost>7000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>9</minimumLevel>
+				<value>5</value>
+				<cost>10000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>11</minimumLevel>
+				<value>6</value>
+				<cost>20000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>13</minimumLevel>
+				<value>7</value>
+				<cost>40000</cost>
+			</purchase>
 		</skill>
                 <spells>true</spells>
 		<xpChart>Caster</xpChart>
@@ -179,6 +239,36 @@
 		<skill>
 			<name>Sorcerer spell</name>
 			<value>1</value>
+			<purchase>
+				<minimumLevel>3</minimumLevel>
+				<value>2</value>
+				<cost>2000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>5</minimumLevel>
+				<value>3</value>
+				<cost>4000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>7</minimumLevel>
+				<value>4</value>
+				<cost>7000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>9</minimumLevel>
+				<value>5</value>
+				<cost>10000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>11</minimumLevel>
+				<value>6</value>
+				<cost>20000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>13</minimumLevel>
+				<value>7</value>
+				<cost>40000</cost>
+			</purchase>
 		</skill>
                 <spells>true</spells>
 		<xpChart>Sorcerer</xpChart>
@@ -202,6 +292,36 @@
 		<skill>
 			<name>Wizard spell</name>
 			<value>1</value>
+			<purchase>
+				<minimumLevel>3</minimumLevel>
+				<value>2</value>
+				<cost>2000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>5</minimumLevel>
+				<value>3</value>
+				<cost>4000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>7</minimumLevel>
+				<value>4</value>
+				<cost>7000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>9</minimumLevel>
+				<value>5</value>
+				<cost>10000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>11</minimumLevel>
+				<value>6</value>
+				<cost>20000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>13</minimumLevel>
+				<value>7</value>
+				<cost>40000</cost>
+			</purchase>
 		</skill>
                 <spells>true</spells>
 		<xpChart>Wizard</xpChart>
@@ -225,6 +345,36 @@
 		<skill>
 			<name>Archmage spell</name>
 			<value>1</value>
+			<purchase>
+				<minimumLevel>3</minimumLevel>
+				<value>2</value>
+				<cost>2000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>5</minimumLevel>
+				<value>3</value>
+				<cost>4000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>7</minimumLevel>
+				<value>4</value>
+				<cost>7000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>9</minimumLevel>
+				<value>5</value>
+				<cost>10000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>11</minimumLevel>
+				<value>6</value>
+				<cost>20000</cost>
+			</purchase>
+			<purchase>
+				<minimumLevel>13</minimumLevel>
+				<value>7</value>
+				<cost>40000</cost>
+			</purchase>
 		</skill>
                 <spells>true</spells>
 		<xpChart>Archmage</xpChart>

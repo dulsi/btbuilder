@@ -8,12 +8,33 @@
 #include "job.h"
 #include "game.h"
 
+void BTJobSkillPurchase::serialize(ObjectSerializer* s)
+{
+ s->add("minimumLevel", &minimumLevel);
+ s->add("value", &value);
+ s->add("cost", &cost);
+}
+
+BTJobSkillPurchase *BTJobSkill::findNextPurchase(int current)
+{
+ BTJobSkillPurchase *found = NULL;
+ for (int pr = 0; pr < purchase.size(); ++pr)
+ {
+  if ((current < purchase[pr]->value) && ((found == NULL) || (purchase[pr]->value < found->value)))
+  {
+   found = purchase[pr];
+  }
+ }
+ return found;
+}
+
 void BTJobSkill::serialize(ObjectSerializer* s)
 {
  s->add("name", &skill, NULL, &BTGame::getGame()->getSkillList());
  s->add("value", &value);
  s->add("modifier", &modifier, NULL, &statLookup);
  s->add("improve", &improve);
+ s->add("purchase", &purchase, &BTJobSkillPurchase::create);
 }
 
 int BTJob::calcToHit(int level)

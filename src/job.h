@@ -10,11 +10,26 @@
 #include "xmlserializer.h"
 #include "pc.h"
 
+class BTJobSkillPurchase : public XMLObject
+{
+ public:
+  BTJobSkillPurchase() : minimumLevel(0), value(0), cost(0) {}
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTJobSkillPurchase; }
+
+  int minimumLevel;
+  int value;
+  int cost;
+};
+
 class BTJobSkill : public XMLObject
 {
  public:
   BTJobSkill() : skill(-1), value(0), modifier(-1), improve(0) {}
 
+  BTJobSkillPurchase *findNextPurchase(int current);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTJobSkill; }
@@ -23,6 +38,7 @@ class BTJobSkill : public XMLObject
   int value;
   int modifier;
   int improve;
+  XMLVector<BTJobSkillPurchase*> purchase;
 };
 
 class BTJob : public XMLObject

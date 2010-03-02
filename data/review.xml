@@ -11,7 +11,7 @@
 		<line>The Review Board recognizes <name />.</line>
 		<line>Wouldst thou like to be reviewed for:</line>
 		<choice keys="aA" action="advanceLevel">Advancement</choice>
-		<choice keys="sS">Spell Acquiring</choice>
+		<choice keys="sS" action="requestSkill" screen="5">Spell Acquiring</choice>
 		<choice keys="cC">Class Change</choice>
 		<choice keys="dD" screen="1">Done</choice>
 	</screen>
@@ -24,4 +24,13 @@
 		<barrier />
 		<choice keys="cC" screen="2" align="center">(CONTINUE)</choice>
 	</screen>
+	<screen number="5" escapeScreen="2">
+		<line><job /> spell level <num /> will cost thee <cost />.  Wilt thou pay?</line>
+		<line></line>
+		<choice keys="yY" action="buySkill" screen="2">Yes</choice>
+		<choice keys="nN" screen="2">No</choice>
+	</screen>
+	<error type="noskill" screen="2">Thou art not a spell caster!</error>
+	<error type="notminimumlevel" screen="2">Thou cannot acquire new spells yet.</error>
+	<error type="notenoughgold" screen="2">Not enough gold.</error>
 </screenset>

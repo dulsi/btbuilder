@@ -12,6 +12,7 @@
 #include "xmlserializer.h"
 
 #define BTSKILLUSE_AUTOCOMBAT 0
+#define BTSKILLUSE_MAGIC      3
 
 #define BTSKILLSPECIAL_DISARM 0
 
