@@ -88,13 +88,15 @@ int main(int argc, char *argv[])
   {"spell", 0, 0, 's'},
   {"map", 1, 0, 'p'},
   {"ascii", 0, 0, 'a'},
+  {"xml", 1, 0, 'x'},
   {0, 0, 0, 0}
  };
 
  bool utf8 = true;
  int mode = MODE_STANDARD;
  char *mapFile = NULL;
- while ((opt = getopt_long(argc,argv,"imsap:", long_options, NULL)) != EOF)
+ char *xmlFile = NULL;
+ while ((opt = getopt_long(argc,argv,"imsap:x:", long_options, NULL)) != EOF)
  {
   switch (opt)
   {
@@ -116,6 +118,12 @@ int main(int argc, char *argv[])
     break;
    case 'a':
     utf8 = false;
+    break;
+   case 'x':
+    if (optarg)
+    {
+     xmlFile = strdup(optarg);
+    }
     break;
    default:
     break;
@@ -169,139 +177,160 @@ int main(int argc, char *argv[])
  int i;
  if (mode == MODE_MONSTER)
  {
-  for (i = 0; i < monList.size(); i++)
+  if (xmlFile)
   {
-   BTMonster &mon(monList[i]);
-   printf("Name: %s\n", mon.getName());
-   printf("Illusion: %s   Base armor class: %d\n",
-     (mon.isIllusion() ? "Yes" : "No"), (mon.getAc() - 10) * -1);
-   printf("Level: %d   Thaumaturgical resistance: %d\n", mon.getLevel(),
-     mon.getMagicResistance());
-   printf("Starting distance (*10'): %d   Moves per round: %d\n",
-     mon.getStartDistance(), mon.getMove());
-   printf("Hit points: %dd%d   Combat options: ", mon.getHp().getNumber(),
-     mon.getHp().getType());
-   IShort combatAction = mon.getCombatAction(0);
-   for (int a = 1; a < 4; ++a)
-    if (combatAction != mon.getCombatAction(a))
-     combatAction = -1;
-   if (-1 == combatAction)
-    printf("Multiple\n");
-   else
-    printf("%s\n", combatActions[combatAction]);
-   printf("Rate of attacks: %d   Damage dice: %dd%d\n",
-     mon.getRateAttacks(), mon.getMeleeDamage().getNumber(),
-     mon.getMeleeDamage().getType());
-   printf("Extra damage: %s\n", extraDamage[mon.getMeleeExtra()]);
-   printf("Attack message: <monster> %s <opponent>\n", mon.getMeleeMessage());
-   printf("Extra ranged attack information -\n");
-   printf("   Type: %s", rangedTypes[mon.getRangedType()]);
-   switch (mon.getRangedType())
+   monList.save(xmlFile);
+  }
+  else
+  {
+   for (i = 0; i < monList.size(); i++)
    {
-    case BTRANGEDTYPE_MAGIC:
-     printf(": %s", splList[mon.getRangedSpell()].getCode());
-    case BTRANGEDTYPE_FOE:
-    case BTRANGEDTYPE_GROUP:
-     printf("   Message: <monster> %s <opponent>\n", mon.getRangedMessage());
-     printf("   Damage: %dd%d   Extra damage: %s   Range: %d",
-       mon.getRangedDamage().getNumber(),  mon.getRangedDamage().getType(),
-       extraDamage[mon.getRangedExtra()], mon.getRange());
-     break;
-    default:
-     break;
+    BTMonster &mon(monList[i]);
+    printf("Name: %s\n", mon.getName());
+    printf("Illusion: %s   Base armor class: %d\n",
+      (mon.isIllusion() ? "Yes" : "No"), (mon.getAc() - 10) * -1);
+    printf("Level: %d   Thaumaturgical resistance: %d\n", mon.getLevel(),
+      mon.getMagicResistance());
+    printf("Starting distance (*10'): %d   Moves per round: %d\n",
+      mon.getStartDistance(), mon.getMove());
+    printf("Hit points: %dd%d   Combat options: ", mon.getHp().getNumber(),
+      mon.getHp().getType());
+    IShort combatAction = mon.getCombatAction(0);
+    for (int a = 1; a < 4; ++a)
+     if (combatAction != mon.getCombatAction(a))
+      combatAction = -1;
+    if (-1 == combatAction)
+     printf("Multiple\n");
+    else
+     printf("%s\n", combatActions[combatAction]);
+    printf("Rate of attacks: %d   Damage dice: %dd%d\n",
+      mon.getRateAttacks(), mon.getMeleeDamage().getNumber(),
+      mon.getMeleeDamage().getType());
+    printf("Extra damage: %s\n", extraDamage[mon.getMeleeExtra()]);
+    printf("Attack message: <monster> %s <opponent>\n", mon.getMeleeMessage());
+    printf("Extra ranged attack information -\n");
+    printf("   Type: %s", rangedTypes[mon.getRangedType()]);
+    switch (mon.getRangedType())
+    {
+     case BTRANGEDTYPE_MAGIC:
+      printf(": %s", splList[mon.getRangedSpell()].getCode());
+     case BTRANGEDTYPE_FOE:
+     case BTRANGEDTYPE_GROUP:
+      printf("   Message: <monster> %s <opponent>\n", mon.getRangedMessage());
+      printf("   Damage: %dd%d   Extra damage: %s   Range: %d",
+        mon.getRangedDamage().getNumber(),  mon.getRangedDamage().getType(),
+        extraDamage[mon.getRangedExtra()], mon.getRange());
+      break;
+     default:
+      break;
+    }
+    printf("\n");
+    printf("Upper limit appearing: %d  Gold: %dd%d   Picture number: %d\n",
+      mon.getMaxAppearing(), mon.getGold().getNumber(),
+      mon.getGold().getType(), mon.getPicture());
+    printf("\n");
    }
-   printf("\n");
-   printf("Upper limit appearing: %d  Gold: %dd%d   Picture number: %d\n",
-     mon.getMaxAppearing(), mon.getGold().getNumber(),
-     mon.getGold().getType(), mon.getPicture());
-   printf("\n");
   }
  }
  else if (mode == MODE_SPELL)
  {
-  BTSpellListCompare compare;
-  BTSortedFactory<BTSpell> sortedSplList(&splList, &compare);
-  IShort caster = -1;
-  IShort level = -1;
-  for (i = 0; i < sortedSplList.size(); i++)
+  if (xmlFile)
   {
-   BTSpell &mon(sortedSplList[i]);
-   if ((caster != mon.getCaster()) || (level != mon.getLevel()))
+   splList.save(xmlFile);
+  }
+  else
+  {
+   BTSpellListCompare compare;
+   BTSortedFactory<BTSpell> sortedSplList(&splList, &compare);
+   IShort caster = -1;
+   IShort level = -1;
+   for (i = 0; i < sortedSplList.size(); i++)
    {
-    if (caster != mon.getCaster())
+    BTSpell &mon(sortedSplList[i]);
+    if ((caster != mon.getCaster()) || (level != mon.getLevel()))
     {
-     caster = mon.getCaster();
-     printf("Class:  %s\n", BTGame::getGame()->getJobList()[caster]->name);
+     if (caster != mon.getCaster())
+     {
+      caster = mon.getCaster();
+      printf("Class:  %s\n", BTGame::getGame()->getJobList()[caster]->name);
+     }
+     level = mon.getLevel();
+     printf("Level: %d\n\n", level);
     }
-    level = mon.getLevel();
-    printf("Level: %d\n\n", level);
+    printf("Name: %s\n", mon.getName());
+    printf("Code: %s\n", mon.getCode());
+    printf("Points: %d   Range: %d   Extra range: %s\n", mon.getSp(),
+      mon.getRange() * 10, effectiveRanges[mon.getEffectiveRange()]);
+    printf("Type: %s", spellTypes[mon.getType()]);
+    switch (mon.getType())
+    {
+     case BTSPELLTYPE_SUMMONILLUSION:
+     case BTSPELLTYPE_SUMMONMONSTER:
+      printf("   Name: %s", monList[mon.getExtra()].getName());
+      break;
+     case BTSPELLTYPE_ARMORBONUS:
+     case BTSPELLTYPE_HITBONUS:
+      printf("   Bonus: %d", mon.getExtra());
+      break;
+     case BTSPELLTYPE_REGENBARD:
+      printf("   Amount: %d", mon.getExtra());
+      break;
+     default:
+      break;
+    }
+    printf("\nTarget: %s\n", areaEffect[mon.getArea()]);
+    printf("Dice: %dd%d   Duration: %s\n", mon.getDice().getNumber(),
+      mon.getDice().getType(), durations[mon.getDuration()]);
+    switch (mon.getType())
+    {
+     case BTSPELLTYPE_SCRYSIGHT:
+     case BTSPELLTYPE_DOORDETECT:
+     case BTSPELLTYPE_SUMMONILLUSION:
+     case BTSPELLTYPE_SUMMONMONSTER:
+     case BTSPELLTYPE_LIGHT:
+     case BTSPELLTYPE_TRAPDESTROY:
+//     case BTSPELLTYPE_HITBONUS:
+      printf("Effect: %s\n", mon.getEffect());
+      break;
+     default:
+      printf("Effect: %s <target>\n", mon.getEffect());
+      break;
+    }
+    printf("\n");
    }
-   printf("Name: %s\n", mon.getName());
-   printf("Code: %s\n", mon.getCode());
-   printf("Points: %d   Range: %d   Extra range: %s\n", mon.getSp(),
-     mon.getRange() * 10, effectiveRanges[mon.getEffectiveRange()]);
-   printf("Type: %s", spellTypes[mon.getType()]);
-   switch (mon.getType())
-   {
-    case BTSPELLTYPE_SUMMONILLUSION:
-    case BTSPELLTYPE_SUMMONMONSTER:
-     printf("   Name: %s", monList[mon.getExtra()].getName());
-     break;
-    case BTSPELLTYPE_ARMORBONUS:
-    case BTSPELLTYPE_HITBONUS:
-     printf("   Bonus: %d", mon.getExtra());
-     break;
-    case BTSPELLTYPE_REGENBARD:
-     printf("   Amount: %d", mon.getExtra());
-     break;
-    default:
-     break;
-   }
-   printf("\nTarget: %s\n", areaEffect[mon.getArea()]);
-   printf("Dice: %dd%d   Duration: %s\n", mon.getDice().getNumber(),
-     mon.getDice().getType(), durations[mon.getDuration()]);
-   switch (mon.getType())
-   {
-    case BTSPELLTYPE_SCRYSIGHT:
-    case BTSPELLTYPE_DOORDETECT:
-    case BTSPELLTYPE_SUMMONILLUSION:
-    case BTSPELLTYPE_SUMMONMONSTER:
-    case BTSPELLTYPE_LIGHT:
-    case BTSPELLTYPE_TRAPDESTROY:
-//    case BTSPELLTYPE_HITBONUS:
-     printf("Effect: %s\n", mon.getEffect());
-     break;
-    default:
-     printf("Effect: %s <target>\n", mon.getEffect());
-     break;
-   }
-   printf("\n");
   }
  }
  else if (mode == MODE_ITEM)
  {
-  for (i = 0; i < itmList.size(); i++)
+  if (xmlFile)
   {
-   BTItem &mon(itmList[i]);
-   printf("Name: %s\n", mon.getName());
-   printf("Type: %s\n", itemTypes[mon.getType()]);
-   printf("Price: %d   User class: Multiple\n", mon.getPrice());
-   printf("Armor bonus: %d   Hit bonus: %d\n", mon.getArmorPlus(),
-     mon.getHitPlus());
-   printf("Damage dice: %dd%d\n", mon.getDamage().getNumber(),
-     mon.getDamage().getType());
-   printf("Extra special damage: %s   Special damage likelihood: %d%%\n",
-     extraDamage[mon.getXSpecial()], mon.getChanceXSpecial());
-   if (BTTIMESUSABLE_UNLIMITED == mon.getTimesUsable())
-    printf("Times useable: (unlimited)");
-   else
-    printf("Times useable: %d", mon.getTimesUsable());
-   printf("   Spell cast: %s\n",
-     ((mon.getSpellCast() == -1) ? "(none)" :
-     splList[mon.getSpellCast()].getName()));
-   printf("Cause: <member> %s <opponent>\n", mon.getCause());
-   printf("Effect: %s <damage>\n", mon.getEffect());
-   printf("\n");
+   itmList.save(xmlFile);
+  }
+  else
+  {
+   for (i = 0; i < itmList.size(); i++)
+   {
+    BTItem &mon(itmList[i]);
+    printf("Name: %s\n", mon.getName());
+    printf("Type: %s\n", itemTypes[mon.getType()]);
+    printf("Price: %d   User class: Multiple\n", mon.getPrice());
+    printf("Armor bonus: %d   Hit bonus: %d\n", mon.getArmorPlus(),
+      mon.getHitPlus());
+    printf("Damage dice: %dd%d\n", mon.getDamage().getNumber(),
+      mon.getDamage().getType());
+    printf("Extra special damage: %s   Special damage likelihood: %d%%\n",
+      extraDamage[mon.getXSpecial()], mon.getChanceXSpecial());
+    if (BTTIMESUSABLE_UNLIMITED == mon.getTimesUsable())
+     printf("Times useable: (unlimited)");
+    else
+     printf("Times useable: %d", mon.getTimesUsable());
+    printf("   Spell cast: %s\n",
+      ((mon.getSpellCast() == -1) ? "(none)" :
+      splList[mon.getSpellCast()].getName()));
+    printf("Cause: <member> %s <opponent>\n", mon.getCause());
+    printf("Effect: %s <damage>\n", mon.getEffect());
+    printf("\n");
+   }
   }
  }
  else if (mode == MODE_MAP)
@@ -311,119 +340,125 @@ int main(int argc, char *argv[])
   if (mapFile)
    game.loadMap(mapFile);
   BTMap &gameMap = *game.getMap();
-  printf("Name: %s\n", gameMap.getName());
-  printf("Type: %s   Level: %d\n", mapTypes[gameMap.getType()], gameMap.getLevel());
-  printf("Monster difficulty: %d   Chance of encounter: %d%%\n", gameMap.getMonsterLevel(), gameMap.getMonsterChance());
-  printf("File: %s\n\n", gameMap.getFilename());
-  for (y = 0; y < gameMap.getYSize(); y++)
+  if (xmlFile)
   {
-   printf(" ");
-   for (x = 0; x < gameMap.getXSize(); x++)
+   XMLSerializer parser;
+   parser.add("map", &gameMap);
+   parser.write(xmlFile, true);
+  }
+  else
+  {
+   printf("Name: %s\n", gameMap.getName());
+   printf("Type: %s   Level: %d\n", mapTypes[gameMap.getType()], gameMap.getLevel());
+   printf("Monster difficulty: %d   Chance of encounter: %d%%\n", gameMap.getMonsterLevel(), gameMap.getMonsterChance());
+   printf("File: %s\n\n", gameMap.getFilename());
+   for (y = 0; y < gameMap.getYSize(); y++)
    {
+    printf(" ");
+    for (x = 0; x < gameMap.getXSize(); x++)
+    {
+     index = 0;
+     if ((y > 0) && (gameMap.getSquare(y - 1, x).getWall(BTDIRECTION_WEST) > 0))
+     {
+      index += 1 << BTDIRECTION_NORTH;
+     }
+     if ((x > 0) && (gameMap.getSquare(y, x - 1).getWall(BTDIRECTION_NORTH) > 0))
+     {
+      index += 1 << BTDIRECTION_WEST;
+     }
+     if (gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH) > 0)
+     {
+      index += 1 << BTDIRECTION_EAST;
+     }
+     if (gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST) > 0)
+     {
+      index += 1 << BTDIRECTION_SOUTH;
+     }
+     if (utf8)
+      printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
+     else
+      printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
+    }
     index = 0;
-    if ((y > 0) && (gameMap.getSquare(y - 1, x).getWall(BTDIRECTION_WEST) > 0))
+    if ((y > 0) && (gameMap.getSquare(y - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0))
     {
      index += 1 << BTDIRECTION_NORTH;
     }
-    if ((x > 0) && (gameMap.getSquare(y, x - 1).getWall(BTDIRECTION_NORTH) > 0))
+    if (gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_NORTH) > 0)
     {
      index += 1 << BTDIRECTION_WEST;
     }
-    if (gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH) > 0)
-    {
-     index += 1 << BTDIRECTION_EAST;
-    }
-    if (gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST) > 0)
+    if (gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0)
     {
      index += 1 << BTDIRECTION_SOUTH;
     }
     if (utf8)
-     printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
+     printf("%s \n", cornerWallsUTF8[index]);
     else
-     printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_NORTH)]);
+     printf("%c \n", cornerWalls[index]);
+    printf(" ");
+    for (x = 0; x < gameMap.getXSize(); x++)
+    {
+     index = gameMap.getSquare(y, x).getSpecial();
+     if (utf8)
+      printf("%s%c", sideWallsUTF8[gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST)],
+        (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
+     else
+      printf("%c%c", sideWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST)],
+        (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
+    }
+    if (utf8)
+     printf("%s \n", sideWallsUTF8[gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST)]);
+    else
+     printf("%c \n", sideWalls[gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST)]);
+   }
+   printf(" ");
+   for (x = 0; x < gameMap.getXSize(); x++)
+   {
+    index = 0;
+    if (gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_WEST) > 0)
+    {
+     index += 1 << BTDIRECTION_NORTH;
+    }
+    if ((x > 0) && (gameMap.getSquare(gameMap.getYSize() - 1, x - 1).getWall(BTDIRECTION_SOUTH) > 0))
+    {
+     index += 1 << BTDIRECTION_WEST;
+    }
+    if (gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH) > 0)
+    {
+     index += 1 << BTDIRECTION_EAST;
+    }
+    if (utf8)
+     printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH)]);
+    else
+     printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH)]);
    }
    index = 0;
-   if ((y > 0) && (gameMap.getSquare(y - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0))
+   if (gameMap.getSquare(gameMap.getYSize() - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0)
    {
     index += 1 << BTDIRECTION_NORTH;
    }
-   if (gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_NORTH) > 0)
+   if (gameMap.getSquare(gameMap.getYSize() - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_SOUTH) > 0)
    {
     index += 1 << BTDIRECTION_WEST;
-   }
-   if (gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0)
-   {
-    index += 1 << BTDIRECTION_SOUTH;
    }
    if (utf8)
     printf("%s \n", cornerWallsUTF8[index]);
    else
     printf("%c \n", cornerWalls[index]);
-   printf(" ");
-   for (x = 0; x < gameMap.getXSize(); x++)
+   printf("\nDefined special squares:\n\n\n");
+   for (int i = 0; i < 30; i++)
    {
-    index = gameMap.getSquare(y, x).getSpecial();
-    if (utf8)
-     printf("%s%c", sideWallsUTF8[gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST)],
-       (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
-    else
-     printf("%c%c", sideWalls[gameMap.getSquare(y, x).getWall(BTDIRECTION_WEST)],
-       (index < 0 ) ? ' ' : ((index < 26) ? 'A' + index : 'a' - 26 + index));
-   }
-   if (utf8)
-    printf("%s \n", sideWallsUTF8[gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST)]);
-   else
-    printf("%c \n", sideWalls[gameMap.getSquare(y, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST)]);
-  }
-  printf(" ");
-  for (x = 0; x < gameMap.getXSize(); x++)
-  {
-   index = 0;
-   if (gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_WEST) > 0)
-   {
-    index += 1 << BTDIRECTION_NORTH;
-   }
-   if ((x > 0) && (gameMap.getSquare(gameMap.getYSize() - 1, x - 1).getWall(BTDIRECTION_SOUTH) > 0))
-   {
-    index += 1 << BTDIRECTION_WEST;
-   }
-   if (gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH) > 0)
-   {
-    index += 1 << BTDIRECTION_EAST;
-   }
-   if (utf8)
-    printf("%s%s", cornerWallsUTF8[index], upperWallsUTF8[gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH)]);
-   else
-    printf("%c%c", cornerWalls[index], upperWalls[gameMap.getSquare(gameMap.getYSize() - 1, x).getWall(BTDIRECTION_SOUTH)]);
-  }
-  index = 0;
-  if (gameMap.getSquare(gameMap.getYSize() - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_EAST) > 0)
-  {
-   index += 1 << BTDIRECTION_NORTH;
-  }
-  if (gameMap.getSquare(gameMap.getYSize() - 1, gameMap.getXSize() - 1).getWall(BTDIRECTION_SOUTH) > 0)
-  {
-   index += 1 << BTDIRECTION_WEST;
-  }
-  if (utf8)
-   printf("%s \n", cornerWallsUTF8[index]);
-  else
-   printf("%c \n", cornerWalls[index]);
-  printf("\nDefined special squares:\n\n\n");
-  for (int i = 0; i < 30; i++)
-  {
-   const BTSpecial *sp = gameMap.getSpecial(i);
-   if (NULL != sp)
-   {
-    printf("%c. ", (i < 26) ? 'A' + i : 'a' - 26 + i);
-    sp->print(stdout);
-    printf("\n");
+    const BTSpecial *sp = gameMap.getSpecial(i);
+    if (NULL != sp)
+    {
+     printf("%c. ", (i < 26) ? 'A' + i : 'a' - 26 + i);
+     sp->print(stdout);
+     printf("\n");
+    }
    }
   }
  }
-/* catch (FileException e)
- {
- }*/
  return 0;
 }
 

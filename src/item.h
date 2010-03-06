@@ -33,11 +33,12 @@ cause: char[24]
 effect: char[24]
 */
 
-class BTItem
+class BTItem : public XMLObject
 {
  public:
   BTItem(BinaryReadFile &f);
   BTItem();
+  ~BTItem();
 
   bool canUse(BTPc *pc) const;
   const char *getName() const;
@@ -54,8 +55,14 @@ class BTItem
   IShort getXSpecial() const;
   void write(BinaryWriteFile &f);
 
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTItem; }
+  static void readXML(const char *filename, XMLVector<BTItem*> &item);
+  static void writeXML(const char *filename, XMLVector<BTItem*> &item);
+
  private:
-  char name[25];
+  char *name;
   IShort timesUsable;
   BTDice damage;
   IShort armorPlus;
@@ -66,8 +73,8 @@ class BTItem
   IShort spellCast;
   BitField classAllowed;
   IShort price;
-  char cause[24];
-  char effect[24];
+  char *cause;
+  char *effect;
 
   static int compatJobAllowed[11];
 };

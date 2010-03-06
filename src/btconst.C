@@ -43,6 +43,7 @@ char *spellTypes[] =
  "Damage By Level",
  "Compass"
 };
+ArrayLookup spellTypeLookup(BT_SPELLTYPES, spellTypes);
 
 char *effectiveRanges[] =
 {
@@ -57,6 +58,7 @@ char *areaEffect[] =
  "Group Target",
  "All Monster Groups"
 };
+ArrayLookup areaLookup(BT_AREAEFFECT, areaEffect);
 
 char *durations[] =
 {
@@ -69,6 +71,7 @@ char *durations[] =
  "Continuous",
  "Indefinite"
 };
+ArrayLookup durationLookup(BT_DURATION, durations);
 
 char *extraDamage[] =
 {
@@ -84,6 +87,7 @@ char *extraDamage[] =
  "Item-zot",
  "Point Phaze"
 };
+ArrayLookup extraDamageLookup(BT_MONSTEREXTRADAMAGE, extraDamage);
 
 char *rangedTypes[] =
 {
@@ -232,3 +236,4 @@ char *statAbbrev[] =
  "Lk"
 };
 ArrayLookup statLookup(BT_STATS, statAbbrev);
+

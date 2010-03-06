@@ -12,7 +12,7 @@
 BTGame *BTGame::game = NULL;
 
 BTGame::BTGame(BTModule *m)
- : module(m), itemList(m->item), jobAbbrevList(&jobList), monsterList(m->monster), spellList(m->spell), levelMap(NULL), gameTime(0), timedSpecial(-1), delay(1000)
+ : module(m), itemList(".ITM"), jobAbbrevList(&jobList), monsterList(".MON"), spellList(".SPL"), levelMap(NULL), gameTime(0), timedSpecial(-1), delay(1000)
 {
  BTDice::Init();
  if (NULL == game)
@@ -24,6 +24,9 @@ BTGame::BTGame(BTModule *m)
  BTXpChart::readXML(m->xpChart, xpChartList);
  BTJob::readXML(m->job, jobList);
  BTPc::readXML("roster.xml", group, roster);
+ spellList.load(m->spell);
+ itemList.load(m->item);
+ monsterList.load(m->monster);
  loadStart();
  combat.open("data/combat.xml");
  status.open("data/status.xml");

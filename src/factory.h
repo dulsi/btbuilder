@@ -8,7 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "istdlib.h"
-#include <vector>
+#include "xmlserializer.h"
 
 class BTArrayBoundsException
 {
@@ -18,16 +18,18 @@ template <class item>
 class BTFactory
 {
  public:
-  BTFactory(const char *filename);
+  BTFactory(const char *e);
   ~BTFactory();
 
   int find(item *obj);
+  void load(const char *filename);
   void save(const char *filename);
   IShort size();
   item &operator[](IShort num);
 
  private:
-  std::vector<item*> items;
+  std::string extension;
+  XMLVector<item*> items;
 };
 
 template<class item>
@@ -53,30 +55,14 @@ class BTSortedFactory
 };
 
 template <class item>
-BTFactory<item>::BTFactory(const char *filename)
+BTFactory<item>::BTFactory(const char *e)
+ : extension(e)
 {
- BinaryReadFile f(filename);
- try {
-  while (true)
-  {
-   items.push_back(new item(f));
-  }
- }
- catch (FileException e)
- {
- }
 }
 
 template <class item>
 BTFactory<item>::~BTFactory()
 {
-// Not sure why gcc doesn't accept this
-// for (std::vector<item*>::iterator itr(items.begin()); itr != items.end(); itr++)
-//  delete *itr;
- for (size_t i = 0; i < items.size(); i++)
- {
-  delete items[i];
- }
 }
 
 template <class item>
@@ -90,16 +76,48 @@ int BTFactory<item>::find(item *obj)
  return items.size();
 }
 
+#include <stdio.h>
+template <class item>
+void BTFactory<item>::load(const char *filename)
+{
+ int len = strlen(filename);
+ if ((len > extension.length()) && (strcmp(extension.c_str(), filename + (len - extension.length())) == 0))
+ {
+  BinaryReadFile f(filename);
+  try {
+   while (true)
+   {
+    items.push_back(new item(f));
+   }
+  }
+  catch (FileException e)
+  {
+  }
+ }
+ else
+ {
+  item::readXML(filename, items);
+ }
+}
+
 template <class item>
 void BTFactory<item>::save(const char *filename)
 {
- BinaryReadFile f(filename);
-// Not sure why gcc doesn't accept this
-// for (std::vector<item_ptr>::iterator itr(items.begin()); itr != items.end(); itr++)
-//  itr->write(f);
- for (size_t i = 0; i < items.size(); i++)
+ int len = strlen(filename);
+ if ((len > extension.length()) && (strcmp(extension.c_str(), filename + (len - extension.length())) == 0))
  {
-  items[i]->write(f);
+  BinaryWriteFile f(filename);
+//  Not sure why gcc doesn't accept this
+//  for (std::vector<item_ptr>::iterator itr(items.begin()); itr != items.end(); itr++)
+//   itr->write(f);
+  for (size_t i = 0; i < items.size(); i++)
+  {
+   items[i]->write(f);
+  }
+ }
+ else
+ {
+  item::writeXML(filename, items);
  }
 }
 

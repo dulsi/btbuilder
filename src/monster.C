@@ -16,8 +16,12 @@
 BTMonster::BTMonster(BinaryReadFile &f)
 {
  IUByte unknown;
+ char tmp[15];
 
- f.readUByteArray(14, (IUByte *)name);
+ f.readUByteArray(14, (IUByte *)tmp);
+ tmp[15] = 0;
+ name = new char[strlen(tmp) + 1];
+ strcpy(name, tmp);
  f.readShort(startDistance);
  startDistance = startDistance / 16;
  f.readShort(move);
@@ -32,13 +36,19 @@ BTMonster::BTMonster(BinaryReadFile &f)
  f.readShort(maxAppearing);
  hp.read(f);
  meleeDamage.read(f);
- f.readUByteArray(14, (IUByte *)meleeMessage);
+ f.readUByteArray(14, (IUByte *)tmp);
+ tmp[15] = 0;
+ meleeMessage = new char[strlen(tmp) + 1];
+ strcpy(meleeMessage, tmp);
  f.readShort(magicResistance);
  rangedDamage.read(f);
  f.readUByte(unknown);
  f.readShort(rangedExtra);
  f.readShort(range);
- f.readUByteArray(14, (IUByte *)rangedMessage);
+ f.readUByteArray(14, (IUByte *)tmp);
+ tmp[15] = 0;
+ rangedMessage = new char[strlen(tmp) + 1];
+ strcpy(rangedMessage, tmp);
  f.readShort(rangedType);
  if (rangedType >= MONSTER_RANGEDTYPEMAGIC)
  {
@@ -52,9 +62,22 @@ BTMonster::BTMonster(BinaryReadFile &f)
 
 BTMonster::BTMonster()
 {
+ name = new char[1];
  name[0] = 0;
+ meleeMessage = new char[1];
  meleeMessage[0] = 0;
+ rangedMessage = new char[1];
  rangedMessage[0] = 0;
+}
+
+BTMonster::~BTMonster()
+{
+ if (name)
+  delete [] name;
+ if (meleeMessage)
+  delete [] meleeMessage;
+ if (rangedMessage)
+  delete [] rangedMessage;
 }
 
 const char *BTMonster::getName() const
@@ -190,8 +213,10 @@ void BTMonster::write(BinaryWriteFile &f)
 {
  IUByte unknown;
  IShort value;
+ char tmp[14];
 
- f.writeUByteArray(14, (IUByte *)name);
+ strncpy(tmp, name, 14);
+ f.writeUByteArray(14, (IUByte *)tmp);
  value = startDistance * 16;
  f.writeShort(value);
  f.writeShort(move);
@@ -206,13 +231,15 @@ void BTMonster::write(BinaryWriteFile &f)
  f.writeShort(maxAppearing);
  hp.write(f);
  meleeDamage.write(f);
- f.writeUByteArray(14, (IUByte *)meleeMessage);
+ strncpy(tmp, meleeMessage, 14);
+ f.writeUByteArray(14, (IUByte *)tmp);
  f.writeShort(magicResistance);
  rangedDamage.write(f);
  f.writeUByte(unknown);
  f.writeShort(rangedExtra);
  f.writeShort(range);
- f.writeUByteArray(14, (IUByte *)rangedMessage);
+ strncpy(tmp, rangedMessage, 14);
+ f.writeUByteArray(14, (IUByte *)tmp);
  value = rangedType;
  if (rangedType == MONSTER_RANGEDTYPEMAGIC)
  {
@@ -222,5 +249,52 @@ void BTMonster::write(BinaryWriteFile &f)
  f.writeShort(level);
  gold.write(f);
  f.writeUByte(unknown);
+}
+
+void BTMonster::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("level", &level);
+ s->add("startDistance", &startDistance);
+ s->add("move", &move);
+ s->add("rateAttacks", &rateAttacks);
+ s->add("illusion", &illusion);
+ s->add("picture", &picture);
+ for (int i = 0; i < 4; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  snprintf(tmp, 10, "%d", i + 1);
+  attrib->push_back(XMLAttribute("number", tmp));
+  s->add("combatAction", &combatAction[i], attrib);
+ }
+ s->add("ac", &ac);
+ s->add("maxAppearing", &maxAppearing);
+ s->add("hp", &hp);
+ s->add("gold", &gold);
+ s->add("magicResistance", &magicResistance);
+ s->add("meleeMessage", &meleeMessage);
+ s->add("meleeDamage", &meleeDamage);
+ s->add("meleeExtra", &meleeExtra);
+ s->add("rangedMessage", &rangedMessage);
+ s->add("rangedType", &rangedType);
+ s->add("rangedSpell", &rangedSpell);
+ s->add("rangedDamage", &rangedDamage);
+ s->add("rangedExtra", &rangedExtra);
+ s->add("range", &range);
+}
+
+void BTMonster::readXML(const char *filename, XMLVector<BTMonster*> &monster)
+{
+ XMLSerializer parser;
+ parser.add("monster", &monster, &BTMonster::create);
+ parser.parse(filename, true);
+}
+
+void BTMonster::writeXML(const char *filename, XMLVector<BTMonster*> &monster)
+{
+ XMLSerializer parser;
+ parser.add("monster", &monster, &BTMonster::create);
+ parser.write(filename, true);
 }
 

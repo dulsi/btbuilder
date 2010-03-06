@@ -7,14 +7,19 @@
 
 #include "item.h"
 #include "pc.h"
+#include "game.h"
 
 int BTItem::compatJobAllowed[11] = {0x80, 0x04, 0x10, 0x08, 0x02, 0x01, 0x40, 0x40, 0x40, 0x20, 0x20};
 
 BTItem::BTItem(BinaryReadFile &f)
 {
  IUByte unknown;
+ char tmp[26];
 
- f.readUByteArray(25, (IUByte *)name);
+ f.readUByteArray(25, (IUByte *)tmp);
+ tmp[25] = 0;
+ name = new char[strlen(tmp) + 1];
+ strcpy(name, tmp);
  f.readUByte(unknown);
  f.readShort(timesUsable);
  damage.read(f);
@@ -33,12 +38,34 @@ BTItem::BTItem(BinaryReadFile &f)
    classAllowed.set(i);
  }
  f.readShort(price);
- f.readUByteArray(24, (IUByte *)cause);
- f.readUByteArray(24, (IUByte *)effect);
+ f.readUByteArray(24, (IUByte *)tmp);
+ tmp[24] = 0;
+ cause = new char[strlen(tmp) + 1];
+ strcpy(cause, tmp);
+ f.readUByteArray(24, (IUByte *)tmp);
+ tmp[24] = 0;
+ effect = new char[strlen(tmp) + 1];
+ strcpy(effect, tmp);
 }
 
 BTItem::BTItem()
 {
+ name = new char[1];
+ name[0] = 0;
+ cause = new char[1];
+ cause[0] = 0;
+ effect = new char[1];
+ effect[0] = 0;
+}
+
+BTItem::~BTItem()
+{
+ if (name)
+  delete [] name;
+ if (cause)
+  delete [] cause;
+ if (effect)
+  delete [] effect;
 }
 
 bool BTItem::canUse(BTPc *pc) const
@@ -109,8 +136,10 @@ IShort BTItem::getXSpecial() const
 void BTItem::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
+ char tmp[25];
 
- f.writeUByteArray(25, (IUByte *)name);
+ strncpy(tmp, name, 25);
+ f.writeUByteArray(25, (IUByte *)tmp);
  f.writeUByte(unknown);
  f.writeShort(timesUsable);
  damage.write(f);
@@ -129,7 +158,40 @@ void BTItem::write(BinaryWriteFile &f)
  }
  f.writeShort(jobAllowed);
  f.writeShort(price);
- f.writeUByteArray(24, (IUByte *)cause);
- f.writeUByteArray(24, (IUByte *)effect);
+ strncpy(tmp, cause, 24);
+ f.writeUByteArray(24, (IUByte *)tmp);
+ strncpy(tmp, effect, 24);
+ f.writeUByteArray(24, (IUByte *)tmp);
+}
+
+void BTItem::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("timesUsable", &timesUsable);
+ s->add("damage", &damage);
+ s->add("armorPlus", &armorPlus);
+ s->add("hitPlus", &hitPlus);
+ s->add("xSpecial", &xSpecial);
+ s->add("chanceXSpecial", &chanceXSpecial);
+ s->add("type", &type);
+ s->add("spellCast", &spellCast);
+ s->add("allowedJob", &classAllowed, &BTGame::getGame()->getJobList());
+ s->add("price", &price);
+ s->add("cause", &cause);
+ s->add("effect", &effect);
+}
+
+void BTItem::readXML(const char *filename, XMLVector<BTItem*> &item)
+{
+ XMLSerializer parser;
+ parser.add("item", &item, &BTItem::create);
+ parser.parse(filename, true);
+}
+
+void BTItem::writeXML(const char *filename, XMLVector<BTItem*> &item)
+{
+ XMLSerializer parser;
+ parser.add("item", &item, &BTItem::create);
+ parser.write(filename, true);
 }
 

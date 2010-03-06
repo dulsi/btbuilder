@@ -37,6 +37,7 @@ class ArrayLookup;
 #define BTSPELLTYPE_DAMAGEBYLEVEL  30
 #define BTSPELLTYPE_COMPASS        31
 extern char *spellTypes[];
+extern ArrayLookup spellTypeLookup;
 
 #define BT_EFFECTIVERANGES 2
 extern char *effectiveRanges[];
@@ -47,6 +48,7 @@ extern char *effectiveRanges[];
 #define BTAREAEFFECT_GROUP 2
 #define BTAREAEFFECT_ALL   3
 extern char *areaEffect[];
+extern ArrayLookup areaLookup;
 
 #define BT_DURATION 6
 #define BTDURATION_ONE        0
@@ -58,6 +60,7 @@ extern char *areaEffect[];
 #define BTDURATION_CONTINUOUS 6
 #define BTDURATION_INDEFINITE 7
 extern char *durations[];
+extern ArrayLookup durationLookup;
 
 #define BT_MONSTEREXTRADAMAGE 11
 #define BTEXTRADAMAGE_POSION      1
@@ -67,6 +70,7 @@ extern char *durations[];
 #define BTEXTRADAMAGE_PARALYSIS   7
 #define BTEXTRADAMAGE_CRITICALHIT 8
 extern char *extraDamage[];
+extern ArrayLookup extraDamageLookup;
 
 #define BT_RANGEDTYPES 4
 #define BTRANGEDTYPE_NONE  0

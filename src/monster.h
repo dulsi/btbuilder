@@ -39,11 +39,12 @@
  unknown: byte
 */
 
-class BTMonster
+class BTMonster : public XMLObject
 {
  public:
   BTMonster(BinaryReadFile &f);
   BTMonster();
+  ~BTMonster();
 
   const char *getName() const;
   IShort getAc() const;
@@ -71,8 +72,14 @@ class BTMonster
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
   void write(BinaryWriteFile &f);
 
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTMonster; }
+  static void readXML(const char *filename, XMLVector<BTMonster*> &monster);
+  static void writeXML(const char *filename, XMLVector<BTMonster*> &monster);
+
  private:
-  char name[14];
+  char *name;
   IShort level;
   IShort startDistance;
   IShort move;
@@ -86,11 +93,11 @@ class BTMonster
   BTDice gold;
   IShort magicResistance;
 
-  char meleeMessage[14];
+  char *meleeMessage;
   BTDice meleeDamage;
   IShort meleeExtra;
 
-  char rangedMessage[14];
+  char *rangedMessage;
   IShort rangedType;
   IShort rangedSpell;
   BTDice rangedDamage;

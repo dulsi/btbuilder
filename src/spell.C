@@ -10,26 +10,57 @@
 
 BTSpell::BTSpell(BinaryReadFile &f)
 {
- IUByte unknown;
+ IShort num;
+ IUByte tmp[30];
 
- f.readUByteArray(29, (IUByte *)name);
- f.readUByteArray(5, (IUByte *)code);
- f.readShort(caster);
+ f.readUByteArray(29, tmp);
+ tmp[29] = 0;
+ name = new char[strlen((char *)tmp) + 1];
+ strcpy(name, (char *)tmp);
+ f.readUByteArray(5, tmp);
+ tmp[5] = 0;
+ code = new char[strlen((char *)tmp) + 1];
+ strcpy(code, (char *)tmp);
+ f.readShort(num);
+ caster = num;
  f.readShort(level);
  f.readShort(sp);
  f.readShort(range);
  f.readShort(effectiveRange);
- f.readShort(type);
- f.readShort(area);
+ f.readShort(num);
+ type = num;
+ f.readShort(num);
+ area = num;
  dice.read(f);
- f.readUByte(unknown);
- f.readShort(duration);
- f.readShort(extra);
- f.readUByteArray(22, (IUByte *)effect);
+ f.readUByte(tmp[0]);
+ f.readShort(num);
+ duration = num;
+ f.readShort(num);
+ extra = duration;
+ f.readUByteArray(22, tmp);
+ tmp[22] = 0;
+ effect = new char[strlen((char *)tmp) + 1];
+ strcpy(effect, (char *)tmp);
 }
 
 BTSpell::BTSpell()
 {
+ name = new char[1];
+ name[0] = 0;
+ code = new char[1];
+ code[0] = 0;
+ effect = new char[1];
+ effect[0] = 0;
+}
+
+BTSpell::~BTSpell()
+{
+ if (name)
+  delete [] name;
+ if (code)
+  delete [] code;
+ if (effect)
+  delete [] effect;
 }
 
 const char *BTSpell::getName() const
@@ -37,12 +68,12 @@ const char *BTSpell::getName() const
  return name;
 }
 
-IShort BTSpell::getArea() const
+int BTSpell::getArea() const
 {
  return area;
 }
 
-IShort BTSpell::getCaster() const
+int BTSpell::getCaster() const
 {
  return caster;
 }
@@ -57,7 +88,7 @@ const BTDice &BTSpell::getDice() const
  return dice;
 }
 
-IShort BTSpell::getDuration() const
+int BTSpell::getDuration() const
 {
  return duration;
 }
@@ -72,7 +103,7 @@ IShort BTSpell::getEffectiveRange() const
  return effectiveRange;
 }
 
-IShort BTSpell::getExtra() const
+int BTSpell::getExtra() const
 {
  return extra;
 }
@@ -92,7 +123,7 @@ IShort BTSpell::getSp() const
  return sp;
 }
 
-IShort BTSpell::getType() const
+int BTSpell::getType() const
 {
  return type;
 }
@@ -100,21 +131,31 @@ IShort BTSpell::getType() const
 void BTSpell::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
+ IShort num;
+ char tmp[29];
 
- f.writeUByteArray(29, (IUByte *)name);
- f.writeUByteArray(5, (IUByte *)code);
- f.writeShort(caster);
+ strncpy(tmp, name, 29);
+ f.writeUByteArray(29, (IUByte *)tmp);
+ strncpy(tmp, code, 5);
+ f.writeUByteArray(5, (IUByte *)tmp);
+ num = caster;
+ f.writeShort(num);
  f.writeShort(level);
  f.writeShort(sp);
  f.writeShort(range);
  f.writeShort(effectiveRange);
- f.writeShort(type);
- f.writeShort(area);
+ num = type;
+ f.writeShort(num);
+ num = area;
+ f.writeShort(num);
  dice.write(f);
  f.writeUByte(unknown);
- f.writeShort(duration);
- f.writeShort(extra);
- f.writeUByteArray(22, (IUByte *)effect);
+ num = duration;
+ f.writeShort(num);
+ num = extra;
+ f.writeShort(num);
+ strncpy(tmp, effect, 22);
+ f.writeUByteArray(22, (IUByte *)tmp);
 }
 
 int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target)
@@ -323,6 +364,37 @@ int BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *c
  return activate(d, text.c_str(), partySpell, combat, casterLevel, distance, group, target);
 }
 
+void BTSpell::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("code", &code);
+ s->add("caster", &caster, NULL, &BTGame::getGame()->getSkillList());
+ s->add("level", &level);
+ s->add("sp", &sp);
+ s->add("range", &range);
+ s->add("effectiveRange", &effectiveRange);
+ s->add("type", &type, NULL, &spellTypeLookup);
+ s->add("area", &area, NULL, &areaLookup);
+ s->add("dice", &dice);
+ s->add("duration", &duration, NULL, &durationLookup);
+ s->add("extra", &extra);
+ s->add("effect", &effect);
+}
+
+void BTSpell::readXML(const char *filename, XMLVector<BTSpell*> &spell)
+{
+ XMLSerializer parser;
+ parser.add("spell", &spell, &BTSpell::create);
+ parser.parse(filename, true);
+}
+
+void BTSpell::writeXML(const char *filename, XMLVector<BTSpell*> &spell)
+{
+ XMLSerializer parser;
+ parser.add("spell", &spell, &BTSpell::create);
+ parser.write(filename, true);
+}
+
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
 {
  int ans = a.getCaster() - b.getCaster();
@@ -332,3 +404,4 @@ int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
  }
  return ans;
 }
+

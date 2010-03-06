@@ -35,44 +35,51 @@ extra info: short (monster for summon monster and summon illusion,
 spell effect: char[22];
 */
 
-class BTSpell
+class BTSpell : public XMLObject
 {
  public:
   BTSpell(BinaryReadFile &f);
   BTSpell();
+  ~BTSpell();
 
   const char *getName() const;
-  IShort getArea() const;
-  IShort getCaster() const;
+  int getArea() const;
+  int getCaster() const;
   const char *getCode() const;
   const BTDice &getDice() const;
-  IShort getDuration() const;
+  int getDuration() const;
   const char *getEffect() const;
   IShort getEffectiveRange() const;
-  IShort getExtra() const;
+  int getExtra() const;
   IShort getLevel() const;
   IShort getRange() const;
   IShort getSp() const;
-  IShort getType() const;
+  int getType() const;
   void write(BinaryWriteFile &f);
 
   int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
   int cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
 
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpell; }
+  static void readXML(const char *filename, XMLVector<BTSpell*> &spell);
+  static void writeXML(const char *filename, XMLVector<BTSpell*> &spell);
+
  private:
-  char name[29];
-  char code[5];
-  IShort caster;
+  char *name;
+  char *code;
+  int caster;
   IShort level;
   IShort sp;
   IShort range;
   IShort effectiveRange;
-  IShort type;
-  IShort area;
+  int type;
+  int area;
   BTDice dice;
-  IShort duration;
-  IShort extra;
-  char effect[22];
+  int duration;
+  int extra;
+  char *effect;
 };
 
 class BTSpellListCompare : public BTSortCompare<BTSpell>
