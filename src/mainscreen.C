@@ -77,7 +77,7 @@ void BTMainScreen::runModule(std::string moduleFile)
  parser.parse(moduleFile.c_str(), false);
  std::string appName("btbuilder");
  appName += PHYSFS_getDirSeparator();
- appName += fs::path(moduleFile).filename();
+ appName += fs::path(moduleFile).stem();
  if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
  {
   // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
