@@ -3,5 +3,5 @@
 	<height>200</height>
 	<background>image/mainscreen.png</background>
 	<label><x>0</x><y>0</y><w>1</w><h>1</h></label>
-	<text><x>48</x><y>36</y><w>215</w><h>133</h></text>
+	<text><x>165</x><y>24</y><w>120</w><h>133</h></text>
 </display>
