@@ -11,6 +11,7 @@
 #include "displayconfig.h"
 #include "statusbar.h"
 #include "sdlextend.h"
+#include "SDL_mng.h"
 #ifndef BTBUILDER_NOTTF
 #include <SDL_ttf.h>
 #endif
@@ -90,6 +91,7 @@ class BTDisplay
   void drawRect(SDL_Rect &dst, SDL_Color c);
 
  private:
+  void drawAnimationFrame();
   void scrollUp(int h);
   static Uint32 timerCallback(Uint32 interval, void *param);
 
@@ -108,6 +110,9 @@ class BTDisplay
   XMLVector<Psuedo3DConfig*> p3dConfig;
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
+  MNG_Image *animation;
+  int animationFrame;
+  unsigned long animationTime;
 #ifdef BTBUILDER_NOTTF
   void *ttffont;
 #else
