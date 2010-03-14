@@ -33,6 +33,7 @@ class BTPc : public XMLObject, public BTCombatant
   ~BTPc() { delete [] name; delete [] skill; }
 
   bool advanceLevel();
+  void changeJob(int newJob);
   void equip(int index);
   int incrementStat();
   bool isEquipped(int index) const;

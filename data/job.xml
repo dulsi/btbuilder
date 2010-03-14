@@ -166,6 +166,24 @@
 				<cost>40000</cost>
 			</purchase>
 		</skill>
+		<changeRuleSkill>
+			<skill>Conjurer spell</skill>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Magician spell</skill>
+			<greater>2</greater>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Sorcerer spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Wizard spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
                 <spells>true</spells>
 		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
@@ -218,6 +236,24 @@
 				<cost>40000</cost>
 			</purchase>
 		</skill>
+		<changeRuleSkill>
+			<skill>Conjurer spell</skill>
+			<greater>2</greater>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Magician spell</skill>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Sorcerer spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Wizard spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
                 <spells>true</spells>
 		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
@@ -270,6 +306,35 @@
 				<cost>40000</cost>
 			</purchase>
 		</skill>
+		<changeRuleAtLeast minimum="1">
+			<changeRuleSkill>
+				<skill>Conjurer spell</skill>
+				<greater>2</greater>
+			</changeRuleSkill>
+			<changeRuleSkill>
+				<skill>Magician spell</skill>
+				<greater>2</greater>
+			</changeRuleSkill>
+		</changeRuleAtLeast>
+		<changeRuleSkill>
+			<skill>Conjurer spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Magician spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Sorcerer spell</skill>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Wizard spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
                 <spells>true</spells>
 		<xpChart>Sorcerer</xpChart>
                 <advanced>true</advanced>
@@ -323,6 +388,39 @@
 				<cost>40000</cost>
 			</purchase>
 		</skill>
+		<changeRuleAtLeast minimum="2">
+			<changeRuleSkill>
+				<skill>Conjurer spell</skill>
+				<greater>2</greater>
+			</changeRuleSkill>
+			<changeRuleSkill>
+				<skill>Magician spell</skill>
+				<greater>2</greater>
+			</changeRuleSkill>
+			<changeRuleSkill>
+				<skill>Sorcerer spell</skill>
+				<greater>2</greater>
+			</changeRuleSkill>
+		</changeRuleAtLeast>
+		<changeRuleSkill>
+			<skill>Conjurer spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Magician spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Sorcerer spell</skill>
+			<greater>2</greater>
+			<equal>0</equal>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Wizard spell</skill>
+			<equal>0</equal>
+		</changeRuleSkill>
                 <spells>true</spells>
 		<xpChart>Wizard</xpChart>
                 <advanced>true</advanced>
@@ -376,6 +474,22 @@
 				<cost>40000</cost>
 			</purchase>
 		</skill>
+		<changeRuleSkill>
+			<skill>Conjurer spell</skill>
+			<greater>2</greater>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Magician spell</skill>
+			<greater>2</greater>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Sorcerer spell</skill>
+			<greater>2</greater>
+		</changeRuleSkill>
+		<changeRuleSkill>
+			<skill>Wizard spell</skill>
+			<greater>2</greater>
+		</changeRuleSkill>
                 <spells>true</spells>
 		<xpChart>Archmage</xpChart>
                 <advanced>true</advanced>

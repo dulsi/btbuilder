@@ -8,6 +8,58 @@
 #include "job.h"
 #include "game.h"
 
+bool BTJobChangeRuleAtLeast::compare(BTPc *pc)
+{
+ int match = 0;
+ if (changeRule.size() == 0)
+  return false;
+ for (int i = 0; (i < changeRule.size()) && (match < minimum); ++i)
+ {
+  if (changeRule[i]->compare(pc))
+   ++match;
+ }
+ return (match >= minimum);
+}
+
+void BTJobChangeRuleAtLeast::serialize(ObjectSerializer* s)
+{
+ s->add("changeRuleSkill", &changeRule, &BTJobChangeRuleSkill::create);
+ s->add("changeRuleAtLeast", &changeRule, &BTJobChangeRuleAtLeast::create);
+}
+
+XMLObject *BTJobChangeRuleAtLeast::create(const XML_Char *name, const XML_Char **atts)
+{
+ BTJobChangeRuleAtLeast *obj = new BTJobChangeRuleAtLeast;
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "minimum"))
+   obj->minimum = atol(att[1]);
+ }
+ return obj;
+}
+
+bool BTJobChangeRuleSkill::compare(BTPc *pc)
+{
+ if (greater != -1)
+ {
+  if (pc->skill[skill] > greater)
+   return true;
+ }
+ if (equal != -1)
+ {
+  if (pc->skill[skill] == equal)
+   return true;
+ }
+ return false;
+}
+
+void BTJobChangeRuleSkill::serialize(ObjectSerializer* s)
+{
+ s->add("skill", &skill, NULL, &BTGame::getGame()->getSkillList());
+ s->add("greater", &greater);
+ s->add("equal", &equal);
+}
+
 void BTJobSkillPurchase::serialize(ObjectSerializer* s)
 {
  s->add("minimumLevel", &minimumLevel);
@@ -57,6 +109,13 @@ bool BTJob::isAllowed(BTPc *pc, bool starting)
  else
  {
   // Check to see if can change class
+  if (changeRule.size() == 0)
+   return false;
+  for (int i = 0; i < changeRule.size(); ++i)
+  {
+   if (!changeRule[i]->compare(pc))
+    return false;
+  }
  }
  if (allowedRace.isSet(pc->race))
  {
@@ -80,6 +139,8 @@ void BTJob::serialize(ObjectSerializer* s)
  s->add("improveAc", &improveAc);
  s->add("hp", &hp);
  s->add("skill", &skill, &BTJobSkill::create);
+ s->add("changeRuleSkill", &changeRule, &BTJobChangeRuleSkill::create);
+ s->add("changeRuleAtLeast", &changeRule, &BTJobChangeRuleAtLeast::create);
  s->add("xpChart", &xpChart, NULL, &BTGame::getGame()->getXpChartList());
  s->add("spells", &spells);
  s->add("advanced", &advanced);

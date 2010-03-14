@@ -37,7 +37,7 @@
 		<line><col>St: <stat number="1" /></col><col>IQ: <stat number="2" /></col></line>
 		<line><col>Dx: <stat number="3" /></col><col>Cn: <stat number="4" /></col></line>
 		<line><col>Lk: <stat number="5" /></col><col></col></line>
-		<selectJob action="setJob" screen="7" />
+		<selectJob action="setJob" screen="7" starting="1" />
 		<choice keys="rR" action="display" screen="5" align="center">(REROLL)</choice>
 	</screen>
 	<screen number="7">

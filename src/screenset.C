@@ -460,6 +460,11 @@ XMLObject *BTSelectRace::create(const XML_Char *name, const XML_Char **atts)
  return obj;
 }
 
+BTSelectJob::BTSelectJob()
+ : starting(false)
+{
+}
+
 int BTSelectJob::buildList(ObjectSerializer *obj)
 {
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
@@ -469,7 +474,7 @@ int BTSelectJob::buildList(ObjectSerializer *obj)
  int size = 0;
  for (int i = 0; i < job.size(); ++i)
  {
-  if (job[i]->isAllowed(pc, true))
+  if (job[i]->isAllowed(pc, starting))
   {
    list[size].name = job[i]->name;
    ++size;
@@ -495,6 +500,8 @@ XMLObject *BTSelectJob::create(const XML_Char *name, const XML_Char **atts)
    else
     obj->setScreen(atoi(att[1]));
   }
+  else if (0 == strcmp(*att, "starting"))
+   obj->starting = atoi(att[1]);
  }
  return obj;
 }
@@ -938,6 +945,7 @@ BTScreenSet::BTScreenSet()
  actionList["buy"] = &buy;
  actionList["buySkill"] = &buySkill;
  actionList["castNow"] = &castNow;
+ actionList["changeJob"] = &changeJob;
  actionList["create"] = &create;
  actionList["drop"] = &drop;
  actionList["equip"] = &equip;
@@ -948,6 +956,7 @@ BTScreenSet::BTScreenSet()
  actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
  actionList["requestSkill"] = &requestSkill;
+ actionList["requestJob"] = &requestJob;
  actionList["removeFromParty"] = &removeFromParty;
  actionList["removeRoster"] = &removeRoster;
  actionList["save"] = &save;
@@ -1381,6 +1390,28 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  throw BTSpecialError("nospell");
 }
 
+int BTScreenSet::changeJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
+ BTSelectJob *select = static_cast<BTSelectJob*>(item);
+ int count = select->select;
+ for (int i = 0; i < job.size(); i++)
+ {
+  if (job[i]->isAllowed(b.pc, select->starting))
+  {
+   if (count == 0)
+   {
+    b.pc->changeJob(i);
+    d.drawStats();
+    break;
+   }
+   --count;
+  }
+ }
+ select->clear();
+ return 0;
+}
+
 int BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.setPc(new BTPc);
@@ -1520,6 +1551,23 @@ int BTScreenSet::requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
   throw BTSpecialError("notminimumlevel");
  else
   throw BTSpecialError("noskill");
+}
+
+int BTScreenSet::requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
+ bool bFound(false);
+ for (int i = 0; i < job.size(); i++)
+ {
+  if (job[i]->isAllowed(b.pc, false))
+  {
+   bFound = true;
+   break;
+  }
+ }
+ if (!bFound)
+  throw BTSpecialError("nojob");
+ return 0;
 }
 
 int BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)

@@ -102,6 +102,31 @@ bool BTPc::advanceLevel()
  return false;
 }
 
+void BTPc::changeJob(int newJob)
+{
+ XMLVector<BTJob*> &jobList = BTGame::getGame()->getJobList();
+ toHit += jobList[newJob]->toHit - jobList[job]->toHit - ((level - 1) / jobList[job]->improveToHit);
+ save += jobList[newJob]->save - jobList[job]->save - ((level - 1) / jobList[job]->improveSave);
+ ac += jobList[newJob]->ac - jobList[job]->ac;
+ if (jobList[job]->improveAc != 0)
+  ac -= ((level - 1) / jobList[job]->improveAc);
+ job = newJob;
+ picture = jobList[newJob]->picture;
+ hp = maxHp += BTDice(1, 14, 14).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
+ for (int k = 0; k < jobList[newJob]->skill.size(); ++k)
+ {
+  skill[jobList[newJob]->skill[k]->skill] = jobList[newJob]->skill[k]->value;
+  if ((jobList[newJob]->skill[k]->modifier >= 0) && (stat[jobList[newJob]->skill[k]->modifier] > 14))
+   skill[jobList[newJob]->skill[k]->skill] += stat[jobList[newJob]->skill[k]->modifier] - 14;
+ }
+ if (jobList[newJob]->spells)
+ {
+  sp = maxSp += BTDice(1, 8, 9).roll() + ((stat[BTSTAT_IQ] > 14) ? stat[BTSTAT_IQ] - 14 : 0);
+ }
+ level = 1;
+ xp = 0;
+}
+
 void BTPc::equip(int index)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();

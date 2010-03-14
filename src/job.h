@@ -10,6 +10,41 @@
 #include "xmlserializer.h"
 #include "pc.h"
 
+class BTJobChangeRule : public XMLObject
+{
+ public:
+  virtual bool compare(BTPc *pc) = 0;
+};
+
+class BTJobChangeRuleAtLeast : public BTJobChangeRule
+{
+ public:
+  BTJobChangeRuleAtLeast() : minimum(0) {}
+
+  virtual bool compare(BTPc *pc);
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+
+  int minimum;
+  XMLVector<BTJobChangeRule*> changeRule;
+};
+
+class BTJobChangeRuleSkill : public BTJobChangeRule
+{
+ public:
+  BTJobChangeRuleSkill() : skill(-1), greater(-1), equal(-1) {}
+
+  virtual bool compare(BTPc *pc);
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTJobChangeRuleSkill; }
+
+  int skill;
+  int greater;
+  int equal;
+};
+
 class BTJobSkillPurchase : public XMLObject
 {
  public:
@@ -76,6 +111,7 @@ class BTJob : public XMLObject
   int improveAc;
   int hp;
   XMLVector<BTJobSkill*> skill;
+  XMLVector<BTJobChangeRule*> changeRule;
   int xpChart;
   bool spells;
   bool advanced;

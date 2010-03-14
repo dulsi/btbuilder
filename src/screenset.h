@@ -175,9 +175,13 @@ class BTSelectRace : public BTSelectCommon
 class BTSelectJob : public BTSelectCommon
 {
  public:
+  BTSelectJob();
+
   virtual int buildList(ObjectSerializer *obj);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+
+  bool starting;
 };
 
 class BTSelectGoods : public BTSelectCommon
@@ -318,6 +322,7 @@ class BTScreenSet : public ObjectSerializer
   static int buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int changeJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
@@ -328,6 +333,7 @@ class BTScreenSet : public ObjectSerializer
   static int poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
