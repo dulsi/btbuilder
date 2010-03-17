@@ -116,7 +116,9 @@ void BTPc::changeJob(int newJob)
   ac -= ((level - 1) / jobList[job]->improveAc);
  job = newJob;
  picture = jobList[newJob]->picture;
- hp = maxHp += BTDice(1, 14, 14).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
+ int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
+ hp += moreHp;
+ maxHp += moreHp;
  for (int k = 0; k < jobList[newJob]->skill.size(); ++k)
  {
   skill[jobList[newJob]->skill[k]->skill] = jobList[newJob]->skill[k]->value;
@@ -125,7 +127,11 @@ void BTPc::changeJob(int newJob)
  }
  if (jobList[newJob]->spells)
  {
-  sp = maxSp += BTDice(1, 8, 9).roll() + ((stat[BTSTAT_IQ] > 14) ? stat[BTSTAT_IQ] - 14 : 0);
+  int moreSp = BTDice(1, 4).roll() + ((stat[BTSTAT_IQ] > 14) ? stat[BTSTAT_IQ] - 14 : 0);
+  if (maxSp == 0)
+   moreSp = BTDice(1, 8, 9).roll() + ((stat[BTSTAT_IQ] > 14) ? stat[BTSTAT_IQ] - 14 : 0);
+  sp += moreSp;
+  maxSp += moreSp;
  }
  level = 1;
  xp = 0;
