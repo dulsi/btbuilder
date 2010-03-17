@@ -74,6 +74,11 @@
 		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<skill>
+			<name>Bard song</name>
+			<value>1</value>
+			<improve>1</improve>
+		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>

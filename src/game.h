@@ -17,6 +17,7 @@
 #include "monster.h"
 #include "race.h"
 #include "skill.h"
+#include "song.h"
 #include "spell.h"
 #include "spelleffect.h"
 #include "status.h"
@@ -45,6 +46,7 @@ class BTGame : public Psuedo3DMap
   BTRaceList &getRaceList();
   XMLVector<BTPc*> &getRoster();
   BTSkillList &getSkillList();
+  XMLVector<BTSong*> &getSongList();
   BTFactory<BTSpell> &getSpellList();
   BTXpChartList &getXpChartList();
   BTMap *getMap();
@@ -110,6 +112,7 @@ class BTGame : public Psuedo3DMap
   XMLVector<BTGroup*> group;
   XMLVector<BTPc*> roster;
   BTSkillList skillList;
+  XMLVector<BTSong*> songList;
   BTFactory<BTSpell> spellList;
   BTXpChartList xpChartList;
   BTMap *levelMap;

@@ -1,0 +1,42 @@
+<data>
+	<song>
+		<name>Safety Song</name>
+	</song>
+	<song>
+		<name>Santuary Score</name>
+		<multiManifest>
+			<restriction>noncombat</restriction>
+			<manifest>
+				<type>25</type>
+			</manifest>
+		</multiManifest>
+	</song>
+	<song>
+		<name>Bringaround Ballad</name>
+	</song>
+	<song>
+		<name>Rhyme of Duotime</name>
+	</song>
+	<song>
+		<name>Marcela's Melody</name>
+		<multiManifest>
+			<restriction>noncombat</restriction>
+			<manifest>
+				<type>22</type>
+			</manifest>
+		</multiManifest>
+	</song>
+	<song>
+		<name>Kiel's Overture</name>
+		<multiManifest>
+			<restriction>noncombat</restriction>
+			<manifest>
+				<type>31</type>
+			</manifest>
+		</multiManifest>
+	</song>
+	<song>
+		<name>Cain's Carrack</name>
+	</song>
+</data>
+

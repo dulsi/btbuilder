@@ -25,7 +25,7 @@ class BTAllResistException
 class BTBaseEffect : public XMLObject
 {
  public:
-  BTBaseEffect(int t, int x);
+  BTBaseEffect(int t, int x, bool s);
 
   virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   virtual int maintain(BTDisplay &d, BTCombat *combat);
@@ -40,12 +40,13 @@ class BTBaseEffect : public XMLObject
   int type;
   int expiration;
   bool first;
+  bool song;
 };
 
 class BTTargetedEffect : public BTBaseEffect
 {
  public:
-  BTTargetedEffect(int t, int x, int g, int trgt);
+  BTTargetedEffect(int t, int x, bool s, int g, int trgt);
 
   virtual bool targets(int g, int who);
   virtual bool targetsMonsters();
@@ -59,7 +60,7 @@ class BTTargetedEffect : public BTBaseEffect
 class BTAttackEffect : public BTTargetedEffect
 {
  public:
-  BTAttackEffect(int t, int x, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int s, const char *text);
+  BTAttackEffect(int t, int x, bool s, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const char *text);
 
   virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   virtual int maintain(BTDisplay &d, BTCombat *combat);
@@ -83,7 +84,7 @@ class BTAttackEffect : public BTTargetedEffect
 class BTCureStatusEffect : public BTTargetedEffect
 {
  public:
-  BTCureStatusEffect(int t, int x, int g, int trgt, int s);
+  BTCureStatusEffect(int t, int x, bool s, int g, int trgt, int sts);
 
   virtual int maintain(BTDisplay &d, BTCombat *combat);
 
@@ -93,7 +94,7 @@ class BTCureStatusEffect : public BTTargetedEffect
 class BTHealEffect : public BTTargetedEffect
 {
  public:
-  BTHealEffect(int t, int x, int g, int trgt, const BTDice& h);
+  BTHealEffect(int t, int x, bool s, int g, int trgt, const BTDice& h);
 
   virtual int maintain(BTDisplay &d, BTCombat *combat);
 
@@ -103,7 +104,7 @@ class BTHealEffect : public BTTargetedEffect
 class BTSummonMonsterEffect : public BTTargetedEffect
 {
  public:
-  BTSummonMonsterEffect(int t, int x, int g, int trgt);
+  BTSummonMonsterEffect(int t, int x, bool s, int g, int trgt);
 
   virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
 };
@@ -111,7 +112,7 @@ class BTSummonMonsterEffect : public BTTargetedEffect
 class BTSummonIllusionEffect : public BTTargetedEffect
 {
  public:
-  BTSummonIllusionEffect(int t, int x, int g, int trgt);
+  BTSummonIllusionEffect(int t, int x, bool s, int g, int trgt);
 
   virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
 };
@@ -119,7 +120,7 @@ class BTSummonIllusionEffect : public BTTargetedEffect
 class BTArmorBonusEffect : public BTTargetedEffect
 {
  public:
-  BTArmorBonusEffect(int t, int x, int g, int trgt, int b);
+  BTArmorBonusEffect(int t, int x, bool s, int g, int trgt, int b);
 
   virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
@@ -130,7 +131,7 @@ class BTArmorBonusEffect : public BTTargetedEffect
 class BTResurrectEffect : public BTTargetedEffect
 {
  public:
-  BTResurrectEffect(int t, int x, int g, int trgt);
+  BTResurrectEffect(int t, int x, bool s, int g, int trgt);
 
   virtual int maintain(BTDisplay &d, BTCombat *combat);
 };
@@ -138,7 +139,7 @@ class BTResurrectEffect : public BTTargetedEffect
 class BTPhaseDoorEffect : public BTBaseEffect
 {
  public:
-  BTPhaseDoorEffect(int t, int x, int mX, int mY, int f);
+  BTPhaseDoorEffect(int t, int x, bool s, int mX, int mY, int f);
 
   int mapX;
   int mapY;

@@ -248,4 +248,11 @@ extern ArrayLookup statLookup;
 
 #define BTDISTANCE_MAX 9
 
+#define BT_RESTRICTIONS 3
+#define BTRESTRICTION_NONE      0
+#define BTRESTRICTION_COMBAT    1
+#define BTRESTRICTION_NONCOMBAT 2
+extern char *restriction[];
+extern ArrayLookup restrictionLookup;
+
 #endif

@@ -15,11 +15,12 @@
 #define BTSKILLUSE_MAGIC      3
 
 #define BTSKILLSPECIAL_DISARM 0
+#define BTSKILLSPECIAL_SONG   2
 
 class BTSkill : public XMLObject
 {
  public:
-  BTSkill() : use(-1), effect(-1), special(-1)
+  BTSkill() : use(-1), effect(-1), special(-1), limited(false)
   {
    name = new char[1];
    name[0] = 0;
@@ -35,6 +36,7 @@ class BTSkill : public XMLObject
   char *name;
   int use;
   int effect;
+  bool limited;
   int special;
 };
 

@@ -37,6 +37,7 @@
 	<skill>
 		<name>Bard song</name>
 		<use>any</use>
+		<limited>true</limited>
 		<special>song</special>
 	</skill>
 </data>

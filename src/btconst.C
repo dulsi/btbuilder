@@ -237,3 +237,11 @@ char *statAbbrev[] =
 };
 ArrayLookup statLookup(BT_STATS, statAbbrev);
 
+char *restriction[] =
+{
+ "none",
+ "combat",
+ "noncombat"
+};
+ArrayLookup restrictionLookup(BT_RESTRICTIONS, restriction);
+

@@ -73,6 +73,7 @@ class BTPc : public XMLObject, public BTCombatant
   unsigned int xp;
   unsigned int gold;
   int *skill;
+  int *skillUse;
   BTEquipment item[BT_ITEMS];
 
   // Combat actions

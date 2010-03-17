@@ -232,6 +232,16 @@ class BTSelectParty : public BTScreenItem
   BitField disallow;
 };
 
+class BTSelectSong : public BTSelectCommon
+{
+ public:
+  BTSelectSong();
+
+  virtual int buildList(ObjectSerializer *obj);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+};
+
 class BTCan : public BTScreenItem
 {
  public:
@@ -339,12 +349,14 @@ class BTScreenSet : public ObjectSerializer
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int saveParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int selectBard(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 

@@ -27,8 +27,12 @@ BTPc::BTPc()
   stat[i] = 10;
  int skills = BTGame::getGame()->getSkillList().size();
  skill = new int[skills];
+ skillUse = new int[skills];
  for (i = 0; i < skills; ++i)
+ {
   skill[i] = 0;
+  skillUse[i] = 0;
+ }
 }
 
 BTPc::BTPc(int monsterType, int j)
@@ -334,6 +338,9 @@ void BTPc::serialize(ObjectSerializer* s)
   snprintf(tmp, 10, "%d", i + 1);
   attrib->push_back(XMLAttribute("number", tmp));
   s->add("skill", &skill[i], attrib);
+  attrib = new std::vector<XMLAttribute>;
+  attrib->push_back(XMLAttribute("number", tmp));
+  s->add("skillUse", &skillUse[i], attrib);
  }
  for (i = 0; i < BT_ITEMS; ++i)
  {

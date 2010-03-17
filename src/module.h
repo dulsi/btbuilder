@@ -25,6 +25,7 @@ class BTModule : public XMLObject
   char *spell;
   char *race;
   char *skill;
+  char *song;
   char *xpChart;
   char *job;
   char *start;
@@ -35,3 +36,4 @@ class BTModule : public XMLObject
 };
 
 #endif
+

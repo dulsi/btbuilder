@@ -27,6 +27,7 @@ BTGame::BTGame(BTModule *m)
  spellList.load(m->spell);
  itemList.load(m->item);
  monsterList.load(m->monster);
+ BTSong::readXML(m->song, songList);
  loadStart();
  combat.open("data/combat.xml");
  status.open("data/status.xml");
@@ -82,6 +83,11 @@ XMLVector<BTPc*> &BTGame::getRoster()
 BTSkillList &BTGame::getSkillList()
 {
  return skillList;
+}
+
+XMLVector<BTSong*> &BTGame::getSongList()
+{
+ return songList;
 }
 
 BTFactory<BTSpell> &BTGame::getSpellList()
@@ -376,6 +382,13 @@ void BTGame::run(BTDisplay &d)
       {
        BTScreenSet cast;
        cast.open("data/cast.xml");
+       cast.run(d);
+       break;
+      }
+      case 'b':
+      {
+       BTScreenSet cast;
+       cast.open("data/play.xml");
        cast.run(d);
        break;
       }

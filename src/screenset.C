@@ -704,6 +704,42 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
  return new BTSelectParty(act, s, d);
 }
 
+BTSelectSong::BTSelectSong()
+{
+}
+
+int BTSelectSong::buildList(ObjectSerializer *obj)
+{
+ XMLVector<BTSong*> &songList = BTGame::getGame()->getSongList();
+ list = new BTDisplay::selectItem[songList.size()];
+ int len = songList.size();
+ for (int i = 0; i < len; ++i)
+ {
+  list[i].name = songList[i]->getName();
+ }
+ return len;
+}
+
+XMLObject *BTSelectSong::create(const XML_Char *name, const XML_Char **atts)
+{
+ BTSelectSong *obj = new BTSelectSong();
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "action"))
+   obj->setAction(att[1]);
+  else if (0 == strcmp(*att, "screen"))
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
+  else if (0 == strcmp(*att, "numbered"))
+   obj->numbered = atoi(att[1]);
+ }
+ return obj;
+}
+
 BTCan::BTCan(const char *o, char_ptr *a, const char *v)
 : option(o), atts(a), checkValue(false), drawn(false)
 {
@@ -822,6 +858,7 @@ void BTCan::serialize(ObjectSerializer *s)
  s->add("selectGoods", &items, &BTSelectGoods::create);
  s->add("selectInventory", &items, &BTSelectInventory::create);
  s->add("selectParty", &items, &BTSelectParty::create);
+ s->add("selectSong", &items, &BTSelectSong::create);
 }
 
 XMLObject *BTCan::create(const XML_Char *name, const XML_Char **atts)
@@ -893,6 +930,7 @@ void BTScreenSetScreen::serialize(ObjectSerializer* s)
  s->add("selectGoods", &items, &BTSelectGoods::create);
  s->add("selectInventory", &items, &BTSelectInventory::create);
  s->add("selectParty", &items, &BTSelectParty::create);
+ s->add("selectSong", &items, &BTSelectSong::create);
  s->add("can", &items, &BTCan::create);
 }
 
@@ -962,12 +1000,14 @@ BTScreenSet::BTScreenSet()
  actionList["save"] = &save;
  actionList["saveParty"] = &saveParty;
  actionList["sell"] = &sell;
+ actionList["selectBard"] = &selectBard;
  actionList["selectItem"] = &selectItem;
  actionList["selectMage"] = &selectMage;
  actionList["selectParty"] = &selectParty;
  actionList["selectRoster"] = &selectRoster;
  actionList["setJob"] = &setJob;
  actionList["setRace"] = &setRace;
+ actionList["singNow"] = &singNow;
  actionList["unequip"] = &unequip;
  actionList["useOn"] = &useOn;
 }
@@ -1671,6 +1711,27 @@ int BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  return 0;
 }
 
+int BTScreenSet::selectBard(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ XMLVector<BTSkill*> &skill = BTGame::getGame()->getSkillList();
+ if ((key >= '1') && (key <= '9'))
+ {
+  for (int i = 0; i < skill.size(); ++i)
+  {
+   if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (party[key - '1']->skill[i] > 0))
+   {
+    b.setPc(party[key - '1']);
+    BTSelectParty *select = static_cast<BTSelectParty*>(item);
+    select->checkDisallow(b.pc);
+    return 0;
+   }
+  }
+  throw BTSpecialError("nobard");
+ }
+ return 0;
+}
+
 int BTScreenSet::selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -1742,6 +1803,7 @@ int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
      b.pc->skill[job[i]->skill[k]->skill] = job[i]->skill[k]->value;
      if ((job[i]->skill[k]->modifier >= 0) && (b.pc->stat[job[i]->skill[k]->modifier] > 14))
       b.pc->skill[job[i]->skill[k]->skill] += b.pc->stat[job[i]->skill[k]->modifier] - 14;
+     b.pc->skillUse[job[i]->skill[k]->skill] = b.pc->skill[job[i]->skill[k]->skill];
     }
     b.pc->gold = BTDice(1, 61, 110).roll();
     if (job[i]->spells)
@@ -1766,6 +1828,24 @@ int BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
   b.pc->stat[i] = race[b.pc->race]->stat[i].roll();
  select->clear();
  return 0;
+}
+
+int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ XMLVector<BTSong*> &songList = BTGame::getGame()->getSongList();
+ XMLVector<BTSkill*> &skill = BTGame::getGame()->getSkillList();
+ BTSelectSong *select = static_cast<BTSelectSong*>(item);
+ for (int i = 0; i < skill.size(); ++i)
+ {
+  if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (b.pc->skillUse[i] > 0))
+  {
+   d.clearText();
+   b.pc->skillUse[i] -= 1;
+   songList[select->select]->play(d, b.pc->name, NULL, b.pc->level);
+   return -1;
+  }
+ }
+ throw BTSpecialError("novoice");
 }
 
 int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
