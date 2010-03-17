@@ -90,6 +90,7 @@ extern char *combatActions[];
 
 #define BT_ITEMTYPES 13
 #define BTITEM_HANDWEAPON 1
+#define BTITEM_INSTRUMENT 6
 extern char *itemTypes[];
 
 #define BTTIMESUSABLE_UNLIMITED 255

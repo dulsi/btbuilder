@@ -1834,11 +1834,23 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
 {
  XMLVector<BTSong*> &songList = BTGame::getGame()->getSongList();
  XMLVector<BTSkill*> &skill = BTGame::getGame()->getSkillList();
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skill.size(); ++i)
  {
   if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (b.pc->skillUse[i] > 0))
   {
+   bool instrument(false);
+   for (int k = 0; k < BT_ITEMS; ++k)
+   {
+    if ((b.pc->item[k].equipped == BTITEM_EQUIPPED) && (itemList[b.pc->item[k].id].getType() == BTITEM_INSTRUMENT))
+    {
+     instrument = true;
+     break;
+    }
+   }
+   if (!instrument)
+    throw BTSpecialError("noinstrument");
    d.clearText();
    b.pc->skillUse[i] -= 1;
    songList[select->select]->play(d, b.pc->name, NULL, b.pc->level);
