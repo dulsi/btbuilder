@@ -231,11 +231,14 @@ extern ArrayLookup statLookup;
 #define BTCOMBAT_MAXENCOUNTERS 4
 
 #define BTTARGET_INDIVIDUAL  0x0FFF
+#define BTTARGET_NOSINGER    0x0FFF
 #define BTTARGET_GROUPSHIFT  24
 #define BTTARGET_NONE        0
 #define BTTARGET_PARTY       1
 #define BTTARGET_MONSTER     2
 #define BTTARGET_ALLMONSTERS 7
+
+#define BTMUSICID_NONE 0
 
 #define BTTIME_MAXDAYS    256
 #define BTTIME_PERMANENT  0x08000000U
@@ -257,3 +260,4 @@ extern char *restriction[];
 extern ArrayLookup restrictionLookup;
 
 #endif
+

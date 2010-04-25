@@ -12,6 +12,7 @@
 #include "statusbar.h"
 #include "sdlextend.h"
 #include "SDL_mng.h"
+#include <SDL_mixer.h>
 #ifndef BTBUILDER_NOTTF
 #include <SDL_ttf.h>
 #endif
@@ -28,6 +29,8 @@
 #define BTKEY_LEFT 3
 #define BTKEY_RIGHT 4
 
+#define BTMUSICID_ALL 0
+
 class BTUIElement
 {
  public:
@@ -36,6 +39,17 @@ class BTUIElement
   virtual int getType() const = 0;
 
   SDL_Rect position;
+};
+
+
+class BTMusic
+{
+ public:
+  BTMusic(int id) : musicObj(0), musicId(id) {}
+  ~BTMusic();
+
+  Mix_Music *musicObj;
+  int musicId;
 };
 
 class BTDisplay
@@ -76,6 +90,7 @@ class BTDisplay
   BTDisplayConfig *getConfig();
   void getMultiplier(int &x, int &y);
   SDL_Color &getWhite();
+  int playMusic(const char *file, bool physfs = true);
   unsigned int process(const char *specialKeys = NULL, int delay = 0);
   unsigned int readChar(int delay = 0);
   std::string readString(const char *prompt, int max);
@@ -84,6 +99,7 @@ class BTDisplay
   void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(const char *file);
   void setWallGraphics(int type);
+  void stopMusic(int id);
 
   void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a);
   bool sizeFont(const char *text, int &w, int &h);
@@ -110,6 +126,7 @@ class BTDisplay
   XMLVector<Psuedo3DConfig*> p3dConfig;
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
+  std::list<BTMusic*> music;
   MNG_Image *animation;
   int animationFrame;
   unsigned long animationTime;

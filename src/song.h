@@ -19,19 +19,22 @@ class BTSong : public XMLObject
   {
    name = new char[1];
    name[0] = 0;
+   music = new char[1];
+   music[0] = 0;
   }
 
-  ~BTSong() { delete [] name; }
+  ~BTSong() { delete [] name; delete [] music; }
 
   const char *getName() const;
 
-  int play(BTDisplay &d, const char *caster, BTCombat *combat, int casterLevel);
+  int play(BTDisplay &d, BTPc *singer, BTCombat *combat);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSong; }
   static void readXML(const char *filename, XMLVector<BTSong*> &song);
 
   char *name;
+  char *music;
   XMLVector<BTManifest*> manifest;
 };
 

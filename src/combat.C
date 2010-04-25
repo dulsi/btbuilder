@@ -1092,7 +1092,7 @@ bool BTCombat::endRound(BTDisplay &d)
  XMLVector<BTBaseEffect*>::iterator itrEffect = effect.begin();
  for (itrEffect = effect.begin(); itrEffect != effect.end();)
  {
-  if (game->isExpired((*itrEffect)->expiration))
+  if ((*itrEffect)->isExpired(game))
   {
    BTBaseEffect *current = *itrEffect;
    itrEffect = effect.erase(itrEffect);

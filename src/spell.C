@@ -223,7 +223,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    {
     if (BTTARGET_INDIVIDUAL == target)
     {
-     effect = new BTResurrectEffect(type, expire, false, group, target);
+     effect = new BTResurrectEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target);
     }
     else
     {
@@ -258,9 +258,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
     if ((BTTIME_PERMANENT != expire) && (BTTIME_CONTINUOUS != expire))
     {
      if (type == BTSPELLTYPE_SUMMONMONSTER)
-      effect = new BTSummonMonsterEffect(type, expire, false, BTTARGET_PARTY, party.size() - 1);
+      effect = new BTSummonMonsterEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_PARTY, party.size() - 1);
      else
-      effect = new BTSummonIllusionEffect(type, expire, false, BTTARGET_PARTY, party.size() - 1);
+      effect = new BTSummonIllusionEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_PARTY, party.size() - 1);
     }
    }
    break;
@@ -276,7 +276,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
     int testY = (y + (Psuedo3D::changeXY[f][1] * i) + game->getMap()->getYSize()) % game->getMap()->getYSize();
     if (game->getWallType(testX, testY, f))
     {
-     effect = new BTPhaseDoorEffect(type, BTTIME_MAP, false, testX, testY, f);
+     effect = new BTPhaseDoorEffect(type, BTTIME_MAP, BTTARGET_NOSINGER, BTMUSICID_NONE, testX, testY, f);
      break;
     }
    }
@@ -286,52 +286,52 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_DOORDETECT:
   case BTSPELLTYPE_TRAPDESTROY:
   case BTSPELLTYPE_COMPASS:
-   effect = new BTBaseEffect(type, expire, false);
+   effect = new BTBaseEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
    break;
   case BTSPELLTYPE_DAMAGE:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, dice, BTSTATUS_NONE, "");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, dice, BTSTATUS_NONE, "");
    break;
   case BTSPELLTYPE_KILL:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " is killed");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " is killed");
    break;
   case BTSPELLTYPE_POISON:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned");
    break;
   case BTSPELLTYPE_CAUSEINSANITY:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " has gone insane");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " has gone insane");
    break;
   case BTSPELLTYPE_POSSESS:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POSSESSED, "is possessed");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POSSESSED, "is possessed");
    break;
   case BTSPELLTYPE_FLESHTOSTONE:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_STONED, "is stoned");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_STONED, "is stoned");
    break;
   case BTSPELLTYPE_PARALYZE:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_PARALYZED, "is paralyzed");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_PARALYZED, "is paralyzed");
    break;
   case BTSPELLTYPE_DAMAGEBYLEVEL:
-   effect = new BTAttackEffect(type, expire, false, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
    break;
   case BTSPELLTYPE_CUREPOISON:
-   effect = new BTCureStatusEffect(type, expire, false, group, target, BTSTATUS_POISONED);
+   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_POISONED);
    break;
   case BTSPELLTYPE_CUREINSANITY:
-   effect = new BTCureStatusEffect(type, expire, false, group, target, BTSTATUS_INSANE);
+   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_INSANE);
    break;
   case BTSPELLTYPE_DISPOSSESS:
-   effect = new BTCureStatusEffect(type, expire, false, group, target, BTSTATUS_POSSESSED);
+   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_POSSESSED);
    break;
   case BTSPELLTYPE_STONETOFLESH:
-   effect = new BTCureStatusEffect(type, expire, false, group, target, BTSTATUS_STONED);
+   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_STONED);
    break;
   case BTSPELLTYPE_CUREPARALYZE:
-   effect = new BTCureStatusEffect(type, expire, false, group, target, BTSTATUS_PARALYZED);
+   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_PARALYZED);
    break;
   case BTSPELLTYPE_HEAL:
-   effect = new BTHealEffect(type, expire, false, group, target, dice);
+   effect = new BTHealEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
    break;
   case BTSPELLTYPE_ARMORBONUS:
-   effect = new BTArmorBonusEffect(type, expire, false, group, target, getExtra());
+   effect = new BTArmorBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
    break;
   default:
    break;

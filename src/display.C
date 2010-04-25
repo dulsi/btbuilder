@@ -13,14 +13,25 @@
 
 const char *BTDisplay::allKeys = "allKeys";
 
+BTMusic::~BTMusic()
+{
+ if (musicObj)
+ {
+  Mix_FreeMusic(musicObj);
+ }
+}
+
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
  : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), mainBackground(0), animation(0), ttffont(0), sfont(&simple8x8)
 {
- if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
+ if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
   printf("Failed - SDL_Init\n");
   exit(0);
  }
+#if (SDL_MIXER_MAJOR_VERSION != 1) || (SDL_MIXER_MINOR_VERSION != 2) || (SDL_MIXER_PATCHLEVEL != 8)
+ Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG);
+#endif
  const SDL_VideoInfo *info = SDL_GetVideoInfo();
  xFull = info->current_w;
  yFull = info->current_h;
@@ -71,10 +82,13 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
  SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
  SDL_EventState(SDL_MOUSEBUTTONUP, SDL_IGNORE);
  SDL_EnableUNICODE(1);
+
+ Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024);
 }
 
 BTDisplay::~BTDisplay()
 {
+ stopMusic(true);
  for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
  {
   delete (*elementItr);
@@ -84,6 +98,9 @@ BTDisplay::~BTDisplay()
   SDL_FreeSurface(mainBackground);
  }
  element.clear();
+#if (SDL_MIXER_MAJOR_VERSION != 1) || (SDL_MIXER_MINOR_VERSION != 2) || (SDL_MIXER_PATCHLEVEL != 8)
+ Mix_Quit();
+#endif
  SDL_Quit();
 }
 
@@ -486,6 +503,39 @@ SDL_Color &BTDisplay::getWhite()
  return white;
 }
 
+int BTDisplay::playMusic(const char *file, bool physfs /*= true*/)
+{
+ if ((!music.empty()) && (music.front()->musicObj != NULL))
+ {
+  Mix_FadeOutMusic(1000);
+ }
+ int musicID = 1;
+ for (std::list<BTMusic*>::iterator itr(music.begin()); itr != music.end(); ++itr)
+ {
+  if (musicID <= (*itr)->musicId)
+   musicID = (*itr)->musicId + 1;
+ }
+ if ((file == NULL) || (file[0] == 0))
+ {
+  music.push_front(new BTMusic(musicID));
+  return musicID;
+ }
+ BTMusic *m = new BTMusic(musicID);
+ SDL_RWops *musicFile;
+ if (physfs)
+  musicFile = PHYSFSRWOPS_openRead(file);
+ else
+  musicFile = SDL_RWFromFile(file, "rb");
+ if (musicFile)
+ {
+  m->musicObj = Mix_LoadMUS_RW(musicFile);
+  if (m->musicObj)
+   Mix_FadeInMusic(m->musicObj, -1, 1000);
+ }
+ music.push_front(m);
+ return musicID;
+}
+
 unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*= 0*/)
 {
  unsigned int key;
@@ -862,6 +912,50 @@ bool BTDisplay::sizeFont(const char *text, int &w, int &h)
   h *= yMult;
  }
  return true;
+}
+
+void BTDisplay::stopMusic(int id)
+{
+ if ((!music.empty()) && (music.front()->musicObj != NULL) && ((music.front()->musicId == id) || (id == BTMUSICID_ALL)))
+ {
+  Mix_FadeOutMusic(1000);
+ }
+ if (id == BTMUSICID_ALL)
+ {
+  while (!music.empty())
+  {
+   BTMusic *m = music.front();
+   music.pop_front();
+   if (m)
+    delete m;
+  }
+ }
+ else
+ {
+  if ((!music.empty()) && (music.front()->musicId == id))
+  {
+   BTMusic *m = music.front();
+   music.pop_front();
+   if (m)
+    delete m;
+   if ((!music.empty()) && (music.front()->musicObj != NULL))
+   {
+     Mix_FadeInMusic(music.front()->musicObj, -1, 1000);
+   }
+  }
+  else
+  {
+   for (std::list<BTMusic*>::iterator itr(music.begin()); itr != music.end(); ++itr)
+   {
+    if ((*itr)->musicId == id)
+    {
+     delete (*itr);
+     music.remove(*itr);
+     return;
+    }
+   }
+  }
+ }
 }
 
 void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a)

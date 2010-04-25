@@ -88,6 +88,7 @@ class BTGame : public Psuedo3DMap
   void addEffect(BTBaseEffect *e);
   void clearEffects(BTDisplay &d);
   void clearEffectsByType(BTDisplay &d, int type);
+  void clearEffectsBySource(BTDisplay &d, bool song);
   void clearMapEffects();
   bool hasEffectOfType(int type);
   void addPlayer(BTDisplay &d, int who);
@@ -101,6 +102,9 @@ class BTGame : public Psuedo3DMap
   int getDelay() const;
 
   static BTGame *getGame();
+
+ protected:
+  void checkMusic(BTDisplay &d, std::vector<int> &musicIds);
 
  private:
   BTModule *module;
