@@ -15,7 +15,7 @@
 		<choice keys="dD" action="defend" screen="3">Defend</choice>
 		<can option="maxsp"><choice keys="cC" screen="8">Cast a spell</choice></can>
 		<choice keys="uU" screen="9">Use an item</choice>
-		<can option="skill" number="9"><choice keys="bB" screen="3">Bard song</choice></can>
+		<can option="skill" number="9"><choice keys="bB" screen="12">Bard song</choice></can>
 		<can option="skill" number="7"><choice keys="hH" screen="3">Hide in shadows</choice></can>
 	</screen>
 	<combat number="3" escapeScreen="0" timeout="1000">
@@ -67,10 +67,17 @@
 		<can option="inRange" number="4"><choice keys="dD" action="target" screen="3">[d] <monsterNumber number="4" /> <monsterName number="4" /> (<distance number="4" />0')</choice></can>
 		<selectParty action="target" screen="3" />
 	</screen>
+	<screen number="12" escapeScreen="2">
+		<line>Play tune #</line>
+		<selectSong action="sing" numbered="1" screen="3"/>
+		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
+	</screen>
 	<error type="runAway">You are attempting to run away.
 You manage to get away!</error>
 	<error type="nospell" screen="2">No spell by that name.</error>
 	<error type="dontknow" screen="2">You don't know this spell.</error>
 	<error type="cantuse" screen="2">You can't use that.</error>
 	<error type="nosp" screen="2">Not enough spell points.</error>
+	<error type="novoice" screen="2"><name /> lost his voice!</error>
+	<error type="noinstrument" screen="2"><name /> has no equipped instrument!</error>
 </screenset>

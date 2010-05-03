@@ -10,6 +10,15 @@
 				<type>25</type>
 			</manifest>
 		</multiManifest>
+		<multiManifest>
+			<restriction>combat</restriction>
+			<armorBonusManifest>
+				<type>23</type>
+				<bonus>1</bonus>
+				<level>2</level>
+				<maximum>18</maximum>
+			</armorBonusManifest>
+		</multiManifest>
 	</song>
 	<song>
 		<name>Bringaround Ballad</name>

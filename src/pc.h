@@ -80,8 +80,8 @@ class BTPc : public XMLObject, public BTCombatant
   class BTPcAction
   {
    public:
-    enum pcAction { advance, attack, partyAttack, defend, useItem, runAway, cast, skill, npc };
-    enum objectType { none, item, spell };
+    enum pcAction { advance, attack, partyAttack, defend, useItem, runAway, cast, skill, sing, npc };
+    enum objectType { none, item, spell, song };
 
     void clearTarget(int group, int member = BTTARGET_INDIVIDUAL);
     void setTarget(int group, int member = BTTARGET_INDIVIDUAL);

@@ -136,6 +136,7 @@ BTCombat::BTCombat()
  actionList["defend"] = &defend;
  actionList["partyAttack"] = &partyAttack;
  actionList["runAway"] = &runAway;
+ actionList["sing"] = &sing;
  actionList["target"] = &target;
  actionList["useItem"] = &useItem;
 }
@@ -766,6 +767,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
  BTSkillList &skillList = game->getSkillList();
  BTFactory<BTMonster> &monList = game->getMonsterList();
  BTParty &party = game->getParty();
+ XMLVector<BTSong*> &songList = game->getSongList();
  BTFactory<BTSpell> &spellList = game->getSpellList();
  std::string text;
  pc.active = false;
@@ -1045,6 +1047,45 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
     if ((spellList[pc.combat.object].getArea() == BTAREAEFFECT_FOE) && (target == BTTARGET_INDIVIDUAL))
      findTarget(pc, BTDISTANCE_MAX, grp, target);
     active -= spellList[pc.combat.object].cast(d, pc.name, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
+    break;
+   }
+   case BTPc::BTPcAction::sing:
+   {
+    text = pc.name;
+    text += " ";
+    bool novoice = true;
+    for (int i = 0; i < skillList.size(); ++i)
+    {
+     if ((skillList[i]->special == BTSKILLSPECIAL_SONG) && (pc.skillUse[i] > 0))
+     {
+      bool instrument(false);
+      for (int k = 0; k < BT_ITEMS; ++k)
+      {
+       if ((pc.item[k].equipped == BTITEM_EQUIPPED) && (itemList[pc.item[k].id].getType() == BTITEM_INSTRUMENT))
+       {
+        instrument = true;
+        break;
+       }
+      }
+      if (!instrument)
+      {
+       text += "has no equipped instrument!";
+       d.drawMessage(text.c_str(), game->getDelay());
+      }
+      else
+      {
+       pc.skillUse[i] -= 1;
+       songList[pc.combat.object]->play(d, &pc, this);
+      }
+      novoice = false;
+      break;
+     }
+    }
+    if (novoice)
+    {
+     text += "lost his voice!";
+     d.drawMessage(text.c_str(), game->getDelay());
+    }
     break;
    }
    case BTPc::BTPcAction::useItem:
@@ -1329,6 +1370,38 @@ int BTCombat::runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  for (int i = 0; i < party.size(); ++i)
   party[i]->combat.action = BTPc::BTPcAction::runAway;
  return 0;
+}
+
+int BTCombat::sing(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTGame *game = BTGame::getGame();
+ BTFactory<BTItem> &itemList = game->getItemList();
+ BTSkillList &skillList = game->getSkillList();
+ BTFactory<BTSpell> &spellList = game->getSpellList();
+ BTCombat &c = static_cast<BTCombat&>(b);
+ BTSelectSong *select = static_cast<BTSelectSong*>(item);
+ for (int i = 0; i < skillList.size(); ++i)
+ {
+  if ((skillList[i]->special == BTSKILLSPECIAL_SONG) && (b.getPc()->skillUse[i] > 0))
+  {
+   bool instrument(false);
+   for (int k = 0; k < BT_ITEMS; ++k)
+   {
+    if ((b.getPc()->item[k].equipped == BTITEM_EQUIPPED) && (itemList[b.getPc()->item[k].id].getType() == BTITEM_INSTRUMENT))
+    {
+     instrument = true;
+     break;
+    }
+   }
+   if (!instrument)
+    throw BTSpecialError("noinstrument");
+   b.getPc()->combat.action = BTPc::BTPcAction::sing;
+   b.getPc()->combat.object = select->select;
+   b.getPc()->combat.type = BTPc::BTPcAction::song;
+   return 0;
+  }
+ }
+ throw BTSpecialError("novoice");
 }
 
 int BTCombat::target(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)

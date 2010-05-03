@@ -83,6 +83,7 @@ class BTCombat : public BTScreenSet
   static int defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int sing(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int target(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
@@ -108,3 +109,4 @@ class BTCombat : public BTScreenSet
 };
 
 #endif
+

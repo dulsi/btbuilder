@@ -25,6 +25,21 @@ class BTManifest : public XMLObject
   int type;
 };
 
+class BTArmorBonusManifest : public BTManifest
+{
+ public:
+  BTArmorBonusManifest() : bonus(0), level(0), maximum(0) {}
+
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTArmorBonusManifest; }
+
+  int bonus;
+  bool level;
+  int maximum;
+};
+
 class BTMultiManifest : public BTManifest
 {
  public:
