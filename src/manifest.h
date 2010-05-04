@@ -36,7 +36,7 @@ class BTArmorBonusManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTArmorBonusManifest; }
 
   int bonus;
-  bool level;
+  int level;
   int maximum;
 };
 
