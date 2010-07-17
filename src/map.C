@@ -398,6 +398,26 @@ void BTSpecialCommand::run(BTDisplay &d) const
    d.drawStats();
    break;
   }
+  case BTSPECIALCOMMAND_REGENERATESONGS:
+  {
+   XMLVector<BTPc*> &party = game->getParty();
+   BTSkillList &skillList = game->getSkillList();
+   for (int who = 0; who < party.size(); ++who)
+   {
+    for (int which = 0; which < skillList.size(); ++which)
+    {
+     if ((skillList[which]->special == BTSKILLSPECIAL_SONG) && (skillList[which]->limited) && (party[who]->skillUse[which] < party[who]->skill[which]))
+     {
+      if (party[who]->skillUse[which] + number[0] < party[who]->skill[which])
+       party[who]->skillUse[which] += number[0];
+      else
+       party[who]->skillUse[which] = party[who]->skill[which];
+     }
+    }
+   }
+   d.drawStats();
+   break;
+  }
   case BTSPECIALCOMMAND_BACKONE:
    throw BTSpecialBack();
    break;

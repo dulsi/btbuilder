@@ -21,9 +21,11 @@ class BTSong : public XMLObject
    name[0] = 0;
    music = new char[1];
    music[0] = 0;
+   combatMusic = new char[1];
+   combatMusic[0] = 0;
   }
 
-  ~BTSong() { delete [] name; delete [] music; }
+  ~BTSong() { delete [] name; delete [] music; delete [] combatMusic; }
 
   const char *getName() const;
 
@@ -35,6 +37,7 @@ class BTSong : public XMLObject
 
   char *name;
   char *music;
+  char *combatMusic;
   XMLVector<BTManifest*> manifest;
 };
 

@@ -30,6 +30,7 @@ class BTMonsterGroup
   ~BTMonsterGroup();
 
   int findTarget(int ind = BTTARGET_INDIVIDUAL);
+  void push(int d);
   void setMonsterType(int type, int number = 0);
 
   int monsterType;

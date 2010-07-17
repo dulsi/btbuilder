@@ -55,6 +55,15 @@ int BTMonsterGroup::findTarget(int ind /*= BTTARGET_INDIVIDUAL*/)
  return BTTARGET_INDIVIDUAL;
 }
 
+void BTMonsterGroup::push(int d)
+{
+ distance += d;
+ if (distance <= 0)
+  distance = 1;
+ else if (distance > 9)
+  distance = 9;
+}
+
 void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();

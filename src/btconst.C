@@ -41,7 +41,8 @@ char *spellTypes[] =
  "Dispel Magic",
  "Regenerate Bard Songs",
  "Damage By Level",
- "Compass"
+ "Compass",
+ "Push"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES, spellTypes);
 

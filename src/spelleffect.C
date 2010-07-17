@@ -21,7 +21,7 @@ BTBaseEffect::BTBaseEffect(int t, int x, int s, int m)
 
 int BTBaseEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
 {
- if (g == BTTARGET_NONE)
+ if (g != BTTARGET_NONE)
   return 0;
  else
   return maintain(d, combat);
@@ -141,7 +141,7 @@ BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, in
 
 int BTAttackEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
 {
- if (g == BTTARGET_NONE)
+ if (g != BTTARGET_NONE)
  {
   checkResists(combat, g, trgt);
   return 0;
@@ -1048,5 +1048,42 @@ int BTResurrectEffect::maintain(BTDisplay &d, BTCombat *combat)
 BTPhaseDoorEffect::BTPhaseDoorEffect(int t, int x, int s, int m, int mX, int mY, int f)
  : BTBaseEffect(t, x, s, m), mapX(mX), mapY(mY), facing(f)
 {
+}
+
+BTPushEffect::BTPushEffect(int t, int x, int s, int m, int g, int trgt, int dis)
+ : BTTargetedEffect(t, x, s, m, g, trgt), distance(dis)
+{
+}
+
+int BTPushEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+ if (combat == NULL)
+  return 0;
+ if (BTTARGET_PARTY == group)
+ {
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   grp->push(-1 * distance);
+  }
+ }
+ else if (BTTARGET_ALLMONSTERS == group)
+ {
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   grp->push(distance);
+  }
+ }
+ else if (group >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
+  grp->push(distance);
+ }
+ return 0;
 }
 

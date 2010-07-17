@@ -68,5 +68,19 @@ void BTMultiManifest::serialize(ObjectSerializer* s)
  s->add("manifest", &content, &BTManifest::create);
  s->add("armorBonusManifest", &content, &BTArmorBonusManifest::create);
  s->add("multiManifest", &content, &BTMultiManifest::create);
+ s->add("pushManifest", &content, &BTPushManifest::create);
+}
+
+std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+{
+ std::list<BTBaseEffect*> effect;
+ effect.push_back(new BTPushEffect(type, expire, singer, musicId, group, target, distance));
+ return effect;
+}
+
+void BTPushManifest::serialize(ObjectSerializer* s)
+{
+ BTManifest::serialize(s);
+ s->add("distance", &distance);
 }
 

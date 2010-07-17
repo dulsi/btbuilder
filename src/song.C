@@ -33,7 +33,7 @@ int BTSong::play(BTDisplay &d, BTPc *singer, BTCombat *combat)
   expire = game->getExpiration(1);
  else
   expire = game->getExpiration(BTDice(1, 241, 239).roll());
- int musicId = d.playMusic(music);
+ int musicId = d.playMusic((combat ? combatMusic : music));
  d.drawMessage(text.c_str(), game->getDelay());
  for (int i = 0; i < manifest.size(); ++i)
  {
@@ -58,9 +58,11 @@ void BTSong::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
  s->add("music", &music);
+ s->add("combatMusic", &combatMusic);
  s->add("manifest", &manifest, &BTManifest::create);
  s->add("armorBonusManifest", &manifest, &BTArmorBonusManifest::create);
  s->add("multiManifest", &manifest, &BTMultiManifest::create);
+ s->add("pushManifest", &manifest, &BTPushManifest::create);
 }
 
 void BTSong::readXML(const char *filename, XMLVector<BTSong*> &song)

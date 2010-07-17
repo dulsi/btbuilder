@@ -150,5 +150,15 @@ class BTPhaseDoorEffect : public BTBaseEffect
   int facing;
 };
 
+class BTPushEffect : public BTTargetedEffect
+{
+ public:
+  BTPushEffect(int t, int x, int s, int m, int g, int trgt, int dis);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  int distance;
+};
+
 #endif
 

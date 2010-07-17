@@ -272,6 +272,9 @@ int main(int argc, char *argv[])
      case BTSPELLTYPE_HITBONUS:
       printf("   Bonus: %d", mon.getExtra());
       break;
+     case BTSPELLTYPE_PUSH:
+      printf("   Distance: %d", mon.getExtra());
+      break;
      case BTSPELLTYPE_REGENBARD:
       printf("   Amount: %d", mon.getExtra());
       break;
