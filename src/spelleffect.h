@@ -160,5 +160,16 @@ class BTPushEffect : public BTTargetedEffect
   int distance;
 };
 
+class BTAttackRateBonusEffect : public BTTargetedEffect
+{
+ public:
+  BTAttackRateBonusEffect(int t, int x, int s, int m, int g, int trgt, int b);
+
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+
+  int bonus;
+};
+
 #endif
 

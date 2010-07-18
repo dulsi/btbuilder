@@ -42,7 +42,8 @@ char *spellTypes[] =
  "Regenerate Bard Songs",
  "Damage By Level",
  "Compass",
- "Push"
+ "Push",
+ "Attack Rate Bonus"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES, spellTypes);
 

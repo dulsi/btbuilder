@@ -25,6 +25,13 @@
 	</song>
 	<song>
 		<name>Rhyme of Duotime</name>
+		<multiManifest>
+			<restriction>combat</restriction>
+			<attackRateBonusManifest>
+				<type>33</type>
+				<bonus>1</bonus>
+			</attackRateBonusManifest>
+		</multiManifest>
 	</song>
 	<song>
 		<name>Marcela's Melody</name>
@@ -33,6 +40,13 @@
 			<manifest>
 				<type>22</type>
 			</manifest>
+		</multiManifest>
+		<multiManifest>
+			<restriction>combat</restriction>
+			<pushManifest>
+				<type>32</type>
+				<distance>9</distance>
+			</pushManifest>
 		</multiManifest>
 	</song>
 	<song>

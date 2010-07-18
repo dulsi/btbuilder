@@ -67,5 +67,20 @@ class BTPushManifest : public BTManifest
   int distance;
 };
 
+class BTAttackRateBonusManifest : public BTManifest
+{
+ public:
+  BTAttackRateBonusManifest() : bonus(0), level(0), maximum(0) {}
+
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackRateBonusManifest; }
+
+  int bonus;
+  int level;
+  int maximum;
+};
+
 #endif
 
