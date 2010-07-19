@@ -22,6 +22,14 @@
 	</song>
 	<song>
 		<name>Bringaround Ballad</name>
+		<multiManifest>
+			<restriction>noncombat</restriction>
+			<targetOverride>singer</targetOverride>
+			<healManifest>
+				<type>0</type>
+				<heal><n>0</n><d>2</d><m>1</m></heal>
+			</healManifest>
+		</multiManifest>
 	</song>
 	<song>
 		<name>Rhyme of Duotime</name>

@@ -247,3 +247,11 @@ char *restriction[] =
 };
 ArrayLookup restrictionLookup(BT_RESTRICTIONS, restriction);
 
+char *targetOverride[] =
+{
+ "none",
+ "singer",
+ "all monsters"
+};
+ArrayLookup targetOverrideLookup(BT_TARGETOVERRIDES, targetOverride);
+

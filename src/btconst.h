@@ -261,5 +261,12 @@ extern ArrayLookup statLookup;
 extern char *restriction[];
 extern ArrayLookup restrictionLookup;
 
+#define BT_TARGETOVERRIDES 3
+#define BTTARGETOVERRIDE_NONE        0
+#define BTTARGETOVERRIDE_SINGER      1
+#define BTTARGETOVERRIDE_ALLMONSTERS 2
+extern char *targetOverride[];
+extern ArrayLookup targetOverrideLookup;
+
 #endif
 
