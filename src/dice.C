@@ -12,7 +12,7 @@
 #define DICE_NUMBERMASK 0x1F
 #define DICE_TYPEMASK   0xE0
 
-IShort BTDice::validType[DICE_VALIDTYPES] = {2, 4, 6, 8, 10, 12, 20, 100};
+IShort BTDice::validType[DICE_VALIDTYPES] = {2, 4, 6, 8, 10, 12, 20, 100, 5};
 base_generator_type BTDice::generator(42u);
 
 BTDice::BTDice(BinaryReadFile &f)

@@ -30,6 +30,14 @@
 				<heal><n>0</n><d>2</d><m>1</m></heal>
 			</healManifest>
 		</multiManifest>
+		<multiManifest>
+			<restriction>combat</restriction>
+			<healManifest>
+				<type>0</type>
+				<level>1</level>
+				<heal><n>1</n><d>5</d><m></m></heal>
+			</healManifest>
+		</multiManifest>
 	</song>
 	<song>
 		<name>Rhyme of Duotime</name>

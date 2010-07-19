@@ -22,7 +22,7 @@
  type: bits[3] {d2, d4, d6, d8, d10, d12, d20, d100}
 */
 
-#define DICE_VALIDTYPES 8
+#define DICE_VALIDTYPES 9
 
 typedef boost::minstd_rand base_generator_type;
 
