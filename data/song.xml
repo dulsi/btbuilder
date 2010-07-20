@@ -73,6 +73,16 @@
 				<type>31</type>
 			</manifest>
 		</multiManifest>
+		<multiManifest>
+			<restriction>combat</restriction>
+			<targetOverride>all monsters</targetOverride>
+			<attackManifest>
+				<type>9</type>
+				<range>9</range>
+				<damage><n>1</n><d>5</d><m>0</m></damage>
+				<level>1</level>
+			</attackManifest>
+		</multiManifest>
 	</song>
 	<song>
 		<name>Cain's Carrack</name>

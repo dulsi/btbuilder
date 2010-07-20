@@ -61,6 +61,7 @@ void BTSong::serialize(ObjectSerializer* s)
  s->add("combatMusic", &combatMusic);
  s->add("manifest", &manifest, &BTManifest::create);
  s->add("armorBonusManifest", &manifest, &BTArmorBonusManifest::create);
+ s->add("attackManifest", &manifest, &BTAttackManifest::create);
  s->add("attackRateBonusManifest", &manifest, &BTAttackRateBonusManifest::create);
  s->add("healManifest", &manifest, &BTHealManifest::create);
  s->add("multiManifest", &manifest, &BTMultiManifest::create);

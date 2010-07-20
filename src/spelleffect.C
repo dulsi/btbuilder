@@ -622,7 +622,7 @@ bool BTAttackEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, i
    {
     for (int k = 0; k < grp->individual.size(); ++k)
     {
-     if (BTDice(1, 100).roll() > resistance)
+     if (BTDice(1, 100).roll() <= resistance)
       resists.set(total + k);
      else
       allResists = false;
@@ -645,7 +645,7 @@ bool BTAttackEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, i
    {
     if (BTMONSTER_NONE != party[i]->monster)
     {
-     if (BTDice(1, 100).roll() > monList[party[i]->monster].getMagicResistance())
+     if (BTDice(1, 100).roll() <= monList[party[i]->monster].getMagicResistance())
       resists.set(i);
      else
       allResists = false;
@@ -660,7 +660,7 @@ bool BTAttackEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, i
   {
    if (BTMONSTER_NONE != party[trgt]->monster)
    {
-    if (BTDice(1, 100).roll() > monList[party[trgt]->monster].getMagicResistance())
+    if (BTDice(1, 100).roll() <= monList[party[trgt]->monster].getMagicResistance())
     {
      if ((group == BTTARGET_PARTY) && (BTTARGET_INDIVIDUAL == target))
       resists.set(trgt);
@@ -682,7 +682,7 @@ bool BTAttackEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, i
     bool allResists = true;
     for (int i = 0; i < grp->individual.size(); ++i)
     {
-     if (BTDice(1, 100).roll() > resistance)
+     if (BTDice(1, 100).roll() <= resistance)
       resists.set(i);
      else
       allResists = false;
@@ -690,7 +690,7 @@ bool BTAttackEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, i
     if (allResists)
      return true;
    }
-   else if (BTDice(1, 100).roll() > resistance)
+   else if (BTDice(1, 100).roll() <= resistance)
    {
     resists.set(0);
     return true;
