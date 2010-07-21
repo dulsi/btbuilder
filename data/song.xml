@@ -1,6 +1,17 @@
 <data>
 	<song>
 		<name>Safety Song</name>
+		<multiManifest>
+			<restriction>combat</restriction>
+			<cureStatusManifest>
+				<type>3</type>
+				<status>insane</status>
+			</cureStatusManifest>
+			<cureStatusManifest>
+				<type>5</type>
+				<status>possessed</status>
+			</cureStatusManifest>
+		</multiManifest>
 	</song>
 	<song>
 		<name>Santuary Score</name>

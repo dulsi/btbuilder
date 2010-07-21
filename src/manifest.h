@@ -73,6 +73,19 @@ class BTAttackRateBonusManifest : public BTManifest
   int maximum;
 };
 
+class BTCureStatusManifest : public BTManifest
+{
+ public:
+  BTCureStatusManifest() : status(0) {}
+
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTCureStatusManifest; }
+
+  int status;
+};
+
 class BTHealManifest : public BTManifest
 {
  public:
