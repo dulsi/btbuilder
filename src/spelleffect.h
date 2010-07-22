@@ -171,5 +171,15 @@ class BTAttackRateBonusEffect : public BTTargetedEffect
   int bonus;
 };
 
+class BTRegenManaEffect : public BTTargetedEffect
+{
+ public:
+  BTRegenManaEffect(int t, int x, int s, int m, int g, int trgt, const BTDice& sp);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  BTDice mana;
+};
+
 #endif
 

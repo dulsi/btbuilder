@@ -1153,3 +1153,34 @@ void BTAttackRateBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= B
  }
 }
 
+BTRegenManaEffect::BTRegenManaEffect(int t, int x, int s, int m, int g, int trgt, const BTDice &sp)
+ : BTTargetedEffect(t, x, s, m, g, trgt), mana(sp)
+{
+}
+
+int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (BTTARGET_PARTY == group)
+ {
+  if (BTTARGET_INDIVIDUAL == target)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i]->isAlive())
+    {
+     party[i]->giveSP(mana.roll());
+    }
+   }
+  }
+  else
+  {
+   if (party[target]->isAlive())
+    party[target]->giveSP(mana.roll());
+  }
+  d.drawStats();
+ }
+ return 0;
+}
+

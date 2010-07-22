@@ -277,6 +277,16 @@ void BTPc::giveHP(int amount)
  }
 }
 
+void BTPc::giveSP(int amount)
+{
+ if (!status.isSet(BTSTATUS_DEAD))
+ {
+  sp += amount;
+  if (sp > maxSp)
+   sp = maxSp;
+ }
+}
+
 void BTPc::giveXP(unsigned int amount)
 {
  xp += amount;

@@ -93,8 +93,6 @@ void BTAttackRateBonusManifest::serialize(ObjectSerializer* s)
 
 std::list<BTBaseEffect*> BTCureStatusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
- BTGame *game = BTGame::getGame();
- BTParty &party = game->getParty();
  std::list<BTBaseEffect*> effect;
  effect.push_back(new BTCureStatusEffect(type, expire, singer, musicId, group, target, status));
  return effect;
@@ -168,6 +166,7 @@ void BTMultiManifest::serialize(ObjectSerializer* s)
  s->add("healManifest", &content, &BTHealManifest::create);
  s->add("multiManifest", &content, &BTMultiManifest::create);
  s->add("pushManifest", &content, &BTPushManifest::create);
+ s->add("regenManaManifest", &content, &BTRegenManaManifest::create);
 }
 
 std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -181,5 +180,18 @@ void BTPushManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
  s->add("distance", &distance);
+}
+
+std::list<BTBaseEffect*> BTRegenManaManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+{
+ std::list<BTBaseEffect*> effect;
+ effect.push_back(new BTRegenManaEffect(type, expire, singer, musicId, group, target, mana));
+ return effect;
+}
+
+void BTRegenManaManifest::serialize(ObjectSerializer* s)
+{
+ BTManifest::serialize(s);
+ s->add("mana", &mana);
 }
 

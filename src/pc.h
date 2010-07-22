@@ -46,6 +46,7 @@ class BTPc : public XMLObject, public BTCombatant
   unsigned int giveGold(unsigned int amount);
   void giveHP(int amount);
   bool giveItem(int id, bool known, int charges);
+  void giveSP(int amount);
   void giveXP(unsigned int amount);
   bool hasItem(int id) const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;

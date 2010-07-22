@@ -129,5 +129,18 @@ class BTPushManifest : public BTManifest
   int distance;
 };
 
+class BTRegenManaManifest : public BTManifest
+{
+ public:
+  BTRegenManaManifest() {}
+
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenManaManifest; }
+
+  BTDice mana;
+};
+
 #endif
 

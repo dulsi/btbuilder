@@ -53,6 +53,13 @@
 	<song>
 		<name>Rhyme of Duotime</name>
 		<multiManifest>
+			<restriction>noncombat</restriction>
+			<regenManaManifest>
+				<type>34</type>
+				<mana><n>0</n><d>2</d><m>1</m></mana>
+			</regenManaManifest>
+		</multiManifest>
+		<multiManifest>
 			<restriction>combat</restriction>
 			<attackRateBonusManifest>
 				<type>33</type>
