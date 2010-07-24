@@ -1184,3 +1184,69 @@ int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
  return 0;
 }
 
+BTSaveBonusEffect::BTSaveBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
+ : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
+{
+}
+
+int BTSaveBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ if (BTTARGET_PARTY == g)
+ {
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    party[i]->save += bonus;
+   }
+  }
+  else
+  {
+   party[trgt]->save += bonus;
+  }
+  d.drawStats();
+ }
+ else
+ {
+  // Doesn't work on monsters
+ }
+ return 0;
+}
+
+void BTSaveBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ if (BTTARGET_PARTY == g)
+ {
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    party[i]->save -= bonus;
+   }
+  }
+  else
+  {
+   party[trgt]->save -= bonus;
+  }
+  d.drawStats();
+ }
+ else
+ {
+  // Doesn't work on monsters
+ }
+}
+

@@ -68,6 +68,7 @@ void BTSong::serialize(ObjectSerializer* s)
  s->add("multiManifest", &manifest, &BTMultiManifest::create);
  s->add("pushManifest", &manifest, &BTPushManifest::create);
  s->add("regenManaManifest", &manifest, &BTRegenManaManifest::create);
+ s->add("saveBonusManifest", &manifest, &BTSaveBonusManifest::create);
 }
 
 void BTSong::readXML(const char *filename, XMLVector<BTSong*> &song)

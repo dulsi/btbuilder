@@ -181,5 +181,16 @@ class BTRegenManaEffect : public BTTargetedEffect
   BTDice mana;
 };
 
+class BTSaveBonusEffect : public BTTargetedEffect
+{
+ public:
+  BTSaveBonusEffect(int t, int x, int s, int m, int g, int trgt, int b);
+
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+
+  int bonus;
+};
+
 #endif
 

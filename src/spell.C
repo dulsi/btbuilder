@@ -342,6 +342,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_REGENMANA:
    effect = new BTHealEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
    break;
+  case BTSPELLTYPE_SAVEBONUS:
+   effect = new BTSaveBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
+   break;
   default:
    break;
  }

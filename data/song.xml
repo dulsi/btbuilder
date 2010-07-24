@@ -104,6 +104,13 @@
 	</song>
 	<song>
 		<name>Cain's Carrack</name>
+		<multiManifest>
+			<restriction>noncombat</restriction>
+			<saveBonusManifest>
+				<type>35</type>
+				<bonus>3</bonus>
+			</saveBonusManifest>
+		</multiManifest>
 	</song>
 </data>
 

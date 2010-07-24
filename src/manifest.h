@@ -142,5 +142,20 @@ class BTRegenManaManifest : public BTManifest
   BTDice mana;
 };
 
+class BTSaveBonusManifest : public BTManifest
+{
+ public:
+  BTSaveBonusManifest() : bonus(0), level(0), maximum(0) {}
+
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSaveBonusManifest; }
+
+  int bonus;
+  int level;
+  int maximum;
+};
+
 #endif
 

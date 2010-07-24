@@ -9,7 +9,7 @@
 
 class ArrayLookup;
 
-#define BT_SPELLTYPES 35
+#define BT_SPELLTYPES 36
 #define BTSPELLTYPE_HEAL            0
 #define BTSPELLTYPE_RESURRECT       1
 #define BTSPELLTYPE_CUREPOISON      2
@@ -39,6 +39,7 @@ class ArrayLookup;
 #define BTSPELLTYPE_PUSH            32
 #define BTSPELLTYPE_ATTACKRATEBONUS 33
 #define BTSPELLTYPE_REGENMANA       34
+#define BTSPELLTYPE_SAVEBONUS       35
 extern char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 
