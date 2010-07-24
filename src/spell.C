@@ -286,6 +286,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_DOORDETECT:
   case BTSPELLTYPE_TRAPDESTROY:
   case BTSPELLTYPE_COMPASS:
+  case BTSPELLTYPE_BLOCKENCOUNTERS:
    effect = new BTBaseEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
    break;
   case BTSPELLTYPE_DAMAGE:

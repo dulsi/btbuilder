@@ -2,6 +2,12 @@
 	<song>
 		<name>Safety Song</name>
 		<multiManifest>
+			<restriction>noncombat</restriction>
+			<manifest>
+				<type>36</type>
+			</manifest>
+		</multiManifest>
+		<multiManifest>
 			<restriction>combat</restriction>
 			<cureStatusManifest>
 				<type>3</type>
