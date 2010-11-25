@@ -25,6 +25,16 @@ class BTManifest : public XMLObject
   int type;
 };
 
+class BTTargetedManifest : public BTManifest
+{
+ public:
+  BTTargetedManifest() {}
+
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTTargetedManifest; }
+};
+
 class BTArmorBonusManifest : public BTManifest
 {
  public:

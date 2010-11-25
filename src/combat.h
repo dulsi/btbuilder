@@ -66,6 +66,7 @@ class BTCombat : public BTScreenSet
   int findScreen(int num);
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
   bool findTargetPC(int range, int &target, int ignore = BT_PARTYSIZE);
+  bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   BTMonsterGroup *getMonsterGroup(int group);
   void initScreen(BTDisplay &d);
   bool isWinner() { return won; }
@@ -73,8 +74,8 @@ class BTCombat : public BTScreenSet
   virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
   void runCombat(BTDisplay &d);
-  void runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTCombatant &mon);
-  void runPcAction(BTDisplay &d, int &active, BTPc &pc);
+  void runMonsterAction(BTDisplay &d, int &active, int monGroup, int monNumber, BTMonsterGroup &grp, BTCombatant &mon);
+  void runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc);
 
   // Actions
   static int advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

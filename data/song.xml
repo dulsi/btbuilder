@@ -117,6 +117,13 @@
 				<bonus>3</bonus>
 			</saveBonusManifest>
 		</multiManifest>
+		<multiManifest>
+			<restriction>combat</restriction>
+			<targetOverride>all monsters</targetOverride>
+			<targetedManifest>
+				<type>37</type>
+			</targetedManifest>
+		</multiManifest>
 	</song>
 </data>
 

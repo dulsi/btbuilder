@@ -346,6 +346,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_SAVEBONUS:
    effect = new BTSaveBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
    break;
+  case BTSPELLTYPE_BLOCKMAGIC:
+   effect = new BTTargetedEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target);
+   break;
   default:
    break;
  }
@@ -364,13 +367,24 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
  return killed;
 }
 
-int BTSpell::cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target)
+int BTSpell::cast(BTDisplay &d, const char *caster, int casterGroup, int casterTarget, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target)
 {
  std::string text = caster;
- text += " casts ";
- text += name;
- text += ".";
- return activate(d, text.c_str(), partySpell, combat, casterLevel, distance, group, target);
+ if (BTGame::getGame()->hasEffectOfType(BTSPELLTYPE_BLOCKMAGIC, casterGroup, casterTarget))
+ {
+  text += " gestures. ";
+  text += caster;
+  text += "'s spell shatters.";
+  d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
+  return 0;
+ }
+ else
+ {
+  text += " casts ";
+  text += name;
+  text += ".";
+  return activate(d, text.c_str(), partySpell, combat, casterLevel, distance, group, target);
+ }
 }
 
 void BTSpell::serialize(ObjectSerializer* s)

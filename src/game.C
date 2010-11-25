@@ -637,16 +637,26 @@ void BTGame::clearMapEffects()
  }
 }
 
-bool BTGame::hasEffectOfType(int type)
+bool BTGame::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
 {
  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
  {
   if ((*itr)->type == type)
   {
-   return true;
+   if (group != BTTARGET_NONE)
+   {
+    if ((*itr)->targets(group, target))
+     return true;
+    if ((*itr)->targets(group, BTTARGET_INDIVIDUAL))
+     return true;
+    if ((group != BTTARGET_PARTY) && ((*itr)->targets(BTTARGET_ALLMONSTERS, BTTARGET_INDIVIDUAL)))
+     return true;
+   }
+   else
+    return true;
   }
  }
- return false;
+ return combat.hasEffectOfType(type, group, target);
 }
 
 void BTGame::addPlayer(BTDisplay &d, int who)

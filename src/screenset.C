@@ -1391,6 +1391,7 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
 
 int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ BTParty &party = BTGame::getGame()->getParty();
  BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
  BTReadString *readString = static_cast<BTReadString*>(item);
  std::string spellCode = readString->getResponse();
@@ -1402,6 +1403,15 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
    {
     if (b.getPc()->sp < spellList[i].getSp())
      throw BTSpecialError("nosp");
+    int pcNumber = 0;
+    for (int k = 0; k < party.size(); ++k)
+    {
+     if (party[k] == b.getPc())
+     {
+      pcNumber = k;
+      break;
+     }
+    }
     switch (spellList[i].getArea())
     {
      case BTAREAEFFECT_FOE:
@@ -1412,12 +1422,12 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
      case BTAREAEFFECT_GROUP:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
-      spellList[i].cast(d, b.pc->name, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
+      spellList[i].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
       return -1;
      case BTAREAEFFECT_NONE:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
-      spellList[i].cast(d, b.pc->name, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
+      spellList[i].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
       return -1;
      case BTAREAEFFECT_ALL:
       throw BTSpecialError("nocombat");
@@ -1877,7 +1887,7 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
   d.clearText();
   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
   b.pc->sp -= spellList[b.pc->combat.object].getSp();
-  spellList[b.pc->combat.object].cast(d, b.pc->name, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
+  spellList[b.pc->combat.object].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
   return -1;
  }
  return 0;

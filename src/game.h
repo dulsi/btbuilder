@@ -90,7 +90,7 @@ class BTGame : public Psuedo3DMap
   void clearEffectsByType(BTDisplay &d, int type);
   void clearEffectsBySource(BTDisplay &d, bool song);
   void clearMapEffects();
-  bool hasEffectOfType(int type);
+  bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   void addPlayer(BTDisplay &d, int who);
   void movedPlayer(BTDisplay &d, int who, int where);
   unsigned int getExpiration(unsigned int duration);

@@ -58,7 +58,7 @@ class BTSpell : public XMLObject
   void write(BinaryWriteFile &f);
 
   int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
-  int cast(BTDisplay &d, const char *caster, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
+  int cast(BTDisplay &d, const char *caster, int casterGroup, int casterTarget, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
 
   virtual void serialize(ObjectSerializer* s);
 

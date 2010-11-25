@@ -340,6 +340,28 @@ bool BTCombat::findTargetPC(int range, int &target, int ignore /*= BT_PARTYSIZE*
  return false;
 }
 
+bool BTCombat::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
+{
+ for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
+ {
+  if ((*itr)->type == type)
+  {
+   if (group != BTTARGET_NONE)
+   {
+    if ((*itr)->targets(group, target))
+     return true;
+    if ((*itr)->targets(group, BTTARGET_INDIVIDUAL))
+     return true;
+    if ((group != BTTARGET_PARTY) && ((*itr)->targets(BTTARGET_ALLMONSTERS, BTTARGET_INDIVIDUAL)))
+     return true;
+   }
+   else
+    return true;
+  }
+ }
+ return false;
+}
+
 BTMonsterGroup *BTCombat::getMonsterGroup(int group)
 {
  std::list<BTMonsterGroup>::iterator itr(monsters.begin());
@@ -533,12 +555,15 @@ void BTCombat::runCombat(BTDisplay &d)
   bool ran = false;
   BTDice whoDie(1, active, -1);
   int who = whoDie.roll();
-  for (itr = monsters.begin(); itr != monsters.end(); ++itr)
+
+  int monGroup = BTTARGET_MONSTER;
+  for (itr = monsters.begin(); itr != monsters.end(); ++itr, ++monGroup)
   {
    if (who < itr->active)
    {
     --itr->active;
-    for (std::vector<BTCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster)
+    int monNumber = 0;
+    for (std::vector<BTCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster, ++monNumber)
     {
      if (monster->active)
      {
@@ -546,7 +571,7 @@ void BTCombat::runCombat(BTDisplay &d)
       if (-1 == who)
       {
        ran = true;
-       runMonsterAction(d, active, *itr, *monster);
+       runMonsterAction(d, active, monGroup, monNumber, *itr, *monster);
        break;
       }
      }
@@ -566,7 +591,7 @@ void BTCombat::runCombat(BTDisplay &d)
      if (-1 == who)
      {
       ran = true;
-      runPcAction(d, active, *party[i]);
+      runPcAction(d, active, i, *party[i]);
      }
     }
    }
@@ -584,7 +609,7 @@ void BTCombat::runCombat(BTDisplay &d)
  d.drawIcons();
 }
 
-void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, BTCombatant &mon)
+void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int monNumber, BTMonsterGroup &grp, BTCombatant &mon)
 {
  BTGame *game = BTGame::getGame();
  BTFactory<BTMonster> &monList = game->getMonsterList();
@@ -752,7 +777,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, 
     if (spellList[monList[grp.monsterType].getRangedSpell()].getArea() == BTAREAEFFECT_FOE)
      if (!findTargetPC(BT_PARTYSIZE, target))
       break;
-    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName(), true, this, monList[grp.monsterType].getLevel(), grp.distance, BTTARGET_PARTY, target);
+    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, BTTARGET_PARTY, target);
     break;
    }
    default:
@@ -769,7 +794,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, BTMonsterGroup &grp, 
  }
 }
 
-void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
+void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
 {
  BTGame *game = BTGame::getGame();
  BTFactory<BTItem> &itemList = game->getItemList();
@@ -1055,7 +1080,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, BTPc &pc)
     int target = pc.combat.getTargetIndividual();
     if ((spellList[pc.combat.object].getArea() == BTAREAEFFECT_FOE) && (target == BTTARGET_INDIVIDUAL))
      findTarget(pc, BTDISTANCE_MAX, grp, target);
-    active -= spellList[pc.combat.object].cast(d, pc.name, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
+    active -= spellList[pc.combat.object].cast(d, pc.name, BTTARGET_PARTY, pcNumber, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
     break;
    }
    case BTPc::BTPcAction::sing:
