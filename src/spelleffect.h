@@ -150,6 +150,17 @@ class BTPhaseDoorEffect : public BTBaseEffect
   int facing;
 };
 
+class BTRegenSkillEffect : public BTTargetedEffect
+{
+ public:
+  BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  int skill;
+  BTDice use;
+};
+
 class BTPushEffect : public BTTargetedEffect
 {
  public:

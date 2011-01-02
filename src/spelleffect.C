@@ -1050,6 +1050,37 @@ BTPhaseDoorEffect::BTPhaseDoorEffect(int t, int x, int s, int m, int mX, int mY,
 {
 }
 
+BTRegenSkillEffect::BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u)
+ : BTTargetedEffect(t, x, s, m, g, trgt), skill(sk), use(u)
+{
+}
+
+int BTRegenSkillEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (BTTARGET_PARTY == group)
+ {
+  if (BTTARGET_INDIVIDUAL == target)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i]->isAlive())
+    {
+     party[i]->giveSkillUse(skill, use.roll());
+    }
+   }
+  }
+  else
+  {
+   if (party[target]->isAlive())
+    party[target]->giveSkillUse(skill, use.roll());
+  }
+  d.drawStats();
+ }
+ return 0;
+}
+
 BTPushEffect::BTPushEffect(int t, int x, int s, int m, int g, int trgt, int dis)
  : BTTargetedEffect(t, x, s, m, g, trgt), distance(dis)
 {

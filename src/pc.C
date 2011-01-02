@@ -287,6 +287,18 @@ void BTPc::giveSP(int amount)
  }
 }
 
+void BTPc::giveSkillUse(int skNum, int amount)
+{
+ if (!status.isSet(BTSTATUS_DEAD))
+ {
+  skillUse[skNum] += amount;
+  if (skillUse[skNum] > skill[skNum])
+   skillUse[skNum] = skill[skNum];
+  else if (skillUse[skNum] < 0)
+   skillUse[skNum] = 0;
+ }
+}
+
 void BTPc::giveXP(unsigned int amount)
 {
  xp += amount;

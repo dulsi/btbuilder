@@ -36,7 +36,7 @@ BTSpell::BTSpell(BinaryReadFile &f)
  f.readShort(num);
  duration = num;
  f.readShort(num);
- extra = duration;
+ extra = num;
  f.readUByteArray(22, tmp);
  tmp[22] = 0;
  effect = new char[strlen((char *)tmp) + 1];
@@ -334,6 +334,21 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_ARMORBONUS:
    effect = new BTArmorBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
    break;
+  case BTSPELLTYPE_REGENBARD:
+  {
+   BTDice amount(0, 4, getExtra());
+   XMLVector<BTSkill*> &skillList = BTGame::getGame()->getSkillList();
+   for (int which = 0; which < skillList.size(); ++which)
+   {
+    if ((skillList[which]->special == BTSKILLSPECIAL_SONG) && (skillList[which]->limited))
+    {
+printf("%d %d\n", getExtra(), which);
+     effect = new BTRegenSkillEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, which, amount);
+     break;
+    }
+   }
+   break;
+  }
   case BTSPELLTYPE_PUSH:
    effect = new BTPushEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
    break;
@@ -341,7 +356,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    effect = new BTAttackRateBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
    break;
   case BTSPELLTYPE_REGENMANA:
-   effect = new BTHealEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
+   effect = new BTRegenManaEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
    break;
   case BTSPELLTYPE_SAVEBONUS:
    effect = new BTSaveBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
