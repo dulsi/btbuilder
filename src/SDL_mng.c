@@ -72,9 +72,14 @@ int IMG_isMNG(SDL_RWops *src)
 {
     unsigned char buf[8];
 
-    if( SDL_RWread(src, buf, 1, 8) != 8 )
+    int start = SDL_RWtell(src);
+    if ( SDL_RWread(src, buf, 1, 8) != 8 )
+    {
+        SDL_RWseek(src, start, RW_SEEK_SET);
         return 0;
+    }
 
+    SDL_RWseek(src, start, RW_SEEK_SET);
     return( !memcmp(buf, "\212MNG\r\n\032\n", 8) );
 }
 
@@ -106,6 +111,8 @@ MNG_Image *IMG_LoadMNG(const char *file)
 
 MNG_Image *IMG_LoadMNG_RW(SDL_RWops *src)
 {
+    unsigned char buf[8];
+
     if ( src == NULL )
         return NULL;
 
@@ -117,8 +124,15 @@ MNG_Image *IMG_LoadMNG_RW(SDL_RWops *src)
             return NULL;
     }
 
+    if ( SDL_RWread(src, buf, 1, 8) != 8 )
+    {
+        SDL_SetError("File is not an MNG file");
+        SDL_RWclose(src);
+        return NULL;
+    }
+
     /* Verify MNG signature */
-    if ( !IMG_isMNG(src) )
+    if ( memcmp(buf, "\212MNG\r\n\032\n", 8) )
     {
             SDL_SetError("File is not an MNG file");
             SDL_RWclose(src);

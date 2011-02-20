@@ -251,35 +251,35 @@ void BTDisplay::drawImage(int pic)
   animation = NULL;
   animationFrame = 0;
  }
- snprintf(filename, 50, "image/slot%d.mng", pic);
- if (PHYSFS_exists(filename))
- {
-  SDL_RWops *f = PHYSFSRWOPS_openRead(filename);
-  animation = IMG_LoadMNG_RW(f);
-  SDL_FreeRW(f);
-  if (animation)
-  {
-   if ((xMult > 1) || (yMult > 1))
-   {
-    for (int i = 0; i < animation->frame_count; ++i)
-    {
-     SDL_Surface *img2 = simpleZoomSurface(animation->frame[i], xMult, yMult);
-     SDL_FreeSurface(animation->frame[i]);
-     animation->frame[i] = img2;
-    }
-   }
-   drawAnimationFrame();
-   animationTime = SDL_GetTicks();
-   return;
-  }
- }
+ snprintf(filename, 50, "image/slot%d.ng", pic);
  SDL_Rect src, dst;
  SDL_Surface *img = NULL;
- snprintf(filename, 50, "image/slot%d.png", pic);
  if (PHYSFS_exists(filename))
  {
   SDL_RWops *f = PHYSFSRWOPS_openRead(filename);
-  img = IMG_Load_RW(f, 1);
+  if (IMG_isMNG(f))
+  {
+   animation = IMG_LoadMNG_RW(f);
+   if (animation)
+   {
+    if ((xMult > 1) || (yMult > 1))
+    {
+     for (int i = 0; i < animation->frame_count; ++i)
+     {
+      SDL_Surface *img2 = simpleZoomSurface(animation->frame[i], xMult, yMult);
+      SDL_FreeSurface(animation->frame[i]);
+      animation->frame[i] = img2;
+     }
+    }
+    drawAnimationFrame();
+    animationTime = SDL_GetTicks();
+    return;
+   }
+  }
+  else
+  {
+   img = IMG_Load_RW(f, 1);
+  }
  }
  if ((pic >= 45) && (img == NULL))
  {
