@@ -126,6 +126,7 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_STOP             1
 #define BTSPECIALCOMMAND_SPIN             2
 #define BTSPECIALCOMMAND_DARKNESS         3
+#define BTSPECIALCOMMAND_SILENCE          4
 #define BTSPECIALCOMMAND_GETINPUT         6
 #define BTSPECIALCOMMAND_SETLOCALFLAG     7
 #define BTSPECIALCOMMAND_CLEARLOCALFLAG   8

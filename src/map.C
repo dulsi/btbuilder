@@ -163,6 +163,10 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_DARKNESS:
    game->clearEffectsByType(d, BTSPELLTYPE_LIGHT);
    break;
+  case BTSPECIALCOMMAND_SILENCE:
+   d.drawText("The sound of silence...");
+   game->clearEffectsBySource(d, true);
+   break;
   case BTSPECIALCOMMAND_GETINPUT:
    game->setLastInput(d.readString("", 13));
    break;
