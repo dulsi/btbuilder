@@ -44,12 +44,12 @@ void BTMainScreen::run()
  {
   if (fs::is_regular_file(dir_itr->status()))
   {
-   fileModule.push_back(dir_itr->path().file_string());
+   fileModule.push_back(dir_itr->path().string());
    BTModule *current = new BTModule;
    module.push_back(current);
    parser.removeLevel();
    current->serialize(&parser);
-   parser.parse(dir_itr->path().file_string().c_str(), false);
+   parser.parse(dir_itr->path().string().c_str(), false);
   }
  }
  BTDisplay::selectItem *list = new BTDisplay::selectItem[module.size()];
@@ -77,7 +77,7 @@ void BTMainScreen::runModule(std::string moduleFile)
  parser.parse(moduleFile.c_str(), false);
  std::string appName("btbuilder");
  appName += PHYSFS_getDirSeparator();
- appName += fs::path(moduleFile).stem();
+ appName += fs::path(moduleFile).stem().string();
  if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
  {
   // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
