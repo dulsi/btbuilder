@@ -58,6 +58,8 @@ class BTGame : public Psuedo3DMap
   int getFacing();
   int getX();
   int getY();
+  const BitField &getFlags();
+  void addFlags(const BitField &flagsToAdd);
   int getWallType(int x, int y, int direction);
   void setFacing(int f);
 
@@ -121,6 +123,7 @@ class BTGame : public Psuedo3DMap
   BTXpChartList xpChartList;
   BTMap *levelMap;
   int xPos, yPos, facing;
+  BitField flags;
   BTParty party;
   XMLVector<BTBaseEffect*> effect;
   std::string lastInput;

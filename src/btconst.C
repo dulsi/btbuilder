@@ -217,6 +217,13 @@ char *specialCommands[] =
  "tele-activate to $L dir: $D in $N"
 };
 
+char *specialFlag[] =
+{
+ "Silence",
+ "Anti-magic"
+};
+ArrayLookup specialFlagLookup(BT_SPECIALFLAGS, specialFlag);
+
 char *directions[] =
 {
  "north",

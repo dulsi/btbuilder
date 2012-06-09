@@ -183,6 +183,16 @@ int BTGame::getY()
  return yPos;
 }
 
+const BitField &BTGame::getFlags()
+{
+ return flags;
+}
+
+void BTGame::addFlags(const BitField &flagsToAdd)
+{
+ flags = flags & flagsToAdd;
+}
+
 int BTGame::getWallType(int x, int y, int direction)
 {
  if (x < 0)
@@ -456,6 +466,7 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
   yPos = yPos % levelMap->getYSize();
   facing = t.facing;
   d.drawView();
+  flags.clearAll();
   return t.activate;
  }
  catch (const BTSpecialBack &)
@@ -501,6 +512,7 @@ bool BTGame::move(BTDisplay &d, int dir)
   xPos = xPos % levelMap->getXSize();
   yPos += Psuedo3D::changeXY[dir][1] + levelMap->getYSize();
   yPos = yPos % levelMap->getYSize();
+  flags.clearAll();
   return true;
  }
  return false;

@@ -93,17 +93,20 @@ class XMLAttribute
 class XMLAction
 {
  public:
+  XMLAction() : attrib(NULL), type(0), next(NULL) {}
   ~XMLAction();
 
   std::string createTag();
   int getType() const { return type & XMLTYPE_TYPE; }
 
   std::string name;
+  std::string objnm;
   std::vector<XMLAttribute> *attrib;
   int type;
   int level;
   void *object;
   void *data;
+  XMLAction *next;
 };
 
 class XMLLevel
@@ -119,7 +122,8 @@ class ObjectSerializer
   ObjectSerializer();
   ~ObjectSerializer();
 
-  void add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL) { add(name, NULL, vec, func, atts); }
+  void add(const char *name, const char *objnm, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL);
@@ -133,7 +137,6 @@ class ObjectSerializer
   void add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts = NULL);
 
   XMLAction* find(const char *name, const char **atts);
-  void findAll(const char *name, std::list<XMLAction*> &list);
   virtual int getLevel() = 0;
   void removeLevel();
 
@@ -162,3 +165,4 @@ class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
 };
 
 #endif
+

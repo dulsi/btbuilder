@@ -55,6 +55,56 @@ void BTMapSquare::serialize(ObjectSerializer* s)
  s->add("special", &special);
 }
 
+IBool BTSpecialBody::isNothing() const
+{
+ int i = 0;
+ while (i < ops.size())
+ {
+  if (!ops[i]->isNothing())
+   return false;
+  ++i;
+ }
+ return true;
+}
+
+void BTSpecialBody::print(FILE *f) const
+{
+ print(f, false);
+}
+
+void BTSpecialBody::print(FILE *f, bool lineNumbers) const
+{
+ int i = 0;
+ while (i < ops.size())
+ {
+  if (lineNumbers)
+   fprintf(f, "%2d. ",i + 1);
+  ops[i]->print(f);
+  ++i;
+ }
+}
+
+void BTSpecialBody::run(BTDisplay &d) const
+{
+ runFromLine(d, 0);
+}
+
+void BTSpecialBody::runFromLine(BTDisplay &d, int line) const
+{
+ while (line < ops.size())
+ {
+  ops[line]->run(d);
+  ++line;
+ }
+}
+
+void BTSpecialBody::serialize(ObjectSerializer* s)
+{
+ s->add("conditional", typeid(BTSpecialConditional).name(), &ops, &BTSpecialConditional::create);
+ s->add("command", typeid(BTSpecialCommand).name(), &ops, &BTSpecialCommand::create);
+ s->add("body", typeid(BTSpecialBody).name(), &ops, &BTSpecialBody::create);
+}
+
 BTSpecialCommand::BTSpecialCommand()
 {
  type = 0;
@@ -71,6 +121,11 @@ BTSpecialCommand::~BTSpecialCommand()
 IShort BTSpecialCommand::getType() const
 {
  return type;
+}
+
+IBool BTSpecialCommand::isNothing() const
+{
+ return (0 == getType());
 }
 
 void BTSpecialCommand::print(FILE *f) const
@@ -166,6 +221,11 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_SILENCE:
    d.drawText("The sound of silence...");
    game->clearEffectsBySource(d, true);
+//   flags.set(BTSPECIALFLAG_SILENCE);
+   break;
+  case BTSPECIALCOMMAND_ANTIMAGIC:
+   game->clearEffectsBySource(d, false);
+//   flags.set(BTSPECIALFLAG_ANTIMAGIC);
    break;
   case BTSPECIALCOMMAND_GETINPUT:
    game->setLastInput(d.readString("", 13));
@@ -729,7 +789,7 @@ IShort BTSpecialConditional::getType() const
 
 IBool BTSpecialConditional::isNothing() const
 {
- return ((-1 == type) && (0 == thenClause.getType()));
+ return ((-1 == type) && (thenClause.isNothing()));
 }
 
 void BTSpecialConditional::print(FILE *f) const
@@ -802,8 +862,12 @@ void BTSpecialConditional::read(BinaryReadFile &f)
  text = new char[strlen(tmp) + 1];
  strcpy(text, tmp);
  f.readShort(number);
- thenClause.read(f);
- elseClause.read(f);
+ BTSpecialCommand *op = new BTSpecialCommand;
+ op->read(f);
+ thenClause.addOperation(op);
+ op = new BTSpecialCommand;
+ op->read(f);
+ elseClause.addOperation(op);
 }
 
 void BTSpecialConditional::run(BTDisplay &d) const
@@ -892,8 +956,11 @@ void BTSpecialConditional::run(BTDisplay &d) const
    truth = (false == BTGame::getGame()->getGlobalFlag(number));
    break;
   case BTCONDITION_RANDOM:
-   truth = (BTDice(1, 100).roll() <= number);
+  {
+   int roll = BTDice(1, 100).roll();
+   truth = (roll <= number);
    break;
+  }
   case BTCONDITION_RACEINPARTY:
   {
    truth = false;
@@ -956,13 +1023,13 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
  for (int i = 0; i < 20; i++)
  {
   BTSpecialConditional *op = new BTSpecialConditional;
-  operation.push_back(op);
   op->read(f);
   if (-99 == op->getType())
   {
-   op->setType(-1);
+   delete op;
    break;
   }
+  body.addOperation(op);
  }
 }
 
@@ -982,35 +1049,26 @@ void BTSpecial::print(FILE *f) const
  int i, last;
 
  fprintf(f, "%s\n", name);
- for (last = operation.size(); last > 1; last--)
- {
-  if (!operation[last - 1]->isNothing())
-  {
-   break;
-  }
- }
- for (i = 0; i < last; i++)
- {
-  fprintf(f, "%2d. ",i + 1);
-  operation[i]->print(f);
- }
+ body.print(f, true);
 }
 
 void BTSpecial::run(BTDisplay &d) const
 {
+ BTGame::getGame()->addFlags(flags);
  try
  {
-  int i = 0;
-  while (i < operation.size())
+  bool stop = false;
+  int line = 0;
+  while (!stop)
   {
    try
    {
-    operation[i]->run(d);
-    ++i;
+    body.runFromLine(d, line);
+    stop = true;
    }
    catch (const BTSpecialGoto &g)
    {
-    i = g.line;
+    line = g.line;
    }
   }
  }
@@ -1022,7 +1080,8 @@ void BTSpecial::run(BTDisplay &d) const
 void BTSpecial::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
- s->add("operation", &operation, &BTSpecialConditional::create);
+ s->add("flags", &flags, &specialFlagLookup);
+ s->add("body", &body);
 }
 
 BTMap::BTMap(BinaryReadFile &f)

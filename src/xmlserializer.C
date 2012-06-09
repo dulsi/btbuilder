@@ -9,9 +9,11 @@
 #include <physfs.h>
 #include <string.h>
 #include <stdio.h>
+#include <typeinfo>
 
 XMLAction::~XMLAction()
 {
+ if (next) delete next;
  if (attrib) delete attrib;
  if (type & XMLTYPE_DELETE)
  {
@@ -57,15 +59,26 @@ ObjectSerializer::~ObjectSerializer()
  action.clear();
 }
 
-void ObjectSerializer::add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, const char *objnm, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
+ if (objnm)
+  act->objnm = objnm;
  act->attrib = atts;
  act->type = XMLTYPE_CREATE;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(vec);
  act->data = reinterpret_cast<void*>(func);
+ for (std::vector<XMLAction*>::reverse_iterator itr(action.rbegin()); (action.rend() != itr) && (act->level == (*itr)->level); itr++)
+ {
+  if ((*itr)->object == act->object)
+  {
+   act->next = (*itr)->next;
+   (*itr)->next = act;
+   return;
+  }
+ }
  action.push_back(act);
 }
 
@@ -203,46 +216,37 @@ XMLAction* ObjectSerializer::find(const char *name, const char **atts)
  int curLevel = getLevel();
  for (std::vector<XMLAction*>::reverse_iterator itr(action.rbegin()); (action.rend() != itr) && ((*itr)->level == curLevel); itr++)
  {
-  if (0 == strcmp((*itr)->name.c_str(), name))
+  for (XMLAction *act = *itr; act; act = act->next)
   {
-   bool found(true);
-   if ((NULL == atts) && ((*itr)->attrib))
-    found = false;
-   else if ((*itr)->attrib)
+   if (0 == strcmp(act->name.c_str(), name))
    {
-    found = false;
-    for (std::vector<XMLAttribute>::iterator itrAttrib((*itr)->attrib->begin()); itrAttrib != (*itr)->attrib->end(); itrAttrib++)
+    bool found(true);
+    if ((NULL == atts) && (act->attrib))
+     found = false;
+    else if (act->attrib)
     {
      found = false;
-     for (int i = 0; atts[i]; i += 2)
+     for (std::vector<XMLAttribute>::iterator itrAttrib(act->attrib->begin()); itrAttrib != act->attrib->end(); itrAttrib++)
      {
-      if ((0 == strcmp(itrAttrib->name.c_str(), atts[i])) && (0 == strcmp(itrAttrib->value.c_str(), atts[i + 1])))
+      found = false;
+      for (int i = 0; atts[i]; i += 2)
       {
-       found = true;
-       break;
+       if ((0 == strcmp(itrAttrib->name.c_str(), atts[i])) && (0 == strcmp(itrAttrib->value.c_str(), atts[i + 1])))
+       {
+        found = true;
+        break;
+       }
       }
+      if (!found)
+       break;
      }
-     if (!found)
-      break;
     }
+    if (found)
+     return act;
    }
-   if (found)
-    return *itr;
   }
  }
  return NULL;
-}
-
-void ObjectSerializer::findAll(const char *name, std::list<XMLAction*> &list)
-{
- int curLevel = getLevel();
- for (std::vector<XMLAction*>::reverse_iterator itr(action.rbegin()); (action.rend() != itr) && ((*itr)->level == curLevel); itr++)
- {
-  if (0 == strcmp((*itr)->name.c_str(), name))
-  {
-   list.push_front(*itr);
-  }
- }
 }
 
 void ObjectSerializer::removeLevel()
@@ -424,14 +428,14 @@ void XMLSerializer::write(const char *filename, bool physfs)
    {
     itr = action.end();
     --itr;
-    while (*itr != level.back()->state)
+    while ((*itr)->object != level.back()->state->object)
      --itr;
-    XMLAction *act = (*itr);
-    if (XMLTYPE_CREATE == (*itr)->getType())
+    XMLAction *act = level.back()->state;
+    if (XMLTYPE_CREATE == act->getType())
     {
-     XMLArray *ary = reinterpret_cast<XMLArray*>(level.back()->state->object);
+     XMLArray *ary = reinterpret_cast<XMLArray*>(act->object);
      PHYSFS_write(f, "</", 1, 2);
-     PHYSFS_write(f, (*itr)->name.c_str(), 1, (*itr)->name.length());
+     PHYSFS_write(f, act->name.c_str(), 1, act->name.length());
      PHYSFS_write(f, ">", 1, 1);
      int i = 0;
      for (; i < ary->size(); ++i)
@@ -447,23 +451,32 @@ void XMLSerializer::write(const char *filename, bool physfs)
      {
       itr = action.end();
       --itr;
-      while (*itr != act)
+      while ((*itr)->object != act->object)
        --itr;
       continue;
      }
      else
      {
-      std::string tag = act->createTag();
-      PHYSFS_write(f, "<", 1, 1);
-      PHYSFS_write(f, tag.c_str(), 1, tag.length());
-      PHYSFS_write(f, ">", 1, 1);
       XMLLevel *newLevel = new XMLLevel;
-      newLevel->state = act;
       newLevel->object = ary->get(i + 1);
-      level.push_back(newLevel);
-      int size = action.size();
-      newLevel->object->serialize(this);
-      itr = action.begin() + size - 1;
+      std::string objnm = typeid(*(newLevel->object)).name();
+      for (act = *itr; (act) && (!act->objnm.empty()) && (act->objnm != objnm); act = act->next)
+      {
+      }
+      if (act)
+      {
+       std::string tag = act->createTag();
+       PHYSFS_write(f, "<", 1, 1);
+       PHYSFS_write(f, tag.c_str(), 1, tag.length());
+       PHYSFS_write(f, ">", 1, 1);
+       newLevel->state = act;
+       level.push_back(newLevel);
+       int size = action.size();
+       newLevel->object->serialize(this);
+       itr = action.begin() + size - 1;
+      }
+      else
+       delete newLevel;
       continue;
      }
     }
@@ -571,17 +584,27 @@ void XMLSerializer::write(const char *filename, bool physfs)
      XMLArray *ary = reinterpret_cast<XMLArray*>((*itr)->object);
      if (0 != ary->size())
      {
-      std::string tag = (*itr)->createTag();
-      PHYSFS_write(f, "<", 1, 1);
-      PHYSFS_write(f, tag.c_str(), 1, tag.length());
-      PHYSFS_write(f, ">", 1, 1);
       XMLLevel *newLevel = new XMLLevel;
-      newLevel->state = *itr;
       newLevel->object = ary->get(0);
-      level.push_back(newLevel);
-      int size = action.size();
-      newLevel->object->serialize(this);
-      itr = action.begin() + size - 1;
+      std::string objnm = typeid(*(newLevel->object)).name();
+      XMLAction *act = *itr;
+      for (; (act) && (!act->objnm.empty()) && (act->objnm != objnm); act = act->next)
+      {
+      }
+      if (act)
+      {
+       std::string tag = act->createTag();
+       PHYSFS_write(f, "<", 1, 1);
+       PHYSFS_write(f, tag.c_str(), 1, tag.length());
+       PHYSFS_write(f, ">", 1, 1);
+       newLevel->state = act;
+       level.push_back(newLevel);
+       int size = action.size();
+       newLevel->object->serialize(this);
+       itr = action.begin() + size - 1;
+      }
+      else
+       delete newLevel;
      }
      break;
     }

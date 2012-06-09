@@ -127,6 +127,7 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_SPIN             2
 #define BTSPECIALCOMMAND_DARKNESS         3
 #define BTSPECIALCOMMAND_SILENCE          4
+#define BTSPECIALCOMMAND_ANTIMAGIC        5
 #define BTSPECIALCOMMAND_GETINPUT         6
 #define BTSPECIALCOMMAND_SETLOCALFLAG     7
 #define BTSPECIALCOMMAND_CLEARLOCALFLAG   8
@@ -183,6 +184,12 @@ extern char *conditionalCommands[];
 extern char *specialCommands[];
 
 #define BTSPECIAL_NONE -1
+
+#define BT_SPECIALFLAGS 2
+#define BTSPECIALFLAG_SILENCE   0
+#define BTSPECIALFLAG_ANTIMAGIC 1
+extern char *specialFlag[];
+extern ArrayLookup specialFlagLookup;
 
 #define BT_DIRECTIONS 4
 #define BTDIRECTION_NORTH 0

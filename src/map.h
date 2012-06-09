@@ -10,6 +10,7 @@
 #include "istdlib.h"
 #include <file.h>
 #include "display.h"
+#include <typeinfo>
 
 /*
 [map]
@@ -133,7 +134,32 @@ class BTSpecialStop
   BTSpecialStop() {}
 };
 
-class BTSpecialCommand : public XMLObject
+class BTSpecialOperation : public XMLObject
+{
+ public:
+  virtual IBool isNothing() const = 0;
+  virtual void print(FILE *f) const = 0;
+  virtual void run(BTDisplay &d) const = 0;
+};
+
+class BTSpecialBody : public BTSpecialOperation
+{
+ public:
+  void addOperation(BTSpecialOperation *op) { ops.push_back(op); }
+  IBool isNothing() const;
+  virtual void print(FILE *f) const;
+  void print(FILE *f, bool lineNumbers) const;
+  virtual void run(BTDisplay &d) const;
+  void runFromLine(BTDisplay &d, int line) const;
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialBody; }
+
+ private:
+  XMLVector<BTSpecialOperation*> ops;
+};
+
+class BTSpecialCommand : public BTSpecialOperation
 {
  public:
   BTSpecialCommand();
@@ -141,10 +167,13 @@ class BTSpecialCommand : public XMLObject
   ~BTSpecialCommand();
 
   IShort getType() const;
+  IBool isNothing() const;
   void print(FILE *f) const;
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
   virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialCommand; }
 
   static BTSpecialCommand Guild;
 
@@ -154,7 +183,7 @@ class BTSpecialCommand : public XMLObject
   IUShort number[3];
 };
 
-class BTSpecialConditional : public XMLObject
+class BTSpecialConditional : public BTSpecialOperation
 {
  public:
   BTSpecialConditional();
@@ -174,8 +203,8 @@ class BTSpecialConditional : public XMLObject
   IShort type;
   char *text;
   IShort number;
-  BTSpecialCommand thenClause;
-  BTSpecialCommand elseClause;
+  BTSpecialBody thenClause;
+  BTSpecialBody elseClause;
 };
 
 class BTSpecial : public XMLObject
@@ -194,7 +223,8 @@ class BTSpecial : public XMLObject
 
  private:
   char *name;
-  XMLVector<BTSpecialConditional*> operation;
+  BitField flags;
+  BTSpecialBody body;
 };
 
 class BTMap : public XMLObject
