@@ -187,8 +187,11 @@ class BTSpecialConditional : public BTSpecialOperation
 {
  public:
   BTSpecialConditional();
+  BTSpecialConditional(IShort t, char *txt, IShort num);
   ~BTSpecialConditional();
 
+  void addThenOperation(BTSpecialOperation *op) { thenClause.addOperation(op); }
+  void addElseOperation(BTSpecialOperation *op) { elseClause.addOperation(op); }
   IShort getType() const;
   IBool isNothing() const;
   void print(FILE *f) const;

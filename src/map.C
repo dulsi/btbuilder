@@ -78,7 +78,11 @@ void BTSpecialBody::print(FILE *f, bool lineNumbers) const
  while (i < ops.size())
  {
   if (lineNumbers)
+  {
    fprintf(f, "%2d. ",i + 1);
+   if (dynamic_cast<BTSpecialCommand*>(ops[i]) != NULL)
+    fprintf(f, "DO   ");
+  }
   ops[i]->print(f);
   ++i;
  }
@@ -776,6 +780,13 @@ BTSpecialConditional::BTSpecialConditional()
  text[0] = 0;
 }
 
+BTSpecialConditional::BTSpecialConditional(IShort t, char *txt, IShort num)
+: type(t), number(num)
+{
+ text = new char[strlen(txt) + 1];
+ strcpy(text, txt);
+}
+
 BTSpecialConditional::~BTSpecialConditional()
 {
  if (text)
@@ -797,58 +808,50 @@ void BTSpecialConditional::print(FILE *f) const
  char *dollarSign;
  long len;
 
- if (-1 == type)
+ fprintf(f, "IF   ");
+ dollarSign = strchr(conditionalCommands[type], '$');
+ if (dollarSign)
  {
-  fprintf(f, "DO   ");
-  thenClause.print(f);
+  len = (long)dollarSign - (long)conditionalCommands[type];
+  fwrite(conditionalCommands[type], 1, len, f);
+  switch (dollarSign[1])
+  {
+   case 'I':
+    fprintf(f, "%s", BTGame::getGame()->getItemList()[number].getName());
+    break;
+   case 'A':
+    fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number].getName());
+    break;
+   case 'C':
+    fprintf(f, "%s", BTGame::getGame()->getJobList()[number]->name);
+    break;
+   case 'R':
+    fprintf(f, "%s", BTGame::getGame()->getRaceList()[number]->name);
+    break;
+   case 'D':
+    fprintf(f, "%s", directions[number]);
+    break;
+   case '#':
+   case 'G':
+   case 'F':
+    fprintf(f, "%d", number);
+    break;
+   case '$':
+   default:
+    fprintf(f, "%s", text);
+    break;
+  }
+  dollarSign += 2;
  }
  else
  {
-  fprintf(f, "IF   ");
-  dollarSign = strchr(conditionalCommands[type], '$');
-  if (dollarSign)
-  {
-   len = (long)dollarSign - (long)conditionalCommands[type];
-   fwrite(conditionalCommands[type], 1, len, f);
-   switch (dollarSign[1])
-   {
-    case 'I':
-     fprintf(f, "%s", BTGame::getGame()->getItemList()[number].getName());
-     break;
-    case 'A':
-     fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number].getName());
-     break;
-    case 'C':
-     fprintf(f, "%s", BTGame::getGame()->getJobList()[number]->name);
-     break;
-    case 'R':
-     fprintf(f, "%s", BTGame::getGame()->getRaceList()[number]->name);
-     break;
-    case 'D':
-     fprintf(f, "%s", directions[number]);
-     break;
-    case '#':
-    case 'G':
-    case 'F':
-     fprintf(f, "%d", number);
-     break;
-    case '$':
-    default:
-     fprintf(f, "%s", text);
-     break;
-   }
-   dollarSign += 2;
-  }
-  else
-  {
-   dollarSign = conditionalCommands[type];
-  }
-  fprintf(f, "%s\n", dollarSign);
-  fprintf(f, "    THEN ");
-  thenClause.print(f);
-  fprintf(f, "    ELSE ");
-  elseClause.print(f);
+  dollarSign = conditionalCommands[type];
  }
+ fprintf(f, "%s\n", dollarSign);
+ fprintf(f, "    THEN ");
+ thenClause.print(f);
+ fprintf(f, "    ELSE ");
+ elseClause.print(f);
 }
 
 void BTSpecialConditional::read(BinaryReadFile &f)
@@ -857,10 +860,6 @@ void BTSpecialConditional::read(BinaryReadFile &f)
  f.readShort(type);
  f.readUByteArray(26, (IUByte *)tmp);
  tmp[26] = 0;
- if (text)
-  delete [] text;
- text = new char[strlen(tmp) + 1];
- strcpy(text, tmp);
  f.readShort(number);
  BTSpecialCommand *op = new BTSpecialCommand;
  op->read(f);
@@ -1020,16 +1019,60 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
  name = new char[strlen(tmp) + 1];
  strcpy(name, tmp);
  f.readUByte(unknown);
+ int nothing = 0;
  for (int i = 0; i < 20; i++)
  {
-  BTSpecialConditional *op = new BTSpecialConditional;
-  op->read(f);
-  if (-99 == op->getType())
+  IShort type;
+  char tmp[27];
+  IShort number;
+  f.readShort(type);
+  f.readUByteArray(26, (IUByte *)tmp);
+  tmp[26] = 0;
+  f.readShort(number);
+  BTSpecialCommand *opThen = new BTSpecialCommand;
+  opThen->read(f);
+  BTSpecialCommand *opElse = new BTSpecialCommand;
+  opElse->read(f);
+  switch (type)
   {
-   delete op;
+   case -99:
+    delete opThen;
+    delete opElse;
+    break;
+   case -1:
+    if (opThen->getType() == BTSPECIALCOMMAND_NOTHING)
+    {
+     ++nothing;
+    }
+    else
+    {
+     while (nothing > 0)
+     {
+      body.addOperation(new BTSpecialCommand(BTSPECIALCOMMAND_NOTHING));
+      --nothing;
+     }
+     body.addOperation(opThen);
+    }
+    delete opElse;
+    break;
+   default:
+   {
+    while (nothing > 0)
+    {
+     body.addOperation(new BTSpecialCommand(BTSPECIALCOMMAND_NOTHING));
+     --nothing;
+    }
+    BTSpecialConditional *op = new BTSpecialConditional(type, tmp, number);
+    op->addThenOperation(opThen);
+    op->addElseOperation(opElse);
+    body.addOperation(op);
+    break;
+   }
+  }
+  if (-99 == type)
+  {
    break;
   }
-  body.addOperation(op);
  }
 }
 

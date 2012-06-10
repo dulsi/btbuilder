@@ -123,6 +123,7 @@ extern char *itemTypes[];
 extern char *conditionalCommands[];
 
 #define BT_SPECIALCOMMANDS 61
+#define BTSPECIALCOMMAND_NOTHING          0
 #define BTSPECIALCOMMAND_STOP             1
 #define BTSPECIALCOMMAND_SPIN             2
 #define BTSPECIALCOMMAND_DARKNESS         3
