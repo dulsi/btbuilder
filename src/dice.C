@@ -76,6 +76,11 @@ void BTDice::serialize(ObjectSerializer* s)
  s->add("m", &modifier);
 }
 
+void BTDice::setModifier(IShort val)
+{
+ modifier = val;
+}
+
 void BTDice::setNumber(IShort val)
 {
  number = val;

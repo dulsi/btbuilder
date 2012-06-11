@@ -254,6 +254,11 @@ void BTGame::setCounter(int val)
  counter = val;
 }
 
+BTChest &BTGame::getChest()
+{
+ return chest;
+}
+
 BTCombat &BTGame::getCombat()
 {
  return combat;

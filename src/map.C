@@ -252,24 +252,8 @@ void BTSpecialCommand::run(BTDisplay &d) const
   }
   case BTSPECIALCOMMAND_GIVEITEM:
   {
-   XMLVector<BTPc*> &party = game->getParty();
-   int who = 0;
-   int charges = game->getItemList()[number[0]].getTimesUsable();
-   for (; who < party.size(); ++who)
-   {
-    if (party[who]->giveItem(number[0], true, charges))
-     break;
-   }
-   char tmp[100];
-   if (who < party.size())
-   {
-    snprintf(tmp, 100, "%s gets %s.", party[who]->name, game->getItemList()[number[0]].getName());
-   }
-   else
-   {
-    snprintf(tmp, 100, "No one has room for %s!", game->getItemList()[number[0]].getName());
-   }
-   d.drawText(tmp);
+   BTParty &party = game->getParty();
+   party.giveItem(number[0], d);
    break;
   }
   case BTSPECIALCOMMAND_SELLITEM:
@@ -642,8 +626,14 @@ void BTSpecialCommand::run(BTDisplay &d) const
    game->getCombat().run(d);
    break;
   case BTSPECIALCOMMAND_CHEST:
-   // TODO
+  {
+   game->getChest().setup(text, number[1], BTDice(0, 6, number[2]), number[0]);
+   BTScreenSet b;
+   b.open("data/chest.xml");
+   b.run(d);
+   game->getChest().clear();
    break;
+  }
   case BTSPECIALCOMMAND_SETGLOBALFLAG:
    game->setGlobalFlag(number[0], true);
    break;

@@ -40,6 +40,7 @@ class BTDice : public XMLObject
   void read(BinaryReadFile &f);
   int roll() const;
   virtual void serialize(ObjectSerializer* s);
+  void setModifier(IShort val);
   void setNumber(IShort val);
   void setType(IShort val);
   void write(BinaryWriteFile &f);

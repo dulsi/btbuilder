@@ -550,6 +550,28 @@ bool BTParty::checkDead(BTDisplay &d)
  return false;
 }
 
+void BTParty::giveItem(int itemID, BTDisplay &d)
+{
+ BTGame *game = BTGame::getGame();
+ int who = 0;
+ int charges = game->getItemList()[itemID].getTimesUsable();
+ for (; who < size(); ++who)
+ {
+  if ((*this)[who]->giveItem(itemID, true, charges))
+   break;
+ }
+ char tmp[100];
+ if (who < size())
+ {
+  snprintf(tmp, 100, "%s gets %s.", (*this)[who]->name, game->getItemList()[itemID].getName());
+ }
+ else
+ {
+  snprintf(tmp, 100, "No one has room for %s!", game->getItemList()[itemID].getName());
+ }
+ d.drawText(tmp);
+}
+
 void BTParty::moveTo(int who, int where, BTDisplay &d)
 {
  BTPc *pc = (*this)[who];

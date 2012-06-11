@@ -106,6 +106,7 @@ class BTParty : public XMLVector<BTPc*>
 
   void add(BTDisplay &d, BTPc *pc);
   bool checkDead(BTDisplay &d);
+  void giveItem(int itemID, BTDisplay &d);
   void moveTo(int who, int where, BTDisplay &d);
   bool remove(int who, BTDisplay &d);
 

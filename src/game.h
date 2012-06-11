@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include <file.h>
+#include "chest.h"
 #include "combat.h"
 #include "display.h"
 #include "factory.h"
@@ -69,6 +70,7 @@ class BTGame : public Psuedo3DMap
   int getCounter() const;
   void setCounter(int val);
 
+  BTChest &getChest();
   BTCombat &getCombat();
   BTStatus &getStatus();
 
@@ -128,6 +130,7 @@ class BTGame : public Psuedo3DMap
   XMLVector<BTBaseEffect*> effect;
   std::string lastInput;
   int counter;
+  BTChest chest;
   BTCombat combat;
   BTStatus status;
   BitField local;

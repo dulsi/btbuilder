@@ -991,6 +991,7 @@ BTScreenSet::BTScreenSet()
  actionList["exitAndSave"] = &exitAndSave;
  actionList["give"] = &give;
  actionList["moveTo"] = &moveTo;
+ actionList["openChest"] = &openChest;
  actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
  actionList["requestSkill"] = &requestSkill;
@@ -1559,6 +1560,13 @@ int BTScreenSet::moveTo(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  return 0;
 }
 
+int BTScreenSet::openChest(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ d.clearText();
+ BTGame::getGame()->getChest().open(d);
+ return 0;
+}
+
 int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -1570,6 +1578,7 @@ int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
    party[i]->takeGold(gp - b.pc->giveGold(gp));
   }
  }
+ return 0;
 }
 
 int BTScreenSet::quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)

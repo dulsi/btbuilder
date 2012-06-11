@@ -1,0 +1,21 @@
+<screenset>
+	<screen number="1" escapeScreen="exit">
+		<line>You see a chest!</line>
+		<line>Will you:</line>
+		<choice keys="fF" action="findTraps" screen="">Find traps</choice>
+		<choice keys="oO" action="openChest" screen="exit">Open chest</choice>
+		<choice keys="cC" screen="2">Cast spell</choice>
+		<choice keys="uU" screen="">Use item</choice>
+		<choice keys="bB" screen="">Bard song</choice>
+	</screen>
+	<screen number="2" escapeScreen="1">
+		<line />
+		<line>Who do you wish to cast the spell?</line>
+		<selectParty action="selectMage" disallow="dead,paralyzed,stoned" screen="3" />
+		<choice keys="cC" action="1">(CANCEL)</choice>
+	</screen>
+	<screen number="3" escapeScreen="1">
+		<line>Spell to cast:</line>
+		<readString action="castNow" screen="1">&gt;</readString>
+	</screen>
+</screenset>
