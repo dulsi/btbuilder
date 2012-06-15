@@ -23,6 +23,8 @@
 		<name>Critical hit</name>
 		<use>autocombat</use>
 		<effect>Critical hit</effect>
+		<roll><n>1</n><d>100</d><m>0</m></roll>
+		<defaultDifficulty>101</defaultDifficulty>
 	</skill>
 	<skill>
 		<name>Hide in shadows</name>
@@ -33,6 +35,8 @@
 		<name>Disarm trap</name>
 		<use>special</use>
 		<special>disarm</special>
+		<roll><n>1</n><d>100</d><m>0</m></roll>
+		<defaultDifficulty>101</defaultDifficulty>
 	</skill>
 	<skill>
 		<name>Bard song</name>

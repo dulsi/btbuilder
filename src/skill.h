@@ -20,7 +20,7 @@
 class BTSkill : public XMLObject
 {
  public:
-  BTSkill() : use(-1), effect(-1), special(-1), limited(false)
+  BTSkill() : use(-1), effect(-1), special(-1), limited(false), defaultDifficulty(0)
   {
    name = new char[1];
    name[0] = 0;
@@ -38,6 +38,8 @@ class BTSkill : public XMLObject
   int effect;
   bool limited;
   int special;
+  BTDice roll;
+  int defaultDifficulty;
 };
 
 class BTSkillList : public ValueLookup, public XMLVector<BTSkill*>
@@ -48,3 +50,4 @@ class BTSkillList : public ValueLookup, public XMLVector<BTSkill*>
 };
 
 #endif
+

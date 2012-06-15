@@ -338,6 +338,7 @@ class BTScreenSet : public ObjectSerializer
   static int equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int findTraps(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int moveTo(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int openChest(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

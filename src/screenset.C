@@ -989,6 +989,7 @@ BTScreenSet::BTScreenSet()
  actionList["equip"] = &equip;
  actionList["exit"] = &exit;
  actionList["exitAndSave"] = &exitAndSave;
+ actionList["findTraps"] = &findTraps;
  actionList["give"] = &give;
  actionList["moveTo"] = &moveTo;
  actionList["openChest"] = &openChest;
@@ -1512,6 +1513,34 @@ int BTScreenSet::exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, i
  exit(b, d, item, key);
 }
 
+int BTScreenSet::findTraps(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ BTChest &chest = BTGame::getGame()->getChest();
+ BTSkillList &skillList = BTGame::getGame()->getSkillList();
+ if (chest.isSearched())
+ {
+  throw BTSpecialError("alreadysearched");
+ }
+ chest.setSearched();
+ for (int i = 0; i < skillList.size(); ++i)
+ {
+  if (skillList[i]->special == BTSKILLSPECIAL_DISARM)
+  {
+   for (int k = 0; k < party.size(); ++k)
+   {
+    if (party[k]->useSkill(i))
+    {
+     b.setPc(party[k]);
+     chest.removeTrap();
+     throw BTSpecialError("findtrap");
+    }
+   }
+  }
+ }
+ throw BTSpecialError("notraps");
+}
+
 int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -1901,3 +1930,4 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
  }
  return 0;
 }
+

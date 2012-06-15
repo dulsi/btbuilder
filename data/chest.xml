@@ -2,7 +2,7 @@
 	<screen number="1" escapeScreen="exit">
 		<line>You see a chest!</line>
 		<line>Will you:</line>
-		<choice keys="fF" action="findTraps" screen="">Find traps</choice>
+		<choice keys="fF" action="findTraps" screen="1">Find traps</choice>
 		<choice keys="oO" action="openChest" screen="exit">Open chest</choice>
 		<choice keys="cC" screen="2">Cast spell</choice>
 		<choice keys="uU" screen="">Use item</choice>
@@ -18,4 +18,7 @@
 		<line>Spell to cast:</line>
 		<readString action="castNow" screen="1">&gt;</readString>
 	</screen>
+	<error type="alreadysearched" screen="1">You already looked for traps.</error>
+	<error type="notraps" screen="1">No one finds any traps on the chest...</error>
+	<error type="findtrap" screen="1"><name /> finds and disarms a trap!</error>
 </screenset>

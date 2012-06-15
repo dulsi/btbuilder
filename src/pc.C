@@ -439,6 +439,28 @@ void BTPc::unequip(int index)
  item[index].equipped = BTITEM_NOTEQUIPPED;
 }
 
+bool BTPc::useSkill(int index, int difficulty /*= BTSKILL_DEFAULTDIFFICULTY*/)
+{
+ BTSkillList &skillList = BTGame::getGame()->getSkillList();
+ if (difficulty == BTSKILL_DEFAULTDIFFICULTY)
+  difficulty = skillList[index]->defaultDifficulty;
+ if (0 < skill[index])
+ {
+  if (skillList[index]->limited)
+  {
+   if (skillUse[index] > 0)
+    --skillUse[index];
+   else
+    return false;
+  }
+  if (skillList[index]->roll.roll() + skill[index] >= difficulty)
+  {
+   return true;
+  }
+ }
+ return false;
+}
+
 void BTPc::readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc)
 {
  XMLSerializer parser;

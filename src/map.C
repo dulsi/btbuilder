@@ -517,7 +517,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
      {
       for (int k = 0; k < party.size(); ++k)
       {
-       if ((party[k]->skill[i] > 0) && (BTDice(1, 100).roll() < party[k]->skill[i]))
+       if (party[k]->useSkill(i))
        {
         char tmp[100];
         snprintf(tmp, 100, "%s finds and disarms a trap!", party[k]->name);

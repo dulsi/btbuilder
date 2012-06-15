@@ -234,6 +234,8 @@ extern ArrayLookup statLookup;
 
 #define BTSAVE_DIFFICULTY 20
 
+#define BTSKILL_DEFAULTDIFFICULTY -1
+
 #define BTSTATUS_NONE      -1
 #define BTSTATUS_DEAD      0
 #define BTSTATUS_POISONED  1

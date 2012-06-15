@@ -57,6 +57,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool takeItem(int id);
   bool takeItemFromIndex(int index);
   void unequip(int index);
+  bool useSkill(int index, int difficulty = BTSKILL_DEFAULTDIFFICULTY);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }
   static void readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc);

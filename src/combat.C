@@ -983,7 +983,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
       {
        for (int i = 0; i < skillList.size(); ++i)
        {
-        if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) && (pc.skill[i] > 0) && (BTDice(1, 100).roll() <= pc.skill[i]))
+        if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) && (pc.useSkill(i)))
         {
          special.set(skillList[i]->effect);
         }

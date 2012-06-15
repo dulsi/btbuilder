@@ -33,6 +33,8 @@ void BTSkill::serialize(ObjectSerializer* s)
  s->add("effect", &effect, NULL, &effectLookup);
  s->add("limited", &limited);
  s->add("special", &special, NULL, &specialLookup);
+ s->add("roll", &roll);
+ s->add("defaultDifficulty", &defaultDifficulty);
 }
 
 void BTSkill::readXML(const char *filename, XMLVector<BTSkill*> &skill)

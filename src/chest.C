@@ -9,7 +9,7 @@
 #include "chest.h"
 
 BTChest::BTChest()
-: trapText(NULL), trapDamage(0, 6, 0), trapExtra(0)
+: searched(false), trapText(NULL), trapDamage(0, 6, 0), trapExtra(0)
 {
 }
 
@@ -21,6 +21,7 @@ BTChest::~BTChest()
 
 void BTChest::clear()
 {
+ searched = false;
  if (trapText)
   delete [] trapText;
  trapText = NULL;
@@ -28,6 +29,11 @@ void BTChest::clear()
  trapDamage.setNumber(0);
  trapExtra = 0;
  itemID = BTITEM_NONE;
+}
+
+bool BTChest::isSearched()
+{
+ return searched;
 }
 
 void BTChest::open(BTDisplay &d)
@@ -94,6 +100,7 @@ bool BTChest::removeTrap()
 
 void BTChest::setup(char *text, int extra, const BTDice &damage, int item)
 {
+ searched = false;
  if (trapText)
   delete [] trapText;
  trapText = new char[strlen(text) + 1];
@@ -101,5 +108,10 @@ void BTChest::setup(char *text, int extra, const BTDice &damage, int item)
  trapExtra = extra;
  trapDamage = damage;
  itemID = item;
+}
+
+void BTChest::setSearched()
+{
+ searched = true;
 }
 
