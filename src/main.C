@@ -252,7 +252,14 @@ int main(int argc, char *argv[])
      if (caster != mon.getCaster())
      {
       caster = mon.getCaster();
-      printf("Class:  %s\n", BTGame::getGame()->getJobList()[caster]->name);
+      BTJobList& jobList = BTGame::getGame()->getJobList();
+      int j;
+      for (j = 0; j < jobList.size(); ++j)
+      {
+       if (jobList[j]->getSkill(caster) != NULL)
+        break;
+      }
+      printf("Class:  %s\n", ((j < jobList.size()) ? BTGame::getGame()->getJobList()[j]->name : "Unknown"));
      }
      level = mon.getLevel();
      printf("Level: %d\n\n", level);

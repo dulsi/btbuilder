@@ -92,6 +92,7 @@ class BTJob : public XMLObject
 
   int calcToHit(int level);
   int calcSave(int level);
+  BTJobSkill *getSkill(int skillIndex);
   bool isAllowed(BTPc *pc, bool starting);
   virtual void serialize(ObjectSerializer* s);
 

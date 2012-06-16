@@ -99,6 +99,16 @@ int BTJob::calcSave(int level)
  return save + (level / improveSave);
 }
 
+BTJobSkill *BTJob::getSkill(int skillIndex)
+{
+ for (int i = 0; i < skill.size(); ++i)
+ {
+  if (skill[i]->skill == skillIndex)
+   return skill[i];
+ }
+ return NULL;
+}
+
 bool BTJob::isAllowed(BTPc *pc, bool starting)
 {
  if (starting)
