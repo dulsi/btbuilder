@@ -36,11 +36,16 @@ bool BTChest::isSearched()
  return searched;
 }
 
+bool BTChest::isTrapped()
+{
+ return ((trapDamage.getMax() > 0) || (trapExtra > 0));
+}
+
 void BTChest::open(BTDisplay &d)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- if ((trapDamage.getMax() > 0) || (trapExtra > 0))
+ if (isTrapped())
  {
   d.drawText("A trap on the chest is triggered!");
   if (trapText)

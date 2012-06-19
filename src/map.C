@@ -630,6 +630,8 @@ void BTSpecialCommand::run(BTDisplay &d) const
    game->getChest().setup(text, number[1], BTDice(0, 6, number[2]), number[0]);
    BTScreenSet b;
    b.open("data/chest.xml");
+   if (!game->getChest().isTrapped())
+    b.setEffect(BTSPELLTYPE_TRAPDESTROY);
    b.run(d);
    game->getChest().clear();
    break;

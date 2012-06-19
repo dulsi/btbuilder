@@ -848,17 +848,17 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
 
 void BTCan::serialize(ObjectSerializer *s)
 {
- s->add("barrier", &items, &BTBarrier::create);
- s->add("line", &items, &BTLine::create);
- s->add("choice", &items, &BTChoice::create);
- s->add("readString", &items, &BTReadString::create);
- s->add("selectRoster", &items, &BTSelectRoster::create);
- s->add("selectRace", &items, &BTSelectRace::create);
- s->add("selectJob", &items, &BTSelectJob::create);
- s->add("selectGoods", &items, &BTSelectGoods::create);
- s->add("selectInventory", &items, &BTSelectInventory::create);
- s->add("selectParty", &items, &BTSelectParty::create);
- s->add("selectSong", &items, &BTSelectSong::create);
+ s->add("barrier", typeid(BTBarrier).name(), &items, &BTBarrier::create);
+ s->add("line", typeid(BTLine).name(), &items, &BTLine::create);
+ s->add("choice", typeid(BTChoice).name(), &items, &BTChoice::create);
+ s->add("readString", typeid(BTReadString).name(), &items, &BTReadString::create);
+ s->add("selectRoster", typeid(BTSelectRoster).name(), &items, &BTSelectRoster::create);
+ s->add("selectRace", typeid(BTSelectRace).name(), &items, &BTSelectRace::create);
+ s->add("selectJob", typeid(BTSelectJob).name(), &items, &BTSelectJob::create);
+ s->add("selectGoods", typeid(BTSelectGoods).name(), &items, &BTSelectGoods::create);
+ s->add("selectInventory", typeid(BTSelectInventory).name(), &items, &BTSelectInventory::create);
+ s->add("selectParty", typeid(BTSelectParty).name(), &items, &BTSelectParty::create);
+ s->add("selectSong", typeid(BTSelectSong).name(), &items, &BTSelectSong::create);
 }
 
 XMLObject *BTCan::create(const XML_Char *name, const XML_Char **atts)
@@ -975,6 +975,25 @@ XMLObject *BTError::create(const XML_Char *name, const XML_Char **atts)
  return new BTError(type, screen);
 }
 
+std::string BTEffect::getAction()
+{
+ return action;
+}
+
+XMLObject *BTEffect::create(const XML_Char *name, const XML_Char **atts)
+{
+ int type(0);
+ const char *action = "";
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "type"))
+   type = spellTypeLookup.getIndex(att[1]);
+  if (0 == strcmp(*att, "action"))
+   action = att[1];
+ }
+ return new BTEffect(type, action);
+}
+
 BTScreenSet::BTScreenSet()
  : picture(-1), label(0), building(false), clearMagic(false), pc(0), grp(0)
 {
@@ -999,6 +1018,7 @@ BTScreenSet::BTScreenSet()
  actionList["requestJob"] = &requestJob;
  actionList["removeFromParty"] = &removeFromParty;
  actionList["removeRoster"] = &removeRoster;
+ actionList["removeTraps"] = &removeTraps;
  actionList["save"] = &save;
  actionList["saveParty"] = &saveParty;
  actionList["sell"] = &sell;
@@ -1030,6 +1050,31 @@ int BTScreenSet::getLevel()
 BTPc* BTScreenSet::getPc()
 {
  return pc;
+}
+
+void BTScreenSet::checkEffects(BTDisplay &d)
+{
+ BTGame *game = BTGame::getGame();
+ for (int i = 0; i < effects.size(); ++i)
+ {
+  if ((!effects[i]->isProcessed()) && (game->hasEffectOfType(effects[i]->getType())))
+  {
+   effects[i]->setProcessed();
+   effects[i]->draw(d, this);
+   d.process(BTDisplay::allKeys);
+   try
+   {
+    BTScreenSet::action a = findAction(effects[i]->getAction());
+    if (a)
+     (*a)(*this, d, effects[i], 13);
+   }
+   catch (const BTSpecialError &e)
+   {
+    displayError(d, e);
+   }
+   d.clearText();
+  }
+ }
 }
 
 int BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
@@ -1091,6 +1136,7 @@ void BTScreenSet::open(const char *filename)
  parser.add("clearMagic", &clearMagic);
  parser.add("screen", &screen, &BTScreenSetScreen::create);
  parser.add("error", &errors, &BTError::create);
+ parser.add("effect", &effects, &BTEffect::create);
  parser.parse(filename, true);
 }
 
@@ -1148,6 +1194,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
       break;
     }
    }
+   checkEffects(d);
    try
    {
     screen[where]->draw(d, this);
@@ -1187,6 +1234,8 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
     {
      next = displayError(d, e);
     }
+    if (BTSCREEN_ESCAPE == next)
+     next = screen[where]->getEscapeScreen();
     if (0 == next)
      next = item->getScreen(pc);
     where = findScreen(next);
@@ -1209,7 +1258,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
    {
     where = start;
    }
-   if (where == -1)
+   if (where == BTSCREEN_EXIT)
    {
     try
     {
@@ -1234,6 +1283,17 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
   }
   else
    d.clearElements();
+ }
+}
+
+void BTScreenSet::setEffect(int type)
+{
+ for (int i = 0; i < effects.size(); ++i)
+ {
+  if (effects[i]->getType() == type)
+  {
+   effects[i]->setProcessed();
+  }
  }
 }
 
@@ -1424,17 +1484,19 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
      case BTAREAEFFECT_GROUP:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
+      d.drawStats();
       spellList[i].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
-      return -1;
+      return BTSCREEN_ESCAPE;
      case BTAREAEFFECT_NONE:
       d.clearText();
       b.pc->sp -= spellList[i].getSp();
+      d.drawStats();
       spellList[i].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
-      return -1;
+      return BTSCREEN_ESCAPE;
      case BTAREAEFFECT_ALL:
       throw BTSpecialError("nocombat");
      default:
-      return -1;
+      return BTSCREEN_ESCAPE;
     }
    }
   }
@@ -1706,6 +1768,13 @@ int BTScreenSet::removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  return 0;
 }
 
+int BTScreenSet::removeTraps(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTChest &chest = BTGame::getGame()->getChest();
+ chest.removeTrap();
+ return 0;
+}
+
 int BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
@@ -1903,7 +1972,9 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
    d.clearText();
    b.pc->skillUse[i] -= 1;
    songList[select->select]->play(d, b.pc, NULL);
-   return -1;
+   d.drawIcons();
+   d.drawStats();
+   return BTSCREEN_ESCAPE;
   }
  }
  throw BTSpecialError("novoice");
@@ -1925,6 +1996,7 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
   d.clearText();
   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
   b.pc->sp -= spellList[b.pc->combat.object].getSp();
+  d.drawStats();
   spellList[b.pc->combat.object].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
   return -1;
  }

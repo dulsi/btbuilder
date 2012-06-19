@@ -14,6 +14,7 @@
 #include <map>
 
 #define BTSCREEN_EXIT -1
+#define BTSCREEN_ESCAPE -2
 
 typedef char *char_ptr;
 
@@ -304,6 +305,24 @@ class BTError : public BTLine
   int screen;
 };
 
+class BTEffect : public BTLine
+{
+ public:
+  BTEffect(int t, const char *act) : type(t), action(act), processed(false) {}
+
+  virtual std::string getAction();
+  int getType() { return type; }
+  bool isProcessed() { return processed; }
+  void setProcessed() { processed = true; }
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+
+ private:
+  int type;
+  std::string action;
+  bool processed;
+};
+
 class BTScreenSet : public ObjectSerializer
 {
  public:
@@ -315,6 +334,7 @@ class BTScreenSet : public ObjectSerializer
   virtual int getLevel();
 
   BTPc* getPc();
+  void checkEffects(BTDisplay &d);
   int displayError(BTDisplay &d, const BTSpecialError &e);
   virtual void endScreen(BTDisplay &d) {}
   action findAction(const std::string &actionName);
@@ -322,6 +342,7 @@ class BTScreenSet : public ObjectSerializer
   virtual void initScreen(BTDisplay &d) {}
   virtual void open(const char *filename);
   void run(BTDisplay &d, int start = 0, bool status = true);
+  void setEffect(int type);
   void setGroup(BTGroup *g);
   void setPc(BTPc *c);
   void setPicture(BTDisplay &d, int pic, const char *l);
@@ -348,6 +369,7 @@ class BTScreenSet : public ObjectSerializer
   static int requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int removeTraps(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int saveParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
@@ -373,6 +395,7 @@ class BTScreenSet : public ObjectSerializer
   bool clearMagic;
   XMLVector<BTScreenSetScreen*> screen;
   XMLVector<BTError*> errors;
+  XMLVector<BTEffect*> effects;
   std::map<std::string, action> actionList;
 };
 

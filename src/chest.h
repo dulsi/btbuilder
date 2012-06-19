@@ -19,6 +19,7 @@ class BTChest
 
   void clear();
   bool isSearched();
+  bool isTrapped();
   void open(BTDisplay &d);
   bool removeTrap();
   void setup(char *text, int extra, const BTDice &damage, int item);
