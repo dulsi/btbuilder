@@ -1012,6 +1012,120 @@ void BTArmorBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARG
  }
 }
 
+BTHitBonusEffect::BTHitBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
+ : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
+{
+}
+
+int BTHitBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ if (BTTARGET_PARTY == g)
+ {
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    party[i]->toHit += bonus;
+   }
+  }
+  else
+  {
+   party[trgt]->toHit += bonus;
+  }
+  d.drawStats();
+ }
+ else if (BTTARGET_ALLMONSTERS == g)
+ {
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   for (int k = 0; k < grp->individual.size(); ++k)
+   {
+    grp->individual[k].toHit += bonus;
+   }
+  }
+ }
+ else if (g >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < grp->individual.size(); ++i)
+   {
+    grp->individual[i].toHit += bonus;
+   }
+  }
+  else
+  {
+   grp->individual[trgt].toHit += bonus;
+  }
+ }
+ return 0;
+}
+
+void BTHitBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ if (BTTARGET_PARTY == g)
+ {
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    party[i]->toHit -= bonus;
+   }
+  }
+  else
+  {
+   party[trgt]->toHit -= bonus;
+  }
+  d.drawStats();
+ }
+ else if (BTTARGET_ALLMONSTERS == g)
+ {
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   for (int k = 0; k < grp->individual.size(); ++k)
+   {
+    grp->individual[k].toHit -= bonus;
+   }
+  }
+ }
+ else if (g >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < grp->individual.size(); ++i)
+   {
+    grp->individual[i].toHit -= bonus;
+   }
+  }
+  else
+  {
+   grp->individual[trgt].toHit -= bonus;
+  }
+ }
+}
+
 BTResurrectEffect::BTResurrectEffect(int t, int x, int s, int m, int g, int trgt)
  : BTTargetedEffect(t, x, s, m, g, trgt)
 {

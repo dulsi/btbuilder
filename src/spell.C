@@ -334,6 +334,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_ARMORBONUS:
    effect = new BTArmorBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
    break;
+  case BTSPELLTYPE_HITBONUS:
+   effect = new BTHitBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
+   break;
   case BTSPELLTYPE_REGENBARD:
   {
    BTDice amount(0, 4, getExtra());
