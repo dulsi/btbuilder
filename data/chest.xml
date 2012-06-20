@@ -1,5 +1,5 @@
 <screenset>
-	<picture>46</picture>
+	<picture>28</picture>
 	<label>Chest</label>
 	<screen number="1" escapeScreen="exit">
 		<line>You see a chest!</line>

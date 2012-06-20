@@ -344,7 +344,7 @@ void BTGame::run(BTDisplay &d)
      {
       if (!hasEffectOfType(BTSPELLTYPE_BLOCKENCOUNTERS))
       {
-       d.drawText("Random Encounter");
+       levelMap->generateRandomEncounter(d);
       }
      }
      key = d.readChar(6000);

@@ -47,7 +47,6 @@ BTCS Incomplete Functionality
 Special Commands
 * anti-magic zone
 * play sound $!
-* chest holding $I,trap $T,damage $#,message $$
 * force a random encounter
 
 Spells

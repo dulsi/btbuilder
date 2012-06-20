@@ -707,6 +707,9 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_SETSPECIAL:
    game->getMap()->setSpecial(game->getX(), game->getY(), number[0]);
    break;
+  case BTSPECIALCOMMAND_RANDOMENCOUNTER:
+   game->getMap()->generateRandomEncounter(d);
+   break;
   case BTSPECIALCOMMAND_CLEARTEXT:
    d.clearText();
    break;
@@ -1209,6 +1212,26 @@ IShort BTMap::getMonsterLevel() const
 const char *BTMap::getName() const
 {
  return name;
+}
+
+void BTMap::generateRandomEncounter(BTDisplay &d) const
+{
+ BTGame *game = BTGame::getGame();
+ BTFactory<BTMonster> &monList = game->getMonsterList();
+ std::vector<int> monsters;
+ for (int i = 0; i < monList.size(); ++i)
+ {
+  if (monList[i].getLevel() == getMonsterLevel())
+  {
+   monsters.push_back(i);
+  }
+ }
+ if (monsters.size() > 0)
+ {
+  int monIndex = BTDice(1, monsters.size(), -1).roll();
+  game->getCombat().addEncounter(monsters[monIndex]);
+  game->getCombat().run(d);
+ }
 }
 
 const BTSpecial *BTMap::getSpecial(IShort num) const
