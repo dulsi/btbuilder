@@ -18,7 +18,7 @@ void BTEquipment::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), job(0), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
+ : race(0), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
@@ -36,7 +36,7 @@ BTPc::BTPc()
 }
 
 BTPc::BTPc(int monsterType, int j)
- : race(-1), job(j), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), level(1), gold(0), xp(0)
+ : race(-1), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
 {
  // TO DO: Modify to accept combatant as an optional argument so that
  // spell bind can be implemented.
@@ -70,11 +70,9 @@ bool BTPc::advanceLevel()
    ++level;
    if (((level - 1) % jobList[job]->improveToHit) == 0)
     ++toHit;
-   if ((jobList[job]->improveRateAttacks) && (((level - 1) % jobList[job]->improveRateAttacks) == 0))
+   if ((jobList[job]->improveRateAttacks) && (level - 1 > (jobList[job]->maxRateAttacks * jobList[job]->improveRateAttacks) + 1) && (((level - 1) % jobList[job]->improveRateAttacks) == 0))
    {
     ++rateAttacks;
-    if (rateAttacks > jobList[job]->maxRateAttacks)
-     rateAttacks = jobList[job]->improveRateAttacks;
    }
    if (((level - 1) % jobList[job]->improveSave) == 0)
     ++save;
@@ -90,8 +88,6 @@ bool BTPc::advanceLevel()
      skill[jobList[job]->skill[i]->skill] += BTDice(1, jobList[job]->skill[i]->improve).roll();
      if ((jobList[job]->skill[i]->modifier >= 0) && (stat[jobList[job]->skill[i]->modifier] > 14))
       skill[jobList[job]->skill[i]->skill] += stat[jobList[job]->skill[i]->modifier] - 14;
-     if (skill[jobList[job]->skill[i]->skill] > 99)
-      skill[jobList[job]->skill[i]->skill] = 99;
     }
    }
    if (jobList[job]->spells)
@@ -135,6 +131,24 @@ void BTPc::changeJob(int newJob)
  }
  level = 1;
  xp = 0;
+}
+
+bool BTPc::drainLevel()
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ BTXpChartList &xpChartList = BTGame::getGame()->getXpChartList();
+ bool answer = BTCombatant::drainLevel();
+ if (answer)
+ {
+  if ((jobList[job]->improveRateAttacks) && (jobList[job]->maxRateAttacks * jobList[job]->improveRateAttacks > level) && (((level) % jobList[job]->improveRateAttacks) == 0))
+  {
+   --rateAttacks;
+  }
+  if (((level) % jobList[job]->improveSave) == 0)
+   --save;
+  xp = xpChartList[jobList[job]->xpChart]->getXpNeeded(level);
+ }
+ return answer;
 }
 
 void BTPc::equip(int index)
@@ -355,6 +369,7 @@ void BTPc::serialize(ObjectSerializer* s)
  s->add("hp", &hp);
  s->add("maxsp", &maxSp);
  s->add("sp", &sp);
+ s->add("maxLevel", &maxLevel);
  s->add("level", &level);
  s->add("xp", &xp);
  s->add("gold", &gold);
@@ -453,7 +468,8 @@ bool BTPc::useSkill(int index, int difficulty /*= BTSKILL_DEFAULTDIFFICULTY*/)
    else
     return false;
   }
-  if (skillList[index]->roll.roll() + skill[index] >= difficulty)
+  int roll = skillList[index]->roll.roll();
+  if ((roll != skillList[index]->roll.getMin()) && (roll + skill[index] >= difficulty))
   {
    return true;
   }

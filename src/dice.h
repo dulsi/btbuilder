@@ -34,6 +34,7 @@ class BTDice : public XMLObject
   BTDice();
 
   int getMax() const;
+  int getMin() const;
   int getModifier() const;
   int getNumber() const;
   int getType() const;

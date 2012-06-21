@@ -34,6 +34,7 @@ class BTPc : public XMLObject, public BTCombatant
 
   bool advanceLevel();
   void changeJob(int newJob);
+  bool drainLevel();
   void equip(int index);
   int incrementStat();
   bool isEquipped(int index) const;
@@ -65,14 +66,12 @@ class BTPc : public XMLObject, public BTCombatant
 
   char *name;
   int race;
-  int job;
   int picture;
   int monster;
   int stat[BT_STATS];
   int rateAttacks;
   int save;
   int sp, maxSp;
-  int level;
   unsigned int xp;
   unsigned int gold;
   int *skill;

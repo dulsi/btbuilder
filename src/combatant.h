@@ -12,12 +12,16 @@
 class BTCombatant
 {
  public:
-  BTCombatant() : ac(0), toHit(0), maxHp(-1), hp(-1), active(true) {}
-  BTCombatant(int startAc, int startToHit, int startHp) : ac(startAc), toHit(startToHit), maxHp(startHp), hp(startHp), active(true) {}
+  BTCombatant() : maxLevel(1), level(1), job(0), ac(0), toHit(0), maxHp(-1), hp(-1), active(true) {}
+  BTCombatant(int startLevel, int startJob, int startAc, int startToHit, int startHp) : maxLevel(startLevel), level(startLevel), job(startJob), ac(startAc), toHit(startToHit), maxHp(startHp), hp(startHp), active(true) {}
 
+  virtual bool drainLevel();
   bool isAlive() const;
   bool takeHP(int amount);
 
+  int maxLevel;
+  int level;
+  int job;
   int ac;
   int toHit;
   int maxHp, hp;

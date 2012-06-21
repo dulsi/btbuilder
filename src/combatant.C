@@ -7,6 +7,26 @@
 
 #include "btconst.h"
 #include "combatant.h"
+#include "game.h"
+
+bool BTCombatant::drainLevel()
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ if (level > 1)
+ {
+  if (((level - 1) % jobList[job]->improveToHit) == 0)
+   --toHit;
+  if ((jobList[job]->improveAc) && (((level - 1) % jobList[job]->improveAc) == 0))
+   --ac;
+  --level;
+  return false;
+ }
+ else
+ {
+  status.set(BTSTATUS_DEAD);
+  return true;
+ }
+}
 
 bool BTCombatant::isAlive() const
 {

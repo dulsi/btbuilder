@@ -77,7 +77,7 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
   toHit += (monList[type].getLevel() - 1) / jobList[((monList[type].isIllusion() == 1) ? BTJOB_ILLUSION : BTJOB_MONSTER)]->improveToHit;
  while (number > 0)
  {
-  individual.push_back(BTCombatant(monList[monsterType].getAc(), toHit, monList[monsterType].getHp().roll()));
+  individual.push_back(BTCombatant(monList[type].getLevel(), ((monList[type].isIllusion() == 1) ? BTJOB_ILLUSION : BTJOB_MONSTER), monList[monsterType].getAc(), toHit, monList[monsterType].getHp().roll()));
   --number;
  }
  active = individual.size();
