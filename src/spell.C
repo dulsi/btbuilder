@@ -345,7 +345,6 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    {
     if ((skillList[which]->special == BTSKILLSPECIAL_SONG) && (skillList[which]->limited))
     {
-printf("%d %d\n", getExtra(), which);
      effect = new BTRegenSkillEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, which, amount);
      break;
     }

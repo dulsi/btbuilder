@@ -192,7 +192,7 @@ bool BTPc::drainLevel()
   {
    if (skill[k]->history.size() >= level)
    {
-      skill[k]->value -= skill[k]->history[level];
+    skill[k]->value -= skill[k]->history[level];
    }
   }
   xp = xpChartList[jobList[job]->xpChart]->getXpNeeded(level);
