@@ -25,12 +25,26 @@ class BTEquipment : public XMLObject
   int charges;
 };
 
+class BTSkillValue : public XMLObject
+{
+ public:
+  BTSkillValue() : skill(0), value(0), uses(0) {}
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSkillValue; }
+
+  int skill;
+  int value;
+  int uses;
+  std::vector<unsigned int> history;
+};
+
 class BTPc : public XMLObject, public BTCombatant
 {
  public:
   BTPc();
   BTPc(int monsterType, int job);
-  ~BTPc() { delete [] name; delete [] skill; }
+  ~BTPc() { delete [] name; }
 
   bool advanceLevel();
   void changeJob(int newJob);
@@ -43,6 +57,7 @@ class BTPc : public XMLObject, public BTCombatant
   int getGold() const;
   int getHandWeapon() const;
   int getItem(int index) const;
+  int getSkill(int skNum) const;
   unsigned int getXPNeeded();
   unsigned int giveGold(unsigned int amount);
   void giveHP(int amount);
@@ -51,9 +66,11 @@ class BTPc : public XMLObject, public BTCombatant
   void giveSkillUse(int skNum, int amount);
   void giveXP(unsigned int amount);
   bool hasItem(int id) const;
+  bool hasSkillUse(int skNum);
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
   virtual void serialize(ObjectSerializer* s);
   void setName(const char *nm);
+  void setSkill(int skNum, int value, int uses);
   unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);
   bool takeItemFromIndex(int index);
@@ -74,8 +91,7 @@ class BTPc : public XMLObject, public BTCombatant
   int sp, maxSp;
   unsigned int xp;
   unsigned int gold;
-  int *skill;
-  int *skillUse;
+  XMLVector<BTSkillValue*> skill;
   BTEquipment item[BT_ITEMS];
 
   // Combat actions

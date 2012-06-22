@@ -42,12 +42,12 @@ bool BTJobChangeRuleSkill::compare(BTPc *pc)
 {
  if (greater != -1)
  {
-  if (pc->skill[skill] > greater)
+  if (pc->getSkill(skill) > greater)
    return true;
  }
  if (equal != -1)
  {
-  if (pc->skill[skill] == equal)
+  if (pc->getSkill(skill) == equal)
    return true;
  }
  return false;

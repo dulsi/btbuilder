@@ -1428,7 +1428,7 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
  bool bFound(false);
  for (int sk = 0; sk < job[b.pc->job]->skill.size(); ++sk)
  {
-  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->skill[job[b.pc->job]->skill[sk]->skill]);
+  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->skill[job[b.pc->job]->skill[sk]->skill]->value);
   if (b.pc->level >= purchase->minimumLevel)
   {
    if (b.pc->getGold() < purchase->cost)
@@ -1438,7 +1438,13 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
    else
    {
     b.pc->takeGold(purchase->cost);
-    b.pc->skill[job[b.pc->job]->skill[sk]->skill] = purchase->value;
+    for (int i = 0; i < b.pc->skill.size(); ++i)
+    {
+     if (b.pc->skill[i]->skill == job[b.pc->job]->skill[sk]->skill)
+     {
+      b.pc->skill[i]->value = purchase->value;
+     }
+    }
    }
    return 0;
   }
@@ -1461,7 +1467,7 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  {
   if (0 == strcasecmp(spellCode.c_str(), spellList[i].getCode()))
   {
-   if (b.getPc()->skill[spellList[i].getCaster()] >= spellList[i].getLevel())
+   if (b.getPc()->getSkill(spellList[i].getCaster()) >= spellList[i].getLevel())
    {
     if (b.getPc()->sp < spellList[i].getSp())
      throw BTSpecialError("nosp");
@@ -1687,7 +1693,7 @@ int BTScreenSet::requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  bool bFound(false);
  for (int sk = 0; sk < job[b.pc->job]->skill.size(); ++sk)
  {
-  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->skill[job[b.pc->job]->skill[sk]->skill]);
+  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->getSkill(job[b.pc->job]->skill[sk]->skill));
   if (b.pc->level >= purchase->minimumLevel)
   {
    b.add("num", &purchase->value);
@@ -1836,7 +1842,7 @@ int BTScreenSet::selectBard(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  {
   for (int i = 0; i < skill.size(); ++i)
   {
-   if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (party[key - '1']->skill[i] > 0))
+   if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (party[key - '1']->getSkill(i) > 0))
    {
     b.setPc(party[key - '1']);
     BTSelectParty *select = static_cast<BTSelectParty*>(item);
@@ -1917,10 +1923,10 @@ int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
     b.pc->ac = job[i]->ac + ((b.pc->stat[BTSTAT_DX] > 14) ? b.pc->stat[BTSTAT_DX] - 14 : 0);
     for (int k = 0; k < job[i]->skill.size(); ++k)
     {
-     b.pc->skill[job[i]->skill[k]->skill] = job[i]->skill[k]->value;
+     int value = job[i]->skill[k]->value;
      if ((job[i]->skill[k]->modifier >= 0) && (b.pc->stat[job[i]->skill[k]->modifier] > 14))
-      b.pc->skill[job[i]->skill[k]->skill] += b.pc->stat[job[i]->skill[k]->modifier] - 14;
-     b.pc->skillUse[job[i]->skill[k]->skill] = b.pc->skill[job[i]->skill[k]->skill];
+      value += b.pc->stat[job[i]->skill[k]->modifier] - 14;
+     b.pc->setSkill(job[i]->skill[k]->skill, value, value);
     }
     b.pc->gold = BTDice(1, 61, 110).roll();
     if (job[i]->spells)
@@ -1956,7 +1962,7 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skill.size(); ++i)
  {
-  if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (b.pc->skillUse[i] > 0))
+  if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (b.pc->hasSkillUse(i)))
   {
    bool instrument(false);
    for (int k = 0; k < BT_ITEMS; ++k)
@@ -1970,7 +1976,7 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
    if (!instrument)
     throw BTSpecialError("noinstrument");
    d.clearText();
-   b.pc->skillUse[i] -= 1;
+   b.pc->giveSkillUse(i, -1);
    songList[select->select]->play(d, b.pc, NULL);
    d.drawIcons();
    d.drawStats();

@@ -1090,7 +1090,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
     bool novoice = true;
     for (int i = 0; i < skillList.size(); ++i)
     {
-     if ((skillList[i]->special == BTSKILLSPECIAL_SONG) && (pc.skillUse[i] > 0))
+     if ((skillList[i]->special == BTSKILLSPECIAL_SONG) && (pc.hasSkillUse(i)))
      {
       bool instrument(false);
       for (int k = 0; k < BT_ITEMS; ++k)
@@ -1108,7 +1108,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
       }
       else
       {
-       pc.skillUse[i] -= 1;
+       pc.giveSkillUse(i, -1);
        songList[pc.combat.object]->play(d, &pc, this);
       }
       novoice = false;
@@ -1340,7 +1340,7 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  {
   if (0 == strcasecmp(spellCode.c_str(), spellList[i].getCode()))
   {
-   if (b.getPc()->skill[spellList[i].getCaster()] >= spellList[i].getLevel())
+   if (b.getPc()->getSkill(spellList[i].getCaster()) >= spellList[i].getLevel())
    {
     if (b.getPc()->sp < spellList[i].getSp())
      throw BTSpecialError("nosp");
@@ -1416,7 +1416,7 @@ int BTCombat::sing(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skillList.size(); ++i)
  {
-  if ((skillList[i]->special == BTSKILLSPECIAL_SONG) && (b.getPc()->skillUse[i] > 0))
+  if ((skillList[i]->special == BTSKILLSPECIAL_SONG) && (b.getPc()->hasSkillUse(i)))
   {
    bool instrument(false);
    for (int k = 0; k < BT_ITEMS; ++k)

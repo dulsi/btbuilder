@@ -458,13 +458,8 @@ void BTSpecialCommand::run(BTDisplay &d) const
    {
     for (int which = 0; which < skillList.size(); ++which)
     {
-     if ((skillList[which]->special == BTSKILLSPECIAL_SONG) && (skillList[which]->limited) && (party[who]->skillUse[which] < party[who]->skill[which]))
-     {
-      if (party[who]->skillUse[which] + number[0] < party[who]->skill[which])
-       party[who]->skillUse[which] += number[0];
-      else
-       party[who]->skillUse[which] = party[who]->skill[which];
-     }
+     if ((skillList[which]->special == BTSKILLSPECIAL_SONG) && (skillList[which]->limited))
+      party[who]->giveSkillUse(which, number[0]);
     }
    }
    d.drawStats();

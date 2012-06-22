@@ -17,6 +17,14 @@ void BTEquipment::serialize(ObjectSerializer* s)
  s->add("charges", &charges);
 }
 
+void BTSkillValue::serialize(ObjectSerializer* s)
+{
+ s->add("skill", &skill);
+ s->add("value", &value);
+ s->add("uses", &uses);
+ s->add("history", &history);
+}
+
 BTPc::BTPc()
  : race(0), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
 {
@@ -25,14 +33,6 @@ BTPc::BTPc()
  int i;
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
- int skills = BTGame::getGame()->getSkillList().size();
- skill = new int[skills];
- skillUse = new int[skills];
- for (i = 0; i < skills; ++i)
- {
-  skill[i] = 0;
-  skillUse[i] = 0;
- }
 }
 
 BTPc::BTPc(int monsterType, int j)
@@ -53,10 +53,6 @@ BTPc::BTPc(int monsterType, int j)
  int i;
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
- int skills = BTGame::getGame()->getSkillList().size();
- skill = new int[skills];
- for (i = 0; i < skills; ++i)
-  skill[i] = 0;
 }
 
 bool BTPc::advanceLevel()
@@ -78,23 +74,46 @@ bool BTPc::advanceLevel()
     ++save;
    if ((jobList[job]->improveAc) && (((level - 1) % jobList[job]->improveAc) == 0))
     ++ac;
-   int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
-   hp += moreHp;
-   maxHp += moreHp;
-   for (int i = 0; i < jobList[job]->skill.size(); ++i)
+   if (level > maxLevel)
    {
-    if (jobList[job]->skill[i]->improve > 0)
+    int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
+    hp += moreHp;
+    maxHp += moreHp;
+    for (int i = 0; i < jobList[job]->skill.size(); ++i)
     {
-     skill[jobList[job]->skill[i]->skill] += BTDice(1, jobList[job]->skill[i]->improve).roll();
-     if ((jobList[job]->skill[i]->modifier >= 0) && (stat[jobList[job]->skill[i]->modifier] > 14))
-      skill[jobList[job]->skill[i]->skill] += stat[jobList[job]->skill[i]->modifier] - 14;
+     if (jobList[job]->skill[i]->improve > 0)
+     {
+      for (int k = 0; k < skill.size(); ++k)
+      {
+       if (skill[k]->skill == jobList[job]->skill[i]->skill)
+       {
+        unsigned int increase = BTDice(1, jobList[job]->skill[i]->improve).roll();
+        if ((jobList[job]->skill[i]->modifier >= 0) && (stat[jobList[job]->skill[i]->modifier] > 14))
+         increase += stat[jobList[job]->skill[i]->modifier] - 14;
+        skill[k]->value += increase;
+        skill[k]->history.push_back(increase);
+        break;
+       }
+      }
+     }
     }
+    if (jobList[job]->spells)
+    {
+     int moreSp = BTDice(1, 4).roll() + ((stat[BTSTAT_IQ] > 14) ? stat[BTSTAT_IQ] - 14 : 0);
+     sp += moreSp;
+     maxSp += moreSp;
+    }
+    maxLevel = level;
    }
-   if (jobList[job]->spells)
+   else
    {
-    int moreSp = BTDice(1, 4).roll() + ((stat[BTSTAT_IQ] > 14) ? stat[BTSTAT_IQ] - 14 : 0);
-    sp += moreSp;
-    maxSp += moreSp;
+    for (int k = 0; k < skill.size(); ++k)
+    {
+     if (skill[k]->history.size() >= level)
+     {
+      skill[k]->value += skill[k]->history[level - 1];
+     }
+    }
    }
    return true;
   }
@@ -115,11 +134,34 @@ void BTPc::changeJob(int newJob)
  int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
  hp += moreHp;
  maxHp += moreHp;
+ {
+  for (int i = 0; i < skill.size(); ++i)
+  {
+   skill[i]->history.clear();
+  }
+ }
  for (int k = 0; k < jobList[newJob]->skill.size(); ++k)
  {
-  skill[jobList[newJob]->skill[k]->skill] = jobList[newJob]->skill[k]->value;
-  if ((jobList[newJob]->skill[k]->modifier >= 0) && (stat[jobList[newJob]->skill[k]->modifier] > 14))
-   skill[jobList[newJob]->skill[k]->skill] += stat[jobList[newJob]->skill[k]->modifier] - 14;
+  bool found(false);
+  for (int i = 0; i < skill.size(); ++i)
+  {
+   if (skill[i]->skill == jobList[newJob]->skill[k]->skill)
+   {
+    skill[i]->value = jobList[newJob]->skill[k]->value;
+    if ((jobList[newJob]->skill[k]->modifier >= 0) && (stat[jobList[newJob]->skill[k]->modifier] > 14))
+     skill[i]->value += stat[jobList[newJob]->skill[k]->modifier] - 14;
+    found = true;
+   }
+  }
+  if (!found)
+  {
+   BTSkillValue *value = new BTSkillValue;
+   value->skill = jobList[newJob]->skill[k]->skill;
+   value->value = jobList[newJob]->skill[k]->value;
+   if ((jobList[newJob]->skill[k]->modifier >= 0) && (stat[jobList[newJob]->skill[k]->modifier] > 14))
+    value->value += stat[jobList[newJob]->skill[k]->modifier] - 14;
+   skill.push_back(value);
+  }
  }
  if (jobList[newJob]->spells)
  {
@@ -146,6 +188,13 @@ bool BTPc::drainLevel()
   }
   if (((level) % jobList[job]->improveSave) == 0)
    --save;
+  for (int k = 0; k < skill.size(); ++k)
+  {
+   if (skill[k]->history.size() >= level)
+   {
+      skill[k]->value -= skill[k]->history[level];
+   }
+  }
   xp = xpChartList[jobList[job]->xpChart]->getXpNeeded(level);
  }
  return answer;
@@ -243,6 +292,18 @@ int BTPc::getItem(int index) const
  return item[index].id;
 }
 
+int BTPc::getSkill(int skNum) const
+{
+ for (int i = 0; i < skill.size(); ++i)
+ {
+  if (skill[i]->skill == skNum)
+  {
+   return skill[i]->value;
+  }
+ }
+ return 0;
+}
+
 unsigned int BTPc::getXPNeeded()
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
@@ -305,11 +366,17 @@ void BTPc::giveSkillUse(int skNum, int amount)
 {
  if (!status.isSet(BTSTATUS_DEAD))
  {
-  skillUse[skNum] += amount;
-  if (skillUse[skNum] > skill[skNum])
-   skillUse[skNum] = skill[skNum];
-  else if (skillUse[skNum] < 0)
-   skillUse[skNum] = 0;
+  for (int i = 0; i < skill.size(); ++i)
+  {
+   if (skill[i]->skill == skNum)
+   {
+    skill[i]->uses += amount;
+    if (skill[i]->uses > skill[i]->value)
+     skill[i]->uses = skill[i]->value;
+    else if (skill[i]->uses < 0)
+     skill[i]->uses = 0;
+   }
+  }
  }
 }
 
@@ -327,6 +394,18 @@ bool BTPc::hasItem(int id) const
   if (id == item[i].id)
   {
    return true;
+  }
+ }
+ return false;
+}
+
+bool BTPc::hasSkillUse(int skNum)
+{
+ for (int i = 0; i < skill.size(); ++i)
+ {
+  if (skill[i]->skill == skNum)
+  {
+   return skill[i]->uses > 0;
   }
  }
  return false;
@@ -373,18 +452,7 @@ void BTPc::serialize(ObjectSerializer* s)
  s->add("level", &level);
  s->add("xp", &xp);
  s->add("gold", &gold);
- int skills = BTGame::getGame()->getSkillList().size();
- for (i = 0; i < skills; ++i)
- {
-  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
-  char tmp[10];
-  snprintf(tmp, 10, "%d", i + 1);
-  attrib->push_back(XMLAttribute("number", tmp));
-  s->add("skill", &skill[i], attrib);
-  attrib = new std::vector<XMLAttribute>;
-  attrib->push_back(XMLAttribute("number", tmp));
-  s->add("skillUse", &skillUse[i], attrib);
- }
+ s->add("skill", &skill, &BTSkillValue::create);
  for (i = 0; i < BT_ITEMS; ++i)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
@@ -400,6 +468,23 @@ void BTPc::setName(const char *nm)
  delete [] name;
  name = new char[strlen(nm) + 1];
  strcpy(name, nm);
+}
+
+void BTPc::setSkill(int skNum, int value, int uses)
+{
+ for (int i = 0; i < skill.size(); ++i)
+ {
+  if (skill[i]->skill == skNum)
+  {
+   skill[i]->value = value;
+   skill[i]->uses = uses;
+   return ;
+  }
+ }
+ BTSkillValue *val = new BTSkillValue;
+ val->value = value;
+ val->uses = uses;
+ skill.push_back(val);
 }
 
 unsigned int BTPc::takeGold(unsigned int amount)
@@ -459,19 +544,26 @@ bool BTPc::useSkill(int index, int difficulty /*= BTSKILL_DEFAULTDIFFICULTY*/)
  BTSkillList &skillList = BTGame::getGame()->getSkillList();
  if (difficulty == BTSKILL_DEFAULTDIFFICULTY)
   difficulty = skillList[index]->defaultDifficulty;
- if (0 < skill[index])
+ for (int i = 0; i < skill.size(); ++i)
  {
-  if (skillList[index]->limited)
+  if (skill[i]->skill == index)
   {
-   if (skillUse[index] > 0)
-    --skillUse[index];
-   else
-    return false;
-  }
-  int roll = skillList[index]->roll.roll();
-  if ((roll != skillList[index]->roll.getMin()) && (roll + skill[index] >= difficulty))
-  {
-   return true;
+   if (0 < skill[i]->value)
+   {
+    if (skillList[index]->limited)
+    {
+     if (skill[i]->uses > 0)
+      --(skill[i]->uses);
+     else
+      return false;
+    }
+    int roll = skillList[index]->roll.roll();
+    if ((roll != skillList[index]->roll.getMin()) && (roll + skill[i]->value >= difficulty))
+    {
+     return true;
+    }
+   }
+   return false;
   }
  }
  return false;
