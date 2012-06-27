@@ -728,6 +728,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
       }
       else
       {
+       bool period(true);
        if (special)
        {
         if (party[target]->savingThrow(BTSAVE_DIFFICULTY))
@@ -737,6 +738,21 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
          case BTEXTRADAMAGE_POSION:
           defender->status.set(BTSTATUS_POISONED);
           text += " and poisons";
+          break;
+         case BTEXTRADAMAGE_LEVELDRAIN:
+          text += " and drains a level from ";
+          text += party[target]->name;
+          if (defender->drainLevel())
+          {
+           period = false;
+           text += ".";
+           d.drawMessage(text.c_str(), game->getDelay());
+           text = party[target]->name;
+           text += " is totally drained of life!";
+           d.drawMessage(text.c_str(), game->getDelay());
+           text = party[target]->name;
+           text += " dies!";
+          }
           break;
          case BTEXTRADAMAGE_INSANITY:
           defender->status.set(BTSTATUS_INSANE);
@@ -754,7 +770,8 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
           break;
         }
        }
-       text += ".";
+       if (period)
+        text += ".";
       }
       d.drawStats();
      }
@@ -926,10 +943,11 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
       text += item.getCause();
      }
      text += " ";
+     std::string defenderName;
      if (BTPc::BTPcAction::attack == pc.combat.action)
-      text += monList[grp->monsterType].getName();
+      text += defenderName = monList[grp->monsterType].getName();
      else
-      text += party[target]->name;
+      text += defenderName = party[target]->name;
      ++attacks;
      int roll = BTDice(1, 20).roll();
      if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= defender->ac)))
@@ -1012,6 +1030,23 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
           case BTEXTRADAMAGE_POSION:
            defender->status.set(BTSTATUS_POISONED);
            specialText += " poisons";
+           break;
+          case BTEXTRADAMAGE_LEVELDRAIN:
+           specialText += " drains a level from ";
+           specialText += defenderName;
+           if (defender->drainLevel())
+           {
+            specialText += " totally draining him";
+            if (defender->active)
+            {
+             defender->active = false;
+             if (grp)
+             {
+              grp->active--;
+             }
+             --active;
+            }
+           }
            break;
           case BTEXTRADAMAGE_INSANITY:
            defender->status.set(BTSTATUS_INSANE);
