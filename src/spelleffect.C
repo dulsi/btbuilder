@@ -225,10 +225,21 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
        flags.set(BTSPELLFLG_KILLED);
        flags.set(BTSPELLFLG_EXCLAMATION);
       }
+      if (status != BTSTATUS_NONE)
+      {
+       if (status == BTSTATUS_LEVELDRAIN)
+       {
+        if (party[i]->drainLevel())
+        {
+         flags.set(BTSPELLFLG_KILLED);
+         flags.set(BTSPELLFLG_EXCLAMATION);
+        }
+       }
+       else
+        party[i]->status.set(status);
+      }
       std::string text = message(party[i]->name, ((dam > 0) ? "takes" : ""), dam, statusText, flags);
       d.drawMessage(text.c_str(), game->getDelay());
-      if (status != BTSTATUS_NONE)
-       party[i]->status.set(status);
       if ((!party[i]->isAlive()) && (party[i]->active))
       {
        ++killed;
@@ -273,10 +284,21 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
       flags.set(BTSPELLFLG_KILLED);
       flags.set(BTSPELLFLG_EXCLAMATION);
      }
+     if (status != BTSTATUS_NONE)
+     {
+      if (status == BTSTATUS_LEVELDRAIN)
+      {
+       if (party[target]->drainLevel())
+       {
+        flags.set(BTSPELLFLG_KILLED);
+        flags.set(BTSPELLFLG_EXCLAMATION);
+       }
+      }
+      else
+       party[target]->status.set(status);
+     }
      std::string text = message(party[target]->name, ((dam > 0) ? "takes" : ""), dam, statusText, flags);
      d.drawMessage(text.c_str(), game->getDelay());
-     if (status != BTSTATUS_NONE)
-      party[target]->status.set(status);
      if ((!party[target]->isAlive()) && (party[target]->active))
      {
       ++killed;
@@ -353,9 +375,20 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
        flags.set(BTSPELLFLG_KILLED);
        flags.set(BTSPELLFLG_EXCLAMATION);
       }
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
       if (status != BTSTATUS_NONE)
-       grp->individual[k].status.set(status);
+      {
+       if (status == BTSTATUS_LEVELDRAIN)
+       {
+        if (grp->individual[k].drainLevel())
+        {
+         flags.set(BTSPELLFLG_KILLED);
+         flags.set(BTSPELLFLG_EXCLAMATION);
+        }
+       }
+       else
+        grp->individual[k].status.set(status);
+      }
+      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
       if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
       {
        ++killed;
@@ -433,9 +466,20 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
        flags.set(BTSPELLFLG_KILLED);
        flags.set(BTSPELLFLG_EXCLAMATION);
       }
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
       if (status != BTSTATUS_NONE)
-       grp->individual[i].status.set(status);
+      {
+       if (status == BTSTATUS_LEVELDRAIN)
+       {
+        if (grp->individual[i].drainLevel())
+        {
+         flags.set(BTSPELLFLG_KILLED);
+         flags.set(BTSPELLFLG_EXCLAMATION);
+        }
+       }
+       else
+        grp->individual[i].status.set(status);
+      }
+      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
       if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
       {
        ++killed;
@@ -483,9 +527,20 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
       flags.set(BTSPELLFLG_KILLED);
       flags.set(BTSPELLFLG_EXCLAMATION);
      }
-     std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
      if (status != BTSTATUS_NONE)
-      grp->individual[target].status.set(status);
+     {
+      if (status == BTSTATUS_LEVELDRAIN)
+      {
+       if (grp->individual[target].drainLevel())
+       {
+        flags.set(BTSPELLFLG_KILLED);
+        flags.set(BTSPELLFLG_EXCLAMATION);
+       }
+      }
+      else
+       grp->individual[target].status.set(status);
+     }
+     std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
      if ((!grp->individual[target].isAlive()) && (grp->individual[target].active))
      {
       ++killed;

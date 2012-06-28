@@ -180,7 +180,7 @@ bool BTPc::drainLevel()
  BTJobList &jobList = BTGame::getGame()->getJobList();
  BTXpChartList &xpChartList = BTGame::getGame()->getXpChartList();
  bool answer = BTCombatant::drainLevel();
- if (answer)
+ if (!answer)
  {
   if ((jobList[job]->improveRateAttacks) && (jobList[job]->maxRateAttacks * jobList[job]->improveRateAttacks > level) && (((level) % jobList[job]->improveRateAttacks) == 0))
   {

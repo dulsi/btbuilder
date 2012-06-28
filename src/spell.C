@@ -310,6 +310,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_PARALYZE:
    effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_PARALYZED, "is paralyzed");
    break;
+  case BTSPELLTYPE_DRAINLEVEL:
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_LEVELDRAIN, "is drained of a level");
+   break;
   case BTSPELLTYPE_DAMAGEBYLEVEL:
    effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
    break;
