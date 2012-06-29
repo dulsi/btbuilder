@@ -331,6 +331,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_CUREPARALYZE:
    effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_PARALYZED);
    break;
+  case BTSPELLTYPE_RESTORELEVELS:
+   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_LEVELDRAIN);
+   break;
   case BTSPELLTYPE_HEAL:
    effect = new BTHealEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
    break;

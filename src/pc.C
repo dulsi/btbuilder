@@ -19,7 +19,7 @@ void BTEquipment::serialize(ObjectSerializer* s)
 
 void BTSkillValue::serialize(ObjectSerializer* s)
 {
- s->add("skill", &skill);
+ s->add("index", &skill);
  s->add("value", &value);
  s->add("uses", &uses);
  s->add("history", &history);
@@ -109,9 +109,9 @@ bool BTPc::advanceLevel()
    {
     for (int k = 0; k < skill.size(); ++k)
     {
-     if (skill[k]->history.size() >= level)
+     if (skill[k]->history.size() >= level - 1)
      {
-      skill[k]->value += skill[k]->history[level - 1];
+      skill[k]->value += skill[k]->history[level - 2];
      }
     }
    }
@@ -192,7 +192,7 @@ bool BTPc::drainLevel()
   {
    if (skill[k]->history.size() >= level)
    {
-    skill[k]->value -= skill[k]->history[level];
+    skill[k]->value -= skill[k]->history[level - 1];
    }
   }
   xp = xpChartList[jobList[job]->xpChart]->getXpNeeded(level);
@@ -411,6 +411,22 @@ bool BTPc::hasSkillUse(int skNum)
  return false;
 }
 
+void BTPc::restoreLevel()
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ BTXpChartList &xpChartList = BTGame::getGame()->getXpChartList();
+ if (jobList[job]->xpChart != -1)
+ {
+  if (level < maxLevel)
+  {
+   if (xp < xpChartList[jobList[job]->xpChart]->getXpNeeded(maxLevel))
+    xp = xpChartList[jobList[job]->xpChart]->getXpNeeded(maxLevel);
+   while (level < maxLevel)
+    advanceLevel();
+  }
+ }
+}
+
 bool BTPc::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  int roll = BTDice(1, 20, save).roll();
@@ -482,6 +498,7 @@ void BTPc::setSkill(int skNum, int value, int uses)
   }
  }
  BTSkillValue *val = new BTSkillValue;
+ val->skill = skNum;
  val->value = value;
  val->uses = uses;
  skill.push_back(val);

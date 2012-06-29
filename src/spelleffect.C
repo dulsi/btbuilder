@@ -561,6 +561,8 @@ void BTAttackEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
 {
  if (g == BTTARGET_NONE)
   return;
+ if ((status == BTSTATUS_NONE) || (status == BTSTATUS_LEVELDRAIN))
+  return;
  if (BTTARGET_PARTY == group)
  {
   BTGame *game = BTGame::getGame();
@@ -826,7 +828,11 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
   {
    for (int i = 0; i < party.size(); ++i)
    {
-    if (party[i]->status.isSet(status))
+    if (status == BTSTATUS_LEVELDRAIN)
+    {
+     party[i]->restoreLevel();
+    }
+    else if (party[i]->status.isSet(status))
     {
      party[i]->status.clear(status);
     }
@@ -834,7 +840,11 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
   }
   else
   {
-   if (party[target]->status.isSet(status))
+   if (status == BTSTATUS_LEVELDRAIN)
+   {
+    party[target]->restoreLevel();
+   }
+   else if (party[target]->status.isSet(status))
    {
     party[target]->status.clear(status);
    }
@@ -849,7 +859,11 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
     break;
    for (int k = 0; k < grp->individual.size(); ++k)
    {
-    if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
+    if (status == BTSTATUS_LEVELDRAIN)
+    {
+     grp->individual[k].restoreLevel();
+    }
+    else if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
     {
      grp->individual[k].status.clear(status);
     }
@@ -863,7 +877,11 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
   {
    for (int i = 0; i < grp->individual.size(); ++i)
    {
-    if (grp->individual[i].status.isSet(status))
+    if (status == BTSTATUS_LEVELDRAIN)
+    {
+     grp->individual[i].restoreLevel();
+    }
+    else if (grp->individual[i].status.isSet(status))
     {
      grp->individual[i].status.clear(status);
     }
@@ -871,7 +889,11 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
   }
   else
   {
-   if (grp->individual[target].status.isSet(status))
+   if (status == BTSTATUS_LEVELDRAIN)
+   {
+    grp->individual[target].restoreLevel();
+   }
+   else if (grp->individual[target].status.isSet(status))
    {
     grp->individual[target].status.clear(status);
    }

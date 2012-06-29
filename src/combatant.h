@@ -17,6 +17,7 @@ class BTCombatant
 
   virtual bool drainLevel();
   bool isAlive() const;
+  virtual void restoreLevel();
   bool takeHP(int amount);
 
   int maxLevel;

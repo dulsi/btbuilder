@@ -33,6 +33,19 @@ bool BTCombatant::isAlive() const
  return (!status.isSet(BTSTATUS_DEAD)) && (!status.isSet(BTSTATUS_STONED));
 }
 
+void BTCombatant::restoreLevel()
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ while (level < maxLevel)
+ {
+  ++level;
+  if (((level - 1) % jobList[job]->improveToHit) == 0)
+   ++toHit;
+  if ((jobList[job]->improveAc) && (((level - 1) % jobList[job]->improveAc) == 0))
+   ++ac;
+ }
+}
+
 bool BTCombatant::takeHP(int amount)
 {
  if (!status.isSet(BTSTATUS_DEAD))
