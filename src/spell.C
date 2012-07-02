@@ -313,6 +313,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_DRAINLEVEL:
    effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_LEVELDRAIN, "is drained of a level");
    break;
+  case BTSPELLTYPE_AGE:
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_AGED, "withers");
+   break;
   case BTSPELLTYPE_DAMAGEBYLEVEL:
    effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
    break;
@@ -321,6 +324,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    break;
   case BTSPELLTYPE_CUREINSANITY:
    effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_INSANE);
+   break;
+  case BTSPELLTYPE_YOUTH:
+   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_AGED);
    break;
   case BTSPELLTYPE_DISPOSSESS:
    effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_POSSESSED);

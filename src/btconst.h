@@ -14,6 +14,7 @@ class ArrayLookup;
 #define BTSPELLTYPE_RESURRECT       1
 #define BTSPELLTYPE_CUREPOISON      2
 #define BTSPELLTYPE_CUREINSANITY    3
+#define BTSPELLTYPE_YOUTH           4
 #define BTSPELLTYPE_DISPOSSESS      5
 #define BTSPELLTYPE_STONETOFLESH    6
 #define BTSPELLTYPE_CUREPARALYZE    7
@@ -22,6 +23,7 @@ class ArrayLookup;
 #define BTSPELLTYPE_KILL            10
 #define BTSPELLTYPE_POISON          11
 #define BTSPELLTYPE_CAUSEINSANITY   12
+#define BTSPELLTYPE_AGE             13
 #define BTSPELLTYPE_POSSESS         14
 #define BTSPELLTYPE_FLESHTOSTONE    15
 #define BTSPELLTYPE_PARALYZE        16
@@ -245,6 +247,7 @@ extern ArrayLookup statLookup;
 #define BTSTATUS_DEAD       0
 #define BTSTATUS_POISONED   1
 #define BTSTATUS_INSANE     2
+#define BTSTATUS_AGED       3
 #define BTSTATUS_POSSESSED  4
 #define BTSTATUS_STONED     5
 #define BTSTATUS_PARALYZED  6

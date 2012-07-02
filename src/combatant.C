@@ -9,6 +9,11 @@
 #include "combatant.h"
 #include "game.h"
 
+bool BTCombatant::age()
+{
+ return drainLevel();
+}
+
 bool BTCombatant::drainLevel()
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
@@ -56,3 +61,9 @@ bool BTCombatant::takeHP(int amount)
  }
  return hp < 0;
 }
+
+void BTCombatant::youth()
+{
+ restoreLevel();
+}
+

@@ -196,7 +196,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
       d.drawMessage(text.c_str(), game->getDelay());
      }
     }
-    else if ((party[i]->isAlive()) && (!party[i]->status.isSet(status)))
+    else if (party[i]->isAlive())
     {
      if (party[i]->savingThrow())
      {
@@ -235,6 +235,14 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
          flags.set(BTSPELLFLG_EXCLAMATION);
         }
        }
+       else if (status == BTSTATUS_AGED)
+       {
+        if (party[i]->age())
+        {
+         flags.set(BTSPELLFLG_KILLED);
+         flags.set(BTSPELLFLG_EXCLAMATION);
+        }
+       }
        else
         party[i]->status.set(status);
       }
@@ -251,7 +259,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   }
   else
   {
-   if ((party[target]->isAlive()) && (!party[target]->status.isSet(status)))
+   if (party[target]->isAlive())
    {
     int dam = damage.roll();
     if (distance > range)
@@ -289,6 +297,14 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
       if (status == BTSTATUS_LEVELDRAIN)
       {
        if (party[target]->drainLevel())
+       {
+        flags.set(BTSPELLFLG_KILLED);
+        flags.set(BTSPELLFLG_EXCLAMATION);
+       }
+      }
+      else if (status == BTSTATUS_AGED)
+      {
+       if (party[target]->age())
        {
         flags.set(BTSPELLFLG_KILLED);
         flags.set(BTSPELLFLG_EXCLAMATION);
@@ -345,7 +361,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
       d.drawMessage(text.c_str(), game->getDelay());
      }
     }
-    else if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
+    else if (grp->individual[k].isAlive())
     {
      if (monList[grp->monsterType].savingThrow())
      {
@@ -380,6 +396,14 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
        if (status == BTSTATUS_LEVELDRAIN)
        {
         if (grp->individual[k].drainLevel())
+        {
+         flags.set(BTSPELLFLG_KILLED);
+         flags.set(BTSPELLFLG_EXCLAMATION);
+        }
+       }
+       else if (status == BTSTATUS_AGED)
+       {
+        if (grp->individual[k].age())
         {
          flags.set(BTSPELLFLG_KILLED);
          flags.set(BTSPELLFLG_EXCLAMATION);
@@ -436,7 +460,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
       d.drawMessage(text.c_str(), game->getDelay());
      }
     }
-    else if ((grp->individual[i].isAlive()) && (!grp->individual[i].status.isSet(status)))
+    else if (grp->individual[i].isAlive())
     {
      if (monList[grp->monsterType].savingThrow())
      {
@@ -476,6 +500,14 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
          flags.set(BTSPELLFLG_EXCLAMATION);
         }
        }
+       else if (status == BTSTATUS_AGED)
+       {
+        if (grp->individual[i].age())
+        {
+         flags.set(BTSPELLFLG_KILLED);
+         flags.set(BTSPELLFLG_EXCLAMATION);
+        }
+       }
        else
         grp->individual[i].status.set(status);
       }
@@ -493,7 +525,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   }
   else
   {
-   if ((grp->individual[target].isAlive()) && (!grp->individual[target].status.isSet(status)))
+   if (grp->individual[target].isAlive())
    {
     int dam = damage.roll();
     if (abs(grp->distance - distance) > range)
@@ -537,6 +569,14 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
         flags.set(BTSPELLFLG_EXCLAMATION);
        }
       }
+      else if (status == BTSTATUS_AGED)
+      {
+       if (grp->individual[target].age())
+       {
+        flags.set(BTSPELLFLG_KILLED);
+        flags.set(BTSPELLFLG_EXCLAMATION);
+       }
+      }
       else
        grp->individual[target].status.set(status);
      }
@@ -561,7 +601,7 @@ void BTAttackEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
 {
  if (g == BTTARGET_NONE)
   return;
- if ((status == BTSTATUS_NONE) || (status == BTSTATUS_LEVELDRAIN))
+ if ((status == BTSTATUS_NONE) || (status == BTSTATUS_LEVELDRAIN) || (status == BTSTATUS_AGED))
   return;
  if (BTTARGET_PARTY == group)
  {
@@ -832,6 +872,10 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
     {
      party[i]->restoreLevel();
     }
+    else if (status == BTSTATUS_AGED)
+    {
+     party[i]->youth();
+    }
     else if (party[i]->status.isSet(status))
     {
      party[i]->status.clear(status);
@@ -843,6 +887,10 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
    if (status == BTSTATUS_LEVELDRAIN)
    {
     party[target]->restoreLevel();
+   }
+   else if (status == BTSTATUS_AGED)
+   {
+    party[target]->youth();
    }
    else if (party[target]->status.isSet(status))
    {
@@ -863,6 +911,10 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
     {
      grp->individual[k].restoreLevel();
     }
+    else if (status == BTSTATUS_AGED)
+    {
+     grp->individual[k].youth();
+    }
     else if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
     {
      grp->individual[k].status.clear(status);
@@ -881,6 +933,10 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
     {
      grp->individual[i].restoreLevel();
     }
+    else if (status == BTSTATUS_AGED)
+    {
+     grp->individual[i].youth();
+    }
     else if (grp->individual[i].status.isSet(status))
     {
      grp->individual[i].status.clear(status);
@@ -892,6 +948,10 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
    if (status == BTSTATUS_LEVELDRAIN)
    {
     grp->individual[target].restoreLevel();
+   }
+   else if (status == BTSTATUS_AGED)
+   {
+    grp->individual[target].youth();
    }
    else if (grp->individual[target].status.isSet(status))
    {

@@ -121,6 +121,26 @@ bool BTPc::advanceLevel()
  return false;
 }
 
+bool BTPc::age()
+{
+ for (int i = 0; i < BT_STATS; ++i)
+ {
+  if (stat[i] > 1)
+  {
+   if (stat[i] > 14)
+   {
+    if (i == BTSTAT_DX)
+     ac -= 1;
+    if (i == BTSTAT_LK)
+     save -= 1;
+   }
+   stat[i] -= 1;
+  }
+ }
+ status.set(BTSTATUS_AGED);
+ return false;
+}
+
 void BTPc::changeJob(int newJob)
 {
  XMLVector<BTJob*> &jobList = BTGame::getGame()->getJobList();
@@ -230,19 +250,23 @@ int BTPc::incrementStat()
  if (s == 0)
   return -1;
  if (s != 1)
-  s = BTDice(1, s, -1).roll();
+  s = BTDice(1, s, 0).roll();
  for (i = 0; i < BT_STATS; ++i)
  {
   if (stat[i] < BTSTAT_MAX)
   {
    --s;
-   ++stat[i];
-   if ((i == BTSTAT_LK) && (stat[i] > 14))
-    ++save;
-   if ((i == BTSTAT_DX) && (stat[i] > 14))
-    ++ac;
    if (0 == s)
+   {
+    ++stat[i];
+    if (statMax[i] < BTSTAT_MAX)
+     ++statMax[i];
+    if ((i == BTSTAT_LK) && (stat[i] > 14))
+     ++save;
+    if ((i == BTSTAT_DX) && (stat[i] > 14))
+     ++ac;
     return i;
+   }
   }
  }
  return -1; // Can't get here
@@ -455,6 +479,14 @@ void BTPc::serialize(ObjectSerializer* s)
   attrib->push_back(XMLAttribute("number", tmp));
   s->add("stat", &stat[i], attrib);
  }
+ for (i = 0; i < BT_STATS; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  snprintf(tmp, 10, "%d", i + 1);
+  attrib->push_back(XMLAttribute("number", tmp));
+  s->add("statMax", &statMax[i], attrib);
+ }
  s->add("ac", &ac);
  s->add("toHit", &toHit);
  s->add("rateAttacks", &rateAttacks);
@@ -584,6 +616,26 @@ bool BTPc::useSkill(int index, int difficulty /*= BTSKILL_DEFAULTDIFFICULTY*/)
   }
  }
  return false;
+}
+
+void BTPc::youth()
+{
+ for (int i = 0; i < BT_STATS; ++i)
+ {
+  if (stat[i] < statMax[i])
+  {
+   if (statMax[i] > 14)
+   {
+    int difference = (statMax[i] - 14) - ((stat[i] > 14) ? (stat[i] - 14) : 0);
+    if (i == BTSTAT_DX)
+     ac += difference;
+    if (i == BTSTAT_LK)
+     save += difference;
+   }
+   stat[i] = statMax[i];
+  }
+ }
+ status.clear(BTSTATUS_AGED);
 }
 
 void BTPc::readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc)

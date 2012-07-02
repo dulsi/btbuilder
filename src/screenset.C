@@ -1948,7 +1948,7 @@ int BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  BTSelectRace *select = static_cast<BTSelectRace*>(item);
  b.pc->race = select->select;
  for (int i = 0; i < BT_STATS; ++i)
-  b.pc->stat[i] = race[b.pc->race]->stat[i].roll();
+  b.pc->stat[i] = b.pc->statMax[i] = race[b.pc->race]->stat[i].roll();
  select->clear();
  return 0;
 }

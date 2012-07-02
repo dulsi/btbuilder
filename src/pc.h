@@ -47,6 +47,7 @@ class BTPc : public XMLObject, public BTCombatant
   ~BTPc() { delete [] name; }
 
   bool advanceLevel();
+  bool age();
   void changeJob(int newJob);
   bool drainLevel();
   void equip(int index);
@@ -77,6 +78,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool takeItemFromIndex(int index);
   void unequip(int index);
   bool useSkill(int index, int difficulty = BTSKILL_DEFAULTDIFFICULTY);
+  void youth();
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }
   static void readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc);
@@ -87,6 +89,7 @@ class BTPc : public XMLObject, public BTCombatant
   int picture;
   int monster;
   int stat[BT_STATS];
+  int statMax[BT_STATS];
   int rateAttacks;
   int save;
   int sp, maxSp;
