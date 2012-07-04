@@ -382,6 +382,7 @@ class BTScreenSet : public ObjectSerializer
   static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:

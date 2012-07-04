@@ -580,6 +580,28 @@ bool BTPc::takeItemFromIndex(int index)
  return true;
 }
 
+void BTPc::takeItemCharge(int index)
+{
+ if (item[index].id == BTITEM_NONE)
+  return;
+ if ((item[index].charges == 0) || (item[index].charges == BTTIMESUSABLE_UNLIMITED))
+  return;
+ item[index].charges -= 1;
+ if (item[index].charges == 0)
+ {
+  if (item[index].equipped == BTITEM_EQUIPPED)
+   unequip(index);
+  for (int i = index + 1; i < BT_ITEMS; ++i)
+  {
+   item[i - 1].id = item[i].id;
+   item[i - 1].equipped = item[i].equipped;
+   item[i - 1].known = item[i].known;
+   item[i - 1].charges = item[i].charges;
+  }
+  item[BT_ITEMS - 1].id = BTITEM_NONE;
+ }
+}
+
 void BTPc::unequip(int index)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();

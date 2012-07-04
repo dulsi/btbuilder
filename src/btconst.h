@@ -104,6 +104,8 @@ extern char *combatActions[];
 #define BTITEM_INSTRUMENT 6
 extern char *itemTypes[];
 
+#define BTITEMCAST_NONE -1
+
 #define BTTIMESUSABLE_UNLIMITED 255
 
 #define BT_CONDITIONALCOMMANDS 18

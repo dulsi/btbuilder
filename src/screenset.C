@@ -1031,6 +1031,7 @@ BTScreenSet::BTScreenSet()
  actionList["setRace"] = &setRace;
  actionList["singNow"] = &singNow;
  actionList["unequip"] = &unequip;
+ actionList["useNow"] = &useNow;
  actionList["useOn"] = &useOn;
 }
 
@@ -1559,6 +1560,8 @@ int BTScreenSet::equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
 int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  bool dead = BTGame::getGame()->getParty().checkDead(d);
+ if (item)
+  d.clearText();
  d.drawStats();
  if (dead)
  {
@@ -1995,6 +1998,57 @@ int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  return 0;
 }
 
+int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
+ if ((select->select == -1) || (b.pc->item[select->select].id == BTITEM_NONE))
+ {
+  d.clearText();
+  return BTSCREEN_ESCAPE;
+ }
+ if (BTITEM_EQUIPPED != b.pc->item[select->select].equipped)
+  throw BTSpecialError("notequipped");
+ int spellCast = itemList[b.pc->item[select->select].id].getSpellCast();
+ if ((!b.pc->item[b.pc->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
+  throw BTSpecialError("notusable");
+ int pcNumber = 0;
+ for (int k = 0; k < party.size(); ++k)
+ {
+  if (party[k] == b.getPc())
+  {
+   pcNumber = k;
+   break;
+  }
+ }
+ switch (spellList[spellCast].getArea())
+ {
+  case BTAREAEFFECT_FOE:
+   b.getPc()->combat.action = BTPc::BTPcAction::useItem;
+   b.pc->combat.object = select->select;
+   b.pc->combat.type = BTPc::BTPcAction::item;
+   return 0;
+  case BTAREAEFFECT_GROUP:
+   d.clearText();
+   b.pc->takeItemCharge(select->select);
+   d.drawStats();
+   spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
+   return BTSCREEN_ESCAPE;
+  case BTAREAEFFECT_NONE:
+   d.clearText();
+   b.pc->takeItemCharge(select->select);
+   d.drawStats();
+   spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
+   return BTSCREEN_ESCAPE;
+  case BTAREAEFFECT_ALL:
+   throw BTSpecialError("nocombat");
+  default:
+   return BTSCREEN_ESCAPE;
+ }
+}
+
 int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  if (b.pc->combat.action == BTPc::BTPcAction::cast)
@@ -2004,6 +2058,17 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
   b.pc->sp -= spellList[b.pc->combat.object].getSp();
   d.drawStats();
   spellList[b.pc->combat.object].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
+  return -1;
+ }
+ else if (b.pc->combat.action == BTPc::BTPcAction::useItem)
+ {
+  d.clearText();
+  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+  BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+  int spellCast = itemList[b.pc->item[b.pc->combat.object].id].getSpellCast();
+  b.pc->takeItemCharge(b.pc->combat.object);
+  d.drawStats();
+  spellList[spellCast].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
   return -1;
  }
  return 0;

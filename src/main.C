@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
     else
      printf("Times useable: %d", mon.getTimesUsable());
     printf("   Spell cast: %s\n",
-      ((mon.getSpellCast() == -1) ? "(none)" :
+      ((mon.getSpellCast() == BTITEMCAST_NONE) ? "(none)" :
       splList[mon.getSpellCast()].getName()));
     printf("Cause: <member> %s <opponent>\n", mon.getCause());
     printf("Effect: %s <damage>\n", mon.getEffect());

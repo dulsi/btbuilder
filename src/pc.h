@@ -76,6 +76,7 @@ class BTPc : public XMLObject, public BTCombatant
   unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);
   bool takeItemFromIndex(int index);
+  void takeItemCharge(int index);
   void unequip(int index);
   bool useSkill(int index, int difficulty = BTSKILL_DEFAULTDIFFICULTY);
   void youth();

@@ -407,6 +407,13 @@ void BTGame::run(BTDisplay &d)
        cast.run(d);
        break;
       }
+      case 'u':
+      {
+       BTScreenSet useItem;
+       useItem.open("data/use.xml");
+       useItem.run(d);
+       break;
+      }
       case 'b':
       {
        BTScreenSet cast;

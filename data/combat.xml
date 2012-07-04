@@ -45,7 +45,7 @@
 	</screen>
 	<screen number="9" escapeScreen="2">
 		<line />
-		<selectInventory action="useItem" screen="3" noerror="1" numbered="1"/>
+		<selectInventory action="useItem" screen="3" numbered="1"/>
 		<line>Use item #</line>
 		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
 	</screen>
@@ -80,4 +80,5 @@ You manage to get away!</error>
 	<error type="nosp" screen="2">Not enough spell points.</error>
 	<error type="novoice" screen="2"><name /> lost his voice!</error>
 	<error type="noinstrument" screen="2"><name /> has no equipped instrument!</error>
+	<error type="noinventory" screen="2"><name /> has no items to use!</error>
 </screenset>
