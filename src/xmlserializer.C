@@ -48,6 +48,57 @@ std::string XMLAction::createTag()
  return str;
 }
 
+std::string XMLAction::createString()
+{
+ char convert[30];
+ std::string content;
+ switch(type)
+ {
+  case XMLTYPE_BOOL:
+   if (*(reinterpret_cast<bool*>(object)))
+    content = "true";
+   else
+    content = "false";
+   break;
+  case XMLTYPE_INT:
+   if (data)
+   {
+    content = reinterpret_cast<ValueLookup*>(data)->getName(*(reinterpret_cast<int*>(object)));
+   }
+   else
+   {
+    sprintf(convert, "%d", *(reinterpret_cast<int*>(object)));
+    content = convert;
+   }
+   break;
+  case XMLTYPE_UINT:
+   sprintf(convert, "%u", *(reinterpret_cast<unsigned int*>(object)));
+   content = convert;
+   break;
+  case XMLTYPE_INT16:
+   sprintf(convert, "%d", *(reinterpret_cast<int16_t*>(object)));
+   content = convert;
+   break;
+  case XMLTYPE_UINT16:
+   sprintf(convert, "%u", *(reinterpret_cast<uint16_t*>(object)));
+   content = convert;
+   break;
+  case XMLTYPE_STRING:
+  {
+   content = *(reinterpret_cast<char**>(object));
+   break;
+  }
+  case XMLTYPE_STDSTRING:
+  {
+   content = *reinterpret_cast<std::string*>(object);
+   break;
+  }
+  default:
+   break;
+ }
+ return content;
+}
+
 ObjectSerializer::ObjectSerializer()
 {
 }
@@ -200,6 +251,12 @@ void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, std::
  action.push_back(act);
 }
 
+void ObjectSerializer::addLevel(XMLLevel *newLevel)
+{
+  level.push_back(newLevel);
+  newLevel->object->serialize(this);
+}
+
 void ObjectSerializer::add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
@@ -249,7 +306,12 @@ XMLAction* ObjectSerializer::find(const char *name, const char **atts)
  return NULL;
 }
 
-void ObjectSerializer::removeLevel()
+int ObjectSerializer::getLevel()
+{
+ return level.size();
+}
+
+XMLLevel *ObjectSerializer::removeLevel()
 {
  int curLevel = getLevel();
  if (action.size() > 0)
@@ -260,6 +322,13 @@ void ObjectSerializer::removeLevel()
    delete act;
   }
  }
+ XMLLevel *old = NULL;
+ if (!level.empty())
+ {
+  old = level.back();
+  level.pop_back();
+ }
+ return old;
 }
 
 XMLSerializer::XMLSerializer()
@@ -269,11 +338,6 @@ XMLSerializer::XMLSerializer()
 
 XMLSerializer::~XMLSerializer()
 {
-}
-
-int XMLSerializer::getLevel()
-{
- return level.size();
 }
 
 void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
@@ -293,16 +357,14 @@ void XMLSerializer::startElement(const XML_Char *name, const XML_Char **atts)
   XMLLevel *newLevel = new XMLLevel;
   newLevel->state = act;
   newLevel->object = (*reinterpret_cast<XMLObject::create>(act->data))(name, atts);
-  level.push_back(newLevel);
-  newLevel->object->serialize(this);
+  addLevel(newLevel);
  }
  else if (XMLTYPE_OBJECT == act->getType())
  {
   XMLLevel *newLevel = new XMLLevel;
   newLevel->state = act;
   newLevel->object = reinterpret_cast<XMLObject*>(act->object);
-  level.push_back(newLevel);
-  newLevel->object->serialize(this);
+  addLevel(newLevel);
  }
  else
  {
@@ -393,11 +455,9 @@ void XMLSerializer::endElement(const XML_Char *name)
  {
   if (0 == strcmp(level.back()->state->name.c_str(), name))
   {
-   removeLevel();
-   XMLLevel *oldLevel = level.back();
+   XMLLevel *oldLevel = removeLevel();
    if (XMLTYPE_CREATE == oldLevel->state->getType())
     reinterpret_cast<XMLArray*>(oldLevel->state->object)->push_back(oldLevel->object);
-   level.pop_back();
    delete oldLevel;
   }
  }
@@ -429,7 +489,9 @@ void XMLSerializer::write(const char *filename, bool physfs)
     itr = action.end();
     --itr;
     while ((*itr)->object != level.back()->state->object)
+    {
      --itr;
+    }
     XMLAction *act = level.back()->state;
     if (XMLTYPE_CREATE == act->getType())
     {
@@ -443,9 +505,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
       if (ary->get(i) == level.back()->object)
        break;
      }
-     removeLevel();
-     XMLLevel *oldLevel = level.back();
-     level.pop_back();
+     XMLLevel *oldLevel = removeLevel();
      delete oldLevel;
      if (i + 1 == ary->size())
      {
@@ -470,9 +530,8 @@ void XMLSerializer::write(const char *filename, bool physfs)
        PHYSFS_write(f, tag.c_str(), 1, tag.length());
        PHYSFS_write(f, ">", 1, 1);
        newLevel->state = act;
-       level.push_back(newLevel);
        int size = action.size();
-       newLevel->object->serialize(this);
+       addLevel(newLevel);
        itr = action.begin() + size - 1;
       }
       else
@@ -485,9 +544,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
      PHYSFS_write(f, "</", 1, 2);
      PHYSFS_write(f, (*itr)->name.c_str(), 1, (*itr)->name.length());
      PHYSFS_write(f, ">", 1, 1);
-     removeLevel();
-     XMLLevel *oldLevel = level.back();
-     level.pop_back();
+     XMLLevel *oldLevel = removeLevel();
      delete oldLevel;
      itr = action.end();
      --itr;
@@ -509,44 +566,14 @@ void XMLSerializer::write(const char *filename, bool physfs)
    switch(type)
    {
     case XMLTYPE_BOOL:
-     if (*(reinterpret_cast<bool*>((*itr)->object)))
-      content = "true";
-     else
-      content = "false";
-     break;
     case XMLTYPE_INT:
-     if ((*itr)->data)
-     {
-      content = reinterpret_cast<ValueLookup*>((*itr)->data)->getName(*(reinterpret_cast<int*>((*itr)->object)));
-     }
-     else
-     {
-      sprintf(convert, "%d", *(reinterpret_cast<int*>((*itr)->object)));
-      content = convert;
-     }
-     break;
     case XMLTYPE_UINT:
-     sprintf(convert, "%u", *(reinterpret_cast<unsigned int*>((*itr)->object)));
-     content = convert;
-     break;
     case XMLTYPE_INT16:
-     sprintf(convert, "%d", *(reinterpret_cast<int16_t*>((*itr)->object)));
-     content = convert;
-     break;
     case XMLTYPE_UINT16:
-     sprintf(convert, "%u", *(reinterpret_cast<uint16_t*>((*itr)->object)));
-     content = convert;
-     break;
     case XMLTYPE_STRING:
-    {
-     content = *(reinterpret_cast<char**>((*itr)->object));
-     break;
-    }
     case XMLTYPE_STDSTRING:
-    {
-     content = *reinterpret_cast<std::string*>((*itr)->object);
+     content = (*itr)->createString();
      break;
-    }
     case XMLTYPE_BITFIELD:
     {
      BitField *b = reinterpret_cast<BitField*>((*itr)->object);
@@ -598,9 +625,8 @@ void XMLSerializer::write(const char *filename, bool physfs)
        PHYSFS_write(f, tag.c_str(), 1, tag.length());
        PHYSFS_write(f, ">", 1, 1);
        newLevel->state = act;
-       level.push_back(newLevel);
        int size = action.size();
-       newLevel->object->serialize(this);
+       addLevel(newLevel);
        itr = action.begin() + size - 1;
       }
       else
@@ -613,9 +639,8 @@ void XMLSerializer::write(const char *filename, bool physfs)
      XMLLevel *newLevel = new XMLLevel;
      newLevel->state = *itr;
      newLevel->object = reinterpret_cast<XMLObject*>((*itr)->object);
-     level.push_back(newLevel);
      int size = action.size();
-     newLevel->object->serialize(this);
+     addLevel(newLevel);
      itr = action.begin() + size - 1;
      break;
     }
@@ -638,3 +663,4 @@ void XMLSerializer::write(const char *filename, bool physfs)
  {
  }
 }
+

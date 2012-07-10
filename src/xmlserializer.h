@@ -97,6 +97,7 @@ class XMLAction
   ~XMLAction();
 
   std::string createTag();
+  std::string createString();
   int getType() const { return type & XMLTYPE_TYPE; }
 
   std::string name;
@@ -122,8 +123,8 @@ class ObjectSerializer
   ObjectSerializer();
   ~ObjectSerializer();
 
-  void add(const char *name, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL) { add(name, NULL, vec, func, atts); }
-  void add(const char *name, const char *objnm, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, XMLArray *vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL) { add(name, NULL, vec, func, atts); }
+  void add(const char *name, const char *objnm, XMLArray *vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL);
@@ -136,12 +137,14 @@ class ObjectSerializer
   void add(const char *name, std::vector<unsigned int> *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts = NULL);
 
-  XMLAction* find(const char *name, const char **atts);
-  virtual int getLevel() = 0;
-  void removeLevel();
+  void addLevel(XMLLevel *newLevel);
+  XMLAction *find(const char *name, const char **atts);
+  int getLevel();
+  XMLLevel *removeLevel();
 
  protected:
   std::vector<XMLAction*> action;
+  std::list<XMLLevel*> level;
 };
 
 class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
@@ -150,8 +153,6 @@ class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
   XMLSerializer();
   ~XMLSerializer();
 
-  virtual int getLevel();
-
   virtual void startElement(const XML_Char *name, const XML_Char **atts);
   virtual void endElement(const XML_Char *name);
   virtual void characterData(const XML_Char *s, int len);
@@ -159,7 +160,6 @@ class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
   void write(const char *filename, bool physfs);
 
  private:
-  std::list<XMLLevel*> level;
   XMLAction *state;
   std::string content;
 };

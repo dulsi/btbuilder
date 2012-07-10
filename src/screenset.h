@@ -246,7 +246,7 @@ class BTSelectSong : public BTSelectCommon
 class BTCan : public BTScreenItem
 {
  public:
-  BTCan(const char *o, char_ptr *a, const char *v);
+  BTCan(const char *o, char_ptr *a, const char *f, const char *v, const char *d);
   ~BTCan();
 
   virtual std::string getKeys();
@@ -262,7 +262,9 @@ class BTCan : public BTScreenItem
  private:
   std::string option;
   char_ptr *atts;
+  std::string field;
   std::string value;
+  std::string defaultValue;
   bool checkValue;
   bool drawn;
   XMLVector<BTScreenItem*> items;
@@ -330,8 +332,6 @@ class BTScreenSet : public ObjectSerializer
 
   BTScreenSet();
   ~BTScreenSet();
-
-  virtual int getLevel();
 
   BTPc* getPc();
   void checkEffects(BTDisplay &d);

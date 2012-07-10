@@ -129,41 +129,69 @@ std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) c
   else
   {
    XMLAction *state = obj->find((*itr)->text.c_str(), const_cast<const char**>((*itr)->atts));
+   if (!state)
+    state = obj->find((*itr)->text.c_str(), NULL);
    if (state)
    {
     switch(state->getType())
     {
      case XMLTYPE_BOOL:
-      if (*(reinterpret_cast<bool*>(state->object)))
-       final += "true";
-      else
-       final += "false";
-      break;
      case XMLTYPE_INT:
-      if (state->data)
-      {
-       final += reinterpret_cast<ValueLookup*>(state->data)->getName(*(reinterpret_cast<int*>(state->object)));
-      }
-      else
-      {
-       char tmp[40];
-       snprintf(tmp, 40, "%d", *(reinterpret_cast<int*>(state->object)));
-       final += tmp;
-      }
-      break;
      case XMLTYPE_UINT:
+     case XMLTYPE_INT16:
+     case XMLTYPE_UINT16:
+     case XMLTYPE_STRING:
+     case XMLTYPE_STDSTRING:
+      final += state->createString();
+      break;
+     case XMLTYPE_CREATE:
      {
-      char tmp[40];
-      snprintf(tmp, 40, "%u", *(reinterpret_cast<unsigned int*>(state->object)));
-      final += tmp;
+      const char *field = NULL;
+      const char *defaultValue = NULL;
+      const char **atts = const_cast<const char**>((*itr)->atts);
+      for (int i = 0; atts[i]; i += 2)
+      {
+       if (0 == strcmp(atts[i], "field"))
+        field = atts[i + 1];
+       else if (0 == strcmp(atts[i], "default"))
+        defaultValue = atts[i + 1];
+      }
+      XMLArray *ary = reinterpret_cast<XMLArray*>(state->object);
+      bool found(false);
+      for (int i = 0; i < ary->size(); ++i)
+      {
+       XMLLevel *lvl = new XMLLevel;
+       lvl->state = state;
+       lvl->object = ary->get(i);
+       obj->addLevel(lvl);
+       found = true;
+       for (int i = 0; atts[i]; i += 2)
+       {
+        if ((0 != strcmp(atts[i], "field")) && (0 != strcmp(atts[i], "default")))
+        {
+         XMLAction *item = obj->find(atts[i], NULL);
+         if ((!item) || (item->createString() != atts[i + 1]))
+         {
+          found = false;
+         }
+        }
+       }
+       if (found)
+       {
+        XMLAction *item = obj->find(field, NULL);
+        if (item)
+         final += item->createString();
+        else if (defaultValue)
+         final += defaultValue;
+       }
+       lvl = obj->removeLevel();
+       if (found)
+        break;
+      }
+      if ((!found) && (defaultValue))
+       final += defaultValue;
       break;
      }
-     case XMLTYPE_STRING:
-      final += *(reinterpret_cast<char**>(state->object));
-      break;
-     case XMLTYPE_STDSTRING:
-      final += *(reinterpret_cast<std::string*>(state->object));
-      break;
      case XMLTYPE_BITFIELD:
      default:
       break;
@@ -740,14 +768,18 @@ XMLObject *BTSelectSong::create(const XML_Char *name, const XML_Char **atts)
  return obj;
 }
 
-BTCan::BTCan(const char *o, char_ptr *a, const char *v)
+BTCan::BTCan(const char *o, char_ptr *a, const char *f, const char *v, const char *d)
 : option(o), atts(a), checkValue(false), drawn(false)
 {
+ if (f)
+  field = f;
  if (v)
  {
   value = v;
   checkValue = true;
  }
+ if (d)
+  defaultValue = d;
 }
 
 BTCan::~BTCan()
@@ -784,6 +816,8 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  drawn = false;
  XMLAction *state = obj->find(option.c_str(), const_cast<const char**>(atts));
+ if (!state)
+  state = obj->find(option.c_str(), NULL);
  if (state)
  {
   switch(state->getType())
@@ -830,6 +864,32 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
     else if (0 == reinterpret_cast<std::string*>(state->object)->length())
      return;
     break;
+   case XMLTYPE_CREATE:
+   {
+    const char **a = const_cast<const char**>(atts);
+    XMLArray *ary = reinterpret_cast<XMLArray*>(state->object);
+    bool found(false);
+    for (int i = 0; (i < ary->size()) && (!found); ++i)
+    {
+     XMLLevel *lvl = new XMLLevel;
+     lvl->state = state;
+     lvl->object = ary->get(i);
+     obj->addLevel(lvl);
+     found = true;
+     for (int i = 0; a[i]; i += 2)
+     {
+      XMLAction *item = obj->find(atts[i], NULL);
+      if ((!item) || (item->createString() != atts[i + 1]))
+      {
+       found = false;
+      }
+     }
+     lvl = obj->removeLevel();
+    }
+    if (!found)
+     return;
+    break;
+   }
    case XMLTYPE_BITFIELD:
    default:
     return;
@@ -865,14 +925,20 @@ XMLObject *BTCan::create(const XML_Char *name, const XML_Char **atts)
 {
  const char *option = NULL;
  char_ptr *a = NULL;
+ const char *field = NULL;
  const char *value = NULL;
+ const char *defaultValue = NULL;
  int size = 0;
  for (const char **att = atts; *att; att += 2)
  {
   if (0 == strcmp(*att, "option"))
    option = att[1];
+  else if (0 == strcmp(*att, "field"))
+   field = att[1];
   else if (0 == strcmp(*att, "value"))
    value = att[1];
+  else if (0 == strcmp(*att, "defaultValue"))
+   defaultValue = att[1];
   else
    size += 2;
  }
@@ -883,7 +949,7 @@ XMLObject *BTCan::create(const XML_Char *name, const XML_Char **atts)
   size = 0;
   for (int i = 0; atts[i]; ++i)
   {
-   if ((i % 2 == 0) && ((0 == strcmp(atts[i], "option")) || (0 == strcmp(atts[i], "value"))))
+   if ((i % 2 == 0) && ((0 == strcmp(atts[i], "option")) || (0 == strcmp(atts[i], "value")) || (0 == strcmp(atts[i], "field")) || (0 == strcmp(atts[i], "defaultValue"))))
     ++i;
    else
    {
@@ -893,7 +959,7 @@ XMLObject *BTCan::create(const XML_Char *name, const XML_Char **atts)
    }
   }
  }
- return new BTCan(option, a, value);
+ return new BTCan(option, a, field, value, defaultValue);
 }
 
 void BTScreenSetScreen::draw(BTDisplay &d, ObjectSerializer *obj)
@@ -1041,11 +1107,6 @@ BTScreenSet::~BTScreenSet()
   delete pc;
  if (label)
   delete [] label;
-}
-
-int BTScreenSet::getLevel()
-{
- return 0;
 }
 
 BTPc* BTScreenSet::getPc()
@@ -2011,42 +2072,53 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  }
  if (BTITEM_EQUIPPED != b.pc->item[select->select].equipped)
   throw BTSpecialError("notequipped");
- int spellCast = itemList[b.pc->item[select->select].id].getSpellCast();
- if ((!b.pc->item[b.pc->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
-  throw BTSpecialError("notusable");
- int pcNumber = 0;
- for (int k = 0; k < party.size(); ++k)
+ if (BTITEM_ARROW == itemList[b.pc->item[select->select].id].getType())
+  throw BTSpecialError("notarrow");
+ if (BTITEM_BOW == itemList[b.pc->item[select->select].id].getType())
  {
-  if (party[k] == b.getPc())
+  // Determine if you have arrows.
+ }
+ else if (BTITEM_THROWNWEAPON != itemList[b.pc->item[select->select].id].getType())
+ {
+  int spellCast = itemList[b.pc->item[select->select].id].getSpellCast();
+  if ((!b.pc->item[b.pc->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
+   throw BTSpecialError("notusable");
+  int pcNumber = 0;
+  for (int k = 0; k < party.size(); ++k)
   {
-   pcNumber = k;
-   break;
+   if (party[k] == b.getPc())
+   {
+    pcNumber = k;
+    break;
+   }
+  }
+  switch (spellList[spellCast].getArea())
+  {
+   case BTAREAEFFECT_FOE:
+    // Fall through to code for bows and thrown weapons
+    break;
+   case BTAREAEFFECT_GROUP:
+    d.clearText();
+    b.pc->takeItemCharge(select->select);
+    d.drawStats();
+    spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
+    return BTSCREEN_ESCAPE;
+   case BTAREAEFFECT_NONE:
+    d.clearText();
+    b.pc->takeItemCharge(select->select);
+    d.drawStats();
+    spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
+    return BTSCREEN_ESCAPE;
+   case BTAREAEFFECT_ALL:
+    throw BTSpecialError("nocombat");
+   default:
+    return BTSCREEN_ESCAPE;
   }
  }
- switch (spellList[spellCast].getArea())
- {
-  case BTAREAEFFECT_FOE:
-   b.getPc()->combat.action = BTPc::BTPcAction::useItem;
-   b.pc->combat.object = select->select;
-   b.pc->combat.type = BTPc::BTPcAction::item;
-   return 0;
-  case BTAREAEFFECT_GROUP:
-   d.clearText();
-   b.pc->takeItemCharge(select->select);
-   d.drawStats();
-   spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
-   return BTSCREEN_ESCAPE;
-  case BTAREAEFFECT_NONE:
-   d.clearText();
-   b.pc->takeItemCharge(select->select);
-   d.drawStats();
-   spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
-   return BTSCREEN_ESCAPE;
-  case BTAREAEFFECT_ALL:
-   throw BTSpecialError("nocombat");
-  default:
-   return BTSCREEN_ESCAPE;
- }
+ b.getPc()->combat.action = BTPc::BTPcAction::useItem;
+ b.pc->combat.object = select->select;
+ b.pc->combat.type = BTPc::BTPcAction::item;
+ return 0;
 }
 
 int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
@@ -2064,11 +2136,20 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
  {
   d.clearText();
   BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-  BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
-  int spellCast = itemList[b.pc->item[b.pc->combat.object].id].getSpellCast();
-  b.pc->takeItemCharge(b.pc->combat.object);
-  d.drawStats();
-  spellList[spellCast].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
+  if (BTITEM_BOW == itemList[b.pc->item[b.pc->combat.object].id].getType())
+  {
+  }
+  else if (BTITEM_THROWNWEAPON != itemList[b.pc->item[b.pc->combat.object].id].getType())
+  {
+  }
+  else
+  {
+   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+   int spellCast = itemList[b.pc->item[b.pc->combat.object].id].getSpellCast();
+   b.pc->takeItemCharge(b.pc->combat.object);
+   d.drawStats();
+   spellList[spellCast].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
+  }
   return -1;
  }
  return 0;

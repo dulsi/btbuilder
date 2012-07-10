@@ -100,8 +100,11 @@ extern char *rangedTypes[];
 extern char *combatActions[];
 
 #define BT_ITEMTYPES 13
-#define BTITEM_HANDWEAPON 1
-#define BTITEM_INSTRUMENT 6
+#define BTITEM_HANDWEAPON   1
+#define BTITEM_INSTRUMENT   6
+#define BTITEM_BOW          10
+#define BTITEM_ARROW        11
+#define BTITEM_THROWNWEAPON 12
 extern char *itemTypes[];
 
 #define BTITEMCAST_NONE -1
