@@ -32,7 +32,7 @@ int BTMonsterGroup::findTarget(int ind /*= BTTARGET_INDIVIDUAL*/)
  if ((ind != BTTARGET_INDIVIDUAL) && (individual[ind].hp >= 0))
   return ind;
  int alive = 0;
- std::vector<BTCombatant>::iterator monster(individual.begin());
+ std::vector<BTMonsterCombatant>::iterator monster(individual.begin());
  for (; monster != individual.end(); ++monster)
  {
   if (monster->isAlive())
@@ -77,7 +77,7 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
   toHit += (monList[type].getLevel() - 1) / jobList[((monList[type].isIllusion() == 1) ? BTJOB_ILLUSION : BTJOB_MONSTER)]->improveToHit;
  while (number > 0)
  {
-  individual.push_back(BTCombatant(monList[type].getLevel(), ((monList[type].isIllusion() == 1) ? BTJOB_ILLUSION : BTJOB_MONSTER), monList[monsterType].getAc(), toHit, monList[monsterType].getHp().roll()));
+  individual.push_back(BTMonsterCombatant(this, monList[type].getLevel(), ((monList[type].isIllusion() == 1) ? BTJOB_ILLUSION : BTJOB_MONSTER), monList[monsterType].getAc(), toHit, monList[monsterType].getHp().roll()));
   --number;
  }
  active = individual.size();
@@ -92,6 +92,12 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
   strcpy(monsterName, monList[monsterType].getName());
   strcat(monsterName, "(s)");
  }
+}
+
+std::string BTMonsterCombatant::getName() const
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ return monList[group->monsterType].getName();
 }
 
 void BTCombatScreen::draw(BTDisplay &d, ObjectSerializer *obj)
@@ -563,7 +569,7 @@ void BTCombat::runCombat(BTDisplay &d)
    {
     --itr->active;
     int monNumber = 0;
-    for (std::vector<BTCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster, ++monNumber)
+    for (std::vector<BTMonsterCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster, ++monNumber)
     {
      if (monster->active)
      {
@@ -667,7 +673,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
    d.addText(blank);
    d.process(BTDisplay::allKeys, 1000);
    d.clearElements();
-   for (std::vector<BTCombatant>::iterator monster(grp.individual.begin()); monster != grp.individual.end(); ++monster)
+   for (std::vector<BTMonsterCombatant>::iterator monster(grp.individual.begin()); monster != grp.individual.end(); ++monster)
    {
     if (monster->active)
     {
@@ -944,10 +950,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
      }
      text += " ";
      std::string defenderName;
-     if (BTPc::BTPcAction::attack == pc.combat.action)
-      text += defenderName = monList[grp->monsterType].getName();
-     else
-      text += defenderName = party[target]->name;
+     text += defenderName = defender->getName();
      ++attacks;
      int roll = BTDice(1, 20).roll();
      if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= defender->ac)))
@@ -1161,13 +1164,22 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
    {
     if (BTITEM_NONE != pc.item[pc.combat.object].id)
     {
-     int spellCast = itemList[pc.item[pc.combat.object].id].getSpellCast();
-     pc.takeItemCharge(pc.combat.object);
-     BTMonsterGroup *grp = NULL;
-     int target = pc.combat.getTargetIndividual();
-     if ((spellList[spellCast].getArea() == BTAREAEFFECT_FOE) && (target == BTTARGET_INDIVIDUAL))
-      findTarget(pc, BTDISTANCE_MAX, grp, target);
-     active -= spellList[spellCast].cast(d, pc.name, BTTARGET_PARTY, pcNumber, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
+     if (BTITEM_ARROW == itemList[pc.item[pc.combat.object].id].getType())
+     {
+     }
+     else if (BTITEM_THROWNWEAPON == itemList[pc.item[pc.combat.object].id].getType())
+     {
+     }
+     else
+     {
+      int spellCast = itemList[pc.item[pc.combat.object].id].getSpellCast();
+      pc.takeItemCharge(pc.combat.object);
+      BTMonsterGroup *grp = NULL;
+      int target = pc.combat.getTargetIndividual();
+      if ((spellList[spellCast].getArea() == BTAREAEFFECT_FOE) && (target == BTTARGET_INDIVIDUAL))
+       findTarget(pc, BTDISTANCE_MAX, grp, target);
+      active -= spellList[spellCast].cast(d, pc.name, BTTARGET_PARTY, pcNumber, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
+     }
     }
     break;
    }
@@ -1189,7 +1201,7 @@ void BTCombat::debugActive()
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end(); ++itr)
  {
   int realActive = 0;
-  for (std::vector<BTCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster)
+  for (std::vector<BTMonsterCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster)
   {
    if (monster->active)
    {
@@ -1243,7 +1255,7 @@ bool BTCombat::endRound(BTDisplay &d)
   itr->canMove = true;
   itr->active = 0;
   bool hasIndvidualSpell = true;
-  for (std::vector<BTCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end();)
+  for (std::vector<BTMonsterCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end();)
   {
    if (monster->isAlive())
    {

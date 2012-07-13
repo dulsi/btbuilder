@@ -23,6 +23,19 @@ class BTCombatError
   std::string error;
 };
 
+class BTMonsterGroup;
+
+class BTMonsterCombatant : public BTCombatant
+{
+ public:
+  BTMonsterCombatant(BTMonsterGroup *grp, int startLevel, int startJob, int startAc, int startToHit, int startHp) : BTCombatant(startLevel, startJob, startAc, startToHit, startHp), group(grp) {}
+
+  std::string getName() const;
+
+ protected:
+  BTMonsterGroup *group;
+};
+
 class BTMonsterGroup
 {
  public:
@@ -38,7 +51,7 @@ class BTMonsterGroup
   int distance;
   int active;
   bool canMove;
-  std::vector<BTCombatant> individual;
+  std::vector<BTMonsterCombatant> individual;
 };
 
 class BTCombatScreen : public BTScreenSetScreen

@@ -16,7 +16,7 @@
 		<selectParty action="useOn" screen="exit" />
 	</screen>
 	<error type="notequipped" screen="exit">You must equip the item to use it.</error>
-	<error type="notarrow" screen="exit">You can't use an arrow! You must use a bow.</error>
+	<error type="notarrow" screen="exit">You need to select an ammunition to use.</error>
 	<error type="notusable" screen="exit">You can't use that!</error>
 	<error type="dead" screen="exit"><name /> is dead!</error>
 	<error type="paralyzed" screen="exit"><name /> has been paralyzed and cannot move!</error>

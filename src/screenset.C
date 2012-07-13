@@ -986,18 +986,18 @@ BTScreenItem *BTScreenSetScreen::findItem(int key)
 
 void BTScreenSetScreen::serialize(ObjectSerializer* s)
 {
- s->add("barrier", &items, &BTBarrier::create);
- s->add("line", &items, &BTLine::create);
- s->add("choice", &items, &BTChoice::create);
- s->add("readString", &items, &BTReadString::create);
- s->add("selectRoster", &items, &BTSelectRoster::create);
- s->add("selectRace", &items, &BTSelectRace::create);
- s->add("selectJob", &items, &BTSelectJob::create);
- s->add("selectGoods", &items, &BTSelectGoods::create);
- s->add("selectInventory", &items, &BTSelectInventory::create);
- s->add("selectParty", &items, &BTSelectParty::create);
- s->add("selectSong", &items, &BTSelectSong::create);
- s->add("can", &items, &BTCan::create);
+ s->add("barrier", typeid(BTBarrier).name(), &items, &BTBarrier::create);
+ s->add("line", typeid(BTLine).name(), &items, &BTLine::create);
+ s->add("choice", typeid(BTChoice).name(), &items, &BTChoice::create);
+ s->add("readString", typeid(BTReadString).name(), &items, &BTReadString::create);
+ s->add("selectRoster", typeid(BTSelectRoster).name(), &items, &BTSelectRoster::create);
+ s->add("selectRace", typeid(BTSelectRace).name(), &items, &BTSelectRace::create);
+ s->add("selectJob", typeid(BTSelectJob).name(), &items, &BTSelectJob::create);
+ s->add("selectGoods", typeid(BTSelectGoods).name(), &items, &BTSelectGoods::create);
+ s->add("selectInventory", typeid(BTSelectInventory).name(), &items, &BTSelectInventory::create);
+ s->add("selectParty", typeid(BTSelectParty).name(), &items, &BTSelectParty::create);
+ s->add("selectSong", typeid(BTSelectSong).name(), &items, &BTSelectSong::create);
+ s->add("can", typeid(BTCan).name(), &items, &BTCan::create);
 }
 
 XMLObject *BTScreenSetScreen::create(const XML_Char *name, const XML_Char **atts)
@@ -2070,14 +2070,14 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
   d.clearText();
   return BTSCREEN_ESCAPE;
  }
- if (BTITEM_EQUIPPED != b.pc->item[select->select].equipped)
-  throw BTSpecialError("notequipped");
  if (BTITEM_ARROW == itemList[b.pc->item[select->select].id].getType())
-  throw BTSpecialError("notarrow");
- if (BTITEM_BOW == itemList[b.pc->item[select->select].id].getType())
  {
-  // Determine if you have arrows.
+  // Determine if you have a bow equipped.
  }
+ else if (BTITEM_EQUIPPED != b.pc->item[select->select].equipped)
+  throw BTSpecialError("notequipped");
+ if (BTITEM_BOW == itemList[b.pc->item[select->select].id].getType())
+  throw BTSpecialError("notarrow");
  else if (BTITEM_THROWNWEAPON != itemList[b.pc->item[select->select].id].getType())
  {
   int spellCast = itemList[b.pc->item[select->select].id].getSpellCast();
@@ -2136,7 +2136,7 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
  {
   d.clearText();
   BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-  if (BTITEM_BOW == itemList[b.pc->item[b.pc->combat.object].id].getType())
+  if (BTITEM_ARROW == itemList[b.pc->item[b.pc->combat.object].id].getType())
   {
   }
   else if (BTITEM_THROWNWEAPON != itemList[b.pc->item[b.pc->combat.object].id].getType())

@@ -55,6 +55,8 @@ class BTPc : public XMLObject, public BTCombatant
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
   bool isEquipmentFull() const;
+  
+  std::string getName() const;
   int getGold() const;
   int getHandWeapon() const;
   int getItem(int index) const;

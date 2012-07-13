@@ -293,6 +293,11 @@ bool BTPc::isEquipmentFull() const
   return false;
 }
 
+std::string BTPc::getName() const
+{
+ return name;
+}
+
 int BTPc::getGold() const
 {
  return gold;
