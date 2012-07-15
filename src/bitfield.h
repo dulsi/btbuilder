@@ -23,6 +23,7 @@ class BitField
   void set(int index);
 
   BitField operator&(const BitField &other) const;
+  BitField &operator|=(const BitField &other);
 
  private:
   void expand(int newSize);

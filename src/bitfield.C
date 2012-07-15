@@ -308,3 +308,30 @@ BitField BitField::operator&(const BitField &other) const
  }
  return ans;
 }
+
+BitField &BitField::operator|=(const BitField &other)
+{
+ if (bits)
+ {
+  if (other.bits)
+  {
+   if (other.size > size)
+    expand(size);
+   for (int i = 0; i < size; ++i)
+    bits[i] |= other.bits[i];
+  }
+  else
+   bits[0] |= other.size;
+ }
+ else if (other.bits)
+ {
+  expand(other.size);
+  for (int i = 0; i < size; ++i)
+   bits[i] |= other.bits[i];
+ }
+ else
+ {
+  size |= other.size;
+ }
+ return *this;
+}

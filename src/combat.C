@@ -21,6 +21,28 @@
 
 static const char *blank = "";
 
+void BTMonsterCombatant::deactivate(int &activeNum)
+{
+ if (active)
+ {
+  active = false;
+  group->active--;
+  --activeNum;
+ }
+}
+
+std::string BTMonsterCombatant::getName() const
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ return monList[group->monsterType].getName();
+}
+
+bool BTMonsterCombatant::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ return monList[group->monsterType].savingThrow(BTSAVE_DIFFICULTY);
+}
+
 BTMonsterGroup::~BTMonsterGroup()
 {
  if (monsterName)
@@ -92,12 +114,6 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
   strcpy(monsterName, monList[monsterType].getName());
   strcat(monsterName, "(s)");
  }
-}
-
-std::string BTMonsterCombatant::getName() const
-{
- BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
- return monList[group->monsterType].getName();
 }
 
 void BTCombatScreen::draw(BTDisplay &d, ObjectSerializer *obj)
@@ -913,7 +929,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
    case BTPc::BTPcAction::partyAttack:
    {
     int handWeapon = pc.getHandWeapon();
-    for (int attacks = 0; attacks < pc.rateAttacks; )
+    for (int attacks = pc.rateAttacks; attacks > 0; )
     {
      BTCombatant *defender = NULL;
      BTMonsterGroup *grp = NULL;
@@ -934,177 +950,9 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
        party[target]->status.set(BTSTATUS_INSANE);
       defender = party[target];
      }
-     text = pc.name;
-     text += " ";
-     if (-1 == handWeapon)
-     {
-      if (BTMONSTER_NONE == pc.monster)
-       text += "punches at";
-      else
-       text += monList[pc.monster].getMeleeMessage();
-     }
-     else
-     {
-      BTItem &item = itemList[handWeapon];
-      text += item.getCause();
-     }
-     text += " ";
-     std::string defenderName;
-     text += defenderName = defender->getName();
-     ++attacks;
-     int roll = BTDice(1, 20).roll();
-     if ((1 != roll) && ((20 == roll) || (roll + pc.toHit >= defender->ac)))
-     {
-      text += " ";
-      int damage = 0;
-      BitField special;
-      if (-1 == handWeapon)
-      {
-       if (BTMONSTER_NONE == pc.monster)
-       {
-        text += "and strikes for";
-        damage = BTDice(1, 2).roll();
-       }
-       else
-       {
-        text += "and hits for";
-        damage = monList[pc.monster].getMeleeDamage().roll();
-        special.set(monList[pc.monster].getMeleeExtra());
-       }
-      }
-      else
-      {
-       BTItem &item = itemList[handWeapon];
-       text += item.getEffect();
-       damage = item.getDamage().roll();
-       if (BTDice(1, 100).roll() <= item.getChanceXSpecial())
-        special.set(item.getXSpecial());
-      }
-      text += " ";
-      if (pc.stat[BTSTAT_ST] > 14)
-       damage += pc.stat[BTSTAT_ST] - 14;
-      char tmp[20];
-      sprintf(tmp, "%d", damage);
-      text += tmp;
-      text += " points of damage";
-      if (defender->takeHP(damage))
-      {
-       text += ", killing him!";
-       if (defender->active)
-       {
-        defender->active = false;
-        if (grp)
-        {
-         grp->active--;
-        }
-        --active;
-       }
-      }
-      else
-      {
-       for (int i = 0; i < skillList.size(); ++i)
-       {
-        if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) && (pc.useSkill(i)))
-        {
-         special.set(skillList[i]->effect);
-        }
-       }
-       int maxSpecial = special.getMaxSet();
-       if (maxSpecial > -1)
-       {
-        std::string specialText;
-        for (int i = 0; i <= maxSpecial; ++i)
-        {
-         if (!special.isSet(i))
-          continue;
-         if (i != BTEXTRADAMAGE_CRITICALHIT)
-         {
-          if ((grp) && (monList[grp->monsterType].savingThrow(BTSAVE_DIFFICULTY)))
-           continue;
-          else if ((!grp) && (party[target]->savingThrow(BTSAVE_DIFFICULTY)))
-           continue;
-         }
-         if ((specialText == "") || (maxSpecial == i))
-          specialText += " and";
-         else
-          specialText += ",";
-         switch(i)
-         {
-          case BTEXTRADAMAGE_POSION:
-           defender->status.set(BTSTATUS_POISONED);
-           specialText += " poisons";
-           break;
-          case BTEXTRADAMAGE_LEVELDRAIN:
-           specialText += " drains a level from ";
-           specialText += defenderName;
-           if (defender->drainLevel())
-           {
-            specialText += " totally draining him";
-            if (defender->active)
-            {
-             defender->active = false;
-             if (grp)
-             {
-              grp->active--;
-             }
-             --active;
-            }
-           }
-           break;
-          case BTEXTRADAMAGE_INSANITY:
-           defender->status.set(BTSTATUS_INSANE);
-           specialText += " inflicts insanity";
-           break;
-          case BTEXTRADAMAGE_POSSESSION:
-           defender->status.set(BTSTATUS_POSSESSED);
-           specialText += " possesses";
-           break;
-          case BTEXTRADAMAGE_PARALYSIS:
-           defender->status.set(BTSTATUS_PARALYZED);
-           specialText += " paralyzes";
-           break;
-          case BTEXTRADAMAGE_STONED:
-           defender->status.set(BTSTATUS_STONED);
-           specialText += " stones";
-           if (defender->active)
-           {
-            defender->active = false;
-            if (grp)
-            {
-             grp->active--;
-            }
-            --active;
-           }
-           break;
-          case BTEXTRADAMAGE_CRITICALHIT:
-           specialText += " critically hits";
-           defender->status.set(BTSTATUS_DEAD);
-           if (defender->active)
-           {
-            defender->active = false;
-            if (grp)
-            {
-             grp->active--;
-            }
-            --active;
-           }
-           break;
-          default:
-           break;
-         }
-        }
-        text += specialText;
-       }
-       if (defender->isAlive())
-        text += ".";
-       else
-        text += "!";
-      }
-      if (!grp)
-       d.drawStats();
-     }
-     else
-      text += ", but misses!";
+     text = pc.attack(defender, handWeapon, attacks, active);
+     if (!grp)
+      d.drawStats();
      d.drawMessage(text.c_str(), game->getDelay());
     }
     break;

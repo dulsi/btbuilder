@@ -2073,6 +2073,8 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  if (BTITEM_ARROW == itemList[b.pc->item[select->select].id].getType())
  {
   // Determine if you have a bow equipped.
+  if (BTITEM_CANNOTEQUIP == b.pc->item[select->select].equipped)
+   throw BTSpecialError("notbyyou");
  }
  else if (BTITEM_EQUIPPED != b.pc->item[select->select].equipped)
   throw BTSpecialError("notequipped");

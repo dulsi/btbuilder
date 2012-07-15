@@ -48,6 +48,7 @@ class BTPc : public XMLObject, public BTCombatant
 
   bool advanceLevel();
   bool age();
+  std::string attack(BTCombatant *defender, int weapon, int &numAttacksLeft, int &activeNum);
   void changeJob(int newJob);
   bool drainLevel();
   void equip(int index);
@@ -55,7 +56,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
   bool isEquipmentFull() const;
-  
+
   std::string getName() const;
   int getGold() const;
   int getHandWeapon() const;

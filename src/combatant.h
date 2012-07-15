@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "bitfield.h"
+#include "btconst.h"
 #include <string>
 
 class BTCombatant
@@ -18,10 +19,12 @@ class BTCombatant
   virtual ~BTCombatant() {}
 
   virtual bool age();
+  virtual void deactivate(int &activeNum);
   virtual bool drainLevel();
   virtual std::string getName() const = 0;
   bool isAlive() const;
   virtual void restoreLevel();
+  virtual bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const = 0;
   bool takeHP(int amount);
   virtual void youth();
 

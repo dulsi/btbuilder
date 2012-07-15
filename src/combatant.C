@@ -14,6 +14,15 @@ bool BTCombatant::age()
  return drainLevel();
 }
 
+void BTCombatant::deactivate(int &activeNum)
+{
+ if (active)
+ {
+  active = false;
+  --activeNum;
+ }
+}
+
 bool BTCombatant::drainLevel()
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
