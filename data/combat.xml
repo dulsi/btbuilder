@@ -76,9 +76,13 @@
 You manage to get away!</error>
 	<error type="nospell" screen="2">No spell by that name.</error>
 	<error type="dontknow" screen="2">You don't know this spell.</error>
-	<error type="cantuse" screen="2">You can't use that.</error>
 	<error type="nosp" screen="2">Not enough spell points.</error>
 	<error type="novoice" screen="2"><name /> lost his voice!</error>
 	<error type="noinstrument" screen="2"><name /> has no equipped instrument!</error>
 	<error type="noinventory" screen="2"><name /> has no items to use!</error>
+	<error type="notequipped" screen="2">You must equip the item to use it.</error>
+	<error type="notarrow" screen="2">You need to select an ammunition to use.</error>
+	<error type="notbyyou" screen="2">You can't use that ammunition.</error>
+	<error type="notusable" screen="2">You can't use that!</error>
+	<error type="nobow" screen="2">You have no equipped bow!</error>
 </screenset>

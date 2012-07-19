@@ -2072,15 +2072,34 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  }
  if (BTITEM_ARROW == itemList[b.pc->item[select->select].id].getType())
  {
+  if (BTITEM_CANNOTEQUIP == b.pc->item[select->select].equipped)
+   throw BTSpecialError("notbyyou");
   // Determine if you have a bow equipped.
+  bool found = false;
+  for (int i = 0; i < BT_ITEMS; ++i)
+  {
+   if (BTITEM_NONE == b.pc->item[i].id)
+    break;
+   if ((BTITEM_EQUIPPED == b.pc->item[i].equipped) && (BTITEM_BOW == itemList[b.pc->item[i].id].getType()))
+   {
+    found = true;
+    break;
+   }
+  }
+  if (!found)
+   throw BTSpecialError("nobow");
+ }
+ else if (BTITEM_THROWNWEAPON == itemList[b.pc->item[select->select].id].getType())
+ {
+  // Allow even if not equipped
   if (BTITEM_CANNOTEQUIP == b.pc->item[select->select].equipped)
    throw BTSpecialError("notbyyou");
  }
  else if (BTITEM_EQUIPPED != b.pc->item[select->select].equipped)
   throw BTSpecialError("notequipped");
- if (BTITEM_BOW == itemList[b.pc->item[select->select].id].getType())
+ else if (BTITEM_BOW == itemList[b.pc->item[select->select].id].getType())
   throw BTSpecialError("notarrow");
- else if (BTITEM_THROWNWEAPON != itemList[b.pc->item[select->select].id].getType())
+ else
  {
   int spellCast = itemList[b.pc->item[select->select].id].getSpellCast();
   if ((!b.pc->item[b.pc->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
@@ -2137,21 +2156,26 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
  else if (b.pc->combat.action == BTPc::BTPcAction::useItem)
  {
   d.clearText();
+  BTParty &party = BTGame::getGame()->getParty();
   BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-  if (BTITEM_ARROW == itemList[b.pc->item[b.pc->combat.object].id].getType())
+  if ((BTITEM_ARROW == itemList[b.pc->item[b.pc->combat.object].id].getType()) || (BTITEM_THROWNWEAPON == itemList[b.pc->item[b.pc->combat.object].id].getType()))
   {
-  }
-  else if (BTITEM_THROWNWEAPON != itemList[b.pc->item[b.pc->combat.object].id].getType())
-  {
+   if ((key >= '1') && (key <= '9') && (key - '1' < party.size()))
+   {
+    int numAttacks = 1;
+    int activeNum = 1;
+    std::string text = b.pc->attack(party[key - '1'], b.pc->item[b.pc->combat.object].id, numAttacks, activeNum);
+    d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
+   }
   }
   else
   {
    BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
    int spellCast = itemList[b.pc->item[b.pc->combat.object].id].getSpellCast();
-   b.pc->takeItemCharge(b.pc->combat.object);
    d.drawStats();
    spellList[spellCast].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
   }
+  b.pc->takeItemCharge(b.pc->combat.object);
   return -1;
  }
  return 0;

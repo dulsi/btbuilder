@@ -936,8 +936,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
      int target = BTTARGET_INDIVIDUAL;
      if (BTPc::BTPcAction::attack == pc.combat.action)
      {
-      findTarget(pc, 1, grp, target);
-      if (NULL == grp)
+      if (!findTarget(pc, 1, grp, target))
        return;
       defender = &grp->individual[target];
      }
@@ -961,11 +960,14 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
     break;
    case BTPc::BTPcAction::cast:
    {
-    pc.sp -= spellList[pc.combat.object].getSp();
     BTMonsterGroup *grp = NULL;
     int target = pc.combat.getTargetIndividual();
     if ((spellList[pc.combat.object].getArea() == BTAREAEFFECT_FOE) && (target == BTTARGET_INDIVIDUAL))
-     findTarget(pc, BTDISTANCE_MAX, grp, target);
+    {
+     if (!findTarget(pc, BTDISTANCE_MAX, grp, target))
+      return;
+    }
+    pc.sp -= spellList[pc.combat.object].getSp();
     active -= spellList[pc.combat.object].cast(d, pc.name, BTTARGET_PARTY, pcNumber, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
     break;
    }
@@ -1012,22 +1014,41 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
    {
     if (BTITEM_NONE != pc.item[pc.combat.object].id)
     {
-     if (BTITEM_ARROW == itemList[pc.item[pc.combat.object].id].getType())
+     if ((BTITEM_ARROW == itemList[pc.item[pc.combat.object].id].getType()) || (BTITEM_THROWNWEAPON == itemList[pc.item[pc.combat.object].id].getType()))
      {
-     }
-     else if (BTITEM_THROWNWEAPON == itemList[pc.item[pc.combat.object].id].getType())
-     {
+      int target = pc.combat.getTargetIndividual();
+      int numAttacks = 1;
+      BTCombatant *defender = NULL;
+      if (BTTARGET_PARTY == pc.combat.getTargetGroup())
+      {
+       defender = party[target];
+      }
+      else
+      {
+       BTMonsterGroup *grp = getMonsterGroup(pc.combat.getTargetGroup() - BTTARGET_MONSTER);
+       if (target == BTTARGET_INDIVIDUAL)
+       {
+        if (!findTarget(pc, BTDISTANCE_MAX, grp, target))
+         return;
+       }
+       defender = &(grp->individual[target]);
+      }
+      std::string text = pc.attack(defender, pc.item[pc.combat.object].id, numAttacks, active);
+      d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
      }
      else
      {
       int spellCast = itemList[pc.item[pc.combat.object].id].getSpellCast();
-      pc.takeItemCharge(pc.combat.object);
       BTMonsterGroup *grp = NULL;
       int target = pc.combat.getTargetIndividual();
       if ((spellList[spellCast].getArea() == BTAREAEFFECT_FOE) && (target == BTTARGET_INDIVIDUAL))
-       findTarget(pc, BTDISTANCE_MAX, grp, target);
+      {
+       if (!findTarget(pc, BTDISTANCE_MAX, grp, target))
+        return;
+      }
       active -= spellList[spellCast].cast(d, pc.name, BTTARGET_PARTY, pcNumber, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
      }
+     pc.takeItemCharge(pc.combat.object);
     }
     break;
    }
@@ -1375,39 +1396,74 @@ int BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  {
   return 2; // Should never get here.
  }
- if (BTITEM_EQUIPPED != b.getPc()->item[select->select].equipped)
+ if (BTITEM_ARROW == itemList[b.getPc()->item[select->select].id].getType())
+ {
+  if (BTITEM_CANNOTEQUIP == b.getPc()->item[select->select].equipped)
+   throw BTSpecialError("notbyyou");
+  // Determine if you have a bow equipped.
+  bool found = false;
+  for (int i = 0; i < BT_ITEMS; ++i)
+  {
+   if (BTITEM_NONE == b.getPc()->item[i].id)
+    break;
+   if ((BTITEM_EQUIPPED == b.getPc()->item[i].equipped) && (BTITEM_BOW == itemList[b.getPc()->item[i].id].getType()))
+   {
+    found = true;
+    break;
+   }
+  }
+  if (!found)
+   throw BTSpecialError("nobow");
+  b.add("range", new unsigned int(BTDISTANCE_MAX), NULL, true);
+ }
+ else if (BTITEM_THROWNWEAPON == itemList[b.getPc()->item[select->select].id].getType())
+ {
+  // Allow even if not equipped
+  if (BTITEM_CANNOTEQUIP == b.getPc()->item[select->select].equipped)
+   throw BTSpecialError("notbyyou");
+  b.add("range", new unsigned int(BTDISTANCE_MAX), NULL, true);
+ }
+ else if (BTITEM_EQUIPPED != b.getPc()->item[select->select].equipped)
   throw BTSpecialError("notequipped");
- int spellCast = itemList[b.getPc()->item[select->select].id].getSpellCast();
- if ((!b.getPc()->item[b.getPc()->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
-  throw BTSpecialError("notusable");
+ else if (BTITEM_BOW == itemList[b.getPc()->item[select->select].id].getType())
+  throw BTSpecialError("notarrow");
+ else
+ {
+  int spellCast = itemList[b.getPc()->item[select->select].id].getSpellCast();
+  if ((!b.getPc()->item[b.getPc()->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
+   throw BTSpecialError("notusable");
+  b.getPc()->combat.action = BTPc::BTPcAction::useItem;
+  b.getPc()->combat.type = BTPc::BTPcAction::item;
+  b.getPc()->combat.object = select->select;
+  switch (spellList[spellCast].getArea())
+  {
+   case BTAREAEFFECT_FOE:
+    b.add("range", new unsigned int(spellList[spellCast].getRange() * (1 + spellList[spellCast].getEffectiveRange())), NULL, true);
+    return BTCOMBATSCREEN_TARGETSINGLE;
+   case BTAREAEFFECT_GROUP:
+    if (c.monsters.empty())
+    {
+     b.getPc()->combat.setTarget(BTTARGET_PARTY);
+     return 0;
+    }
+    else
+    {
+     b.add("range", new unsigned int(spellList[spellCast].getRange() * (1 + spellList[spellCast].getEffectiveRange())), NULL, true);
+     return BTCOMBATSCREEN_TARGETGROUP;
+    }
+   case BTAREAEFFECT_NONE:
+    b.getPc()->combat.clearTarget(b.getPc()->combat.getTargetGroup());
+    return 0;
+   case BTAREAEFFECT_ALL:
+    b.getPc()->combat.setTarget(BTTARGET_ALLMONSTERS);
+    return 0;
+   default:
+    return 0;
+  }
+ }
  b.getPc()->combat.action = BTPc::BTPcAction::useItem;
  b.getPc()->combat.type = BTPc::BTPcAction::item;
  b.getPc()->combat.object = select->select;
- switch (spellList[spellCast].getArea())
- {
-  case BTAREAEFFECT_FOE:
-   b.add("range", new unsigned int(spellList[spellCast].getRange() * (1 + spellList[spellCast].getEffectiveRange())), NULL, true);
-   return BTCOMBATSCREEN_TARGETSINGLE;
-  case BTAREAEFFECT_GROUP:
-   if (c.monsters.empty())
-   {
-    b.getPc()->combat.setTarget(BTTARGET_PARTY);
-    return 0;
-   }
-   else
-   {
-    b.add("range", new unsigned int(spellList[spellCast].getRange() * (1 + spellList[spellCast].getEffectiveRange())), NULL, true);
-    return BTCOMBATSCREEN_TARGETGROUP;
-   }
-  case BTAREAEFFECT_NONE:
-   b.getPc()->combat.clearTarget(b.getPc()->combat.getTargetGroup());
-   return 0;
-  case BTAREAEFFECT_ALL:
-   b.getPc()->combat.setTarget(BTTARGET_ALLMONSTERS);
-   return 0;
-  default:
-   return 0;
- }
- return 0;
+ return BTCOMBATSCREEN_TARGETSINGLE;
 }
 

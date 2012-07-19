@@ -169,14 +169,15 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
     else
     {
      damage = monList[monster].getMeleeDamage().roll();
-     special.set(monList[monster].getMeleeExtra());
+     if (BTEXTRADAMAGE_NONE != monList[monster].getMeleeExtra())
+      special.set(monList[monster].getMeleeExtra());
     }
    }
    else
    {
     BTItem &itemWeapon = itemList[weapon];
     damage = itemWeapon.getDamage().roll();
-    if (BTDice(1, 100).roll() <= itemWeapon.getChanceXSpecial())
+    if ((BTEXTRADAMAGE_NONE != itemWeapon.getXSpecial()) && (BTDice(1, 100).roll() <= itemWeapon.getChanceXSpecial()))
      special.set(itemWeapon.getXSpecial());
    }
    if (stat[BTSTAT_ST] > 14)
@@ -303,7 +304,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
   text += tmp;
   text += " points of damage";
   if (dead)
-   text += ", killing him!";
+   text += ", killing him";
   else
   {
    int maxSpecial = finalSpecial.getMaxSet();
