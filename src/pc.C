@@ -228,6 +228,12 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
        case BTEXTRADAMAGE_INSANITY:
         defender->status.set(BTSTATUS_INSANE);
         break;
+       case BTEXTRADAMAGE_AGED:
+        if (defender->age())
+        {
+         defender->deactivate(activeNum);
+        }
+        break;
        case BTEXTRADAMAGE_POSSESSION:
         defender->status.set(BTSTATUS_POSSESSED);
         break;
@@ -334,6 +340,9 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
        break;
       case BTEXTRADAMAGE_INSANITY:
        specialText += " inflicts insanity";
+       break;
+      case BTEXTRADAMAGE_AGED:
+       specialText += " withers him";
        break;
       case BTEXTRADAMAGE_POSSESSION:
        specialText += " possesses";

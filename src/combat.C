@@ -742,11 +742,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
       if (defender->takeHP(damage))
       {
        text += ", killing him!";
-       if (defender->active)
-       {
-        defender->active = false;
-        --active;
-       }
+       defender->deactivate(active);
       }
       else
       {
@@ -774,11 +770,19 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
            d.drawMessage(text.c_str(), game->getDelay());
            text = party[target]->name;
            text += " dies!";
+           defender->deactivate(active);
           }
           break;
          case BTEXTRADAMAGE_INSANITY:
           defender->status.set(BTSTATUS_INSANE);
           text += " and inflicts insanity";
+          break;
+         case BTEXTRADAMAGE_AGED:
+          text += " and whithers him";
+          if (defender->age())
+          {
+           defender->deactivate(active);
+          }
           break;
          case BTEXTRADAMAGE_POSSESSION:
           defender->status.set(BTSTATUS_POSSESSED);
@@ -787,6 +791,14 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
          case BTEXTRADAMAGE_PARALYSIS:
           defender->status.set(BTSTATUS_PARALYZED);
           text += " and paralyzes";
+          break;
+         case BTEXTRADAMAGE_CRITICALHITS:
+          if (!defender->savingThrow(BTSAVE_DIFFICULTY))
+          {
+           defender->status.set(BTSTATUS_DEAD);
+           defender->deactivate(active);
+           text += " and criticalhits";
+          }
           break;
          default:
           break;
