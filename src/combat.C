@@ -797,7 +797,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
           {
            defender->status.set(BTSTATUS_DEAD);
            defender->deactivate(active);
-           text += " and criticalhits";
+           text += " and critical hits";
           }
           break;
          default:
