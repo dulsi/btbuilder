@@ -792,7 +792,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
           defender->status.set(BTSTATUS_PARALYZED);
           text += " and paralyzes";
           break;
-         case BTEXTRADAMAGE_CRITICALHITS:
+         case BTEXTRADAMAGE_CRITICALHIT:
           if (!defender->savingThrow(BTSAVE_DIFFICULTY))
           {
            defender->status.set(BTSTATUS_DEAD);
