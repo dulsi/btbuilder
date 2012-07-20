@@ -1111,8 +1111,8 @@ void BTUISelect::draw(BTDisplay &d)
    d.drawFont(tmp, dst, d.getBlack(), BTDisplay::left);
    dst.x += wFirst;
    dst.w = position.w - wFirst;
-   if (list[i].name)
-    d.drawFont(list[i].name, dst, d.getBlack(), BTDisplay::left);
+   if (!list[i].name.empty())
+    d.drawFont(list[i].name.c_str(), dst, d.getBlack(), BTDisplay::left);
    dst.y += h;
   }
   for (; i < numbered; ++i)
@@ -1155,8 +1155,8 @@ void BTUISelect::draw(BTDisplay &d)
     wValue = 0;
    dst.x += wFirst;
    dst.w = position.w - wValue - wFirst;
-   if (list[i].name)
-    d.drawFont(list[i].name, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
+   if (!list[i].name.empty())
+    d.drawFont(list[i].name.c_str(), dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
    dst.y += h;
   }
  }

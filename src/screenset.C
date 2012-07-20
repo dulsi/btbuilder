@@ -608,7 +608,16 @@ int BTSelectInventory::buildList(ObjectSerializer *obj)
    list[i].first = '*';
   else if (!itemList[id].canUse(pc))
    list[i].first = '@';
-  list[i].name = itemList[id].getName();
+  if (BTITEM_ARROW == itemList[id].getType())
+  {
+   char tmp[20];
+   snprintf(tmp, 20, "%d", pc->item[i].charges);
+   list[i].name = tmp;
+   list[i].name += " ";
+   list[i].name += itemList[id].getName();
+  }
+  else
+   list[i].name = itemList[id].getName();
   if (value)
    list[i].value = itemList[id].getPrice() / 2;
  }

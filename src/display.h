@@ -61,10 +61,10 @@ class BTDisplay
   enum alignment { left, center, right };
   struct selectItem
   {
-   selectItem() : first(0), name(0), value(0) {}
+   selectItem() : first(0), value(0) {}
 
    char first;
-   const char *name;
+   std::string name;
    int value;
   };
 
