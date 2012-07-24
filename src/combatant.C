@@ -14,6 +14,180 @@ bool BTCombatant::age()
  return drainLevel();
 }
 
+std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum)
+{
+ int hits = 0;
+ int totalDamage = 0;
+ bool dead = false;
+ bool totalDrain = false;
+ BitField finalSpecial;
+ while ((defender->isAlive()) && (numAttacksLeft > 0))
+ {
+  int roll = BTDice(1, 20).roll();
+  if ((1 != roll) && ((20 == roll) || (roll + toHit >= defender->ac)))
+  {
+   ++hits;
+   int damage = 0;
+   BitField special;
+   damage = damageDice.roll();
+   if ((BTEXTRADAMAGE_NONE != xSpecial) && (BTDice(1, 100).roll() <= chanceXSpecial))
+    special.set(xSpecial);
+   totalDamage += damage;
+   if (defender->takeHP(damage))
+   {
+    dead = true;
+    defender->deactivate(activeNum);
+   }
+   else
+   {
+    useAutoCombatSkill(special);
+    int maxSpecial = special.getMaxSet();
+    if (maxSpecial > -1)
+    {
+     std::string specialText;
+     for (int i = 0; i <= maxSpecial; ++i)
+     {
+      if (!special.isSet(i))
+       continue;
+      if (i != BTEXTRADAMAGE_CRITICALHIT)
+      {
+       if (defender->savingThrow(BTSAVE_DIFFICULTY))
+       {
+        special.clear(i);
+        continue;
+       }
+      }
+      switch(i)
+      {
+       case BTEXTRADAMAGE_POSION:
+        defender->status.set(BTSTATUS_POISONED);
+        break;
+       case BTEXTRADAMAGE_LEVELDRAIN:
+        if (defender->drainLevel())
+        {
+         totalDrain = true;
+         defender->deactivate(activeNum);
+        }
+        break;
+       case BTEXTRADAMAGE_INSANITY:
+        defender->status.set(BTSTATUS_INSANE);
+        break;
+       case BTEXTRADAMAGE_AGED:
+        if (defender->age())
+        {
+         defender->deactivate(activeNum);
+        }
+        break;
+       case BTEXTRADAMAGE_POSSESSION:
+        defender->status.set(BTSTATUS_POSSESSED);
+        break;
+       case BTEXTRADAMAGE_PARALYSIS:
+        defender->status.set(BTSTATUS_PARALYZED);
+        break;
+       case BTEXTRADAMAGE_STONED:
+        defender->status.set(BTSTATUS_STONED);
+        defender->deactivate(activeNum);
+        break;
+       case BTEXTRADAMAGE_CRITICALHIT:
+        defender->status.set(BTSTATUS_DEAD);
+        defender->deactivate(activeNum);
+        break;
+       default:
+        break;
+      }
+     }
+     finalSpecial |= special;
+    }
+   }
+  }
+  --numAttacksLeft;
+ }
+ std::string text = getName();
+ text += " ";
+ text += cause;
+ text += " ";
+ std::string defenderName;
+ text += defenderName = defender->getName();
+ if (0 < hits)
+ {
+  text += " ";
+  text += effect;
+  text += " ";
+  char tmp[20];
+  if (hits > 1)
+  {
+   sprintf(tmp, "%d", hits);
+   text += tmp;
+   text += " times ";
+  }
+  text += "for ";
+  sprintf(tmp, "%d", totalDamage);
+  text += tmp;
+  text += " points of damage";
+  if (dead)
+   text += ", killing him";
+  else
+  {
+   int maxSpecial = finalSpecial.getMaxSet();
+   if (maxSpecial > -1)
+   {
+    std::string specialText;
+    for (int i = 0; i <= maxSpecial; ++i)
+    {
+     if (!finalSpecial.isSet(i))
+      continue;
+     if ((specialText == "") || (maxSpecial == i))
+      specialText += " and";
+     else
+      specialText += ",";
+     switch(i)
+     {
+      case BTEXTRADAMAGE_POSION:
+       specialText += " poisons";
+       break;
+      case BTEXTRADAMAGE_LEVELDRAIN:
+       specialText += " drains a level from ";
+       specialText += defenderName;
+       if (totalDrain)
+       {
+        specialText += " totally draining him";
+       }
+       break;
+      case BTEXTRADAMAGE_INSANITY:
+       specialText += " inflicts insanity";
+       break;
+      case BTEXTRADAMAGE_AGED:
+       specialText += " withers him";
+       break;
+      case BTEXTRADAMAGE_POSSESSION:
+       specialText += " possesses";
+       break;
+      case BTEXTRADAMAGE_PARALYSIS:
+       specialText += " paralyzes";
+       break;
+      case BTEXTRADAMAGE_STONED:
+       specialText += " stones";
+       break;
+      case BTEXTRADAMAGE_CRITICALHIT:
+       specialText += " critically hits";
+       break;
+      default:
+       break;
+     }
+    }
+    text += specialText;
+   }
+   if (defender->isAlive())
+    text += ".";
+   else
+    text += "!";
+  }
+ }
+ else
+  text += ", but misses!";
+ return text;
+}
+
 void BTCombatant::deactivate(int &activeNum)
 {
  if (active)
@@ -69,6 +243,10 @@ bool BTCombatant::takeHP(int amount)
    status.set(BTSTATUS_DEAD);
  }
  return hp < 0;
+}
+
+void BTCombatant::useAutoCombatSkill(BitField &special)
+{
 }
 
 void BTCombatant::youth()

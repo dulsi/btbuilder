@@ -9,6 +9,7 @@
 
 #include "bitfield.h"
 #include "btconst.h"
+#include "dice.h"
 #include <string>
 
 class BTCombatant
@@ -19,6 +20,7 @@ class BTCombatant
   virtual ~BTCombatant() {}
 
   virtual bool age();
+  std::string attack(BTCombatant *defender, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum);
   virtual void deactivate(int &activeNum);
   virtual bool drainLevel();
   virtual std::string getName() const = 0;
@@ -26,6 +28,7 @@ class BTCombatant
   virtual void restoreLevel();
   virtual bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const = 0;
   bool takeHP(int amount);
+  virtual void useAutoCombatSkill(BitField &special);
   virtual void youth();
 
   int maxLevel;

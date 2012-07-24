@@ -714,103 +714,13 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
   int target;
   if (grp.distance <= 1)
   {
-   for (int attacks = 0; attacks < monList[grp.monsterType].getRateAttacks(); )
+   for (int attacks = monList[grp.monsterType].getRateAttacks(); attacks > 0; )
    {
     if (findTargetPC(BT_BACK, target))
     {
      defender = party[target];
-     std::string text = monList[grp.monsterType].getName();
-     text += " ";
-     text += monList[grp.monsterType].getMeleeMessage();
-     text += " ";
-     text += party[target]->name;
-     ++attacks;
-     int roll = BTDice(1, 20).roll();
-     if ((1 != roll) && ((20 == roll) || (roll + mon.toHit >= defender->ac)))
-     {
-      text += " ";
-      int damage = 0;
-      int special = 0;
-      text += "and hits for";
-      damage = monList[grp.monsterType].getMeleeDamage().roll();
-      special = monList[grp.monsterType].getMeleeExtra();
-      text += " ";
-      char tmp[20];
-      sprintf(tmp, "%d", damage);
-      text += tmp;
-      text += " points of damage";
-      if (defender->takeHP(damage))
-      {
-       text += ", killing him!";
-       defender->deactivate(active);
-      }
-      else
-      {
-       bool period(true);
-       if (special)
-       {
-        if (party[target]->savingThrow(BTSAVE_DIFFICULTY))
-         special = 0;
-        switch(special)
-        {
-         case BTEXTRADAMAGE_POSION:
-          defender->status.set(BTSTATUS_POISONED);
-          text += " and poisons";
-          break;
-         case BTEXTRADAMAGE_LEVELDRAIN:
-          text += " and drains a level from ";
-          text += party[target]->name;
-          if (defender->drainLevel())
-          {
-           period = false;
-           text += ".";
-           d.drawMessage(text.c_str(), game->getDelay());
-           text = party[target]->name;
-           text += " is totally drained of life!";
-           d.drawMessage(text.c_str(), game->getDelay());
-           text = party[target]->name;
-           text += " dies!";
-           defender->deactivate(active);
-          }
-          break;
-         case BTEXTRADAMAGE_INSANITY:
-          defender->status.set(BTSTATUS_INSANE);
-          text += " and inflicts insanity";
-          break;
-         case BTEXTRADAMAGE_AGED:
-          text += " and whithers him";
-          if (defender->age())
-          {
-           defender->deactivate(active);
-          }
-          break;
-         case BTEXTRADAMAGE_POSSESSION:
-          defender->status.set(BTSTATUS_POSSESSED);
-          text += " and possesses";
-          break;
-         case BTEXTRADAMAGE_PARALYSIS:
-          defender->status.set(BTSTATUS_PARALYZED);
-          text += " and paralyzes";
-          break;
-         case BTEXTRADAMAGE_CRITICALHIT:
-          if (!defender->savingThrow(BTSAVE_DIFFICULTY))
-          {
-           defender->status.set(BTSTATUS_DEAD);
-           defender->deactivate(active);
-           text += " and critical hits";
-          }
-          break;
-         default:
-          break;
-        }
-       }
-       if (period)
-        text += ".";
-      }
-      d.drawStats();
-     }
-     else
-      text += ", but misses!";
+     std::string text = mon.attack(defender, monList[grp.monsterType].getMeleeMessage(), "and hits", monList[grp.monsterType].getMeleeDamage(), 100, monList[grp.monsterType].getMeleeExtra(), attacks, active);
+     d.drawStats();
      d.drawMessage(text.c_str(), game->getDelay());
     }
     else
