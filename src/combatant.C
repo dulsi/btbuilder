@@ -49,13 +49,10 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
      {
       if (!special.isSet(i))
        continue;
-      if (i != BTEXTRADAMAGE_CRITICALHIT)
+      if (defender->savingThrow(BTSAVE_DIFFICULTY))
       {
-       if (defender->savingThrow(BTSAVE_DIFFICULTY))
-       {
-        special.clear(i);
-        continue;
-       }
+       special.clear(i);
+       continue;
       }
       switch(i)
       {
@@ -91,6 +88,12 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
        case BTEXTRADAMAGE_CRITICALHIT:
         defender->status.set(BTSTATUS_DEAD);
         defender->deactivate(activeNum);
+        break;
+       case BTEXTRADAMAGE_POINTPHAZE:
+        if (!defender->takeSP(5))
+        {
+         special.clear(BTEXTRADAMAGE_POINTPHAZE);
+        }
         break;
        default:
         break;
@@ -171,6 +174,9 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
       case BTEXTRADAMAGE_CRITICALHIT:
        specialText += " critically hits";
        break;
+      case BTEXTRADAMAGE_POINTPHAZE:
+       specialText += " absorbs spell points";
+       break;
       default:
        break;
      }
@@ -243,6 +249,11 @@ bool BTCombatant::takeHP(int amount)
    status.set(BTSTATUS_DEAD);
  }
  return hp < 0;
+}
+
+bool BTCombatant::takeSP(int amount)
+{
+ return false;
 }
 
 void BTCombatant::useAutoCombatSkill(BitField &special)

@@ -82,6 +82,7 @@ extern ArrayLookup durationLookup;
 #define BTEXTRADAMAGE_STONED      6
 #define BTEXTRADAMAGE_PARALYSIS   7
 #define BTEXTRADAMAGE_CRITICALHIT 8
+#define BTEXTRADAMAGE_POINTPHAZE 10
 extern char *extraDamage[];
 extern ArrayLookup extraDamageLookup;
 

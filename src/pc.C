@@ -659,6 +659,20 @@ void BTPc::takeItemCharge(int index)
  }
 }
 
+bool BTPc::takeSP(int amount)
+{
+ if (sp > 0)
+ {
+  if (sp > amount)
+   sp -= amount;
+  else
+   sp = 0;
+  return true;
+ }
+ else
+  return false;
+}
+
 void BTPc::unequip(int index)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();

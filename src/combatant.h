@@ -28,6 +28,7 @@ class BTCombatant
   virtual void restoreLevel();
   virtual bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const = 0;
   bool takeHP(int amount);
+  virtual bool takeSP(int amount);
   virtual void useAutoCombatSkill(BitField &special);
   virtual void youth();
 

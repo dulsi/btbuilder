@@ -80,6 +80,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool takeItem(int id);
   bool takeItemFromIndex(int index);
   void takeItemCharge(int index);
+  bool takeSP(int amount);
   void unequip(int index);
   void useAutoCombatSkill(BitField &special);
   bool useSkill(int index, int difficulty = BTSKILL_DEFAULTDIFFICULTY);
