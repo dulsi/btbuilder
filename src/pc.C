@@ -646,16 +646,20 @@ void BTPc::takeItemCharge(int index)
  item[index].charges -= 1;
  if (item[index].charges == 0)
  {
-  if (item[index].equipped == BTITEM_EQUIPPED)
-   unequip(index);
-  for (int i = index + 1; i < BT_ITEMS; ++i)
+  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+  if (itemList[item[index].id].isConsumed())
   {
-   item[i - 1].id = item[i].id;
-   item[i - 1].equipped = item[i].equipped;
-   item[i - 1].known = item[i].known;
-   item[i - 1].charges = item[i].charges;
+   if (item[index].equipped == BTITEM_EQUIPPED)
+    unequip(index);
+   for (int i = index + 1; i < BT_ITEMS; ++i)
+   {
+    item[i - 1].id = item[i].id;
+    item[i - 1].equipped = item[i].equipped;
+    item[i - 1].known = item[i].known;
+    item[i - 1].charges = item[i].charges;
+   }
+   item[BT_ITEMS - 1].id = BTITEM_NONE;
   }
-  item[BT_ITEMS - 1].id = BTITEM_NONE;
  }
 }
 

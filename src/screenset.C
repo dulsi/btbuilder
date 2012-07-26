@@ -2079,7 +2079,9 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
   d.clearText();
   return BTSCREEN_ESCAPE;
  }
- if (BTITEM_ARROW == itemList[b.pc->item[select->select].id].getType())
+ if (b.pc->item[select->select].charges == 0)
+  throw BTSpecialError("notusable");
+ else if (BTITEM_ARROW == itemList[b.pc->item[select->select].id].getType())
  {
   if (BTITEM_CANNOTEQUIP == b.pc->item[select->select].equipped)
    throw BTSpecialError("notbyyou");
@@ -2111,7 +2113,7 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  else
  {
   int spellCast = itemList[b.pc->item[select->select].id].getSpellCast();
-  if ((!b.pc->item[b.pc->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
+  if (spellCast == BTITEMCAST_NONE)
    throw BTSpecialError("notusable");
   int pcNumber = 0;
   for (int k = 0; k < party.size(); ++k)

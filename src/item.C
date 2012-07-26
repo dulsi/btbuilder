@@ -46,6 +46,10 @@ BTItem::BTItem(BinaryReadFile &f)
  tmp[24] = 0;
  effect = new char[strlen(tmp) + 1];
  strcpy(effect, tmp);
+ if ((BTITEM_ARROW == type) || (BTITEM_THROWNWEAPON == type))
+  consume = true;
+ else
+  consume = false;
 }
 
 BTItem::BTItem()
@@ -56,6 +60,7 @@ BTItem::BTItem()
  cause[0] = 0;
  effect = new char[1];
  effect[0] = 0;
+ consume = false;
 }
 
 BTItem::~BTItem()
@@ -133,6 +138,11 @@ IShort BTItem::getXSpecial() const
  return xSpecial;
 }
 
+bool BTItem::isConsumed() const
+{
+ return consume;
+}
+
 void BTItem::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
@@ -179,6 +189,7 @@ void BTItem::serialize(ObjectSerializer* s)
  s->add("price", &price);
  s->add("cause", &cause);
  s->add("effect", &effect);
+ s->add("consume", &consume);
 }
 
 void BTItem::readXML(const char *filename, XMLVector<BTItem*> &item)

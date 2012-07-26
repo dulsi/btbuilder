@@ -53,6 +53,7 @@ class BTItem : public XMLObject
   IShort getTimesUsable() const;
   IShort getType() const;
   IShort getXSpecial() const;
+  bool isConsumed() const;
   void write(BinaryWriteFile &f);
 
   virtual void serialize(ObjectSerializer* s);
@@ -75,6 +76,7 @@ class BTItem : public XMLObject
   IShort price;
   char *cause;
   char *effect;
+  bool consume;
 
   static int compatJobAllowed[11];
 };
