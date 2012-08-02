@@ -6,7 +6,6 @@
 \*-------------------------------------------------------------------------*/
 
 #include "xmlserializer.h"
-#include <physfs.h>
 #include <string.h>
 #include <stdio.h>
 #include <typeinfo>
@@ -478,189 +477,218 @@ void XMLSerializer::characterData(const XML_Char *s, int len)
 
 void XMLSerializer::write(const char *filename, bool physfs)
 {
- if (physfs)
+ PHYSFS_file *physFile = NULL;
+ FILE *file = NULL;
+ if (strcmp(filename, "-") == 0)
  {
-  PHYSFS_file *f = PHYSFS_openWrite(filename);
-  PHYSFS_write(f, "<data>\n", 1, 7);
-  for (std::vector<XMLAction*>::iterator itr(action.begin()); (itr != action.end()) || (!level.empty()); ++itr)
-  {
-   if (itr == action.end())
-   {
-    itr = action.end();
-    --itr;
-    while ((*itr)->object != level.back()->state->object)
-    {
-     --itr;
-    }
-    XMLAction *act = level.back()->state;
-    if (XMLTYPE_CREATE == act->getType())
-    {
-     XMLArray *ary = reinterpret_cast<XMLArray*>(act->object);
-     PHYSFS_write(f, "</", 1, 2);
-     PHYSFS_write(f, act->name.c_str(), 1, act->name.length());
-     PHYSFS_write(f, ">", 1, 1);
-     int i = 0;
-     for (; i < ary->size(); ++i)
-     {
-      if (ary->get(i) == level.back()->object)
-       break;
-     }
-     XMLLevel *oldLevel = removeLevel();
-     delete oldLevel;
-     if (i + 1 == ary->size())
-     {
-      itr = action.end();
-      --itr;
-      while ((*itr)->object != act->object)
-       --itr;
-      continue;
-     }
-     else
-     {
-      XMLLevel *newLevel = new XMLLevel;
-      newLevel->object = ary->get(i + 1);
-      std::string objnm = typeid(*(newLevel->object)).name();
-      for (act = *itr; (act) && (!act->objnm.empty()) && (act->objnm != objnm); act = act->next)
-      {
-      }
-      if (act)
-      {
-       std::string tag = act->createTag();
-       PHYSFS_write(f, "<", 1, 1);
-       PHYSFS_write(f, tag.c_str(), 1, tag.length());
-       PHYSFS_write(f, ">", 1, 1);
-       newLevel->state = act;
-       int size = action.size();
-       addLevel(newLevel);
-       itr = action.begin() + size - 1;
-      }
-      else
-       delete newLevel;
-      continue;
-     }
-    }
-    else
-    {
-     PHYSFS_write(f, "</", 1, 2);
-     PHYSFS_write(f, (*itr)->name.c_str(), 1, (*itr)->name.length());
-     PHYSFS_write(f, ">", 1, 1);
-     XMLLevel *oldLevel = removeLevel();
-     delete oldLevel;
-     itr = action.end();
-     --itr;
-     while (*itr != act)
-      --itr;
-     continue;
-    }
-   }
-   int type = (*itr)->getType();
-   if ((XMLTYPE_CREATE != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
-   {
-    std::string tag = (*itr)->createTag();
-    PHYSFS_write(f, "<", 1, 1);
-    PHYSFS_write(f, tag.c_str(), 1, tag.length());
-    PHYSFS_write(f, ">", 1, 1);
-   }
-   char convert[30];
-   std::string content;
-   switch(type)
-   {
-    case XMLTYPE_BOOL:
-    case XMLTYPE_INT:
-    case XMLTYPE_UINT:
-    case XMLTYPE_INT16:
-    case XMLTYPE_UINT16:
-    case XMLTYPE_STRING:
-    case XMLTYPE_STDSTRING:
-     content = (*itr)->createString();
-     break;
-    case XMLTYPE_BITFIELD:
-    {
-     BitField *b = reinterpret_cast<BitField*>((*itr)->object);
-     ValueLookup *lookup = reinterpret_cast<ValueLookup*>((*itr)->data);
-     for (int i = b->getMaxSet(); i >= 0; --i)
-     {
-      if (b->isSet(i))
-      {
-       content = "<" + (*itr)->createTag() + ">" + lookup->getName(i) + "</" + (*itr)->name + ">";
-      }
-     }
-     break;
-    }
-    case XMLTYPE_VECTORUINT:
-    {
-     std::vector<unsigned int> *v = reinterpret_cast<std::vector<unsigned int> *>((*itr)->object);
-     for (int i = 0; i < v->size(); ++i)
-     {
-      sprintf(convert, "%u", (*v)[i]);
-      content += "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
-     }
-     break;
-    }
-    case XMLTYPE_VECTORSTRING:
-    {
-     std::vector<std::string> *v = reinterpret_cast<std::vector<std::string> *>((*itr)->object);
-     for (int i = 0; i < v->size(); ++i)
-     {
-      content += "<" + (*itr)->createTag() + ">" + (*v)[i] + "</" + (*itr)->name + ">";
-     }
-     break;
-    }
-    case XMLTYPE_CREATE:
-    {
-     XMLArray *ary = reinterpret_cast<XMLArray*>((*itr)->object);
-     if (0 != ary->size())
-     {
-      XMLLevel *newLevel = new XMLLevel;
-      newLevel->object = ary->get(0);
-      std::string objnm = typeid(*(newLevel->object)).name();
-      XMLAction *act = *itr;
-      for (; (act) && (!act->objnm.empty()) && (act->objnm != objnm); act = act->next)
-      {
-      }
-      if (act)
-      {
-       std::string tag = act->createTag();
-       PHYSFS_write(f, "<", 1, 1);
-       PHYSFS_write(f, tag.c_str(), 1, tag.length());
-       PHYSFS_write(f, ">", 1, 1);
-       newLevel->state = act;
-       int size = action.size();
-       addLevel(newLevel);
-       itr = action.begin() + size - 1;
-      }
-      else
-       delete newLevel;
-     }
-     break;
-    }
-    case XMLTYPE_OBJECT:
-    {
-     XMLLevel *newLevel = new XMLLevel;
-     newLevel->state = *itr;
-     newLevel->object = reinterpret_cast<XMLObject*>((*itr)->object);
-     int size = action.size();
-     addLevel(newLevel);
-     itr = action.begin() + size - 1;
-     break;
-    }
-    default:
-     break;
-   }
-   if (content.length())
-    PHYSFS_write(f, content.c_str(), 1, content.length());
-   if ((XMLTYPE_CREATE != type) && (XMLTYPE_OBJECT != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
-   {
-    PHYSFS_write(f, "</", 1, 2);
-    PHYSFS_write(f, (*itr)->name.c_str(), 1, (*itr)->name.length());
-    PHYSFS_write(f, ">", 1, 1);
-   }
-  }
-  PHYSFS_write(f, "</data>\n", 1, 8);
-  PHYSFS_close(f);
+  file = stdout;
+ }
+ else if (physfs)
+ {
+  physFile = PHYSFS_openWrite(filename);
  }
  else
  {
+  file = fopen(filename, "w");
+ }
+ write(physFile, file, "<data>\n", 7);
+ for (std::vector<XMLAction*>::iterator itr(action.begin()); (itr != action.end()) || (!level.empty()); ++itr)
+ {
+  if (itr == action.end())
+  {
+   itr = action.end();
+   --itr;
+   while ((*itr)->object != level.back()->state->object)
+   {
+    --itr;
+   }
+   XMLAction *act = level.back()->state;
+   if (XMLTYPE_CREATE == act->getType())
+   {
+    XMLArray *ary = reinterpret_cast<XMLArray*>(act->object);
+    write(physFile, file, "</", 2);
+    write(physFile, file, act->name.c_str(), act->name.length());
+    write(physFile, file, ">", 1);
+    int i = 0;
+    for (; i < ary->size(); ++i)
+    {
+     if (ary->get(i) == level.back()->object)
+      break;
+    }
+    XMLLevel *oldLevel = removeLevel();
+    delete oldLevel;
+    if (i + 1 == ary->size())
+    {
+     itr = action.end();
+     --itr;
+     while ((*itr)->object != act->object)
+      --itr;
+     continue;
+    }
+    else
+    {
+     XMLLevel *newLevel = new XMLLevel;
+     newLevel->object = ary->get(i + 1);
+     std::string objnm = typeid(*(newLevel->object)).name();
+     for (act = *itr; (act) && (!act->objnm.empty()) && (act->objnm != objnm); act = act->next)
+     {
+     }
+     if (act)
+     {
+      std::string tag = act->createTag();
+      write(physFile, file, "<", 1);
+      write(physFile, file, tag.c_str(), tag.length());
+      write(physFile, file, ">", 1);
+      newLevel->state = act;
+      int size = action.size();
+      addLevel(newLevel);
+      itr = action.begin() + size - 1;
+     }
+     else
+      delete newLevel;
+     continue;
+    }
+   }
+   else
+   {
+    write(physFile, file, "</", 2);
+    write(physFile, file, (*itr)->name.c_str(), (*itr)->name.length());
+    write(physFile, file, ">", 1);
+    XMLLevel *oldLevel = removeLevel();
+    delete oldLevel;
+    itr = action.end();
+    --itr;
+    while (*itr != act)
+     --itr;
+    continue;
+   }
+  }
+  int type = (*itr)->getType();
+  if ((XMLTYPE_CREATE != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
+  {
+   std::string tag = (*itr)->createTag();
+   write(physFile, file, "<", 1);
+   write(physFile, file, tag.c_str(), tag.length());
+   write(physFile, file, ">", 1);
+  }
+  char convert[30];
+  std::string content;
+  switch(type)
+  {
+   case XMLTYPE_BOOL:
+   case XMLTYPE_INT:
+   case XMLTYPE_UINT:
+   case XMLTYPE_INT16:
+   case XMLTYPE_UINT16:
+   case XMLTYPE_STRING:
+   case XMLTYPE_STDSTRING:
+    content = (*itr)->createString();
+    break;
+   case XMLTYPE_BITFIELD:
+   {
+    BitField *b = reinterpret_cast<BitField*>((*itr)->object);
+    ValueLookup *lookup = reinterpret_cast<ValueLookup*>((*itr)->data);
+    for (int i = b->getMaxSet(); i >= 0; --i)
+    {
+     if (b->isSet(i))
+     {
+      content = "<" + (*itr)->createTag() + ">" + lookup->getName(i) + "</" + (*itr)->name + ">";
+     }
+    }
+    break;
+   }
+   case XMLTYPE_VECTORUINT:
+   {
+    std::vector<unsigned int> *v = reinterpret_cast<std::vector<unsigned int> *>((*itr)->object);
+    for (int i = 0; i < v->size(); ++i)
+    {
+     sprintf(convert, "%u", (*v)[i]);
+     content += "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
+    }
+    break;
+   }
+   case XMLTYPE_VECTORSTRING:
+   {
+    std::vector<std::string> *v = reinterpret_cast<std::vector<std::string> *>((*itr)->object);
+    for (int i = 0; i < v->size(); ++i)
+    {
+     content += "<" + (*itr)->createTag() + ">" + (*v)[i] + "</" + (*itr)->name + ">";
+    }
+    break;
+   }
+   case XMLTYPE_CREATE:
+   {
+    XMLArray *ary = reinterpret_cast<XMLArray*>((*itr)->object);
+    if (0 != ary->size())
+    {
+     XMLLevel *newLevel = new XMLLevel;
+     newLevel->object = ary->get(0);
+     std::string objnm = typeid(*(newLevel->object)).name();
+     XMLAction *act = *itr;
+     for (; (act) && (!act->objnm.empty()) && (act->objnm != objnm); act = act->next)
+     {
+     }
+     if (act)
+     {
+      std::string tag = act->createTag();
+      write(physFile, file, "<", 1);
+      write(physFile, file, tag.c_str(), tag.length());
+      write(physFile, file, ">", 1);
+      newLevel->state = act;
+      int size = action.size();
+      addLevel(newLevel);
+      itr = action.begin() + size - 1;
+     }
+     else
+      delete newLevel;
+    }
+    break;
+   }
+   case XMLTYPE_OBJECT:
+   {
+    XMLLevel *newLevel = new XMLLevel;
+    newLevel->state = *itr;
+    newLevel->object = reinterpret_cast<XMLObject*>((*itr)->object);
+    int size = action.size();
+    addLevel(newLevel);
+    itr = action.begin() + size - 1;
+    break;
+   }
+   default:
+    break;
+  }
+  if (content.length())
+   write(physFile, file, content.c_str(), content.length());
+  if ((XMLTYPE_CREATE != type) && (XMLTYPE_OBJECT != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
+  {
+   write(physFile, file, "</", 2);
+   write(physFile, file, (*itr)->name.c_str(), (*itr)->name.length());
+   write(physFile, file, ">", 1);
+  }
+ }
+ write(physFile, file, "</data>\n", 8);
+ if (strcmp(filename, "-") == 0)
+ {
+ }
+ else if (physfs)
+ {
+  PHYSFS_close(physFile);
+ }
+ else
+ {
+  fclose(file);
+ }
+}
+
+void XMLSerializer::write(PHYSFS_file *physFile, FILE *file, const char *content, size_t len)
+{
+ if (physFile)
+ {
+  PHYSFS_write(physFile, content, 1, len);
+ }
+ else if (file)
+ {
+  fwrite(content, 1, len, file);
  }
 }
 

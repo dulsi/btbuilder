@@ -14,6 +14,7 @@
 #include <list>
 #include <string>
 #include <stdint.h>
+#include <physfs.h>
 
 class ObjectSerializer;
 
@@ -158,6 +159,9 @@ class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
   virtual void characterData(const XML_Char *s, int len);
 
   void write(const char *filename, bool physfs);
+
+ protected:
+  void write(PHYSFS_file *physFile, FILE *file, const char *content, size_t len);
 
  private:
   XMLAction *state;
