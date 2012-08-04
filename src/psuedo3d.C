@@ -12,7 +12,7 @@
 int Psuedo3D::changeXY[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} };
 
 Psuedo3D::Psuedo3D(int xM, int yM)
- : xMult(xM), yMult(yM), config(NULL), display(NULL), background(NULL), walls(NULL)
+ : xMult(xM), yMult(yM), config(NULL), display(NULL), background(NULL), walls(NULL), mapWalls(NULL), mapSpecial(NULL), mapUnknown(NULL)
 {
 }
 
@@ -24,6 +24,34 @@ Psuedo3D::~Psuedo3D()
 
 void Psuedo3D::clear()
 {
+ if (mapUnknown)
+ {
+  SDL_FreeSurface(mapUnknown);
+  mapUnknown = NULL;
+ }
+ if (mapSpecial)
+ {
+  SDL_FreeSurface(mapSpecial);
+  mapSpecial = NULL;
+ }
+ if (mapWalls)
+ {
+  for (int i = 0; i < config->mapType.size(); ++i)
+  {
+   for (int j = 0; j < CARDINAL_DIRECTIONS; ++j)
+   {
+    if (mapWalls[i][j])
+    {
+     SDL_FreeSurface(mapWalls[i][j]);
+     mapWalls[i][j] = NULL;
+    }
+   }
+   delete [] mapWalls[i];
+   mapWalls[i] = NULL;
+  }
+  delete [] mapWalls;
+  mapWalls = NULL;
+ }
  if (walls)
  {
   for (int i = 0; i < config->wallType.size(); ++i)
@@ -90,6 +118,14 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
  }
 }
 
+SDL_Surface *Psuedo3D::getMapWall(Psuedo3DMap *map, int x, int y, int direction)
+{
+ int type = config->findMapType(map->getWallType(x, y, direction));
+ if (type > 0)
+  return mapWalls[type - 1][direction];
+ return NULL;
+}
+
 void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
 {
  if (config)
@@ -102,20 +138,7 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
   }
  }
  config = configNew;
- std::string imagePath("image/");
- SDL_Surface *img = IMG_Load((imagePath + config->background).c_str());
- if (NULL == img)
- {
-  printf((std::string("Failed - Loading ") + imagePath + config->background + std::string("\n")).c_str());
-  exit(0);
- }
- if ((xMult > 1) || (yMult > 1))
- {
-  background = simpleZoomSurface(img, xMult, yMult);
-  SDL_FreeSurface(img);
- }
- else
-  background = img;
+ background = loadImage(config->background);
  walls = new SDL_Surface_ary[config->wallType.size()];
  for (int i = 0; i < config->wallType.size(); ++i)
  {
@@ -123,23 +146,27 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
   for (int j = 0; j < WALL_DIRECTIONS; ++j)
    if (config->wallType[i]->walls[j])
    {
-    img = IMG_Load((imagePath + config->wallType[i]->walls[j]).c_str());
-    if (NULL == img)
-    {
-     printf((std::string("Failed - Loading ") + imagePath + config->wallType[i]->walls[j] + std::string("\n")).c_str());
-     exit(0);
-    }
-    if ((xMult > 1) || (yMult > 1))
-    {
-     walls[i][j] = simpleZoomSurface(img, xMult, yMult);
-     SDL_FreeSurface(img);
-    }
-    else
-     walls[i][j] = img;
+    walls[i][j] = loadImage(config->wallType[i]->walls[j]);
    }
    else
     walls[i][j] = NULL;
  }
+ mapWalls = new SDL_Surface_ary[config->mapType.size()];
+ for (int i = 0; i < config->mapType.size(); ++i)
+ {
+  mapWalls[i] = new SDL_Surface_ptr[CARDINAL_DIRECTIONS];
+  for (int j = 0; j < CARDINAL_DIRECTIONS; ++j)
+   if (config->mapType[i]->mapWalls[j])
+   {
+    mapWalls[i][j] = loadImage(config->mapType[i]->mapWalls[j]);
+   }
+   else
+    mapWalls[i][j] = NULL;
+ }
+ if (config->mapSpecial)
+  mapSpecial = loadImage(config->mapSpecial);
+ if (config->mapUnknown)
+  mapUnknown = loadImage(config->mapUnknown);
  if (!display)
  {
   Uint32 rmask, gmask, bmask, amask;
@@ -235,3 +262,22 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
   }
  }
 }
+
+SDL_Surface *Psuedo3D::loadImage(const char *file)
+{
+ std::string imagePath("image/");
+ SDL_Surface *img = IMG_Load((imagePath + file).c_str());
+ if (NULL == img)
+ {
+  printf((std::string("Failed - Loading ") + imagePath + file + std::string("\n")).c_str());
+  exit(0);
+ }
+ if ((xMult > 1) || (yMult > 1))
+ {
+  SDL_Surface *tmp = img;
+  img = simpleZoomSurface(tmp, xMult, yMult);
+  SDL_FreeSurface(tmp);
+ }
+ return img;
+}
+

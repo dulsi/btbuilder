@@ -36,6 +36,8 @@
 #define WALL_EDGE_RIGHT5_2 22
 #define WALL_EDGE_RIGHT5_3 23
 
+#define CARDINAL_DIRECTIONS 4
+
 class Psuedo3DWallType : public XMLObject
 {
  public:
@@ -61,11 +63,35 @@ class Psuedo3DWallType : public XMLObject
   char *walls[WALL_DIRECTIONS];
 };
 
+class Psuedo3DMapType : public XMLObject
+{
+ public:
+  Psuedo3DMapType()
+  {
+   for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+    mapWalls[i] = 0;
+  }
+
+  ~Psuedo3DMapType()
+  {
+   for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+     if (mapWalls[i])
+      delete [] mapWalls[i];
+  }
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DMapType; }
+
+  int type;
+  char *mapWalls[CARDINAL_DIRECTIONS];
+};
+
 class Psuedo3DConfig : public XMLObject
 {
  public:
   Psuedo3DConfig()
-   : height(0), width(0), background(0)
+   : height(0), width(0), background(0), mapSpecial(0), mapUnknown(0)
   {
   }
 
@@ -76,6 +102,7 @@ class Psuedo3DConfig : public XMLObject
   }
 
   int findWallType(int type, int position);
+  int findMapType(int type);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DConfig; }
@@ -85,6 +112,10 @@ class Psuedo3DConfig : public XMLObject
   int divide;
   char *background;
   XMLVector<Psuedo3DWallType*> wallType;
+  int mapHeight, mapWidth;
+  XMLVector<Psuedo3DMapType*> mapType;
+  char *mapSpecial;
+  char *mapUnknown;
 };
 
 #endif

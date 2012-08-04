@@ -20,12 +20,16 @@ class Psuedo3D
   void clear();
   void draw(Psuedo3DMap *map, int x, int y, int direction);
   SDL_Surface *getDisplay() { return display; }
+  SDL_Surface *getMapWall(Psuedo3DMap *map, int x, int y, int direction);
+  SDL_Surface *getMapSpecial() { return mapSpecial; }
+  SDL_Surface *getMapUnknown() { return mapUnknown; }
   void setConfig(Psuedo3DConfig *configNew);
   void setMultiplier(int xM, int yM) { xMult = xM; yMult = yM; }
 
  protected:
   void drawEdge(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
   void drawFront(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
+  SDL_Surface *loadImage(const char *file);
 
  public:
   typedef SDL_Surface *SDL_Surface_ptr;
@@ -35,6 +39,9 @@ class Psuedo3D
   SDL_Surface *display;
   SDL_Surface *background;
   SDL_Surface ***walls;
+  SDL_Surface ***mapWalls;
+  SDL_Surface *mapSpecial;
+  SDL_Surface *mapUnknown;
 
   static int changeXY[4][2];
 };

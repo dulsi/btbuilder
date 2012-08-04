@@ -428,6 +428,12 @@ void BTGame::run(BTDisplay &d)
        moveTo.run(d);
        break;
       }
+      case '?':
+      {
+       d.drawMap(128, 144, getX() - 3, getY() - 3, 7, 7, false);
+       unsigned char response = d.readChar();
+       break;
+      }
       default:
        break;
      }

@@ -24,6 +24,19 @@ void Psuedo3DWallType::serialize(ObjectSerializer* s)
  }
 }
 
+void Psuedo3DMapType::serialize(ObjectSerializer* s)
+{
+ s->add("type", &type);
+ for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  sprintf(tmp, "%d", i);
+  attrib->push_back(XMLAttribute("direction", tmp));
+  s->add("mapWall", &mapWalls[i], attrib);
+ }
+}
+
 int Psuedo3DConfig::findWallType(int type, int position)
 {
  if (type)
@@ -38,6 +51,19 @@ int Psuedo3DConfig::findWallType(int type, int position)
  return 0;
 }
 
+int Psuedo3DConfig::findMapType(int type)
+{
+ if (type)
+ {
+  for (int i = 0; i < mapType.size(); ++i)
+  {
+   if (mapType[i]->type == type)
+    return i + 1;
+  }
+ }
+ return 0;
+}
+
 void Psuedo3DConfig::serialize(ObjectSerializer* s)
 {
  s->add("height", &height);
@@ -45,6 +71,11 @@ void Psuedo3DConfig::serialize(ObjectSerializer* s)
  s->add("background", &background);
  s->add("divide", &divide);
  s->add("walltype", &wallType, &Psuedo3DWallType::create);
+ s->add("mapHeight", &mapHeight);
+ s->add("mapWidth", &mapWidth);
+ s->add("maptype", &mapType, &Psuedo3DMapType::create);
+ s->add("mapSpecial", &mapSpecial);
+ s->add("mapUnknown", &mapUnknown);
 }
 
 void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg)

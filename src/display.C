@@ -463,6 +463,65 @@ void BTDisplay::drawIcons()
  }
 }
 
+void BTDisplay::drawMap(int x, int y, int xStart, int yStart, int width, int height, bool knowledge)
+{
+ // Draw black
+ BTGame *g = BTGame::getGame();
+ BTMap *m = g->getMap();
+ SDL_Rect src, dst;
+ dst.x = x * xMult;
+ dst.y = y * yMult;
+ dst.w = width * p3d.config->mapWidth * xMult;
+ dst.h = height * p3d.config->mapHeight * yMult;
+ SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
+ for (int i = 0; i < width; ++i)
+ {
+  for (int k = 0; k < height; ++k)
+  {
+   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()))
+   {
+    SDL_Surface *unknown = p3d.getMapUnknown();
+    if (unknown)
+    {
+     src.x = 0;
+     src.y = 0;
+     src.w = p3d.config->mapWidth * xMult;
+     src.h = p3d.config->mapHeight * yMult;
+     dst.x = (x + (i * p3d.config->mapWidth)) * xMult;
+     dst.y = (y + (k * p3d.config->mapHeight)) * yMult;
+     dst.w = p3d.config->mapWidth * xMult;
+     dst.h = p3d.config->mapHeight * yMult;
+     SDL_BlitSurface(unknown, &src, mainScreen, &dst);
+    }
+   }
+   else
+   {
+    for (int direction = 0; direction < CARDINAL_DIRECTIONS; ++direction)
+    {
+     SDL_Surface *mapWall = p3d.getMapWall(g, xStart + i, yStart + k, direction);
+     if (mapWall)
+     {
+      src.x = 0;
+      src.y = 0;
+      src.w = p3d.config->mapWidth * xMult;
+      src.h = p3d.config->mapHeight * yMult;
+      dst.x = (x + (i * p3d.config->mapWidth)) * xMult;
+      dst.y = (y + (k * p3d.config->mapHeight)) * yMult;
+      dst.w = p3d.config->mapWidth * xMult;
+      dst.h = p3d.config->mapHeight * yMult;
+      SDL_BlitSurface(mapWall, &src, mainScreen, &dst);
+     }
+    }
+   }
+  }
+ }
+ dst.x = x * xMult;
+ dst.y = y * yMult;
+ dst.w = width * p3d.config->mapWidth * xMult;
+ dst.h = height * p3d.config->mapHeight * yMult;
+ SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
+}
+
 void BTDisplay::drawStats()
 {
  int i;

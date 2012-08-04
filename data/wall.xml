@@ -4,6 +4,31 @@
   <height>88</height>
   <background>dungeon_horizon.png</background>
   <divide>8</divide>
+  <mapWidth>8</mapWidth>
+  <mapHeight>8</mapHeight>
+  <mapSpecial>map_special.png</mapSpecial>
+  <mapUnknown>map_unknown.png</mapUnknown>
+  <maptype>
+   <type>1</type>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>2</type>
+   <mapWall direction="0">map0_2.png</mapWall>
+   <mapWall direction="1">map1_2.png</mapWall>
+   <mapWall direction="2">map2_2.png</mapWall>
+   <mapWall direction="3">map3_2.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>3</type>
+   <mapWall direction="0">map0_3.png</mapWall>
+   <mapWall direction="1">map1_3.png</mapWall>
+   <mapWall direction="2">map2_3.png</mapWall>
+   <mapWall direction="3">map3_3.png</mapWall>
+  </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
@@ -134,6 +159,31 @@
   <height>88</height>
   <background>dungeon_horizon.png</background>
   <divide>8</divide>
+  <mapWidth>8</mapWidth>
+  <mapHeight>8</mapHeight>
+  <mapSpecial>map_special.png</mapSpecial>
+  <mapUnknown>map_unknown.png</mapUnknown>
+  <maptype>
+   <type>1</type>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>2</type>
+   <mapWall direction="0">map0_2.png</mapWall>
+   <mapWall direction="1">map1_2.png</mapWall>
+   <mapWall direction="2">map2_2.png</mapWall>
+   <mapWall direction="3">map3_2.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>3</type>
+   <mapWall direction="0">map0_3.png</mapWall>
+   <mapWall direction="1">map1_3.png</mapWall>
+   <mapWall direction="2">map2_3.png</mapWall>
+   <mapWall direction="3">map3_3.png</mapWall>
+  </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
@@ -264,6 +314,31 @@
   <height>88</height>
   <background>dungeon_horizon.png</background>
   <divide>8</divide>
+  <mapWidth>8</mapWidth>
+  <mapHeight>8</mapHeight>
+  <mapSpecial>map_special.png</mapSpecial>
+  <mapUnknown>map_unknown.png</mapUnknown>
+  <maptype>
+   <type>1</type>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>2</type>
+   <mapWall direction="0">map0_2.png</mapWall>
+   <mapWall direction="1">map1_2.png</mapWall>
+   <mapWall direction="2">map2_2.png</mapWall>
+   <mapWall direction="3">map3_2.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>3</type>
+   <mapWall direction="0">map0_3.png</mapWall>
+   <mapWall direction="1">map1_3.png</mapWall>
+   <mapWall direction="2">map2_3.png</mapWall>
+   <mapWall direction="3">map3_3.png</mapWall>
+  </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
@@ -394,6 +469,31 @@
   <height>88</height>
   <background>wilderness_horizon.png</background>
   <divide>1</divide>
+  <mapWidth>8</mapWidth>
+  <mapHeight>8</mapHeight>
+  <mapSpecial>map_special.png</mapSpecial>
+  <mapUnknown>map_unknown.png</mapUnknown>
+  <maptype>
+   <type>1</type>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>2</type>
+   <mapWall direction="0">map0_2.png</mapWall>
+   <mapWall direction="1">map1_2.png</mapWall>
+   <mapWall direction="2">map2_2.png</mapWall>
+   <mapWall direction="3">map3_2.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>3</type>
+   <mapWall direction="0">map0_3.png</mapWall>
+   <mapWall direction="1">map1_3.png</mapWall>
+   <mapWall direction="2">map2_3.png</mapWall>
+   <mapWall direction="3">map3_3.png</mapWall>
+  </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
