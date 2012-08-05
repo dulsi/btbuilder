@@ -14,6 +14,10 @@ int Psuedo3D::changeXY[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} };
 Psuedo3D::Psuedo3D(int xM, int yM)
  : xMult(xM), yMult(yM), config(NULL), display(NULL), background(NULL), walls(NULL), mapWalls(NULL), mapSpecial(NULL), mapUnknown(NULL)
 {
+ for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+ {
+  mapArrows[i] = NULL;
+ }
 }
 
 Psuedo3D::~Psuedo3D()
@@ -24,6 +28,14 @@ Psuedo3D::~Psuedo3D()
 
 void Psuedo3D::clear()
 {
+ for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+ {
+  if (mapArrows[i])
+  {
+   SDL_FreeSurface(mapArrows[i]);
+   mapArrows[i] = NULL;
+  }
+ }
  if (mapUnknown)
  {
   SDL_FreeSurface(mapUnknown);
@@ -167,6 +179,15 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
   mapSpecial = loadImage(config->mapSpecial);
  if (config->mapUnknown)
   mapUnknown = loadImage(config->mapUnknown);
+ for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+ {
+  if (config->mapArrows[i])
+  {
+   mapArrows[i] = loadImage(config->mapArrows[i]);
+  }
+  else
+   mapArrows[i] = NULL;
+ }
  if (!display)
  {
   Uint32 rmask, gmask, bmask, amask;

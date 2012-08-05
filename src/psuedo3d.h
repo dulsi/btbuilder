@@ -23,6 +23,7 @@ class Psuedo3D
   SDL_Surface *getMapWall(int mapType, int direction, bool complete);
   SDL_Surface *getMapSpecial() { return mapSpecial; }
   SDL_Surface *getMapUnknown() { return mapUnknown; }
+  SDL_Surface *getMapArrow(int direction) { return mapArrows[direction]; }
   void setConfig(Psuedo3DConfig *configNew);
   void setMultiplier(int xM, int yM) { xMult = xM; yMult = yM; }
 
@@ -42,6 +43,7 @@ class Psuedo3D
   SDL_Surface ***mapWalls;
   SDL_Surface *mapSpecial;
   SDL_Surface *mapUnknown;
+  SDL_Surface *mapArrows[CARDINAL_DIRECTIONS];
 
   static int changeXY[4][2];
 };

@@ -96,6 +96,8 @@ class Psuedo3DConfig : public XMLObject
   Psuedo3DConfig()
    : height(0), width(0), background(0), mapSpecial(0), mapUnknown(0)
   {
+   for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+    mapArrows[i] = 0;
   }
 
   ~Psuedo3DConfig()
@@ -119,6 +121,7 @@ class Psuedo3DConfig : public XMLObject
   XMLVector<Psuedo3DMapType*> mapType;
   char *mapSpecial;
   char *mapUnknown;
+  char *mapArrows[CARDINAL_DIRECTIONS];
 };
 
 #endif

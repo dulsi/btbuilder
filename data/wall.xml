@@ -8,6 +8,10 @@
   <mapHeight>8</mapHeight>
   <mapSpecial>map_special.png</mapSpecial>
   <mapUnknown>map_unknown.png</mapUnknown>
+  <mapArrow direction="0">map_arrow0.png</mapArrow>
+  <mapArrow direction="1">map_arrow1.png</mapArrow>
+  <mapArrow direction="2">map_arrow2.png</mapArrow>
+  <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <mapWall direction="0">map0_1.png</mapWall>
@@ -164,6 +168,10 @@
   <mapHeight>8</mapHeight>
   <mapSpecial>map_special.png</mapSpecial>
   <mapUnknown>map_unknown.png</mapUnknown>
+  <mapArrow direction="0">map_arrow0.png</mapArrow>
+  <mapArrow direction="1">map_arrow1.png</mapArrow>
+  <mapArrow direction="2">map_arrow2.png</mapArrow>
+  <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <mapWall direction="0">map0_1.png</mapWall>
@@ -320,6 +328,10 @@
   <mapHeight>8</mapHeight>
   <mapSpecial>map_special.png</mapSpecial>
   <mapUnknown>map_unknown.png</mapUnknown>
+  <mapArrow direction="0">map_arrow0.png</mapArrow>
+  <mapArrow direction="1">map_arrow1.png</mapArrow>
+  <mapArrow direction="2">map_arrow2.png</mapArrow>
+  <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <mapWall direction="0">map0_1.png</mapWall>
@@ -476,6 +488,10 @@
   <mapHeight>8</mapHeight>
   <mapSpecial>map_special.png</mapSpecial>
   <mapUnknown>map_unknown.png</mapUnknown>
+  <mapArrow direction="0">map_arrow0.png</mapArrow>
+  <mapArrow direction="1">map_arrow1.png</mapArrow>
+  <mapArrow direction="2">map_arrow2.png</mapArrow>
+  <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <mapWall direction="0">map0_1.png</mapWall>

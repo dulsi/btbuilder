@@ -512,6 +512,14 @@ void BTDisplay::drawMap(int x, int y, int xStart, int yStart, int width, int hei
       SDL_BlitSurface(special, &src, mainScreen, &dst);
      }
     }
+    if ((yStart + k == g->getY()) && (xStart + i == g->getX()))
+    {
+     SDL_Surface *arrow = p3d.getMapArrow(g->getFacing());
+     if (arrow)
+     {
+      SDL_BlitSurface(arrow, &src, mainScreen, &dst);
+     }
+    }
    }
   }
  }

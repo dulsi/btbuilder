@@ -82,6 +82,14 @@ void Psuedo3DConfig::serialize(ObjectSerializer* s)
  s->add("maptype", &mapType, &Psuedo3DMapType::create);
  s->add("mapSpecial", &mapSpecial);
  s->add("mapUnknown", &mapUnknown);
+ for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  sprintf(tmp, "%d", i);
+  attrib->push_back(XMLAttribute("direction", tmp));
+  s->add("mapArrow", &mapArrows[i], attrib);
+ }
 }
 
 void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg)
