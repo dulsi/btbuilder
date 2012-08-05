@@ -27,6 +27,7 @@ void Psuedo3DWallType::serialize(ObjectSerializer* s)
 void Psuedo3DMapType::serialize(ObjectSerializer* s)
 {
  s->add("type", &type);
+ s->add("incompleteType", &incompleteType);
  for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
@@ -51,14 +52,19 @@ int Psuedo3DConfig::findWallType(int type, int position)
  return 0;
 }
 
-int Psuedo3DConfig::findMapType(int type)
+int Psuedo3DConfig::findMapType(int type, bool complete)
 {
  if (type)
  {
   for (int i = 0; i < mapType.size(); ++i)
   {
    if (mapType[i]->type == type)
-    return i + 1;
+   {
+    if ((!complete) && (-1 != mapType[i]->incompleteType))
+     return findMapType(mapType[i]->incompleteType, true);
+    else
+     return i + 1;
+   }
   }
  }
  return 0;

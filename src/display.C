@@ -478,19 +478,19 @@ void BTDisplay::drawMap(int x, int y, int xStart, int yStart, int width, int hei
  {
   for (int k = 0; k < height; ++k)
   {
-   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()))
+   src.x = 0;
+   src.y = 0;
+   src.w = p3d.config->mapWidth * xMult;
+   src.h = p3d.config->mapHeight * yMult;
+   dst.x = (x + (i * p3d.config->mapWidth)) * xMult;
+   dst.y = (y + (k * p3d.config->mapHeight)) * yMult;
+   dst.w = p3d.config->mapWidth * xMult;
+   dst.h = p3d.config->mapHeight * yMult;
+   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()) || ((!knowledge) && (!g->getKnowledge(xStart + i, yStart + k))))
    {
     SDL_Surface *unknown = p3d.getMapUnknown();
     if (unknown)
     {
-     src.x = 0;
-     src.y = 0;
-     src.w = p3d.config->mapWidth * xMult;
-     src.h = p3d.config->mapHeight * yMult;
-     dst.x = (x + (i * p3d.config->mapWidth)) * xMult;
-     dst.y = (y + (k * p3d.config->mapHeight)) * yMult;
-     dst.w = p3d.config->mapWidth * xMult;
-     dst.h = p3d.config->mapHeight * yMult;
      SDL_BlitSurface(unknown, &src, mainScreen, &dst);
     }
    }
@@ -498,18 +498,18 @@ void BTDisplay::drawMap(int x, int y, int xStart, int yStart, int width, int hei
    {
     for (int direction = 0; direction < CARDINAL_DIRECTIONS; ++direction)
     {
-     SDL_Surface *mapWall = p3d.getMapWall(g, xStart + i, yStart + k, direction);
+     SDL_Surface *mapWall = p3d.getMapWall(m->getSquare(yStart + k, xStart + i).getWall(direction), direction, knowledge);
      if (mapWall)
      {
-      src.x = 0;
-      src.y = 0;
-      src.w = p3d.config->mapWidth * xMult;
-      src.h = p3d.config->mapHeight * yMult;
-      dst.x = (x + (i * p3d.config->mapWidth)) * xMult;
-      dst.y = (y + (k * p3d.config->mapHeight)) * yMult;
-      dst.w = p3d.config->mapWidth * xMult;
-      dst.h = p3d.config->mapHeight * yMult;
       SDL_BlitSurface(mapWall, &src, mainScreen, &dst);
+     }
+    }
+    if (m->getSquare(yStart + k, xStart + i).getSpecial() >= 0)
+    {
+     SDL_Surface *special = p3d.getMapSpecial();
+     if (special)
+     {
+      SDL_BlitSurface(special, &src, mainScreen, &dst);
      }
     }
    }

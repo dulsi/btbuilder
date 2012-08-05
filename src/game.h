@@ -75,8 +75,10 @@ class BTGame : public Psuedo3DMap
   BTStatus &getStatus();
 
   bool getLocalFlag(int index);
+  bool getKnowledge(int x, int y);
   bool getGlobalFlag(int index);
   void setLocalFlag(int index, bool value);
+  void setKnowledge(int x, int y, bool value);
   void setGlobalFlag(int index, bool value);
 
   void run(BTDisplay &d);
@@ -135,6 +137,7 @@ class BTGame : public Psuedo3DMap
   BTStatus status;
   BitField local;
   BitField global;
+  BitField knowledge;
   unsigned int gameTime;
   unsigned int timedExpiration;
   IShort timedSpecial;

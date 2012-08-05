@@ -118,9 +118,9 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
  }
 }
 
-SDL_Surface *Psuedo3D::getMapWall(Psuedo3DMap *map, int x, int y, int direction)
+SDL_Surface *Psuedo3D::getMapWall(int wallType, int direction, bool complete)
 {
- int type = config->findMapType(map->getWallType(x, y, direction));
+ int type = config->findMapType(wallType, complete);
  if (type > 0)
   return mapWalls[type - 1][direction];
  return NULL;

@@ -42,6 +42,7 @@ class Psuedo3DWallType : public XMLObject
 {
  public:
   Psuedo3DWallType()
+   : type(-1)
   {
    for (int i = 0; i < WALL_DIRECTIONS; ++i)
     walls[i] = 0;
@@ -67,6 +68,7 @@ class Psuedo3DMapType : public XMLObject
 {
  public:
   Psuedo3DMapType()
+   : type(-1), incompleteType(-1)
   {
    for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
     mapWalls[i] = 0;
@@ -84,6 +86,7 @@ class Psuedo3DMapType : public XMLObject
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DMapType; }
 
   int type;
+  int incompleteType;
   char *mapWalls[CARDINAL_DIRECTIONS];
 };
 
@@ -102,7 +105,7 @@ class Psuedo3DConfig : public XMLObject
   }
 
   int findWallType(int type, int position);
-  int findMapType(int type);
+  int findMapType(int type, bool complete);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DConfig; }

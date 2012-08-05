@@ -115,6 +115,7 @@ BTMap *BTGame::loadMap(const char *filename)
   delete levelMap;
  }
  local.clearAll();
+ knowledge.clearAll();
  clearTimedSpecial();
  clearMapEffects();
  int len = strlen(filename);
@@ -274,6 +275,12 @@ bool BTGame::getLocalFlag(int index)
  return local.isSet(index);
 }
 
+bool BTGame::getKnowledge(int x, int y)
+{
+ int index = y * levelMap->getXSize() + x;
+ return knowledge.isSet(index);
+}
+
 bool BTGame::getGlobalFlag(int index)
 {
  return global.isSet(index);
@@ -285,6 +292,15 @@ void BTGame::setLocalFlag(int index, bool value)
   local.set(index);
  else
   local.clear(index);
+}
+
+void BTGame::setKnowledge(int x, int y, bool value)
+{
+ int index = y * levelMap->getXSize() + x;
+ if (value)
+  knowledge.set(index);
+ else
+  knowledge.clear(index);
 }
 
 void BTGame::setGlobalFlag(int index, bool value)
@@ -304,6 +320,7 @@ void BTGame::run(BTDisplay &d)
   d.refresh();
   d.setPsuedo3DConfig(module->wall);
   d.setWallGraphics(levelMap->getType());
+  setKnowledge(xPos, yPos, true);
   unsigned char key = ' ';
   try
   {
@@ -318,6 +335,7 @@ void BTGame::run(BTDisplay &d)
   {
    try
    {
+    setKnowledge(xPos, yPos, true);
     nextTurn(d);
     d.drawView();
     d.drawLabel(levelMap->getName());
@@ -329,6 +347,7 @@ void BTGame::run(BTDisplay &d)
      if (s >= 0)
       special = runSpecial(d, s);
     }
+    setKnowledge(xPos, yPos, true);
     if ((!special) && (timedSpecial >= 0) && (isExpired(timedExpiration)))
     {
      IShort s = timedSpecial;
@@ -336,6 +355,7 @@ void BTGame::run(BTDisplay &d)
      special = runSpecial(d, s);
      continue;
     }
+    setKnowledge(xPos, yPos, true);
     d.drawView();
     d.drawLabel(levelMap->getName());
     if (!special)

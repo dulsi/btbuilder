@@ -24,6 +24,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <incompleteType>1</incompleteType>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
@@ -179,6 +180,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <incompleteType>1</incompleteType>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
@@ -334,6 +336,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <incompleteType>1</incompleteType>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
@@ -489,6 +492,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <incompleteType>1</incompleteType>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
