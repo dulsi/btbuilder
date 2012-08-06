@@ -9,7 +9,7 @@
 #include "xmlserializer.h"
 
 BTDisplayConfig::BTDisplayConfig()
- : x3d(0), y3d(0), background(0), font(0)
+ : x3d(0), y3d(0), background(0), font(0), xMap(0), yMap(0), widthMap(0), heightMap(0)
 {
 }
 
@@ -44,5 +44,9 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("print", &statusInfo, &BTPrint::create);
  s->add("icon", &icon, &BTIcon::create);
  s->add("facingIcon", &icon, &BTFacingIcon::create);
+ s->add("xMap", &xMap);
+ s->add("yMap", &yMap);
+ s->add("widthMap", &widthMap);
+ s->add("heightMap", &heightMap);
 }
 

@@ -148,4 +148,8 @@
 		<position><x>225</x><y>120</y><w>20</w><h>12</h></position>
 		<effect>31</effect>
 	</facingIcon>
+	<xMap>128</xMap>
+	<yMap>144</yMap>
+	<widthMap>7</widthMap>
+	<heightMap>7</heightMap>
 </display>

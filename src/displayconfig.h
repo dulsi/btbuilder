@@ -31,6 +31,8 @@ class BTDisplayConfig : public XMLObject
   char *font;
   XMLVector<BTStatusInfo*> statusInfo;
   XMLVector<BTIcon*> icon;
+  int xMap, yMap;
+  int widthMap, heightMap;
 };
 
 #endif

@@ -214,5 +214,13 @@ class BTSaveBonusEffect : public BTTargetedEffect
   int bonus;
 };
 
+class BTScrySightEffect : public BTBaseEffect
+{
+ public:
+  BTScrySightEffect(int t, int x, int s, int m);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+};
+
 #endif
 

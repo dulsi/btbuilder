@@ -1532,3 +1532,13 @@ void BTSaveBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGE
  }
 }
 
+BTScrySightEffect::BTScrySightEffect(int t, int x, int s, int m)
+ : BTBaseEffect(t, x, s, m)
+{
+}
+
+int BTScrySightEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+ d.drawMap(true);
+}
+

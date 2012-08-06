@@ -463,27 +463,34 @@ void BTDisplay::drawIcons()
  }
 }
 
-void BTDisplay::drawMap(int x, int y, int xStart, int yStart, int width, int height, bool knowledge)
+void BTDisplay::drawMap(bool knowledge)
 {
+ drawView();
  // Draw black
  BTGame *g = BTGame::getGame();
  BTMap *m = g->getMap();
  SDL_Rect src, dst;
- dst.x = x * xMult;
- dst.y = y * yMult;
- dst.w = width * p3d.config->mapWidth * xMult;
- dst.h = height * p3d.config->mapHeight * yMult;
+ dst.x = config->xMap * xMult;
+ dst.y = config->yMap * yMult;
+ src.w = dst.w = config->widthMap * p3d.config->mapWidth * xMult;
+ src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
+ src.x = 0;
+ src.y = 0;
+ SDL_Surface *backup = SDL_CreateRGBSurface(SDL_SWSURFACE, dst.w, dst.h, 32, mainScreen->format->Rmask, mainScreen->format->Gmask, mainScreen->format->Bmask, mainScreen->format->Amask);
+ SDL_BlitSurface(mainScreen, &dst, backup, &src);
  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
- for (int i = 0; i < width; ++i)
+ int xStart = g->getX() - (config->widthMap / 2);
+ int yStart = g->getY() - (config->heightMap / 2);
+ for (int i = 0; i < config->widthMap; ++i)
  {
-  for (int k = 0; k < height; ++k)
+  for (int k = 0; k < config->heightMap; ++k)
   {
    src.x = 0;
    src.y = 0;
    src.w = p3d.config->mapWidth * xMult;
    src.h = p3d.config->mapHeight * yMult;
-   dst.x = (x + (i * p3d.config->mapWidth)) * xMult;
-   dst.y = (y + (k * p3d.config->mapHeight)) * yMult;
+   dst.x = (config->xMap + (i * p3d.config->mapWidth)) * xMult;
+   dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
    dst.w = p3d.config->mapWidth * xMult;
    dst.h = p3d.config->mapHeight * yMult;
    if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()) || ((!knowledge) && (!g->getKnowledge(xStart + i, yStart + k))))
@@ -523,10 +530,15 @@ void BTDisplay::drawMap(int x, int y, int xStart, int yStart, int width, int hei
    }
   }
  }
- dst.x = x * xMult;
- dst.y = y * yMult;
- dst.w = width * p3d.config->mapWidth * xMult;
- dst.h = height * p3d.config->mapHeight * yMult;
+ dst.x = config->xMap * xMult;
+ dst.y = config->yMap * yMult;
+ src.w = dst.w = config->widthMap * p3d.config->mapWidth * xMult;
+ src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
+ src.x = 0;
+ src.y = 0;
+ SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
+ unsigned char response = readChar();
+ SDL_BlitSurface(backup, &src, mainScreen, &dst);
  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 

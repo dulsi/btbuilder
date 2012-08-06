@@ -378,6 +378,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_BLOCKMAGIC:
    effect = new BTTargetedEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target);
    break;
+  case BTSPELLTYPE_SCRYSIGHT:
+   effect = new BTScrySightEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
+   break;
   default:
    break;
  }

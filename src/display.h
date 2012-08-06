@@ -85,7 +85,7 @@ class BTDisplay
   void drawText(const char *words, alignment a = left);
   void drawView();
   void drawIcons();
-  void drawMap(int x, int y, int xStart, int yStart, int width, int height, bool knowledge);
+  void drawMap(bool knowledge);
   void drawStats();
   SDL_Color &getBlack();
   BTDisplayConfig *getConfig();
