@@ -450,6 +450,46 @@ void BTGame::run(BTDisplay &d)
       }
       case '?':
       {
+       int quarter = (gameTime / (module->maxTime / 96)) % 4;
+       int hour = ((gameTime / (module->maxTime / 24)) + 6) % 24 + ((quarter == 3) ? 1 : 0);
+       std::string timeText;
+       if (hour == 0)
+       {
+        timeText = "midnight.";
+       }
+       else if (hour == 12)
+       {
+        timeText = "noon.";
+       }
+       else if (hour < 12)
+       {
+        char tmp[20];
+        sprintf(tmp, "%d a.m.", hour);
+        timeText = tmp;
+       }
+       else
+       {
+        char tmp[20];
+        sprintf(tmp, "%d p.m.", hour - 12);
+        timeText = tmp;
+       }
+       switch (quarter)
+       {
+        case 1:
+         timeText = "quarter after " + timeText;
+         break;
+        case 2:
+         timeText = "half past " + timeText;
+         break;
+        case 3:
+         timeText = "quarter til " + timeText;
+         break;
+        case 0:
+        default:
+         break;
+       }
+       timeText = "The time is " + timeText;
+       d.drawText(timeText.c_str());
        d.drawMap(false);
        break;
       }
