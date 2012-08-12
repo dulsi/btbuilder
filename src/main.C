@@ -130,46 +130,27 @@ int main(int argc, char *argv[])
   }
  }
 
+ BTMainScreen mainScreen(argv[0]);
  if (optind >= argc)
  {
   if (mode != MODE_STANDARD)
    return 0;
-  BTMainScreen mainScreen(argv[0]);
   mainScreen.run();
   return 0;
  }
  else if (mode == MODE_STANDARD)
  {
-  BTMainScreen mainScreen(argv[0]);
   std::string moduleFile("module/");
   moduleFile += argv[optind];
   moduleFile += ".xml";
   mainScreen.runModule(moduleFile);
   return 0;
  }
- PHYSFS_init(argv[0]);
  std::string moduleFile("module/");
  moduleFile += argv[optind];
  moduleFile += ".xml";
  BTModule module;
- XMLSerializer parser;
- module.serialize(&parser);
- parser.parse(moduleFile.c_str(), false);
- std::string appName("btbuilder");
- appName += PHYSFS_getDirSeparator();
- appName += argv[optind];
- if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
- {
-  // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
-  const char *basedir = PHYSFS_getBaseDir();
-  PHYSFS_addToSearchPath(basedir, 1);
- }
- std::string contentPath("module");
- contentPath += PHYSFS_getDirSeparator();
- contentPath += "content";
- contentPath += PHYSFS_getDirSeparator();
- contentPath += module.content;
- PHYSFS_addToSearchPath(contentPath.c_str(), 0);
+ mainScreen.loadModule(moduleFile, module);
  BTGame game(&module);
  BTFactory<BTMonster> &monList(game.getMonsterList());
  BTFactory<BTItem> &itmList(game.getItemList());
@@ -469,6 +450,7 @@ int main(int argc, char *argv[])
    }
   }
  }
+ PHYSFS_deinit();
  return 0;
 }
 

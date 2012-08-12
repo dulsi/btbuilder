@@ -70,32 +70,14 @@ void BTMainScreen::run()
 
 void BTMainScreen::runModule(std::string moduleFile)
 {
- PHYSFS_init(argv0);
  BTModule module;
- XMLSerializer parser;
- module.serialize(&parser);
- parser.parse(moduleFile.c_str(), false);
- std::string appName("btbuilder");
- appName += PHYSFS_getDirSeparator();
- appName += fs::path(moduleFile).stem().string();
- if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
- {
-  // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
-  if (0 == Alternative_setSaneConfig("btbsave"))
-   return;
- }
- std::string contentPath("module");
- contentPath += PHYSFS_getDirSeparator();
- contentPath += "content";
- contentPath += PHYSFS_getDirSeparator();
- contentPath += module.content;
- PHYSFS_addToSearchPath(contentPath.c_str(), 0);
+ loadModule(moduleFile, module);
  BTGame game(&module);
  BTFactory<BTMonster> &monList(game.getMonsterList());
  BTFactory<BTItem> &itmList(game.getItemList());
  BTFactory<BTSpell> &splList(game.getSpellList());
  BTDisplayConfig config;
- parser.removeLevel();
+ XMLSerializer parser;
  config.serialize(&parser);
  parser.parse("data/display.xml", true);
  if (display)
@@ -117,6 +99,29 @@ void BTMainScreen::runModule(std::string moduleFile)
   display = NULL;
  }
  PHYSFS_deinit();
+}
+
+void BTMainScreen::loadModule(std::string moduleFile, BTModule &module)
+{
+ PHYSFS_init(argv0);
+ XMLSerializer parser;
+ module.serialize(&parser);
+ parser.parse(moduleFile.c_str(), false);
+ std::string appName("btbuilder");
+ appName += PHYSFS_getDirSeparator();
+ appName += fs::path(moduleFile).stem().string();
+ if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
+ {
+  // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
+  if (0 == Alternative_setSaneConfig("btbsave"))
+   return;
+ }
+ std::string contentPath("module");
+ contentPath += PHYSFS_getDirSeparator();
+ contentPath += "content";
+ contentPath += PHYSFS_getDirSeparator();
+ contentPath += module.content;
+ PHYSFS_addToSearchPath(contentPath.c_str(), 0);
 }
 
 int BTMainScreen::Alternative_setSaneConfig(std::string appName)

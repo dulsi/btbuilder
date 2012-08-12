@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "display.h"
+#include "module.h"
 
 class BTMainScreen
 {
@@ -17,6 +18,8 @@ class BTMainScreen
 
   void run();
   void runModule(std::string moduleFile);
+
+  void loadModule(std::string moduleFile, BTModule &module);
 
  protected:
   int Alternative_setSaneConfig(std::string appName);
