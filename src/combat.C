@@ -741,6 +741,19 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
     active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, BTTARGET_PARTY, target);
     break;
    }
+   case BTRANGEDTYPE_FOE:
+   {
+    int target = BTTARGET_INDIVIDUAL;
+    if (!findTargetPC(BT_PARTYSIZE, target))
+     break;
+    int attacks = 1;
+    std::string text = mon.attack(party[target], monList[grp.monsterType].getRangedMessage(), "and hits", monList[grp.monsterType].getRangedDamage(), 100, monList[grp.monsterType].getRangedExtra(), attacks, active);
+    d.addText(text.c_str());
+    d.addText(blank);
+    d.process(BTDisplay::allKeys, 1000);
+    d.clearElements();
+    break;
+   }
    default:
    {
     std::string text = monList[grp.monsterType].getName();
