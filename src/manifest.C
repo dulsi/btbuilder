@@ -55,7 +55,7 @@ std::list<BTBaseEffect*> BTAttackManifest::manifest(BTDisplay &d, bool partySpel
   value.setNumber(value.getNumber() * (casterLevel / level));
  if ((0 != maximum) && (value.getNumber() > maximum))
   value.setNumber(maximum);
- effect.push_back(new BTAttackEffect(type, expire, singer, musicId, range, effectiveRange, 0, group, target, value, status, ""));
+ effect.push_back(new BTAttackEffect(type, expire, singer, musicId, range, effectiveRange, 0, group, target, value, xSpecial));
  return effect;
 }
 
@@ -65,7 +65,7 @@ void BTAttackManifest::serialize(ObjectSerializer* s)
  s->add("range", &range);
  s->add("effectiveRange", &effectiveRange);
  s->add("damage", &damage);
- s->add("status", &status);
+ s->add("xSpecial", &xSpecial);
  s->add("level", &level);
  s->add("maximum", &maximum);
 }

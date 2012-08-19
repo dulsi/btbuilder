@@ -134,8 +134,8 @@ void BTTargetedEffect::remove(BTCombat *combat, int g, int who)
  }
 }
 
-BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const char *text)
- : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts), statusText(text)
+BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts)
+ : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts)
 {
 }
 
@@ -171,89 +171,13 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   {
    for (int i = 0; i < party.size(); ++i)
    {
-    int dam = damage.roll();
-    if (distance > range)
-     dam = dam / 2;
-    BitField flags;
-    if ((party[i]->isAlive()) && (resists.isSet(i)))
+    bool saved = resists.isSet(i);
+    int activeNum = 0;
+    if ((party[i]->isAlive()) && ((first) || (!saved)))
     {
-     if (first)
-     {
-      dam = dam / 2;
-      if (party[i]->takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (dam == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(party[i]->name, ((dam > 0) ? "saves and takes" : "repealed the spell"), dam, "", flags);
-      if ((!party[i]->isAlive()) && (party[i]->active))
-      {
-       ++killed;
-       party[i]->active = false;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-    else if (party[i]->isAlive())
-    {
-     if (party[i]->savingThrow())
-     {
-      dam = dam / 2;
-      if (party[i]->takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (dam == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(party[i]->name, ((dam > 0) ? "saves and takes" : "saves"), dam, "", flags);
-      if ((!party[i]->isAlive()) && (party[i]->active))
-      {
-       ++killed;
-       party[i]->active = false;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-     else
-     {
-      if (damage.getNumber())
-       flags.set(BTSPELLFLG_DAMAGE);
-      if (party[i]->takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (status != BTSTATUS_NONE)
-      {
-       if (status == BTSTATUS_LEVELDRAIN)
-       {
-        if (party[i]->drainLevel())
-        {
-         flags.set(BTSPELLFLG_KILLED);
-         flags.set(BTSPELLFLG_EXCLAMATION);
-        }
-       }
-       else if (status == BTSTATUS_AGED)
-       {
-        if (party[i]->age())
-        {
-         flags.set(BTSPELLFLG_KILLED);
-         flags.set(BTSPELLFLG_EXCLAMATION);
-        }
-       }
-       else
-        party[i]->status.set(status);
-      }
-      std::string text = message(party[i]->name, ((dam > 0) ? "takes" : ""), dam, statusText, flags);
-      d.drawMessage(text.c_str(), game->getDelay());
-      if ((!party[i]->isAlive()) && (party[i]->active))
-      {
-       ++killed;
-       party[i]->active = false;
-      }
-     }
+     std::string text = BTCombatant::specialAttack(party[i], damage, status, (distance > range), activeNum, (first ? &saved : NULL));
+     killed += abs(activeNum);
+     d.drawMessage(text.c_str(), game->getDelay());
     }
    }
   }
@@ -261,66 +185,10 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   {
    if (party[target]->isAlive())
    {
-    int dam = damage.roll();
-    if (distance > range)
-     dam = dam / 2;
-    BitField flags;
-    if (party[target]->savingThrow())
-    {
-     dam = dam / 2;
-     if (party[target]->takeHP(dam))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     if (dam == 0)
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     std::string text = message(party[target]->name, ((dam > 0) ? "saves and takes" : "saves!"), dam, "", flags);
-     if ((!party[target]->isAlive()) && (party[target]->active))
-     {
-      ++killed;
-      party[target]->active = false;
-     }
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-    else
-    {
-     if (damage.getNumber())
-      flags.set(BTSPELLFLG_DAMAGE);
-     if (party[target]->takeHP(dam))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     if (status != BTSTATUS_NONE)
-     {
-      if (status == BTSTATUS_LEVELDRAIN)
-      {
-       if (party[target]->drainLevel())
-       {
-        flags.set(BTSPELLFLG_KILLED);
-        flags.set(BTSPELLFLG_EXCLAMATION);
-       }
-      }
-      else if (status == BTSTATUS_AGED)
-      {
-       if (party[target]->age())
-       {
-        flags.set(BTSPELLFLG_KILLED);
-        flags.set(BTSPELLFLG_EXCLAMATION);
-       }
-      }
-      else
-       party[target]->status.set(status);
-     }
-     std::string text = message(party[target]->name, ((dam > 0) ? "takes" : ""), dam, statusText, flags);
-     d.drawMessage(text.c_str(), game->getDelay());
-     if ((!party[target]->isAlive()) && (party[target]->active))
-     {
-      ++killed;
-      party[target]->active = false;
-     }
-    }
+    int activeNum = 0;
+    std::string text = BTCombatant::specialAttack(party[target], damage, status, (distance > range), activeNum);
+    killed += abs(activeNum);
+    d.drawMessage(text.c_str(), game->getDelay());
    }
   }
  }
@@ -335,92 +203,13 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
     continue;
    for (int k = 0; k < grp->individual.size(); ++k)
    {
-    int dam = damage.roll();
-    if (abs(grp->distance - distance) > range)
-     dam = dam / 2;
-    BitField flags;
-    if ((grp->individual[k].isAlive()) && (resists.isSet(k)))
+    bool saved = resists.isSet(k);
+    int activeNum = 0;
+    if ((grp->individual[k].isAlive()) && ((first) || (!saved)))
     {
-     if (first)
-     {
-      dam = dam / 2;
-      if (grp->individual[k].takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (dam == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "saves and takes" : "repelled the spell"), dam, "", flags);
-      if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
-      {
-       ++killed;
-       grp->individual[k].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-    else if (grp->individual[k].isAlive())
-    {
-     if (monList[grp->monsterType].savingThrow())
-     {
-      dam = dam / 2;
-      if (grp->individual[k].takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (dam == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "saves and takes" : "saves"), dam, "", flags);
-      if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
-      {
-       ++killed;
-       grp->individual[k].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-     else
-     {
-      if (damage.getNumber())
-       flags.set(BTSPELLFLG_DAMAGE);
-      if (grp->individual[k].takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (status != BTSTATUS_NONE)
-      {
-       if (status == BTSTATUS_LEVELDRAIN)
-       {
-        if (grp->individual[k].drainLevel())
-        {
-         flags.set(BTSPELLFLG_KILLED);
-         flags.set(BTSPELLFLG_EXCLAMATION);
-        }
-       }
-       else if (status == BTSTATUS_AGED)
-       {
-        if (grp->individual[k].age())
-        {
-         flags.set(BTSPELLFLG_KILLED);
-         flags.set(BTSPELLFLG_EXCLAMATION);
-        }
-       }
-       else
-        grp->individual[k].status.set(status);
-      }
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
-      if ((!grp->individual[k].isAlive()) && (grp->individual[k].active))
-      {
-       ++killed;
-       grp->individual[k].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
+     std::string text = BTCombatant::specialAttack(&(grp->individual[k]), damage, status, (abs(grp->distance - distance) > range), activeNum, (first ? &saved : NULL));
+     killed += abs(activeNum);
+     d.drawMessage(text.c_str(), game->getDelay());
     }
    }
   }
@@ -434,92 +223,13 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   {
    for (int i = 0; i < grp->individual.size(); ++i)
    {
-    int dam = damage.roll();
-    if (abs(grp->distance - distance) > range)
-     dam = dam / 2;
-    BitField flags;
-    if ((grp->individual[i].isAlive()) && (resists.isSet(i)))
+    bool saved = resists.isSet(i);
+    int activeNum = 0;
+    if ((grp->individual[i].isAlive()) && ((first) || (!saved)))
     {
-     if (first)
-     {
-      dam = dam / 2;
-      if (grp->individual[i].takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (dam == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "saves and takes" : "repelled the spell"), dam, "", flags);
-      if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
-      {
-       ++killed;
-       grp->individual[i].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-    }
-    else if (grp->individual[i].isAlive())
-    {
-     if (monList[grp->monsterType].savingThrow())
-     {
-      dam = dam / 2;
-      if (grp->individual[i].takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (dam == 0)
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "saves and takes" : "saves"), dam, "", flags);
-      if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
-      {
-       ++killed;
-       grp->individual[i].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
-     else
-     {
-      if (damage.getNumber())
-       flags.set(BTSPELLFLG_DAMAGE);
-      if (grp->individual[i].takeHP(dam))
-      {
-       flags.set(BTSPELLFLG_KILLED);
-       flags.set(BTSPELLFLG_EXCLAMATION);
-      }
-      if (status != BTSTATUS_NONE)
-      {
-       if (status == BTSTATUS_LEVELDRAIN)
-       {
-        if (grp->individual[i].drainLevel())
-        {
-         flags.set(BTSPELLFLG_KILLED);
-         flags.set(BTSPELLFLG_EXCLAMATION);
-        }
-       }
-       else if (status == BTSTATUS_AGED)
-       {
-        if (grp->individual[i].age())
-        {
-         flags.set(BTSPELLFLG_KILLED);
-         flags.set(BTSPELLFLG_EXCLAMATION);
-        }
-       }
-       else
-        grp->individual[i].status.set(status);
-      }
-      std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
-      if ((!grp->individual[i].isAlive()) && (grp->individual[i].active))
-      {
-       ++killed;
-       grp->individual[i].active = false;
-       grp->active--;
-      }
-      d.drawMessage(text.c_str(), game->getDelay());
-     }
+     std::string text = BTCombatant::specialAttack(&(grp->individual[i]), damage, status, (abs(grp->distance - distance) > range), activeNum, (first ? &saved : NULL));
+     killed += abs(activeNum);
+     d.drawMessage(text.c_str(), game->getDelay());
     }
    }
   }
@@ -527,68 +237,10 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   {
    if (grp->individual[target].isAlive())
    {
-    int dam = damage.roll();
-    if (abs(grp->distance - distance) > range)
-     dam = dam / 2;
-    BitField flags;
-    if (monList[grp->monsterType].savingThrow())
-    {
-     dam = dam / 2;
-     if (grp->individual[target].takeHP(dam))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     if (dam == 0)
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "saves and takes" : "saves"), dam, "", flags);
-     if ((!grp->individual[target].isAlive()) && (grp->individual[target].active))
-     {
-      ++killed;
-      grp->individual[target].active = false;
-      grp->active--;
-     }
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-    else
-    {
-     if (damage.getNumber())
-      flags.set(BTSPELLFLG_DAMAGE);
-     if (grp->individual[target].takeHP(dam))
-     {
-      flags.set(BTSPELLFLG_KILLED);
-      flags.set(BTSPELLFLG_EXCLAMATION);
-     }
-     if (status != BTSTATUS_NONE)
-     {
-      if (status == BTSTATUS_LEVELDRAIN)
-      {
-       if (grp->individual[target].drainLevel())
-       {
-        flags.set(BTSPELLFLG_KILLED);
-        flags.set(BTSPELLFLG_EXCLAMATION);
-       }
-      }
-      else if (status == BTSTATUS_AGED)
-      {
-       if (grp->individual[target].age())
-       {
-        flags.set(BTSPELLFLG_KILLED);
-        flags.set(BTSPELLFLG_EXCLAMATION);
-       }
-      }
-      else
-       grp->individual[target].status.set(status);
-     }
-     std::string text = message(monList[grp->monsterType].getName(), ((dam > 0) ? "takes" : ""), dam, statusText, flags);
-     if ((!grp->individual[target].isAlive()) && (grp->individual[target].active))
-     {
-      ++killed;
-      grp->individual[target].active = false;
-      grp->active--;
-     }
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
+    int activeNum = 0;
+    std::string text = BTCombatant::specialAttack(&(grp->individual[target]), damage, status, (abs(grp->distance - distance) > range), activeNum);
+    killed += abs(activeNum);
+    d.drawMessage(text.c_str(), game->getDelay());
    }
   }
  }
@@ -822,35 +474,6 @@ void BTAttackEffect::displayResists(BTDisplay &d, BTCombat *combat)
  }
  text += " repelled the spell!";
  d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
-}
-
-std::string BTAttackEffect::message(const char *name, const char *text, int damage, const std::string &status, const BitField &flags)
-{
- std::string msg = name;
- if ((msg.length() > 0) && (text[0] != 0))
-  msg += " ";
- msg += text;
- if ((damage > 0 ) || (flags.isSet(BTSPELLFLG_DAMAGE)))
- {
-  if (msg.length() > 0)
-   msg += " ";
-  char tmp[20];
-  sprintf(tmp, "%d", damage);
-  msg += tmp;
-  msg += " points of damage";
-  if (flags.isSet(BTSPELLFLG_KILLED))
-   msg += ", killing him";
-  if (status[0] != 0)
-   msg += " and";
- }
- if ((msg.length() > 0) && (status[0] != 0))
-  msg += " ";
- msg += status;
- if (flags.isSet(BTSPELLFLG_EXCLAMATION))
-  msg += "!";
- else
-  msg += ".";
- return msg;
 }
 
 BTCureStatusEffect::BTCureStatusEffect(int t, int x, int s, int m, int g, int trgt, int sts)

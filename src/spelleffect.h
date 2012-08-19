@@ -64,7 +64,7 @@ class BTTargetedEffect : public BTBaseEffect
 class BTAttackEffect : public BTTargetedEffect
 {
  public:
-  BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const char *text);
+  BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts);
 
   virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   virtual int maintain(BTDisplay &d, BTCombat *combat);
@@ -74,7 +74,6 @@ class BTAttackEffect : public BTTargetedEffect
 
   bool checkResists(BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   void displayResists(BTDisplay &d, BTCombat *combat);
-  std::string message(const char *name, const char *text, int damage, const std::string& status, const BitField &flags);
 
   int range;
   int effectiveRange;
@@ -82,7 +81,6 @@ class BTAttackEffect : public BTTargetedEffect
   BitField resists;
   BTDice damage;
   int status;
-  std::string statusText;
 };
 
 class BTCureStatusEffect : public BTTargetedEffect

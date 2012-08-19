@@ -53,7 +53,7 @@ class BTArmorBonusManifest : public BTManifest
 class BTAttackManifest : public BTManifest
 {
  public:
-  BTAttackManifest() : range(0), effectiveRange(0), status(BTSTATUS_NONE), level(0), maximum(0) {}
+  BTAttackManifest() : range(0), effectiveRange(0), xSpecial(BTEXTRADAMAGE_NONE), level(0), maximum(0) {}
 
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
@@ -63,7 +63,7 @@ class BTAttackManifest : public BTManifest
   int range;
   int effectiveRange;
   BTDice damage;
-  int status;
+  int xSpecial;
   int level;
   int maximum;
 };

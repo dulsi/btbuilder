@@ -265,3 +265,177 @@ void BTCombatant::youth()
  restoreLevel();
 }
 
+std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &damageDice, IShort xSpecial, bool farRange, int &activeNum, bool *saved /*= NULL*/)
+{
+ int totalDamage = 0;
+ bool dead = false;
+ bool totalDrain = false;
+ BitField special;
+ totalDamage = damageDice.roll();
+ if (farRange)
+  totalDamage = totalDamage / 2;
+ bool saveResult = false;
+ if (saved)
+  saveResult = *saved;
+ else
+  saveResult = defender->savingThrow(BTSAVE_DIFFICULTY);
+ if (saveResult)
+ {
+  totalDamage = totalDamage / 2;
+ }
+ else
+ {
+  special.set(xSpecial);
+ }
+ if (defender->takeHP(totalDamage))
+ {
+  dead = true;
+  defender->deactivate(activeNum);
+ }
+ else
+ {
+  int maxSpecial = special.getMaxSet();
+  if (maxSpecial > -1)
+  {
+   for (int i = 0; i <= maxSpecial; ++i)
+   {
+    switch(i)
+    {
+     case BTEXTRADAMAGE_POSION:
+      defender->status.set(BTSTATUS_POISONED);
+      break;
+     case BTEXTRADAMAGE_LEVELDRAIN:
+      if (defender->drainLevel())
+      {
+       totalDrain = true;
+       defender->deactivate(activeNum);
+      }
+      break;
+     case BTEXTRADAMAGE_INSANITY:
+      defender->status.set(BTSTATUS_INSANE);
+      break;
+     case BTEXTRADAMAGE_AGED:
+      if (defender->age())
+      {
+       defender->deactivate(activeNum);
+      }
+      break;
+     case BTEXTRADAMAGE_POSSESSION:
+      defender->status.set(BTSTATUS_POSSESSED);
+      break;
+     case BTEXTRADAMAGE_PARALYSIS:
+      defender->status.set(BTSTATUS_PARALYZED);
+      break;
+     case BTEXTRADAMAGE_STONED:
+      defender->status.set(BTSTATUS_STONED);
+      defender->deactivate(activeNum);
+      break;
+     case BTEXTRADAMAGE_CRITICALHIT:
+      defender->status.set(BTSTATUS_DEAD);
+      defender->deactivate(activeNum);
+      break;
+     case BTEXTRADAMAGE_POINTPHAZE:
+      if (!defender->takeSP(5))
+      {
+       special.clear(BTEXTRADAMAGE_POINTPHAZE);
+      }
+      break;
+     default:
+      break;
+    }
+   }
+  }
+ }
+ std::string text;
+ std::string defenderName;
+ text = defenderName = defender->getName();
+ if (saveResult == false)
+ {
+  if (totalDamage > 0)
+  {
+   text += " takes ";
+   char tmp[20];
+   sprintf(tmp, "%d", totalDamage);
+   text += tmp;
+   text += " points of damage";
+  }
+  if (dead)
+   text += ", killing him";
+  else
+  {
+   int maxSpecial = special.getMaxSet();
+   if (maxSpecial > -1)
+   {
+    std::string specialText;
+    for (int i = 0; i <= maxSpecial; ++i)
+    {
+     if (!special.isSet(i))
+      continue;
+     if ((specialText == "") || (maxSpecial == i))
+      specialText += " and";
+     else
+      specialText += ",";
+     switch(i)
+     {
+      case BTEXTRADAMAGE_POSION:
+       specialText += " is poisoned";
+       break;
+      case BTEXTRADAMAGE_LEVELDRAIN:
+       specialText += " is drained of a level";
+       if (totalDrain)
+       {
+        specialText += " totally draining him";
+       }
+       break;
+      case BTEXTRADAMAGE_INSANITY:
+       specialText += " has gone insane";
+       break;
+      case BTEXTRADAMAGE_AGED:
+       specialText += " withers";
+       break;
+      case BTEXTRADAMAGE_POSSESSION:
+       specialText += " is possessed";
+       break;
+      case BTEXTRADAMAGE_PARALYSIS:
+       specialText += " is paralyzed";
+       break;
+      case BTEXTRADAMAGE_STONED:
+       specialText += " is stoned";
+       break;
+      case BTEXTRADAMAGE_CRITICALHIT:
+       specialText += " is killed";
+       break;
+      case BTEXTRADAMAGE_POINTPHAZE:
+       specialText += " is drained of spell points";
+       break;
+      default:
+       break;
+     }
+    }
+    text += specialText;
+   }
+   if (defender->isAlive())
+    text += ".";
+   else
+    text += "!";
+  }
+ }
+ else
+ {
+  if (totalDamage > 0)
+  {
+   text += "saves and takes";
+   char tmp[20];
+   sprintf(tmp, "%d", totalDamage);
+   text += tmp;
+   text += " points of damage";
+   if (dead)
+    text += ", killing him";
+   text += "!";
+  }
+  else
+   text += "saves!";
+ }
+ return text;
+}
+

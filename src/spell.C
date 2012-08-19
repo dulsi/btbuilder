@@ -290,34 +290,34 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    effect = new BTBaseEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
    break;
   case BTSPELLTYPE_DAMAGE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, dice, BTSTATUS_NONE, "");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, dice, BTEXTRADAMAGE_NONE);
    break;
   case BTSPELLTYPE_KILL:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " is killed");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_CRITICALHIT);
    break;
   case BTSPELLTYPE_POISON:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POISONED, " is poisoned");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_POSION);
    break;
   case BTSPELLTYPE_CAUSEINSANITY:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_DEAD, " has gone insane");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_INSANITY);
    break;
   case BTSPELLTYPE_POSSESS:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_POSSESSED, "is possessed");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_POSSESSION);
    break;
   case BTSPELLTYPE_FLESHTOSTONE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_STONED, "is stoned");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_STONED);
    break;
   case BTSPELLTYPE_PARALYZE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_PARALYZED, "is paralyzed");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_PARALYSIS);
    break;
   case BTSPELLTYPE_DRAINLEVEL:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_LEVELDRAIN, "is drained of a level");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_LEVELDRAIN);
    break;
   case BTSPELLTYPE_AGE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTSTATUS_AGED, "withers");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_AGED);
    break;
   case BTSPELLTYPE_DAMAGEBYLEVEL:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTSTATUS_NONE, "");
+   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTEXTRADAMAGE_NONE);
    break;
   case BTSPELLTYPE_CUREPOISON:
    effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_POISONED);
