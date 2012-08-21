@@ -920,6 +920,21 @@ bool BTParty::remove(int who, BTDisplay &d)
   return false;
 }
 
+BTCombatant* BTParty::at(size_t index)
+{
+ return operator[](index);
+}
+
+int BTParty::getDistance()
+{
+ return 0;
+}
+
+size_t BTParty::size()
+{
+ return XMLVector<BTPc*>::size();
+}
+
 BTStatusLookup BTStatusLookup::lookup;
 char *BTStatusLookup::value[8] = { "dead", "poisoned", "insane", "aged", "possessed", "stoned", "paralyzed", "npc" };
 

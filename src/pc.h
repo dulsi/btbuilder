@@ -125,7 +125,7 @@ class BTPc : public XMLObject, public BTCombatant
   BTPcAction combat;
 };
 
-class BTParty : public XMLVector<BTPc*>
+class BTParty : public XMLVector<BTPc*>, public BTCombatantCollection
 {
  public:
   BTParty() : XMLVector<BTPc*>(false) {}
@@ -135,6 +135,10 @@ class BTParty : public XMLVector<BTPc*>
   void giveItem(int itemID, BTDisplay &d);
   void moveTo(int who, int where, BTDisplay &d);
   bool remove(int who, BTDisplay &d);
+
+  BTCombatant* at(size_t index);
+  int getDistance();
+  size_t size();
 
  private:
   BitField removing;

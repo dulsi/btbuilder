@@ -15,6 +15,7 @@
 
 class BTDisplay;
 class BTCombat;
+class BTCombatantCollection;
 class BTGame;
 
 class BTAllResistException
@@ -74,6 +75,7 @@ class BTAttackEffect : public BTTargetedEffect
 
   bool checkResists(BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   void displayResists(BTDisplay &d, BTCombat *combat);
+  int applyToGroup(BTDisplay &d, BTCombatantCollection *grp, int resistOffset = 0);
 
   int range;
   int effectiveRange;

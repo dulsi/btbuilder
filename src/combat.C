@@ -116,6 +116,21 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
  }
 }
 
+BTCombatant* BTMonsterGroup::at(size_t index)
+{
+ return &individual[index];
+}
+
+int BTMonsterGroup::getDistance()
+{
+ return distance;
+}
+
+size_t BTMonsterGroup::size()
+{
+ return individual.size();
+}
+
 void BTCombatScreen::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  static_cast<BTCombat *>(obj)->runCombat(d);
@@ -516,6 +531,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
  }
  catch (const BTCombatError &e)
  {
+  BTGame *game = BTGame::getGame();
   BTError *err = NULL;
   for (int i = 0; i < errors.size(); ++i)
   {
@@ -529,7 +545,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
    err->draw(d, this);
   else
    d.addText(("Unknown Error: " + e.error).c_str());
-  d.process(BTDisplay::allKeys, 1000);
+  d.process(BTDisplay::allKeys, game->getDelay());
  }
  d.clearText();
  clearEffects(d);
@@ -538,6 +554,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
 
 void BTCombat::runCombat(BTDisplay &d)
 {
+ BTGame *game = BTGame::getGame();
  BTParty &party = BTGame::getGame()->getParty();
  int active = 0;
  int i = 0;
@@ -556,7 +573,7 @@ void BTCombat::runCombat(BTDisplay &d)
    party[i]->active = false;
   d.addText("The party advances...");
   d.addText(blank);
-  d.process(BTDisplay::allKeys, 1000);
+  d.process(BTDisplay::allKeys, game->getDelay());
   d.clearElements();
  }
  else if (BTPc::BTPcAction::runAway == party[i]->combat.action)
@@ -624,7 +641,7 @@ void BTCombat::runCombat(BTDisplay &d)
    break;
   }
  }
- BTGame::getGame()->nextTurn(d, this);
+ game->nextTurn(d, this);
  if (endRound(d))
   won = true;
  d.drawStats(); // In case check dead move people around
@@ -687,7 +704,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
    else
     d.addText("Your foes advance!");
    d.addText(blank);
-   d.process(BTDisplay::allKeys, 1000);
+   d.process(BTDisplay::allKeys, game->getDelay());
    d.clearElements();
    for (std::vector<BTMonsterCombatant>::iterator monster(grp.individual.begin()); monster != grp.individual.end(); ++monster)
    {
@@ -750,17 +767,22 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
     std::string text = mon.attack(party[target], monList[grp.monsterType].getRangedMessage(), "and hits", monList[grp.monsterType].getRangedDamage(), 100, monList[grp.monsterType].getRangedExtra(), attacks, active);
     d.addText(text.c_str());
     d.addText(blank);
-    d.process(BTDisplay::allKeys, 1000);
+    d.process(BTDisplay::allKeys, game->getDelay());
     d.clearElements();
+    break;
+   }
+   case BTRANGEDTYPE_GROUP:
+   {
+    monList[grp.monsterType].useRangedOnGroup(d, &party, abs(grp.getDistance() - party.getDistance()), active);
     break;
    }
    default:
    {
     std::string text = monList[grp.monsterType].getName();
-    text += " is special attacking";
+    text += " has an unknown ranged attack";
     d.addText(text.c_str());
     d.addText(blank);
-    d.process(BTDisplay::allKeys, 1000);
+    d.process(BTDisplay::allKeys, game->getDelay());
     d.clearElements();
     break;
    }

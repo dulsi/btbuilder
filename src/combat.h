@@ -38,7 +38,7 @@ class BTMonsterCombatant : public BTCombatant
   BTMonsterGroup *group;
 };
 
-class BTMonsterGroup
+class BTMonsterGroup : public BTCombatantCollection
 {
  public:
   BTMonsterGroup() : monsterName(0), canMove(true) {}
@@ -47,6 +47,10 @@ class BTMonsterGroup
   int findTarget(int ind = BTTARGET_INDIVIDUAL);
   void push(int d);
   void setMonsterType(int type, int number = 0);
+
+  BTCombatant* at(size_t index);
+  int getDistance();
+  size_t size();
 
   int monsterType;
   char *monsterName;

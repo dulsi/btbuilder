@@ -424,7 +424,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
  {
   if (totalDamage > 0)
   {
-   text += "saves and takes";
+   text += " saves and takes ";
    char tmp[20];
    sprintf(tmp, "%d", totalDamage);
    text += tmp;
@@ -434,7 +434,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
    text += "!";
   }
   else
-   text += "saves!";
+   text += " saves!";
  }
  return text;
 }

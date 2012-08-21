@@ -44,4 +44,13 @@ class BTCombatant
   bool active;
 };
 
+class BTCombatantCollection
+{
+ public:
+  virtual BTCombatant* at(size_t index) = 0;
+  virtual int getDistance() = 0;
+  virtual size_t size() = 0;
+};
+
 #endif
+

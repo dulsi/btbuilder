@@ -11,6 +11,8 @@
 #include <file.h>
 #include "dice.h"
 #include "btconst.h"
+#include "combatant.h"
+#include "display.h"
 
 /*
  [monster]
@@ -70,6 +72,7 @@ class BTMonster : public XMLObject
   unsigned int getXp() const;
   IBool isIllusion() const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
+  void useRangedOnGroup(BTDisplay &d, BTCombatantCollection *grp, int distance, int &activeNum);
   void write(BinaryWriteFile &f);
 
   virtual void serialize(ObjectSerializer* s);

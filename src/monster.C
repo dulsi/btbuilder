@@ -209,6 +209,26 @@ bool BTMonster::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
   return (roll >= difficulty);
 }
 
+void BTMonster::useRangedOnGroup(BTDisplay &d, BTCombatantCollection *grp, int distance, int &activeNum)
+{
+ BTGame *game = BTGame::getGame();
+ std::string text = getName();
+ text += " ";
+ text += getRangedMessage();
+ d.drawMessage(text.c_str(), game->getDelay());
+ if (distance > getRange())
+  return;
+ bool farRange = false;
+ for (int i = 0; i < grp->size(); ++i)
+ {
+  if (grp->at(i)->isAlive())
+  {
+   text = BTCombatant::specialAttack(grp->at(i), getRangedDamage(), getRangedExtra(), farRange, activeNum);
+   d.drawMessage(text.c_str(), game->getDelay());
+  }
+ }
+}
+
 void BTMonster::write(BinaryWriteFile &f)
 {
  IUByte unknown;

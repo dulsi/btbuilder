@@ -169,17 +169,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
    return 0;
   if (BTTARGET_INDIVIDUAL == target)
   {
-   for (int i = 0; i < party.size(); ++i)
-   {
-    bool saved = resists.isSet(i);
-    int activeNum = 0;
-    if ((party[i]->isAlive()) && ((first) || (!saved)))
-    {
-     std::string text = BTCombatant::specialAttack(party[i], damage, status, (distance > range), activeNum, (first ? &saved : NULL));
-     killed += abs(activeNum);
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-   }
+   killed += applyToGroup(d, &party);
   }
   else
   {
@@ -194,24 +184,14 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
  }
  else if (BTTARGET_ALLMONSTERS == group)
  {
+  int resistOffset = 0;
   for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
   {
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   if (abs(grp->distance - distance) > (range * (1 + effectiveRange)))
-    continue;
-   for (int k = 0; k < grp->individual.size(); ++k)
-   {
-    bool saved = resists.isSet(k);
-    int activeNum = 0;
-    if ((grp->individual[k].isAlive()) && ((first) || (!saved)))
-    {
-     std::string text = BTCombatant::specialAttack(&(grp->individual[k]), damage, status, (abs(grp->distance - distance) > range), activeNum, (first ? &saved : NULL));
-     killed += abs(activeNum);
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-   }
+   killed += applyToGroup(d, grp, resistOffset);
+   resistOffset += grp->size();
   }
  }
  else if (group >= BTTARGET_MONSTER)
@@ -221,17 +201,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
    return 0;
   if (BTTARGET_INDIVIDUAL == target)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
-   {
-    bool saved = resists.isSet(i);
-    int activeNum = 0;
-    if ((grp->individual[i].isAlive()) && ((first) || (!saved)))
-    {
-     std::string text = BTCombatant::specialAttack(&(grp->individual[i]), damage, status, (abs(grp->distance - distance) > range), activeNum, (first ? &saved : NULL));
-     killed += abs(activeNum);
-     d.drawMessage(text.c_str(), game->getDelay());
-    }
-   }
+   killed += applyToGroup(d, grp);
   }
   else
   {
@@ -246,6 +216,26 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
  }
  if (BTTARGET_PARTY == group)
   d.drawStats();
+ return killed;
+}
+
+int BTAttackEffect::applyToGroup(BTDisplay &d, BTCombatantCollection *grp, int resistOffset /*= 0*/)
+{
+ if (abs(grp->getDistance() - distance) > (range * (1 + effectiveRange)))
+  return 0;
+ BTGame *game = BTGame::getGame();
+ int killed(0);
+ for (int i = 0; i < grp->size(); ++i)
+ {
+  bool saved = resists.isSet(resistOffset + i);
+  int activeNum = 0;
+  if ((grp->at(i)->isAlive()) && ((first) || (!saved)))
+  {
+   std::string text = BTCombatant::specialAttack(grp->at(i), damage, status, (abs(grp->getDistance() - distance) > range), activeNum, (first ? &saved : NULL));
+   killed += abs(activeNum);
+   d.drawMessage(text.c_str(), game->getDelay());
+  }
+ }
  return killed;
 }
 
