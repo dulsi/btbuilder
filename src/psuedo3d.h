@@ -19,6 +19,7 @@ class Psuedo3D
 
   void clear();
   void draw(Psuedo3DMap *map, int x, int y, int direction);
+  Psuedo3DConfig *getConfig();
   SDL_Surface *getDisplay() { return display; }
   SDL_Surface *getMapWall(int mapType, int direction, bool complete);
   SDL_Surface *getMapSpecial() { return mapSpecial; }

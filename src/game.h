@@ -63,6 +63,7 @@ class BTGame : public Psuedo3DMap
   void addFlags(const BitField &flagsToAdd);
   int getWallType(int x, int y, int direction);
   void setFacing(int f);
+  int testWallStrength(int x, int y, int direction);
 
   std::string getLastInput() const;
   void setLastInput(std::string input);
@@ -142,6 +143,7 @@ class BTGame : public Psuedo3DMap
   unsigned int timedExpiration;
   IShort timedSpecial;
   int delay;
+  Psuedo3DConfig *p3dConfig;
 
   static BTGame *game;
 };

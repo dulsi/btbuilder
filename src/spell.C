@@ -274,11 +274,14 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    {
     int testX = (x + (Psuedo3D::changeXY[f][0] * i) + game->getMap()->getXSize()) % game->getMap()->getXSize();
     int testY = (y + (Psuedo3D::changeXY[f][1] * i) + game->getMap()->getYSize()) % game->getMap()->getYSize();
-    if (game->getWallType(testX, testY, f))
+    int str = game->testWallStrength(testX, testY, f);
+    if (1 == str)
     {
      effect = new BTPhaseDoorEffect(type, BTTIME_MAP, BTTARGET_NOSINGER, BTMUSICID_NONE, testX, testY, f);
      break;
     }
+    else if (2 == str)
+     break;
    }
    break;
   }

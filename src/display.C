@@ -958,12 +958,13 @@ void BTDisplay::setPsuedo3DConfig(const char *file)
  Psuedo3DConfig::readXML(file, p3dConfig);
 }
 
-void BTDisplay::setWallGraphics(int type)
+Psuedo3DConfig *BTDisplay::setWallGraphics(int type)
 {
  if (p3dConfig.size() > type)
   p3d.setConfig(p3dConfig[type]);
  else
   p3d.setConfig(p3dConfig[0]);
+ p3d.getConfig();
 }
 
 bool BTDisplay::sizeFont(const char *text, int &w, int &h)

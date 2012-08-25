@@ -130,6 +130,11 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
  }
 }
 
+Psuedo3DConfig *Psuedo3D::getConfig()
+{
+ return config;
+}
+
 SDL_Surface *Psuedo3D::getMapWall(int wallType, int direction, bool complete)
 {
  int type = config->findMapType(wallType, complete);

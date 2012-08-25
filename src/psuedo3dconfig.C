@@ -28,6 +28,9 @@ void Psuedo3DMapType::serialize(ObjectSerializer* s)
 {
  s->add("type", &type);
  s->add("incompleteType", &incompleteType);
+ s->add("viewType", &viewType);
+ s->add("passable", &passable);
+ s->add("invincible", &invincible);
  for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
@@ -42,10 +45,21 @@ int Psuedo3DConfig::findWallType(int type, int position)
 {
  if (type)
  {
+  int viewType = type;
+  {
+   for (int i = 0; i < mapType.size(); ++i)
+   {
+    if (mapType[i]->type == type)
+    {
+     if (-1 != mapType[i]->viewType)
+      viewType = mapType[i]->viewType;
+    }
+   }
+  }
   int modulus = position % divide;
   for (int i = 0; i < wallType.size(); ++i)
   {
-   if ((wallType[i]->type == type) && (wallType[i]->modulus.end() != std::find(wallType[i]->modulus.begin(), wallType[i]->modulus.end(), modulus)))
+   if ((wallType[i]->type == viewType) && (wallType[i]->modulus.end() != std::find(wallType[i]->modulus.begin(), wallType[i]->modulus.end(), modulus)))
     return i + 1;
   }
  }

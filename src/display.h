@@ -99,7 +99,7 @@ class BTDisplay
   void setBackground(const char *file, bool physfs = true);
   void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(const char *file);
-  void setWallGraphics(int type);
+  Psuedo3DConfig *setWallGraphics(int type);
   void stopMusic(int id);
 
   void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a);

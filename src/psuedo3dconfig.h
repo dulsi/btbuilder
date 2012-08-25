@@ -68,7 +68,7 @@ class Psuedo3DMapType : public XMLObject
 {
  public:
   Psuedo3DMapType()
-   : type(-1), incompleteType(-1)
+   : type(-1), incompleteType(-1), viewType(-1), passable(false), invincible(false)
   {
    for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
     mapWalls[i] = 0;
@@ -87,6 +87,9 @@ class Psuedo3DMapType : public XMLObject
 
   int type;
   int incompleteType;
+  int viewType;
+  bool passable;
+  bool invincible;
   char *mapWalls[CARDINAL_DIRECTIONS];
 };
 

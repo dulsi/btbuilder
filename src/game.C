@@ -217,22 +217,54 @@ int BTGame::getWallType(int x, int y, int direction)
     return 0;
   }
  }
- if (w == 2)
-  return 2;
- else if (w == 3)
+ int mapType = p3dConfig->findMapType(w, true);
+ if (mapType == 0)
+  return 0;
+ if (bHasDoorDetect)
  {
-  if (bHasDoorDetect)
-  {
-   return 2;
-  }
-  return 1;
+  if (-1 != p3dConfig->mapType[mapType - 1]->viewType)
+   return p3dConfig->mapType[mapType - 1]->viewType;
  }
- return 1;
+ else
+ {
+  if (-1 != p3dConfig->mapType[mapType - 1]->incompleteType)
+   return p3dConfig->mapType[mapType - 1]->incompleteType;
+ }
+ return w;
 }
 
 void BTGame::setFacing(int f)
 {
  facing = f;
+}
+
+int BTGame::testWallStrength(int x, int y, int direction)
+{
+ if (x < 0)
+  x += levelMap->getXSize();
+ x = x % levelMap->getXSize();
+ if (y < 0)
+  y += levelMap->getYSize();
+ y = y % levelMap->getYSize();
+ IShort w = levelMap->getSquare(y, x).getWall(direction);
+ if (w == 0)
+  return 0;
+ for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
+ {
+  if (BTSPELLTYPE_PHASEDOOR == (*itr)->type)
+  {
+   BTPhaseDoorEffect *phaseDoor = static_cast<BTPhaseDoorEffect*>(*itr);
+   if ((phaseDoor->mapX == x) && (phaseDoor->mapY == y) && (phaseDoor->facing == direction))
+    return 0;
+  }
+ }
+ int mapType = p3dConfig->findMapType(w, true);
+ if (mapType == 0)
+  return 0;
+ if (p3dConfig->mapType[mapType - 1]->invincible)
+  return 2;
+ else
+  return 1;
 }
 
 std::string BTGame::getLastInput() const
@@ -319,7 +351,7 @@ void BTGame::run(BTDisplay &d)
   d.drawFullScreen(module->title, 5000);
   d.refresh();
   d.setPsuedo3DConfig(module->wall);
-  d.setWallGraphics(levelMap->getType());
+  p3dConfig = d.setWallGraphics(levelMap->getType());
   setKnowledge(xPos, yPos, true);
   unsigned char key = ' ';
   try
@@ -528,7 +560,7 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
  catch (const BTSpecialTeleport &t)
  {
   loadMap(t.map.c_str());
-  d.setWallGraphics(levelMap->getType());
+  p3dConfig = d.setWallGraphics(levelMap->getType());
   xPos = t.x;
   yPos = t.y;
   while (xPos < 0)
@@ -583,7 +615,17 @@ bool BTGame::move(BTDisplay &d, int dir)
    }
   }
  }
- if (w != 1)
+ bool walk = true;
+ if (w != 0)
+ {
+  int mapType = p3dConfig->findMapType(w, true);
+  if (0 != mapType)
+  {
+   if (!p3dConfig->mapType[mapType - 1]->passable)
+    walk = false;
+  }
+ }
+ if (walk)
  {
   xPos += Psuedo3D::changeXY[dir][0] + levelMap->getXSize();
   xPos = xPos % levelMap->getXSize();

@@ -21,6 +21,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
    <mapWall direction="2">map2_2.png</mapWall>
@@ -29,6 +30,8 @@
   <maptype>
    <type>3</type>
    <incompleteType>1</incompleteType>
+   <viewType>2</viewType>
+   <passable>true</passable>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
@@ -181,6 +184,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
    <mapWall direction="2">map2_2.png</mapWall>
@@ -189,6 +193,8 @@
   <maptype>
    <type>3</type>
    <incompleteType>1</incompleteType>
+   <viewType>2</viewType>
+   <passable>true</passable>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
@@ -341,6 +347,8 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <passable>true</passable>
+   <invincible>true</invincible>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
    <mapWall direction="2">map2_2.png</mapWall>
@@ -349,6 +357,8 @@
   <maptype>
    <type>3</type>
    <incompleteType>1</incompleteType>
+   <viewType>2</viewType>
+   <passable>true</passable>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
@@ -501,6 +511,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
    <mapWall direction="2">map2_2.png</mapWall>
@@ -509,6 +520,8 @@
   <maptype>
    <type>3</type>
    <incompleteType>1</incompleteType>
+   <viewType>2</viewType>
+   <passable>true</passable>
    <mapWall direction="0">map0_3.png</mapWall>
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
