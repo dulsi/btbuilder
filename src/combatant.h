@@ -22,6 +22,7 @@ class BTCombatant
   virtual bool age();
   std::string attack(BTCombatant *defender, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum);
   virtual void deactivate(int &activeNum);
+  virtual bool drainItem(int amount);
   virtual bool drainLevel();
   virtual std::string getName() const = 0;
   bool isAlive() const;

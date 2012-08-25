@@ -402,12 +402,20 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
 int BTSpell::cast(BTDisplay &d, const char *caster, int casterGroup, int casterTarget, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target)
 {
  std::string text = caster;
- if (BTGame::getGame()->hasEffectOfType(BTSPELLTYPE_BLOCKMAGIC, casterGroup, casterTarget))
+ BTGame *game = BTGame::getGame();
+ if (game->getFlags().isSet(BTSPECIALFLAG_ANTIMAGIC))
+ { 
+  text += " cannot seem to cast ";
+  text += name;
+  text += ".";
+  d.drawMessage(text.c_str(), game->getDelay());
+ }
+ else if (game->hasEffectOfType(BTSPELLTYPE_BLOCKMAGIC, casterGroup, casterTarget))
  {
   text += " gestures. ";
   text += caster;
   text += "'s spell shatters.";
-  d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
+  d.drawMessage(text.c_str(), game->getDelay());
   return 0;
  }
  else

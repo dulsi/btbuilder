@@ -220,7 +220,8 @@ char *specialCommands[] =
 char *specialFlag[] =
 {
  "Silence",
- "Anti-magic"
+ "Anti-magic",
+ "Darkness"
 };
 ArrayLookup specialFlagLookup(BT_SPECIALFLAGS, specialFlag);
 

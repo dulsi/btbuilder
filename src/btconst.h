@@ -82,6 +82,7 @@ extern ArrayLookup durationLookup;
 #define BTEXTRADAMAGE_STONED      6
 #define BTEXTRADAMAGE_PARALYSIS   7
 #define BTEXTRADAMAGE_CRITICALHIT 8
+#define BTEXTRADAMAGE_ITEMZOT     9
 #define BTEXTRADAMAGE_POINTPHAZE 10
 extern char *extraDamage[];
 extern ArrayLookup extraDamageLookup;
@@ -200,9 +201,10 @@ extern char *specialCommands[];
 
 #define BTSPECIAL_NONE -1
 
-#define BT_SPECIALFLAGS 2
+#define BT_SPECIALFLAGS 3
 #define BTSPECIALFLAG_SILENCE   0
 #define BTSPECIALFLAG_ANTIMAGIC 1
+#define BTSPECIALFLAG_DARKNESS  2
 extern char *specialFlag[];
 extern ArrayLookup specialFlagLookup;
 

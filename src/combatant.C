@@ -203,6 +203,11 @@ void BTCombatant::deactivate(int &activeNum)
  }
 }
 
+bool BTCombatant::drainItem(int amount)
+{
+ return false;
+}
+
 bool BTCombatant::drainLevel()
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
@@ -333,6 +338,12 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
      case BTEXTRADAMAGE_CRITICALHIT:
       defender->status.set(BTSTATUS_DEAD);
       defender->deactivate(activeNum);
+      break;
+     case BTEXTRADAMAGE_ITEMZOT:
+      if (!defender->drainItem(5))
+      {
+       special.clear(BTEXTRADAMAGE_ITEMZOT);
+      }
       break;
      case BTEXTRADAMAGE_POINTPHAZE:
       if (!defender->takeSP(5))

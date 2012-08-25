@@ -220,17 +220,30 @@ void BTSpecialCommand::run(BTDisplay &d) const
    game->setFacing(BTDice(1, 4, 0).roll() % 4);
    break;
   case BTSPECIALCOMMAND_DARKNESS:
+  {
    game->clearEffectsByType(d, BTSPELLTYPE_LIGHT);
+   BitField newFlag;
+   newFlag.set(BTSPECIALFLAG_DARKNESS);
+   game->addFlags(newFlag);
    break;
+  }
   case BTSPECIALCOMMAND_SILENCE:
+  {
    d.drawText("The sound of silence...");
    game->clearEffectsBySource(d, true);
-//   flags.set(BTSPECIALFLAG_SILENCE);
+   BitField newFlag;
+   newFlag.set(BTSPECIALFLAG_SILENCE);
+   game->addFlags(newFlag);
    break;
+  }
   case BTSPECIALCOMMAND_ANTIMAGIC:
+  {
    game->clearEffectsBySource(d, false);
-//   flags.set(BTSPECIALFLAG_ANTIMAGIC);
+   BitField newFlag;
+   newFlag.set(BTSPECIALFLAG_ANTIMAGIC);
+   game->addFlags(newFlag);
    break;
+  }
   case BTSPECIALCOMMAND_GETINPUT:
    game->setLastInput(d.readString("", 13));
    break;
