@@ -348,7 +348,6 @@
   <maptype>
    <type>2</type>
    <passable>true</passable>
-   <invincible>true</invincible>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
    <mapWall direction="2">map2_2.png</mapWall>
