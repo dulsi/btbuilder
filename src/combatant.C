@@ -89,6 +89,12 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
         defender->status.set(BTSTATUS_DEAD);
         defender->deactivate(activeNum);
         break;
+       case BTEXTRADAMAGE_ITEMZOT:
+        if (!defender->drainItem(5))
+        {
+         special.clear(BTEXTRADAMAGE_ITEMZOT);
+        }
+        break;
        case BTEXTRADAMAGE_POINTPHAZE:
         if (!defender->takeSP(5))
         {
@@ -173,6 +179,9 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
        break;
       case BTEXTRADAMAGE_CRITICALHIT:
        specialText += " critically hits";
+       break;
+      case BTEXTRADAMAGE_ITEMZOT:
+       specialText += " drains an item";
        break;
       case BTEXTRADAMAGE_POINTPHAZE:
        specialText += " absorbs spell points";
@@ -415,6 +424,9 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
        break;
       case BTEXTRADAMAGE_CRITICALHIT:
        specialText += " is killed";
+       break;
+      case BTEXTRADAMAGE_ITEMZOT:
+       specialText += " has an item drained";
        break;
       case BTEXTRADAMAGE_POINTPHAZE:
        specialText += " is drained of spell points";

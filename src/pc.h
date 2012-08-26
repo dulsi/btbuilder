@@ -50,6 +50,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool age();
   std::string attack(BTCombatant *defender, int weapon, int &numAttacksLeft, int &activeNum);
   void changeJob(int newJob);
+  bool drainItem(int amount);
   bool drainLevel();
   void equip(int index);
   int incrementStat();
@@ -79,7 +80,7 @@ class BTPc : public XMLObject, public BTCombatant
   unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);
   bool takeItemFromIndex(int index);
-  void takeItemCharge(int index);
+  void takeItemCharge(int index, int amount = 1);
   bool takeSP(int amount);
   void unequip(int index);
   void useAutoCombatSkill(BitField &special);

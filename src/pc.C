@@ -247,6 +247,26 @@ void BTPc::changeJob(int newJob)
  xp = 0;
 }
 
+bool BTPc::drainItem(int amount)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ int numItems = 0;
+ for (numItems = 0; numItems < BT_ITEMS; ++numItems)
+ {
+  if (BTITEM_NONE == item[numItems].id)
+   break;
+ }
+ if (numItems == 0)
+  return false;
+ int i = BTDice(1, numItems, -1).roll();
+ if ((item[i].equipped == BTITEM_EQUIPPED) && (BTITEM_ARROW != itemList[item[i].id].getType()) && (BTITEM_BOW != itemList[item[i].id].getType()) && (BTITEM_THROWNWEAPON != itemList[item[i].id].getType()) && (BTITEMCAST_NONE != itemList[item[i].id].getSpellCast()) && (0 < item[i].charges))
+ {
+  takeItemCharge(i, amount);
+  return true;
+ }
+ return false;
+}
+
 bool BTPc::drainLevel()
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
@@ -637,14 +657,14 @@ bool BTPc::takeItemFromIndex(int index)
  return true;
 }
 
-void BTPc::takeItemCharge(int index)
+void BTPc::takeItemCharge(int index, int amount /*= 1*/)
 {
  if (item[index].id == BTITEM_NONE)
   return;
  if ((item[index].charges == 0) || (item[index].charges == BTTIMESUSABLE_UNLIMITED))
   return;
- item[index].charges -= 1;
- if (item[index].charges == 0)
+ item[index].charges -= amount;
+ if (item[index].charges <= 0)
  {
   BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
   if (itemList[item[index].id].isConsumed())
@@ -659,6 +679,10 @@ void BTPc::takeItemCharge(int index)
     item[i - 1].charges = item[i].charges;
    }
    item[BT_ITEMS - 1].id = BTITEM_NONE;
+  }
+  else
+  {
+   item[index].charges = 0;
   }
  }
 }
