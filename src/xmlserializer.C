@@ -592,7 +592,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
     {
      if (b->isSet(i))
      {
-      content = "<" + (*itr)->createTag() + ">" + lookup->getName(i) + "</" + (*itr)->name + ">";
+      content += "<" + (*itr)->createTag() + ">" + lookup->getName(i) + "</" + (*itr)->name + ">";
      }
     }
     break;
