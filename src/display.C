@@ -29,9 +29,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
   printf("Failed - SDL_Init\n");
   exit(0);
  }
-#if (SDL_MIXER_MAJOR_VERSION != 1) || (SDL_MIXER_MINOR_VERSION != 2) || (SDL_MIXER_PATCHLEVEL != 8)
  Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG);
-#endif
  const SDL_VideoInfo *info = SDL_GetVideoInfo();
  xFull = info->current_w;
  yFull = info->current_h;
@@ -98,9 +96,7 @@ BTDisplay::~BTDisplay()
   SDL_FreeSurface(mainBackground);
  }
  element.clear();
-#if (SDL_MIXER_MAJOR_VERSION != 1) || (SDL_MIXER_MINOR_VERSION != 2) || (SDL_MIXER_PATCHLEVEL != 8)
  Mix_Quit();
-#endif
  SDL_Quit();
 }
 
@@ -820,6 +816,12 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     timer = SDL_AddTimer(animationDelay, timerCallback, NULL);
    else if (delay)
     timer = SDL_AddTimer(delay, timerCallback, NULL);
+  }
+  else if (sdlevent.type == SDL_QUIT)
+  {
+   Mix_Quit();
+   SDL_Quit();
+   exit(0);
   }
   else if (sdlevent.type == SDL_USEREVENT)
   {

@@ -66,6 +66,8 @@ void BTMainScreen::run()
   runModule(fileModule[select]);
  }
  delete [] list;
+ delete display;
+ display = NULL;
 }
 
 void BTMainScreen::runModule(std::string moduleFile)
