@@ -31,6 +31,8 @@ class BTShop : public XMLObject
 
   void initDefault();
 
+  void addItem(int id);
+  void removeItem(int id);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTShop; }

@@ -21,6 +21,44 @@ void BTShop::initDefault()
  }
 }
 
+void BTShop::addItem(int id)
+{
+ for (int i = 0; i < goods.size(); ++i)
+ {
+  if (goods[i]->id == id)
+  {
+   if (goods[i]->count != BTITEMCOUNT_UNLIMITED)
+   {
+    if (BTITEMCOUNT_MAX < goods[i]->count)
+    {
+     goods[i]->count++;
+    }
+   }
+   return;
+  }
+ }
+ goods.push_back(new BTShopGood(id, 1));
+}
+
+void BTShop::removeItem(int id)
+{
+ for (int i = 0; i < goods.size(); ++i)
+ {
+  if (goods[i]->id == id)
+  {
+   if (goods[i]->count != BTITEMCOUNT_UNLIMITED)
+   {
+    goods[i]->count--;
+    if (0 >= goods[i]->count)
+    {
+     goods.erase(goods.begin() + i);
+    }
+   }
+   return;
+  }
+ }
+}
+
 void BTShop::serialize(ObjectSerializer* s)
 {
  s->add("id", &id);

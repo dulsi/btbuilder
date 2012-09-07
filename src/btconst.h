@@ -245,6 +245,7 @@ extern ArrayLookup statLookup;
 #define BTITEM_NONE 0x4000
 
 #define BTITEMCOUNT_UNLIMITED -1
+#define BTITEMCOUNT_MAX 9999
 
 #define BTITEM_CANNOTEQUIP 0
 #define BTITEM_NOTEQUIPPED 1

@@ -668,6 +668,8 @@ XMLObject *BTSelectInventory::create(const XML_Char *name, const XML_Char **atts
    obj->numbered = atoi(att[1]);
   else if (0 == strcmp(*att, "value"))
    obj->value = atoi(att[1]);
+  else if (0 == strcmp(*att, "shop"))
+   obj->shop = atoi(att[1]);
  }
  return obj;
 }
@@ -1498,6 +1500,7 @@ int BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
   d.readChar();
   b.pc->takeGold(itemList[shop->goods[select->select]->id].getPrice());
   b.pc->giveItem(shop->goods[select->select]->id, true, itemList[shop->goods[select->select]->id].getTimesUsable());
+  shop->removeItem(shop->goods[select->select]->id);
  }
  return 0;
 }
@@ -1907,6 +1910,11 @@ int BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
+ if (select->shop > 0)
+ {
+  BTShop *shop = BTGame::getGame()->getShop(select->shop);
+  shop->addItem(b.pc->getItem(select->select));
+ }
  b.pc->giveGold(itemList[b.pc->getItem(select->select)].getPrice() / 2);
  b.pc->takeItemFromIndex(select->select);
  d.drawStats();
