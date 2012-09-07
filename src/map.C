@@ -221,27 +221,24 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_DARKNESS:
   {
-   game->clearEffectsByType(d, BTSPELLTYPE_LIGHT);
    BitField newFlag;
    newFlag.set(BTSPECIALFLAG_DARKNESS);
-   game->addFlags(newFlag);
+   game->addFlags(d, newFlag);
    break;
   }
   case BTSPECIALCOMMAND_SILENCE:
   {
    d.drawText("The sound of silence...");
-   game->clearEffectsBySource(d, true);
    BitField newFlag;
    newFlag.set(BTSPECIALFLAG_SILENCE);
-   game->addFlags(newFlag);
+   game->addFlags(d, newFlag);
    break;
   }
   case BTSPECIALCOMMAND_ANTIMAGIC:
   {
-   game->clearEffectsBySource(d, false);
    BitField newFlag;
    newFlag.set(BTSPECIALFLAG_ANTIMAGIC);
-   game->addFlags(newFlag);
+   game->addFlags(d, newFlag);
    break;
   }
   case BTSPECIALCOMMAND_GETINPUT:
@@ -1100,7 +1097,7 @@ void BTSpecial::print(FILE *f) const
 
 void BTSpecial::run(BTDisplay &d) const
 {
- BTGame::getGame()->addFlags(flags);
+ BTGame::getGame()->addFlags(d, flags);
  try
  {
   bool stop = false;
@@ -1126,7 +1123,7 @@ void BTSpecial::run(BTDisplay &d) const
 void BTSpecial::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
- s->add("flags", &flags, &specialFlagLookup);
+ s->add("flag", &flags, &specialFlagLookup);
  s->add("body", &body);
 }
 

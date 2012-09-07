@@ -537,19 +537,28 @@ XMLObject *BTSelectJob::create(const XML_Char *name, const XML_Char **atts)
 int BTSelectGoods::buildList(ObjectSerializer *obj)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ BTShop *shopObj = BTGame::getGame()->getShop(shop);
  XMLAction *act = obj->find("pc", NULL);
  BTPc *pc = static_cast<BTPc*>(reinterpret_cast<XMLObject*>(act->object));
  if (pc->isEquipmentFull())
   throw BTSpecialError("fullinventory");
- list = new BTDisplay::selectItem[9];
- for (int i = 0; (i < itemList.size()) && (i < 9); ++i)
+ list = new BTDisplay::selectItem[shopObj->goods.size()];
+ for (int i = 0; i < shopObj->goods.size(); )
  {
-  if (!itemList[i].canUse(pc))
-   list[i].first = '@';
-  list[i].name = itemList[i].getName();
-  list[i].value = itemList[i].getPrice();
+  if (shopObj->goods[i]->id < itemList.size())
+  {
+   if (!itemList[shopObj->goods[i]->id].canUse(pc))
+    list[i].first = '@';
+   list[i].name = itemList[shopObj->goods[i]->id].getName();
+   list[i].value = itemList[shopObj->goods[i]->id].getPrice();
+   ++i;
+  }
+  else
+  {
+   shopObj->goods.erase(shopObj->goods.begin() + i);
+  }
  }
- return ((9 < itemList.size()) ? 9 : itemList.size());
+ return shopObj->goods.size();
 }
 
 int BTSelectGoods::getScreen(BTPc *pc)
@@ -1478,7 +1487,8 @@ int BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTSelectGoods *select = static_cast<BTSelectGoods*>(item);
- if (b.pc->getGold() < itemList[select->select].getPrice())
+ BTShop *shop = BTGame::getGame()->getShop(select->shop);
+ if (b.pc->getGold() < itemList[shop->goods[select->select]->id].getPrice())
  {
   throw BTSpecialError("notenoughgold");
  }
@@ -1486,8 +1496,8 @@ int BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  {
   d.drawLast(0, "Done!");
   d.readChar();
-  b.pc->takeGold(itemList[select->select].getPrice());
-  b.pc->giveItem(select->select, true, itemList[select->select].getTimesUsable());
+  b.pc->takeGold(itemList[shop->goods[select->select]->id].getPrice());
+  b.pc->giveItem(shop->goods[select->select]->id, true, itemList[shop->goods[select->select]->id].getTimesUsable());
  }
  return 0;
 }
@@ -1648,9 +1658,7 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 
 int BTScreenSet::exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
- XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
- BTPc::writeXML("roster.xml", group, roster);
+ BTGame::getGame()->save();
  exit(b, d, item, key);
 }
 
@@ -1753,9 +1761,7 @@ int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
 
 int BTScreenSet::quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- XMLVector<BTGroup*> &group = BTGame::getGame()->getGroup();
- XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
- BTPc::writeXML("roster.xml", group, roster);
+ BTGame::getGame()->save();
  throw BTSpecialQuit();
 }
 

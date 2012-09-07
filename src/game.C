@@ -24,6 +24,7 @@ BTGame::BTGame(BTModule *m)
  BTXpChart::readXML(m->xpChart, xpChartList);
  BTJob::readXML(m->job, jobList);
  BTPc::readXML("roster.xml", group, roster);
+ BTShop::readXML("shops.xml", shops);
  spellList.load(m->spell);
  itemList.load(m->item);
  monsterList.load(m->monster);
@@ -78,6 +79,22 @@ BTRaceList &BTGame::getRaceList()
 XMLVector<BTPc*> &BTGame::getRoster()
 {
  return roster;
+}
+
+BTShop *BTGame::getShop(int id)
+{
+ for (int i = 0; i < shops.size(); ++i)
+ {
+  if (shops[i]->id == id)
+  {
+   return shops[i];
+  }
+ }
+ BTShop *shop = new BTShop;
+ shop->id = id;
+ shop->initDefault();
+ shops.push_back(shop);
+ return shop;
 }
 
 BTSkillList &BTGame::getSkillList()
@@ -189,9 +206,21 @@ const BitField &BTGame::getFlags()
  return flags;
 }
 
-void BTGame::addFlags(const BitField &flagsToAdd)
+void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
 {
  flags = flags & flagsToAdd;
+ if (flagsToAdd.isSet(BTSPECIALFLAG_DARKNESS))
+ {
+  clearEffectsByType(d, BTSPELLTYPE_LIGHT);
+ }
+ if (flagsToAdd.isSet(BTSPECIALFLAG_SILENCE))
+ {
+  clearEffectsBySource(d, true);
+ }
+ if (flagsToAdd.isSet(BTSPECIALFLAG_ANTIMAGIC))
+ {
+  clearEffectsBySource(d, false);
+ }
 }
 
 int BTGame::getWallType(int x, int y, int direction)
@@ -925,6 +954,12 @@ void BTGame::resetTime()
 int BTGame::getDelay() const
 {
  return delay;
+}
+
+void BTGame::save()
+{
+ BTPc::writeXML("roster.xml", getGroup(), getRoster());
+ BTShop::writeXML("shops.xml", shops);
 }
 
 BTGame *BTGame::getGame()

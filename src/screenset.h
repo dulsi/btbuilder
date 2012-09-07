@@ -11,6 +11,7 @@
 #include "display.h"
 #include "map.h"
 #include "pc.h"
+#include "shop.h"
 #include <map>
 
 #define BTSCREEN_EXIT -1
@@ -208,6 +209,7 @@ class BTSelectInventory : public BTSelectCommon
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 
+  int shop;
   int fullscreen;
   bool noerror;
   bool value;

@@ -17,6 +17,7 @@
 #include "module.h"
 #include "monster.h"
 #include "race.h"
+#include "shop.h"
 #include "skill.h"
 #include "song.h"
 #include "spell.h"
@@ -46,6 +47,7 @@ class BTGame : public Psuedo3DMap
   BTFactory<BTMonster> &getMonsterList();
   BTRaceList &getRaceList();
   XMLVector<BTPc*> &getRoster();
+  BTShop *getShop(int id);
   BTSkillList &getSkillList();
   XMLVector<BTSong*> &getSongList();
   BTFactory<BTSpell> &getSpellList();
@@ -60,7 +62,7 @@ class BTGame : public Psuedo3DMap
   int getX();
   int getY();
   const BitField &getFlags();
-  void addFlags(const BitField &flagsToAdd);
+  void addFlags(BTDisplay &d, const BitField &flagsToAdd);
   int getWallType(int x, int y, int direction);
   void setFacing(int f);
   int testWallStrength(int x, int y, int direction);
@@ -108,6 +110,8 @@ class BTGame : public Psuedo3DMap
 
   int getDelay() const;
 
+  void save();
+
   static BTGame *getGame();
 
  protected:
@@ -122,6 +126,7 @@ class BTGame : public Psuedo3DMap
   BTRaceList raceList;
   XMLVector<BTGroup*> group;
   XMLVector<BTPc*> roster;
+  XMLVector<BTShop*> shops;
   BTSkillList skillList;
   XMLVector<BTSong*> songList;
   BTFactory<BTSpell> spellList;
