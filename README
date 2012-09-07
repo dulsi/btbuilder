@@ -46,7 +46,6 @@ BTCS Incomplete Functionality
 
 Special Commands
 * darkness zone (works initially but doesn't stop new light effects)
-* silence zone (works initially but doesn't stop new songs)
 * play sound $!
 
 Spells

@@ -951,6 +951,11 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
        text += "has no equipped instrument!";
        d.drawMessage(text.c_str(), game->getDelay());
       }
+      else if (game->getFlags().isSet(BTSPECIALFLAG_SILENCE))
+      {
+       text += "can't play a tune! No sound can be heard!";
+       d.drawMessage(text.c_str(), game->getDelay());
+      }
       else
       {
        pc.giveSkillUse(i, -1);

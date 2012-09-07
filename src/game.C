@@ -208,7 +208,7 @@ const BitField &BTGame::getFlags()
 
 void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
 {
- flags = flags & flagsToAdd;
+ flags |= flagsToAdd;
  if (flagsToAdd.isSet(BTSPECIALFLAG_DARKNESS))
  {
   clearEffectsByType(d, BTSPELLTYPE_LIGHT);

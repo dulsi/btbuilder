@@ -2042,10 +2042,11 @@ int BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
 
 int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- XMLVector<BTSong*> &songList = BTGame::getGame()->getSongList();
- XMLVector<BTSkill*> &skill = BTGame::getGame()->getSkillList();
- BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
- BTGame::getGame()->clearEffectsBySource(d, true);
+ BTGame *game = BTGame::getGame();
+ XMLVector<BTSong*> &songList = game->getSongList();
+ XMLVector<BTSkill*> &skill = game->getSkillList();
+ BTFactory<BTItem> &itemList = game->getItemList();
+ game->clearEffectsBySource(d, true);
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skill.size(); ++i)
  {
@@ -2062,6 +2063,8 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
    }
    if (!instrument)
     throw BTSpecialError("noinstrument");
+   if (game->getFlags().isSet(BTSPECIALFLAG_SILENCE))
+    throw BTSpecialError("silence");
    d.clearText();
    b.pc->giveSkillUse(i, -1);
    songList[select->select]->play(d, b.pc, NULL);
