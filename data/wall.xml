@@ -37,6 +37,16 @@
    <mapWall direction="2">map2_3.png</mapWall>
    <mapWall direction="3">map3_3.png</mapWall>
   </maptype>
+  <maptype>
+   <type>4</type>
+   <incompleteType>1</incompleteType>
+   <viewType>1</viewType>
+   <invincible>true</invincible>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
+  </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
@@ -200,6 +210,16 @@
    <mapWall direction="2">map2_3.png</mapWall>
    <mapWall direction="3">map3_3.png</mapWall>
   </maptype>
+  <maptype>
+   <type>4</type>
+   <incompleteType>1</incompleteType>
+   <viewType>1</viewType>
+   <invincible>true</invincible>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
+  </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
@@ -362,6 +382,16 @@
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
    <mapWall direction="3">map3_3.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>4</type>
+   <incompleteType>1</incompleteType>
+   <viewType>1</viewType>
+   <invincible>true</invincible>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -525,6 +555,16 @@
    <mapWall direction="1">map1_3.png</mapWall>
    <mapWall direction="2">map2_3.png</mapWall>
    <mapWall direction="3">map3_3.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>4</type>
+   <incompleteType>1</incompleteType>
+   <viewType>1</viewType>
+   <invincible>true</invincible>
+   <mapWall direction="0">map0_1.png</mapWall>
+   <mapWall direction="1">map1_1.png</mapWall>
+   <mapWall direction="2">map2_1.png</mapWall>
+   <mapWall direction="3">map3_1.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
