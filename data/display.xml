@@ -130,22 +130,22 @@
 	</statBlock>
 	<icon>
 		<image>image/light.png</image>
-		<position><x>174</x><y>120</y><w>20</w><h>12</h></position>
+		<position><x>133</x><y>10</y><w>25</w><h>25</h></position>
 		<effect>22</effect>
 	</icon>
 	<icon>
 		<image>image/armor.png</image>
-		<position><x>199</x><y>120</y><w>20</w><h>12</h></position>
+		<position><x>133</x><y>35</y><w>25</w><h>25</h></position>
 		<effect>23</effect>
 	</icon>
 	<icon>
 		<image>image/sight.png</image>
-		<position><x>253</x><y>121</y><w>20</w><h>13</h></position>
+		<position><x>133</x><y>60</y><w>25</w><h>25</h></position>
 		<effect>25</effect>
 	</icon>
 	<facingIcon>
 		<image>image/compass.png</image>
-		<position><x>225</x><y>120</y><w>20</w><h>12</h></position>
+		<position><x>133</x><y>95</y><w>25</w><h>25</h></position>
 		<effect>31</effect>
 	</facingIcon>
 	<xMap>128</xMap>
