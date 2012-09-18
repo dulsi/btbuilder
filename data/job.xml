@@ -120,6 +120,11 @@
 		<ac>1</ac>
 		<improveAc>1</improveAc>
 		<hp>8</hp>
+		<skill>
+			<name>Martial arts</name>
+			<value>1</value>
+			<improve>1</improve>
+		</skill>
 		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>

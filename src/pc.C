@@ -157,6 +157,20 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
    chanceXSpecial = 100;
    xSpecial = monList[monster].getMeleeExtra();
   }
+  else
+  {
+   XMLVector<BTSkill*> &skill = game->getSkillList();
+   for (int i = 0; i < skill.size(); ++i)
+   {
+    if ((skill[i]->special == BTSKILLSPECIAL_BAREHANDS) && (hasSkillUse(i)))
+    {
+     BTDice *skillDice = skill[i]->getRoll(getSkill(i));
+     if (skillDice)
+      damageDice = *skillDice;
+     break;
+    }
+   }
+  }
  }
  else
  {
@@ -740,8 +754,9 @@ bool BTPc::useSkill(int index, int difficulty /*= BTSKILL_DEFAULTDIFFICULTY*/)
      else
       return false;
     }
-    int roll = skillList[index]->roll.roll();
-    if ((roll != skillList[index]->roll.getMin()) && (roll + skill[i]->value >= difficulty))
+    BTDice *dice = skillList[index]->getRoll(skill[i]->value);
+    int roll = dice->roll();
+    if ((roll != dice->getMin()) && (roll + skill[i]->value >= difficulty))
     {
      return true;
     }

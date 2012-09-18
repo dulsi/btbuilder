@@ -22,9 +22,20 @@ char *specialSkill[] =
 {
  "disarm",
  "hide",
- "song"
+ "song",
+ "barehands"
 };
-ArrayLookup specialLookup(3, specialSkill);
+ArrayLookup specialLookup(4, specialSkill);
+
+BTDice *BTSkill::getRoll(int value)
+{
+ if (roll.size() == 0)
+  return NULL;
+ else if (roll.size() > value)
+  return roll[value - 1];
+ else
+  return roll[roll.size() - 1];
+}
 
 void BTSkill::serialize(ObjectSerializer* s)
 {
@@ -33,7 +44,7 @@ void BTSkill::serialize(ObjectSerializer* s)
  s->add("effect", &effect, NULL, &effectLookup);
  s->add("limited", &limited);
  s->add("special", &special, NULL, &specialLookup);
- s->add("roll", &roll);
+ s->add("roll", &roll, &BTDice::create);
  s->add("defaultDifficulty", &defaultDifficulty);
 }
 

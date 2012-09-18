@@ -44,5 +44,42 @@
 		<limited>true</limited>
 		<special>song</special>
 	</skill>
+	<skill>
+		<name>Martial arts</name>
+		<use>special</use>
+		<special>barehands</special>
+		<roll><n>1</n><d>2</d></roll>
+		<roll><n>2</n><d>2</d></roll>
+		<roll><n>3</n><d>2</d></roll>
+		<roll><n>4</n><d>2</d></roll>
+		<roll><n>5</n><d>2</d></roll>
+		<roll><n>4</n><d>4</d></roll>
+		<roll><n>4</n><d>4</d></roll>
+		<roll><n>5</n><d>4</d></roll>
+		<roll><n>5</n><d>4</d></roll>
+		<roll><n>6</n><d>4</d></roll>
+		<roll><n>6</n><d>4</d></roll>
+		<roll><n>6</n><d>4</d></roll>
+		<roll><n>6</n><d>4</d></roll>
+		<roll><n>7</n><d>4</d></roll>
+		<roll><n>7</n><d>4</d></roll>
+		<roll><n>7</n><d>4</d></roll>
+		<roll><n>5</n><d>8</d></roll>
+		<roll><n>5</n><d>8</d></roll>
+		<roll><n>5</n><d>8</d></roll>
+		<roll><n>5</n><d>8</d></roll>
+		<roll><n>6</n><d>8</d></roll>
+		<roll><n>6</n><d>8</d></roll>
+		<roll><n>6</n><d>8</d></roll>
+		<roll><n>6</n><d>8</d></roll>
+		<roll><n>7</n><d>8</d></roll>
+		<roll><n>7</n><d>8</d></roll>
+		<roll><n>7</n><d>8</d></roll>
+		<roll><n>9</n><d>8</d></roll>
+		<roll><n>9</n><d>8</d></roll>
+		<roll><n>9</n><d>8</d></roll>
+		<roll><n>11</n><d>8</d></roll>
+		<roll><n>13</n><d>8</d></roll>
+	</skill>
 </data>
 

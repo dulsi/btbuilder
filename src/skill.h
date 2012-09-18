@@ -14,8 +14,9 @@
 #define BTSKILLUSE_AUTOCOMBAT 0
 #define BTSKILLUSE_MAGIC      3
 
-#define BTSKILLSPECIAL_DISARM 0
-#define BTSKILLSPECIAL_SONG   2
+#define BTSKILLSPECIAL_DISARM    0
+#define BTSKILLSPECIAL_SONG      2
+#define BTSKILLSPECIAL_BAREHANDS 3
 
 class BTSkill : public XMLObject
 {
@@ -28,6 +29,7 @@ class BTSkill : public XMLObject
 
   ~BTSkill() { delete [] name; }
 
+  BTDice *getRoll(int value);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSkill; }
@@ -38,7 +40,7 @@ class BTSkill : public XMLObject
   int effect;
   bool limited;
   int special;
-  BTDice roll;
+  XMLVector<BTDice*> roll;
   int defaultDifficulty;
 };
 

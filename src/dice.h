@@ -47,6 +47,7 @@ class BTDice : public XMLObject
   void write(BinaryWriteFile &f);
 
   static void Init();
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTDice; }
 
  private:
   int number;
