@@ -1512,8 +1512,8 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
  bool bFound(false);
  for (int sk = 0; sk < job[b.pc->job]->skill.size(); ++sk)
  {
-  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->skill[job[b.pc->job]->skill[sk]->skill]->value);
-  if (b.pc->level >= purchase->minimumLevel)
+  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->getSkill(job[b.pc->job]->skill[sk]->skill));
+  if ((NULL != purchase) && (b.pc->level >= purchase->minimumLevel))
   {
    if (b.pc->getGold() < purchase->cost)
    {
@@ -1522,17 +1522,11 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
    else
    {
     b.pc->takeGold(purchase->cost);
-    for (int i = 0; i < b.pc->skill.size(); ++i)
-    {
-     if (b.pc->skill[i]->skill == job[b.pc->job]->skill[sk]->skill)
-     {
-      b.pc->skill[i]->value = purchase->value;
-     }
-    }
+    b.pc->setSkill(job[b.pc->job]->skill[sk]->skill, purchase->value, purchase->value);
    }
    return 0;
   }
-  else
+  else if (NULL != purchase)
    bFound = true;
  }
  if (bFound)

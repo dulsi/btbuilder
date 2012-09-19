@@ -66,7 +66,7 @@ bool BTPc::advanceLevel()
    ++level;
    if (((level - 1) % jobList[job]->improveToHit) == 0)
     ++toHit;
-   if ((jobList[job]->improveRateAttacks) && (level - 1 > (jobList[job]->maxRateAttacks * jobList[job]->improveRateAttacks) + 1) && (((level - 1) % jobList[job]->improveRateAttacks) == 0))
+   if ((jobList[job]->improveRateAttacks) && (level - 1 < ((jobList[job]->maxRateAttacks - 1) * jobList[job]->improveRateAttacks) + 1) && (((level - 1) % jobList[job]->improveRateAttacks) == 0))
    {
     ++rateAttacks;
    }
@@ -288,7 +288,7 @@ bool BTPc::drainLevel()
  bool answer = BTCombatant::drainLevel();
  if (!answer)
  {
-  if ((jobList[job]->improveRateAttacks) && (jobList[job]->maxRateAttacks * jobList[job]->improveRateAttacks > level) && (((level) % jobList[job]->improveRateAttacks) == 0))
+  if ((jobList[job]->improveRateAttacks) && ((jobList[job]->maxRateAttacks - 1) * jobList[job]->improveRateAttacks > level) && (((level) % jobList[job]->improveRateAttacks) == 0))
   {
    --rateAttacks;
   }

@@ -51,7 +51,7 @@ std::string XMLAction::createString()
 {
  char convert[30];
  std::string content;
- switch(type)
+ switch(getType())
  {
   case XMLTYPE_BOOL:
    if (*(reinterpret_cast<bool*>(object)))
