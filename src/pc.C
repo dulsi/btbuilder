@@ -42,8 +42,8 @@ BTPc::BTPc(int monsterType, int j)
  // spell bind can be implemented.
  BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
  BTJobList &jobList = BTGame::getGame()->getJobList();
- name = new char[strlen(monsterList[monster].getName()) + 1];
- strcpy(name, monsterList[monster].getName());
+ name = new char[monsterList[monster].getName().length() + 1];
+ strcpy(name, monsterList[monster].getName().c_str());
  picture = monsterList[monster].getPicture();
  ac = monsterList[monster].getAc();
  toHit = jobList[job]->calcToHit(level);

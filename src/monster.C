@@ -20,8 +20,8 @@ BTMonster::BTMonster(BinaryReadFile &f)
 
  f.readUByteArray(14, (IUByte *)tmp);
  tmp[15] = 0;
- name = new char[strlen(tmp) + 1];
- strcpy(name, tmp);
+ name = tmp;
+ pluralName = name + "(s)";
  f.readShort(startDistance);
  startDistance = startDistance / 16;
  f.readShort(move);
@@ -62,8 +62,6 @@ BTMonster::BTMonster(BinaryReadFile &f)
 
 BTMonster::BTMonster()
 {
- name = new char[1];
- name[0] = 0;
  meleeMessage = new char[1];
  meleeMessage[0] = 0;
  rangedMessage = new char[1];
@@ -72,17 +70,20 @@ BTMonster::BTMonster()
 
 BTMonster::~BTMonster()
 {
- if (name)
-  delete [] name;
  if (meleeMessage)
   delete [] meleeMessage;
  if (rangedMessage)
   delete [] rangedMessage;
 }
 
-const char *BTMonster::getName() const
+const std::string &BTMonster::getName() const
 {
  return name;
+}
+
+const std::string &BTMonster::getPluralName() const
+{
+ return pluralName;
 }
 
 IShort BTMonster::getAc() const
@@ -235,7 +236,7 @@ void BTMonster::write(BinaryWriteFile &f)
  IShort value;
  char tmp[14];
 
- strncpy(tmp, name, 14);
+ strncpy(tmp, name.c_str(), 14);
  f.writeUByteArray(14, (IUByte *)tmp);
  value = startDistance * 16;
  f.writeShort(value);
@@ -274,6 +275,7 @@ void BTMonster::write(BinaryWriteFile &f)
 void BTMonster::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
+ s->add("pluralName", &pluralName);
  s->add("level", &level);
  s->add("startDistance", &startDistance);
  s->add("move", &move);

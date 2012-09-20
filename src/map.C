@@ -155,7 +155,7 @@ void BTSpecialCommand::print(FILE *f) const
     break;
    case 'A':
    case 'M':
-    fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number[count++]].getName());
+    fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number[count++]].getName().c_str());
     break;
    case 'X':
     fprintf(f, "%s", BTGame::getGame()->getSpellList()[number[count++]].getName());
@@ -556,7 +556,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
   {
    BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
    char tmp[100];
-   snprintf(tmp, 100, "%s asks to join the party! Do you say", monsterList[number[0]].getName());
+   snprintf(tmp, 100, "%s asks to join the party! Do you say", monsterList[number[0]].getName().c_str());
    d.drawText(tmp);
    d.drawText("Yes, or");
    d.drawText("No");
@@ -572,7 +572,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
     BTParty &party = BTGame::getGame()->getParty();
     if (party.size() >= BT_PARTYSIZE)
     {
-     snprintf(tmp, 100, "No room in your party. %s cannot join!", monsterList[number[0]].getName());
+     snprintf(tmp, 100, "No room in your party. %s cannot join!", monsterList[number[0]].getName().c_str());
      d.drawText(tmp);
     }
     else
@@ -677,7 +677,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    BTParty &party = BTGame::getGame()->getParty();
    for (int i = 0; i < party.size(); ++i)
    {
-    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName())))
+    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName().c_str())))
     {
      char tmp[100];
      snprintf(tmp, 100, "%s leaves your party.", party[i]->name);
@@ -694,7 +694,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    BTParty &party = BTGame::getGame()->getParty();
    for (int i = 0; i < party.size(); ++i)
    {
-    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName())))
+    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName().c_str())))
     {
      party[i]->status.set(BTSTATUS_INSANE);
      d.drawStats();
@@ -820,7 +820,7 @@ void BTSpecialConditional::print(FILE *f) const
     fprintf(f, "%s", BTGame::getGame()->getItemList()[number].getName());
     break;
    case 'A':
-    fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number].getName());
+    fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number].getName().c_str());
     break;
    case 'C':
     fprintf(f, "%s", BTGame::getGame()->getJobList()[number]->name);
@@ -924,7 +924,7 @@ void BTSpecialConditional::run(BTDisplay &d) const
   {
    truth = false;
    for (int i = 0; i < party.size(); ++i)
-    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number].getName())))
+    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number].getName().c_str())))
      truth = true;
    break;
   }

@@ -41,10 +41,11 @@ class BTMonsterCombatant : public BTCombatant
 class BTMonsterGroup : public BTCombatantCollection
 {
  public:
-  BTMonsterGroup() : monsterName(0), canMove(true) {}
+  BTMonsterGroup() : canMove(true) {}
   ~BTMonsterGroup();
 
   int findTarget(int ind = BTTARGET_INDIVIDUAL);
+  const std::string &getName() const;
   void push(int d);
   void setMonsterType(int type, int number = 0);
 
@@ -53,7 +54,6 @@ class BTMonsterGroup : public BTCombatantCollection
   size_t size();
 
   int monsterType;
-  char *monsterName;
   int distance;
   int active;
   bool canMove;

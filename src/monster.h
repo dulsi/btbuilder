@@ -48,7 +48,8 @@ class BTMonster : public XMLObject
   BTMonster();
   ~BTMonster();
 
-  const char *getName() const;
+  const std::string &getName() const;
+  const std::string &getPluralName() const;
   IShort getAc() const;
   IShort getCombatAction(IShort round) const;
   const BTDice &getGold() const;
@@ -82,7 +83,8 @@ class BTMonster : public XMLObject
   static void writeXML(const char *filename, XMLVector<BTMonster*> &monster);
 
  private:
-  char *name;
+  std::string name;
+  std::string pluralName;
   IShort level;
   IShort startDistance;
   IShort move;

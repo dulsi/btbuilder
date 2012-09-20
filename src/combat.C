@@ -45,8 +45,6 @@ bool BTMonsterCombatant::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) con
 
 BTMonsterGroup::~BTMonsterGroup()
 {
- if (monsterName)
-  delete[] monsterName;
 }
 
 int BTMonsterGroup::findTarget(int ind /*= BTTARGET_INDIVIDUAL*/)
@@ -77,6 +75,19 @@ int BTMonsterGroup::findTarget(int ind /*= BTTARGET_INDIVIDUAL*/)
  return BTTARGET_INDIVIDUAL;
 }
 
+const std::string &BTMonsterGroup::getName() const
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ if (1 == individual.size())
+ {
+  return monList[monsterType].getName();
+ }
+ else
+ {
+  return monList[monsterType].getPluralName();
+ }
+}
+
 void BTMonsterGroup::push(int d)
 {
  distance += d;
@@ -103,17 +114,6 @@ void BTMonsterGroup::setMonsterType(int type, int number /*= 0*/)
   --number;
  }
  active = individual.size();
- if (1 == active)
- {
-  monsterName = new char[strlen(monList[monsterType].getName()) + 1];
-  strcpy(monsterName, monList[monsterType].getName());
- }
- else
- {
-  monsterName = new char[strlen(monList[monsterType].getName()) + 4];
-  strcpy(monsterName, monList[monsterType].getName());
-  strcat(monsterName, "(s)");
- }
 }
 
 BTCombatant* BTMonsterGroup::at(size_t index)
@@ -441,7 +441,7 @@ void BTCombat::initScreen(BTDisplay &d)
   add("monsterNumber", &itr->active, attrib);
   attrib = new std::vector<XMLAttribute>;
   attrib->push_back(XMLAttribute("number", tmp));
-  add("monsterName", &itr->monsterName, attrib);
+  add("monsterName", new std::string(itr->getName()), attrib, true);
   attrib = new std::vector<XMLAttribute>;
   attrib->push_back(XMLAttribute("number", tmp));
   add("distance", &itr->distance, attrib);
@@ -457,11 +457,11 @@ void BTCombat::initScreen(BTDisplay &d)
    else
     strcat(monsterNames, ", ");
   }
-  sprintf(monsterNames + strlen(monsterNames), "%d %s(s) (%d0')", itr->individual.size(), monList[itr->monsterType].getName(), itr->distance);
+  sprintf(monsterNames + strlen(monsterNames), "%d %s (%d0')", itr->individual.size(), itr->getName().c_str(), itr->distance);
  }
  if (first)
  {
-  setPicture(d, monList[first->monsterType].getPicture(), const_cast<char *>(monList[first->monsterType].getName()));
+  setPicture(d, monList[first->monsterType].getPicture(), const_cast<char *>(monList[first->monsterType].getName().c_str()));
  }
  else if (won)
  {
@@ -755,7 +755,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
     if (spellList[monList[grp.monsterType].getRangedSpell()].getArea() == BTAREAEFFECT_FOE)
      if (!findTargetPC(BT_PARTYSIZE, target))
       break;
-    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, BTTARGET_PARTY, target);
+    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName().c_str(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, BTTARGET_PARTY, target);
     break;
    }
    case BTRANGEDTYPE_FOE:
@@ -1039,7 +1039,7 @@ void BTCombat::debugActive()
     ++realActive;
    }
   }
-  printf("%s: cache %d, real %d\n", itr->monsterName, itr->active, realActive);
+  printf("%s: cache %d, real %d\n", itr->getName().c_str(), itr->active, realActive);
  }
  for (int i = 0; i < party.size(); i++)
  {

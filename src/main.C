@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
    for (i = 0; i < monList.size(); i++)
    {
     BTMonster &mon(monList[i]);
-    printf("Name: %s\n", mon.getName());
+    printf("Name: %s\n", mon.getName().c_str());
     printf("Illusion: %s   Base armor class: %d\n",
       (mon.isIllusion() ? "Yes" : "No"), (mon.getAc() - 10) * -1);
     printf("Level: %d   Thaumaturgical resistance: %d\n", mon.getLevel(),
@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
     {
      case BTSPELLTYPE_SUMMONILLUSION:
      case BTSPELLTYPE_SUMMONMONSTER:
-      printf("   Name: %s", monList[mon.getExtra()].getName());
+      printf("   Name: %s", monList[mon.getExtra()].getName().c_str());
       break;
      case BTSPELLTYPE_ARMORBONUS:
      case BTSPELLTYPE_HITBONUS:
