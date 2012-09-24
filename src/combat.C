@@ -180,6 +180,7 @@ BTCombat::BTCombat()
  actionList["cast"] = &cast;
  actionList["combatOption"] = &combatOption;
  actionList["defend"] = &defend;
+ actionList["hide"] = &hide;
  actionList["partyAttack"] = &partyAttack;
  actionList["runAway"] = &runAway;
  actionList["sing"] = &sing;
@@ -241,6 +242,13 @@ int BTCombat::findScreen(int num)
  int i;
  if ((optionState) && ((num == BTCOMBATSCREEN_OPTION) || (num == BTCOMBATSCREEN_COMBAT)))
  {
+  int closest = 9;
+  std::list<BTMonsterGroup>::iterator itr(monsters.begin());
+  for (; itr != monsters.end(); ++itr)
+  {
+   if (itr->distance < closest)
+    closest = itr->distance;
+  }
   BTParty &party = BTGame::getGame()->getParty();
   BTPc* current = getPc();
   if (current == NULL)
@@ -252,7 +260,14 @@ int BTCombat::findScreen(int num)
     if (!party[i]->status.isSet(BTSTATUS_NPC))
     {
      setPc(party[i]);
-     canAttack = ((!canAdvance) && (0 < monsters.size()));
+     int range = party[i]->hiddenTime();
+     bool hidden = true;
+     if (0 == range)
+     {
+      hidden = false;
+      range = 1;
+     }
+     canAttack = ((closest <= range) && (!monsters.empty()) && ((hidden) || (i < BT_BACK)));
      optionState = true;
      break;
     }
@@ -276,7 +291,14 @@ int BTCombat::findScreen(int num)
       break;
      }
     }
-    canAttack = ((!canAdvance) && (i < BT_BACK) && (!monsters.empty()));
+    int range = party[i]->hiddenTime();
+    bool hidden = true;
+    if (0 == range)
+    {
+     hidden = false;
+     range = 1;
+    }
+    canAttack = ((closest <= range) && (!monsters.empty()) && ((hidden) || (i < BT_BACK)));
    }
    else if (num == BTCOMBATSCREEN_COMBAT)
    {
@@ -290,7 +312,14 @@ int BTCombat::findScreen(int num)
       {
        optionState = true;
        setPc(party[i]);
-       canAttack = ((!canAdvance) && (i < BT_BACK) && (!monsters.empty()));
+       int range = party[i]->hiddenTime();
+       bool hidden = true;
+       if (0 == range)
+       {
+        hidden = false;
+        range = 1;
+       }
+       canAttack = ((closest <= range) && (!monsters.empty()) && ((hidden) || (i < BT_BACK)));
       }
       break;
      }
@@ -631,6 +660,8 @@ void BTCombat::runCombat(BTDisplay &d)
      {
       ran = true;
       runPcAction(d, active, i, *party[i]);
+      if (BTPc::BTPcAction::useSkill != party[i]->combat.action)
+       party[i]->combat.clearSkillUsed();
      }
     }
    }
@@ -811,7 +842,9 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
  else
  {
   if (pc.status.isSet(BTSTATUS_PARALYZED))
+  {
    return;
+  }
   if ((pc.status.isSet(BTSTATUS_INSANE)) || (pc.status.isSet(BTSTATUS_POSSESSED)))
   {
    int group;
@@ -893,7 +926,10 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
      int target = BTTARGET_INDIVIDUAL;
      if (BTPc::BTPcAction::attack == pc.combat.action)
      {
-      if (!findTarget(pc, 1, grp, target))
+      int range = 1;
+      if ((pc.combat.skillUsed != -1) && (skillList[pc.combat.skillUsed]->special == BTSKILLSPECIAL_HIDE))
+       range = pc.combat.consecutiveUsed;
+      if (!findTarget(pc, range, grp, target))
        return;
       defender = &grp->individual[target];
      }
@@ -1014,8 +1050,13 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
     }
     break;
    }
-   case BTPc::BTPcAction::skill:
-    // TODO: Implement
+   case BTPc::BTPcAction::useSkill:
+    if (pc.useSkill(pc.combat.object))
+    {
+     pc.combat.setSkillUsed(pc.combat.object);
+    }
+    else
+     pc.combat.clearSkillUsed();
     break;
    case BTPc::BTPcAction::runAway:
    case BTPc::BTPcAction::advance:
@@ -1203,18 +1244,27 @@ int BTCombat::advance(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 
 int BTCombat::attack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ BTGame *game = BTGame::getGame();
+ BTSkillList &skillList = game->getSkillList();
  BTCombat &c = static_cast<BTCombat&>(b);
  b.getPc()->combat.action = BTPc::BTPcAction::attack;
  int target = 0;
  int i = 0;
+ int range = 1;
+ if ((b.getPc()->combat.skillUsed != -1) && (skillList[b.getPc()->combat.skillUsed]->special == BTSKILLSPECIAL_HIDE))
+  range = b.getPc()->combat.consecutiveUsed;
  for (std::list<BTMonsterGroup>::iterator itr(c.monsters.begin()); itr != c.monsters.end(); ++itr, ++i)
  {
-  if (1 == itr->distance)
+  if (range >= itr->distance)
   {
    if (0 == target)
     target = BTTARGET_MONSTER + i;
    else
+   {
+    if ((b.getPc()->combat.skillUsed != -1) && (skillList[b.getPc()->combat.skillUsed]->special == BTSKILLSPECIAL_HIDE))
+     b.add("range", &b.getPc()->combat.consecutiveUsed, NULL);
     return BTCOMBATSCREEN_SELECTATTACK;
+   }
   }
  }
  b.getPc()->combat.setTarget(target);
@@ -1281,6 +1331,24 @@ int BTCombat::defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  b.getPc()->combat.action = BTPc::BTPcAction::defend;
  return 0;
+}
+
+int BTCombat::hide(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ BTSkillList &skillList = game->getSkillList();
+ for (int i = 0; i < skillList.size(); ++i)
+ {
+  if ((skillList[i]->special == BTSKILLSPECIAL_HIDE) && (b.getPc()->hasSkillUse(i)))
+  {
+   b.getPc()->combat.action = BTPc::BTPcAction::useSkill;
+   b.getPc()->combat.type = BTPc::BTPcAction::skill;
+   b.getPc()->combat.object = i;
+   return 0;
+  }
+ }
+ throw BTSpecialError("nohide");
 }
 
 int BTCombat::partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)

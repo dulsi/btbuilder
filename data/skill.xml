@@ -30,6 +30,8 @@
 		<name>Hide in shadows</name>
 		<use>combat</use>
 		<special>hide</special>
+		<roll><n>1</n><d>100</d><m>0</m></roll>
+		<defaultDifficulty>101</defaultDifficulty>
 	</skill>
 	<skill>
 		<name>Disarm trap</name>

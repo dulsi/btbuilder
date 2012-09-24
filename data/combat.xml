@@ -16,7 +16,7 @@
 		<can option="maxsp"><choice keys="cC" screen="8">Cast a spell</choice></can>
 		<choice keys="uU" screen="9">Use an item</choice>
 		<can option="skill" index="8"><choice keys="bB" screen="12">Bard song</choice></can>
-		<can option="skill" index="6"><choice keys="hH" screen="3">Hide in shadows</choice></can>
+		<can option="skill" index="6"><choice keys="hH" action="hide" screen="3">Hide in shadows</choice></can>
 	</screen>
 	<combat number="3" escapeScreen="0" timeout="1000">
 	</combat>

@@ -53,6 +53,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool drainItem(int amount);
   bool drainLevel();
   void equip(int index);
+  int hiddenTime() const;
   int incrementStat();
   bool isEquipped(int index) const;
   bool isEquipmentEmpty() const;
@@ -109,9 +110,13 @@ class BTPc : public XMLObject, public BTCombatant
   class BTPcAction
   {
    public:
-    enum pcAction { advance, attack, partyAttack, defend, useItem, runAway, cast, skill, sing, npc };
-    enum objectType { none, item, spell, song };
+    enum pcAction { advance, attack, partyAttack, defend, useItem, runAway, cast, useSkill, sing, npc };
+    enum objectType { none, item, spell, song, skill };
 
+    BTPcAction() : skillUsed(-1), consecutiveUsed(0) { }
+
+    void clearSkillUsed() { skillUsed = -1; consecutiveUsed = 0; }
+    void setSkillUsed(int skill) { if (skillUsed == skill) { ++consecutiveUsed; } else { skillUsed = skill; consecutiveUsed = 1; } }
     void clearTarget(int group, int member = BTTARGET_INDIVIDUAL);
     void setTarget(int group, int member = BTTARGET_INDIVIDUAL);
     int getTargetGroup() const { return target >> BTTARGET_GROUPSHIFT; }
@@ -121,6 +126,8 @@ class BTPc : public XMLObject, public BTCombatant
     objectType type;
     int object;
     int target;
+    int skillUsed;
+    int consecutiveUsed;
   };
 
   BTPcAction combat;

@@ -324,6 +324,15 @@ void BTPc::equip(int index)
  item[index].equipped = BTITEM_EQUIPPED;
 }
 
+int BTPc::hiddenTime() const
+{
+ BTSkillList &skillList = BTGame::getGame()->getSkillList();
+ if ((combat.skillUsed != -1) && (skillList[combat.skillUsed]->special == BTSKILLSPECIAL_HIDE))
+  return combat.consecutiveUsed;
+ else
+  return 0;
+}
+
 int BTPc::incrementStat()
 {
  int s = 0;

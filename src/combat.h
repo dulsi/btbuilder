@@ -102,6 +102,7 @@ class BTCombat : public BTScreenSet
   static int cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int combatOption(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int defend(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int hide(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int partyAttack(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int runAway(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sing(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
