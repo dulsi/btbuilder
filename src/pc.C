@@ -257,7 +257,7 @@ void BTPc::changeJob(int newJob)
   sp += moreSp;
   maxSp += moreSp;
  }
- level = 1;
+ maxLevel = level = 1;
  xp = 0;
 }
 

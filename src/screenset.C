@@ -1770,7 +1770,7 @@ int BTScreenSet::requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  for (int sk = 0; sk < job[b.pc->job]->skill.size(); ++sk)
  {
   BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->getSkill(job[b.pc->job]->skill[sk]->skill));
-  if (b.pc->level >= purchase->minimumLevel)
+  if ((purchase) && (b.pc->level >= purchase->minimumLevel))
   {
    b.add("num", &purchase->value);
    b.add("cost", &purchase->cost);
@@ -1791,7 +1791,7 @@ int BTScreenSet::requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  bool bFound(false);
  for (int i = 0; i < job.size(); i++)
  {
-  if (job[i]->isAllowed(b.pc, false))
+  if ((i != b.pc->job)  && (job[i]->isAllowed(b.pc, false)))
   {
    bFound = true;
    break;
