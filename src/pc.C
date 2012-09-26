@@ -33,6 +33,7 @@ BTPc::BTPc()
  int i;
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
+ item = new BTEquipment[BTGame::getGame()->getModule()->maxItems];
 }
 
 BTPc::BTPc(int monsterType, int j)
@@ -53,6 +54,7 @@ BTPc::BTPc(int monsterType, int j)
  int i;
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
+ item = new BTEquipment[BTGame::getGame()->getModule()->maxItems];
 }
 
 bool BTPc::advanceLevel()

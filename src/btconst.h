@@ -237,7 +237,7 @@ extern ArrayLookup statLookup;
 
 #define BTMONSTER_NONE -1
 
-#define BT_ITEMS 8
+#define BT_ITEMS (BTGame::getGame()->getModule()->maxItems)
 #define BT_PARTYSIZE 7
 #define BTPARTY_REMOVE -1
 #define BT_BACK 4

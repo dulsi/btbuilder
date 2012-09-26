@@ -10,7 +10,7 @@
 #include <string.h>
 
 BTModule::BTModule()
- : name(NULL), author(NULL), content(NULL), maxTime(14400), nightTime(7200)
+ : name(NULL), author(NULL), content(NULL), maxItems(8), maxTime(14400), nightTime(7200)
 {
  item = new char[strlen("DEFAULT.ITM") + 1];
  strcpy(item, "DEFAULT.ITM");
@@ -83,6 +83,7 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("job", &job);
  s->add("start", &start);
  s->add("title", &title);
+ s->add("maxItems", &maxItems);
  s->add("maxTime", &maxTime);
  s->add("nightTime", &nightTime);
 }

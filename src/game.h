@@ -44,6 +44,7 @@ class BTGame : public Psuedo3DMap
   BTFactory<BTItem> &getItemList();
   BTJobList &getJobList();
   BTJobAbbrevList &getJobAbbrevList();
+  BTModule *getModule();
   BTFactory<BTMonster> &getMonsterList();
   BTRaceList &getRaceList();
   XMLVector<BTPc*> &getRoster();

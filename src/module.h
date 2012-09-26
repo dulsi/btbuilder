@@ -31,6 +31,7 @@ class BTModule : public XMLObject
   char *start;
   char *title;
   char *wall;
+  unsigned int maxItems;
   unsigned int maxTime;
   unsigned int nightTime;
 };

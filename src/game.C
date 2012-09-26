@@ -66,6 +66,11 @@ BTJobAbbrevList &BTGame::getJobAbbrevList()
  return jobAbbrevList;
 }
 
+BTModule *BTGame::getModule()
+{
+ return module;
+}
+
 BTFactory<BTMonster> &BTGame::getMonsterList()
 {
  return monsterList;

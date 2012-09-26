@@ -44,7 +44,7 @@ class BTPc : public XMLObject, public BTCombatant
  public:
   BTPc();
   BTPc(int monsterType, int job);
-  ~BTPc() { delete [] name; }
+  ~BTPc() { delete [] name; delete [] item; }
 
   bool advanceLevel();
   bool age();
@@ -104,7 +104,7 @@ class BTPc : public XMLObject, public BTCombatant
   unsigned int xp;
   unsigned int gold;
   XMLVector<BTSkillValue*> skill;
-  BTEquipment item[BT_ITEMS];
+  BTEquipment *item;
 
   // Combat actions
   class BTPcAction
