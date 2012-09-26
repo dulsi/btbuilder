@@ -383,7 +383,7 @@ bool BTCombat::findTargetPC(int range, int &target, int ignore /*= BT_PARTYSIZE*
  int alive = 0;
  for (target = 0; (target < party.size()) && (target < range); ++target)
  {
-  if ((party[target]->isAlive()) && (target != ignore))
+  if ((party[target]->isAlive()) && (target != ignore) && (party[target]->hiddenTime() == 0))
   {
    ++alive;
   }
@@ -393,7 +393,7 @@ bool BTCombat::findTargetPC(int range, int &target, int ignore /*= BT_PARTYSIZE*
  alive = BTDice(1, alive).roll();
  for (target = 0; target < party.size(); ++target)
  {
-  if (target != ignore)
+  if ((target != ignore) && (party[target]->hiddenTime() == 0))
   {
    if ((alive == 0) && (party[target]->isAlive()))
     return true;
