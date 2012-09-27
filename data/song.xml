@@ -1,6 +1,8 @@
 <data>
 	<song>
 		<name>Safety Song</name>
+		<music>music/safety_song.ogg</music>
+		<combatMusic>music/safety_song.ogg</combatMusic>
 		<multiManifest>
 			<restriction>noncombat</restriction>
 			<manifest>
