@@ -2,7 +2,8 @@
 	<job>
 		<name>Warrior</name>
 		<abbreviation>Wa</abbreviation>
-		<picture>30</picture>
+		<malePicture>30</malePicture>
+		<femalePicture>75</femalePicture>
 		<toHit>-10</toHit>
 		<improveToHit>1</improveToHit>
 		<save>3</save>
@@ -22,7 +23,8 @@
 	<job>
 		<name>Paladin</name>
 		<abbreviation>Pa</abbreviation>
-		<picture>31</picture>
+		<malePicture>31</malePicture>
+		<femalePicture>76</femalePicture>
 		<toHit>-10</toHit>
 		<improveToHit>1</improveToHit>
 		<improveRateAttacks>2</improveRateAttacks>
@@ -38,7 +40,8 @@
 	<job>
 		<name>Rogue</name>
 		<abbreviation>Ro</abbreviation>
-		<picture>32</picture>
+		<malePicture>32</malePicture>
+		<femalePicture>11</femalePicture>
 		<toHit>-12</toHit>
 		<improveToHit>3</improveToHit>
 		<save>5</save>
@@ -68,7 +71,8 @@
 	<job>
 		<name>Bard</name>
 		<abbreviation>Ba</abbreviation>
-		<picture>33</picture>
+		<malePicture>33</malePicture>
+		<femalePicture>79</femalePicture>
 		<toHit>-10</toHit>
 		<improveToHit>1</improveToHit>
 		<save>3</save>
@@ -89,7 +93,8 @@
 	<job>
 		<name>Hunter</name>
 		<abbreviation>Hu</abbreviation>
-		<picture>34</picture>
+		<malePicture>34</malePicture>
+		<femalePicture>77</femalePicture>
 		<toHit>-11</toHit>
 		<improveToHit>2</improveToHit>
 		<save>5</save>
@@ -110,7 +115,8 @@
 	<job>
 		<name>Monk</name>
 		<abbreviation>Mo</abbreviation>
-		<picture>35</picture>
+		<malePicture>35</malePicture>
+		<femalePicture>78</femalePicture>
 		<toHit>-11</toHit>
 		<improveToHit>2</improveToHit>
 		<save>5</save>
@@ -136,7 +142,8 @@
 	<job>
 		<name>Conjurer</name>
 		<abbreviation>Co</abbreviation>
-		<picture>36</picture>
+		<malePicture>36</malePicture>
+		<femalePicture>81</femalePicture>
 		<toHit>-14</toHit>
 		<improveToHit>4</improveToHit>
 		<save>8</save>
@@ -206,7 +213,8 @@
 	<job>
 		<name>Magician</name>
 		<abbreviation>Ma</abbreviation>
-		<picture>36</picture>
+		<malePicture>36</malePicture>
+		<femalePicture>81</femalePicture>
 		<toHit>-14</toHit>
 		<improveToHit>4</improveToHit>
 		<save>8</save>
@@ -276,7 +284,8 @@
 	<job>
 		<name>Sorcerer</name>
 		<abbreviation>So</abbreviation>
-		<picture>36</picture>
+		<malePicture>36</malePicture>
+		<femalePicture>81</femalePicture>
 		<toHit>-14</toHit>
 		<improveToHit>4</improveToHit>
 		<save>8</save>
@@ -358,7 +367,8 @@
 	<job>
 		<name>Wizard</name>
 		<abbreviation>Wi</abbreviation>
-		<picture>36</picture>
+		<malePicture>36</malePicture>
+		<femalePicture>81</femalePicture>
 		<toHit>-14</toHit>
 		<improveToHit>4</improveToHit>
 		<save>8</save>
@@ -444,7 +454,8 @@
 	<job>
 		<name>Archmage</name>
 		<abbreviation>Am</abbreviation>
-		<picture>37</picture>
+		<malePicture>37</malePicture>
+		<femalePicture>82</femalePicture>
 		<toHit>-14</toHit>
 		<improveToHit>4</improveToHit>
 		<save>8</save>

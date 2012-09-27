@@ -26,7 +26,7 @@ void BTSkillValue::serialize(ObjectSerializer* s)
 }
 
 BTPc::BTPc()
- : race(0), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
+ : race(0), gender(BTGENDER_MALE), picture(-1), monster(BTMONSTER_NONE), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
 {
  name = new char[1];
  name[0] = 0;
@@ -37,7 +37,7 @@ BTPc::BTPc()
 }
 
 BTPc::BTPc(int monsterType, int j)
- : race(-1), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
+ : race(-1), gender(BTGENDER_MALE), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
 {
  // TO DO: Modify to accept combatant as an optional argument so that
  // spell bind can be implemented.
@@ -45,6 +45,7 @@ BTPc::BTPc(int monsterType, int j)
  BTJobList &jobList = BTGame::getGame()->getJobList();
  name = new char[monsterList[monster].getName().length() + 1];
  strcpy(name, monsterList[monster].getName().c_str());
+ gender = monsterList[monster].getGender();
  picture = monsterList[monster].getPicture();
  ac = monsterList[monster].getAc();
  toHit = jobList[job]->calcToHit(level);
@@ -218,7 +219,10 @@ void BTPc::changeJob(int newJob)
  if (jobList[job]->improveAc != 0)
   ac -= ((level - 1) / jobList[job]->improveAc);
  job = newJob;
- picture = jobList[newJob]->picture;
+ if (gender == BTGENDER_FEMALE)
+  picture = jobList[newJob]->femalePicture;
+ else
+  picture = jobList[newJob]->malePicture;
  int moreHp = BTDice(1, jobList[job]->hp).roll() + ((stat[BTSTAT_CN] > 14) ? stat[BTSTAT_CN] - 14 : 0);
  hp += moreHp;
  maxHp += moreHp;
@@ -393,6 +397,11 @@ bool BTPc::isEquipmentFull() const
 std::string BTPc::getName() const
 {
  return name;
+}
+
+int BTPc::getGender() const
+{
+ return gender;
 }
 
 int BTPc::getGold() const
@@ -571,6 +580,7 @@ void BTPc::serialize(ObjectSerializer* s)
  s->add("race", &race, NULL, &BTGame::getGame()->getRaceList());
  s->add("job", &job, NULL, &BTGame::getGame()->getJobList());
  s->add("jobAbbrev", &job, NULL, &BTGame::getGame()->getJobAbbrevList());
+ s->add("gender", &gender, NULL, &genderLookup);
  s->add("picture", &picture);
  s->add("monster", &monster);
  for (i = 0; i < BT_STATS; ++i)

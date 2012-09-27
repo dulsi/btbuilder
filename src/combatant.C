@@ -134,7 +134,10 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
   text += tmp;
   text += " points of damage";
   if (dead)
-   text += ", killing him";
+  {
+   text += ", killing ";
+   text += genderPronouns[defender->getGender()];
+  }
   else
   {
    int maxSpecial = finalSpecial.getMaxSet();
@@ -159,14 +162,16 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
        specialText += defenderName;
        if (totalDrain)
        {
-        specialText += " totally draining him";
+        specialText += " totally draining ";
+        specialText += genderPronouns[defender->getGender()];
        }
        break;
       case BTEXTRADAMAGE_INSANITY:
        specialText += " inflicts insanity";
        break;
       case BTEXTRADAMAGE_AGED:
-       specialText += " withers him";
+       specialText += " withers ";
+        specialText += genderPronouns[defender->getGender()];
        break;
       case BTEXTRADAMAGE_POSSESSION:
        specialText += " possesses";
@@ -192,11 +197,11 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
     }
     text += specialText;
    }
-   if (defender->isAlive())
-    text += ".";
-   else
-    text += "!";
   }
+  if (defender->isAlive())
+   text += ".";
+  else
+   text += "!";
  }
  else
   text += ", but misses!";
@@ -380,7 +385,10 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
    text += " points of damage";
   }
   if (dead)
-   text += ", killing him";
+  {
+   text += ", killing ";
+   text += genderPronouns[defender->getGender()];
+  }
   else
   {
    int maxSpecial = special.getMaxSet();
@@ -404,7 +412,8 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
        specialText += " is drained of a level";
        if (totalDrain)
        {
-        specialText += " totally draining him";
+        specialText += " totally draining ";
+        specialText += genderPronouns[defender->getGender()];
        }
        break;
       case BTEXTRADAMAGE_INSANITY:
@@ -437,11 +446,11 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
     }
     text += specialText;
    }
-   if (defender->isAlive())
-    text += ".";
-   else
-    text += "!";
   }
+  if (defender->isAlive())
+   text += ".";
+  else
+   text += "!";
  }
  else
  {
@@ -453,7 +462,10 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
    text += tmp;
    text += " points of damage";
    if (dead)
-    text += ", killing him";
+   {
+    text += ", killing ";
+    text += genderPronouns[defender->getGender()];
+   }
    text += "!";
   }
   else

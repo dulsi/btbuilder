@@ -52,6 +52,7 @@ class BTMonster : public XMLObject
   const std::string &getPluralName() const;
   IShort getAc() const;
   IShort getCombatAction(IShort round) const;
+  int getGender() const;
   const BTDice &getGold() const;
   const BTDice &getHp() const;
   IShort getLevel() const;
@@ -85,6 +86,7 @@ class BTMonster : public XMLObject
  private:
   std::string name;
   std::string pluralName;
+  int gender;
   IShort level;
   IShort startDistance;
   IShort move;

@@ -60,6 +60,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool isEquipmentFull() const;
 
   std::string getName() const;
+  int getGender() const;
   int getGold() const;
   int getHandWeapon() const;
   int getItem(int index) const;
@@ -94,6 +95,7 @@ class BTPc : public XMLObject, public BTCombatant
 
   char *name;
   int race;
+  int gender;
   int picture;
   int monster;
   int stat[BT_STATS];

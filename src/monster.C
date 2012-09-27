@@ -14,6 +14,7 @@
 #define MONSTER_RANGEDTYPEMAGIC  3
 
 BTMonster::BTMonster(BinaryReadFile &f)
+ : gender(BTGENDER_MALE)
 {
  IUByte unknown;
  char tmp[15];
@@ -61,6 +62,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
 }
 
 BTMonster::BTMonster()
+ : gender(BTGENDER_MALE)
 {
  meleeMessage = new char[1];
  meleeMessage[0] = 0;
@@ -94,6 +96,11 @@ IShort BTMonster::getAc() const
 IShort BTMonster::getCombatAction(IShort round) const
 {
  return combatAction[round % 4];
+}
+
+int BTMonster::getGender() const
+{
+ return gender;
 }
 
 const BTDice &BTMonster::getGold() const
@@ -276,6 +283,7 @@ void BTMonster::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
  s->add("pluralName", &pluralName);
+ s->add("gender", &gender, NULL, &genderLookup);
  s->add("level", &level);
  s->add("startDistance", &startDistance);
  s->add("move", &move);

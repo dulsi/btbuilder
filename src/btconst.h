@@ -230,6 +230,14 @@ extern char *mapTypes[];
 extern char *statAbbrev[];
 extern ArrayLookup statLookup;
 
+#define BT_GENDERS 3
+#define BTGENDER_MALE   0
+#define BTGENDER_FEMALE 1
+#define BTGENDER_IT     2
+extern char *genderNames[];
+extern ArrayLookup genderLookup;
+extern char *genderPronouns[];
+
 #define BTSP_REGEN 50
 
 #define BTJOB_MONSTER  11

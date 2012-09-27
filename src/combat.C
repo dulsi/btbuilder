@@ -31,6 +31,12 @@ void BTMonsterCombatant::deactivate(int &activeNum)
  }
 }
 
+int BTMonsterCombatant::getGender() const
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ return monList[group->monsterType].getGender();
+}
+
 std::string BTMonsterCombatant::getName() const
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();

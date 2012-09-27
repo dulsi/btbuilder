@@ -31,6 +31,7 @@ class BTMonsterCombatant : public BTCombatant
   BTMonsterCombatant(BTMonsterGroup *grp, int startLevel, int startJob, int startAc, int startToHit, int startHp) : BTCombatant(startLevel, startJob, startAc, startToHit, startHp), group(grp) {}
 
   void deactivate(int &activeNum);
+  int getGender() const;
   std::string getName() const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
 

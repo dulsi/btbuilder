@@ -138,7 +138,8 @@ void BTJob::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
  s->add("abbreviation", &abbrev);
- s->add("picture", &picture);
+ s->add("malePicture", &malePicture);
+ s->add("femalePicture", &femalePicture);
  s->add("toHit", &toHit);
  s->add("improveToHit", &improveToHit);
  s->add("improveRateAttacks", &improveRateAttacks);

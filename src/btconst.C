@@ -251,6 +251,20 @@ char *statAbbrev[] =
 };
 ArrayLookup statLookup(BT_STATS, statAbbrev);
 
+char *genderNames[] =
+{
+ "male",
+ "female",
+ "it"
+};
+ArrayLookup genderLookup(BT_GENDERS, genderNames);
+char *genderPronouns[] =
+{
+ "him",
+ "her",
+ "it"
+};
+
 char *restriction[] =
 {
  "none",

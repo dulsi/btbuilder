@@ -24,6 +24,7 @@ class BTCombatant
   virtual void deactivate(int &activeNum);
   virtual bool drainItem(int amount);
   virtual bool drainLevel();
+  virtual int getGender() const = 0;
   virtual std::string getName() const = 0;
   bool isAlive() const;
   virtual void restoreLevel();

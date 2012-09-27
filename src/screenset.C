@@ -1114,6 +1114,7 @@ BTScreenSet::BTScreenSet()
  actionList["selectParty"] = &selectParty;
  actionList["selectRoster"] = &selectRoster;
  actionList["setJob"] = &setJob;
+ actionList["setGender"] = &setGender;
  actionList["setRace"] = &setRace;
  actionList["singNow"] = &singNow;
  actionList["unequip"] = &unequip;
@@ -1993,6 +1994,15 @@ int BTScreenSet::selectRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  return 0;
 }
 
+int BTScreenSet::setGender(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ if ((key == 'f') || (key == 'F'))
+  b.pc->gender = BTGENDER_FEMALE;
+ else if ((key == 'm') || (key == 'M'))
+  b.pc->gender = BTGENDER_MALE;
+ return 0;
+}
+
 int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
@@ -2005,7 +2015,10 @@ int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
    if (count == 0)
    {
     b.pc->job = i;
-    b.pc->picture = job[i]->picture;
+    if (b.pc->gender == BTGENDER_FEMALE)
+     b.pc->picture = job[i]->femalePicture;
+    else
+     b.pc->picture = job[i]->malePicture;
     b.pc->hp = b.pc->maxHp = BTDice(1, 14, 14).roll() + ((b.pc->stat[BTSTAT_CN] > 14) ? b.pc->stat[BTSTAT_CN] - 14 : 0);
     b.pc->toHit = job[i]->toHit;
     b.pc->save = job[i]->save + ((b.pc->stat[BTSTAT_LK] > 14) ? b.pc->stat[BTSTAT_LK] - 14 : 0);

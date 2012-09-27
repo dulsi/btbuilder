@@ -380,6 +380,7 @@ class BTScreenSet : public ObjectSerializer
   static int selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int setGender(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
