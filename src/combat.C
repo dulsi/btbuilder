@@ -456,11 +456,14 @@ void BTCombat::initScreen(BTDisplay &d)
  {
   char tmp[10];
   int hiddenTime = getPc()->hiddenTime();
-  if (hiddenTime > 9)
-   hiddenTime = 9;
-  snprintf(tmp, 10, "%d0'", hiddenTime);
-  std::string *distance = new std::string(tmp);
-  add("hidden", distance, NULL, true);
+  if (hiddenTime > 0)
+  {
+   if (hiddenTime > 9)
+    hiddenTime = 9;
+   snprintf(tmp, 10, "%d0'", hiddenTime);
+   std::string *distance = new std::string(tmp);
+   add("hidden", distance, NULL, true);
+  }
  }
 
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();

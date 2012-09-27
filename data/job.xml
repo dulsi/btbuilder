@@ -59,6 +59,12 @@
 			<modifier>Dx</modifier>
 			<improve>3</improve>
 		</skill>
+		<skill>
+			<name>Sneak Attack</name>
+			<value>10</value>
+			<modifier>Dx</modifier>
+			<improve>3</improve>
+		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>

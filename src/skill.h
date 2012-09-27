@@ -22,7 +22,7 @@
 class BTSkill : public XMLObject
 {
  public:
-  BTSkill() : use(-1), effect(-1), special(-1), limited(false), defaultDifficulty(0)
+  BTSkill() : use(-1), effect(-1), after(-1), special(-1), limited(false), defaultDifficulty(0)
   {
    name = new char[1];
    name[0] = 0;
@@ -39,6 +39,7 @@ class BTSkill : public XMLObject
   char *name;
   int use;
   int effect;
+  int after;
   bool limited;
   int special;
   XMLVector<BTDice*> roll;

@@ -750,7 +750,7 @@ void BTPc::useAutoCombatSkill(BitField &special)
  BTSkillList &skillList = game->getSkillList();
  for (int i = 0; i < skillList.size(); ++i)
  {
-  if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) && (useSkill(i)))
+  if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) && ((-1 == skillList[i]->after) || (combat.skillUsed == skillList[i]->after)) && (useSkill(i)))
   {
    special.set(skillList[i]->effect);
   }

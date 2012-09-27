@@ -86,5 +86,13 @@
 		<roll><n>11</n><d>8</d></roll>
 		<roll><n>13</n><d>8</d></roll>
 	</skill>
+	<skill>
+		<name>Sneak Attack</name>
+		<use>autocombat</use>
+		<effect>Critical hit</effect>
+		<after>Hide in shadows</after>
+		<roll><n>1</n><d>100</d><m>0</m></roll>
+		<defaultDifficulty>101</defaultDifficulty>
+	</skill>
 </data>
 
