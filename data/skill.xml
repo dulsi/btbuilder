@@ -32,6 +32,9 @@
 		<special>hide</special>
 		<roll><n>1</n><d>100</d><m>0</m></roll>
 		<defaultDifficulty>101</defaultDifficulty>
+		<common>jumps into the shadows,</common>
+		<success>and succeeds!</success>
+		<failure>but is discovered!</failure>
 	</skill>
 	<skill>
 		<name>Disarm trap</name>

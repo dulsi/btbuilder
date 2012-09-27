@@ -452,6 +452,16 @@ void BTCombat::initScreen(BTDisplay &d)
  add("gold", &gold);
  add("monsters", &monsterNames);
  add("xp", &xp);
+ if (getPc())
+ {
+  char tmp[10];
+  int hiddenTime = getPc()->hiddenTime();
+  if (hiddenTime > 9)
+   hiddenTime = 9;
+  snprintf(tmp, 10, "%d0'", hiddenTime);
+  std::string *distance = new std::string(tmp);
+  add("hidden", distance, NULL, true);
+ }
 
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
  BTMonsterGroup *first = NULL;
@@ -1057,12 +1067,32 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
     break;
    }
    case BTPc::BTPcAction::useSkill:
+    if (!skillList[pc.combat.object]->common.empty())
+    {
+     text = pc.name;
+     text += " ";
+     text += skillList[pc.combat.object]->common;
+    }
     if (pc.useSkill(pc.combat.object))
     {
+     if (!text.empty())
+     {
+      text += " ";
+      text += skillList[pc.combat.object]->success;
+     }
      pc.combat.setSkillUsed(pc.combat.object);
     }
     else
+    {
+     if (!text.empty())
+     {
+      text += " ";
+      text += skillList[pc.combat.object]->failure;
+     }
      pc.combat.clearSkillUsed();
+    }
+    if (!text.empty())
+     d.drawMessage(text.c_str(), game->getDelay());
     break;
    case BTPc::BTPcAction::runAway:
    case BTPc::BTPcAction::advance:

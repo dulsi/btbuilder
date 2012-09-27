@@ -43,6 +43,9 @@ class BTSkill : public XMLObject
   int special;
   XMLVector<BTDice*> roll;
   int defaultDifficulty;
+  std::string common;
+  std::string success;
+  std::string failure;
 };
 
 class BTSkillList : public ValueLookup, public XMLVector<BTSkill*>
