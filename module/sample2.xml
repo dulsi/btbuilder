@@ -1,0 +1,9 @@
+<module>
+ <name>Builder City 2</name>
+ <author>Dennis Payne</author>
+ <content>sample2</content>
+ <item>item.xml</item>
+ <monster>monster.xml</monster>
+ <spell>spell.xml</spell>
+ <maxItems>12</maxItems>
+</module>

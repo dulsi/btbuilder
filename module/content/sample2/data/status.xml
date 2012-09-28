@@ -1,0 +1,40 @@
+<screenset>
+	<screen number="1" escapeScreen="2">
+		<line><name /></line>
+		<line>Race: <race /></line>
+		<line>Class: <job /></line>
+		<line><col>St: <stat number="1" /></col><col>IQ: <stat number="2" /></col></line>
+		<line><col>Dx: <stat number="3" /></col><col>Cn: <stat number="4" /></col></line>
+		<line><col>Lk: <stat number="5" /></col><col>HP: <hp /></col></line>
+		<line><col>Lvl: <level /></col><col>SP: <sp /></col></line>
+		<line>Expr: <xp /></line>
+		<line>Gold: <gold /></line>
+		<choice keys="pP" action="poolGold" align="center">(POOL GOLD)</choice>
+		<choice keys="tT" action="tradeGold" align="center">(TRADE GOLD)</choice>
+		<choice keys="cCdD" screen="2" align="center">(CONTINUE)</choice>
+	</screen>
+	<screen number="2" escapeScreen="exit">
+		<line><name /></line>
+		<selectInventory action="selectItem" screen="3" noerror="1" numbered="0"/>
+		<line><col>Con:<skill index="0" field="value" default="0"></skill></col><col>Src:<skill index="2" field="value" default="0" /></col><col></col></line>
+		<line><col>Mag:<skill index="1" field="value" default="0" /></col><col>Wiz:<skill index="3" field="value" default="0" /></col><col>Amg:<skill index="4" field="value" default="0" /></col></line>
+		<choice keys="cCdD" screen="exit" align="center">(DONE)</choice>
+	</screen>
+	<screen number="3" escapeScreen="2">
+		<line><name /> do you wish to:</line>
+		<line></line>
+		<choice keys="tT" screen="4">Trade the item</choice>
+		<choice keys="dD" action="drop" screen="2">Drop the item</choice>
+		<can option="equipped" value="1"><choice keys="eEuU" action="equip" screen="2">Equip the item</choice></can>
+		<can option="equipped" value="2"><choice keys="eEuU" action="unequip" screen="2">Unequip the item</choice></can>
+		<barrier />
+		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
+	</screen>
+	<screen number="4" escapeScreen="2">
+		<line></line>
+		<line>Who does <name /> want to give the <itemName /> to?</line>
+		<selectParty action="give" screen="2" />
+		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
+	</screen>
+	<error type="fullinventory"><name /> has no room for that item!</error>
+</screenset>

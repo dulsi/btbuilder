@@ -1,0 +1,25 @@
+<screenset>
+	<screen number="1" escapeScreen="exit">
+		<line />
+		<line>Who wishes to use an item?</line>
+		<selectParty action="selectParty" disallow="dead,paralyzed,stoned" screen="2" />
+		<choice keys="cC" action="exit">(CANCEL)</choice>
+	</screen>
+	<screen number="2" escapeScreen="exit">
+		<line>Use item #(1-8)</line>
+		<selectInventory action="useNow" screen="3" noerror="1" numbered="0"/>
+		<choice keys="cC" action="exit">(CANCEL)</choice>
+	</screen>
+	<screen number="3" escapeScreen="exit">
+		<line>Use on:</line>
+		<line>Member #[1-<partySize />]</line>
+		<selectParty action="useOn" screen="exit" />
+	</screen>
+	<error type="notequipped" screen="exit">You must equip the item to use it.</error>
+	<error type="notarrow" screen="exit">You need to select an ammunition to use.</error>
+	<error type="notbyyou" screen="exit">You can't use that ammunition.</error>
+	<error type="notusable" screen="exit">You can't use that!</error>
+	<error type="nobow" screen="exit">You have no equipped bow!</error>
+	<error type="dead" screen="exit"><name /> is dead!</error>
+	<error type="paralyzed" screen="exit"><name /> has been paralyzed and cannot move!</error>
+</screenset>
