@@ -33,6 +33,7 @@ class BTMonsterCombatant : public BTCombatant
   void deactivate(int &activeNum);
   int getGender() const;
   std::string getName() const;
+  bool isIllusion() const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
 
  protected:

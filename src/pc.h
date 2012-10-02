@@ -74,6 +74,7 @@ class BTPc : public XMLObject, public BTCombatant
   void giveXP(unsigned int amount);
   bool hasItem(int id) const;
   bool hasSkillUse(int skNum);
+  bool isIllusion() const;
   virtual void restoreLevel();
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
   virtual void serialize(ObjectSerializer* s);

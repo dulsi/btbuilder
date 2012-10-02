@@ -648,6 +648,91 @@ void BTSummonIllusionEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BT
  }
 }
 
+BTDispellIllusionEffect::BTDispellIllusionEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt)
+ : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d)
+{
+}
+
+int BTDispellIllusionEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+ int killed = 0;
+ BTGame *game = BTGame::getGame();
+ BTFactory<BTMonster> &monList = game->getMonsterList();
+ if (BTTARGET_PARTY == group)
+ {
+  BTParty &party = game->getParty();
+  if (distance > (range * (1 + effectiveRange)))
+   return 0;
+  if (BTTARGET_INDIVIDUAL == target)
+  {
+   killed += applyToGroup(d, &party);
+  }
+  else
+  {
+   killed += apply(d, party[target]);
+  }
+ }
+ else if (BTTARGET_ALLMONSTERS == group)
+ {
+  int resistOffset = 0;
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   killed += applyToGroup(d, grp);
+   resistOffset += grp->size();
+  }
+ }
+ else if (group >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
+  if (abs(grp->distance - distance) > (range * (1 + effectiveRange)))
+   return 0;
+  if (BTTARGET_INDIVIDUAL == target)
+  {
+   killed += applyToGroup(d, grp);
+  }
+  else
+  {
+   killed += apply(d, grp->at(target));
+  }
+ }
+ if (BTTARGET_PARTY == group)
+  d.drawStats();
+ return killed;
+}
+
+int BTDispellIllusionEffect::applyToGroup(BTDisplay &d, BTCombatantCollection *grp)
+{
+ if (abs(grp->getDistance() - distance) > (range * (1 + effectiveRange)))
+  return 0;
+ int killed(0);
+ for (int i = 0; i < grp->size(); ++i)
+ {
+  killed += apply(d, grp->at(i));
+ }
+ return killed;
+}
+
+int BTDispellIllusionEffect::apply(BTDisplay &d, BTCombatant *target)
+{
+ int killed(0);
+ if ((target->isAlive()) && (target->isIllusion()))
+ {
+  BTGame *game = BTGame::getGame();
+  int activeNum = 0;
+  target->deactivate(activeNum);
+  target->status.set(BTSTATUS_DEAD);
+  killed += abs(activeNum);
+  std::string text = "An illusionary ";
+  text += target->getName();
+  text += " disappears!";
+  d.drawMessage(text.c_str(), game->getDelay());
+ }
+ return killed;
+}
+
 BTArmorBonusEffect::BTArmorBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
  : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
 {

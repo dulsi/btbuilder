@@ -27,6 +27,7 @@ class BTCombatant
   virtual int getGender() const = 0;
   virtual std::string getName() const = 0;
   bool isAlive() const;
+  virtual bool isIllusion() const = 0;
   virtual void restoreLevel();
   virtual bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const = 0;
   bool takeHP(int amount);

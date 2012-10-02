@@ -43,6 +43,12 @@ std::string BTMonsterCombatant::getName() const
  return monList[group->monsterType].getName();
 }
 
+bool BTMonsterCombatant::isIllusion() const
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ return monList[group->monsterType].isIllusion();
+}
+
 bool BTMonsterCombatant::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();

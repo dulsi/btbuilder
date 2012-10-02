@@ -45,6 +45,8 @@ BTPc::BTPc(int monsterType, int j)
  BTJobList &jobList = BTGame::getGame()->getJobList();
  name = new char[monsterList[monster].getName().length() + 1];
  strcpy(name, monsterList[monster].getName().c_str());
+ level = maxLevel = monsterList[monster].getLevel();
+ job = j;
  gender = monsterList[monster].getGender();
  picture = monsterList[monster].getPicture();
  ac = monsterList[monster].getAc();
@@ -544,6 +546,11 @@ bool BTPc::hasSkillUse(int skNum)
   }
  }
  return false;
+}
+
+bool BTPc::isIllusion() const
+{
+ return job == BTJOB_ILLUSION;
 }
 
 void BTPc::restoreLevel()

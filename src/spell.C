@@ -346,6 +346,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_HEAL:
    effect = new BTHealEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
    break;
+  case BTSPELLTYPE_DISPELLILLUSION:
+   effect = new BTDispellIllusionEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target);
+   break;
   case BTSPELLTYPE_ARMORBONUS:
    effect = new BTArmorBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
    break;

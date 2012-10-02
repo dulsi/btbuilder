@@ -16,6 +16,7 @@
 class BTDisplay;
 class BTCombat;
 class BTCombatantCollection;
+class BTCombatant;
 class BTGame;
 
 class BTAllResistException
@@ -119,6 +120,21 @@ class BTSummonIllusionEffect : public BTTargetedEffect
   BTSummonIllusionEffect(int t, int x, int s, int m, int g, int trgt);
 
   virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+};
+
+class BTDispellIllusionEffect : public BTTargetedEffect
+{
+ public:
+  BTDispellIllusionEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  int applyToGroup(BTDisplay &d, BTCombatantCollection *grp);
+  int apply(BTDisplay &d, BTCombatant *target);
+
+  int range;
+  int effectiveRange;
+  int distance;
 };
 
 class BTArmorBonusEffect : public BTTargetedEffect
