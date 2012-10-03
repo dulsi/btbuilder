@@ -11,13 +11,14 @@
 #include "serialrect.h"
 #include "btconst.h"
 #include <SDL.h>
+#include <SDL_mng.h>
 
 class BTDisplay;
 
 class BTIcon : public XMLObject
 {
  public:
-  BTIcon() : image(0), effect(0), img(0) {}
+  BTIcon() : image(0), effect(0), img(0), animation(0) {}
   ~BTIcon();
 
   void clear(BTDisplay &d);
@@ -32,6 +33,7 @@ class BTIcon : public XMLObject
   SerialRect position;
   int effect;
   SDL_Surface *img;
+  MNG_Image *animation;
 };
 
 class BTFacingIcon : public BTIcon
@@ -46,6 +48,7 @@ class BTFacingIcon : public BTIcon
 
  private:
   SDL_Surface *dirImg[BT_DIRECTIONS];
+  MNG_Image *dirAni[BT_DIRECTIONS];
 };
 
 #endif

@@ -378,3 +378,15 @@ SDL_Surface *simpleRender_Solid(simpleFont *font, const char *text, SDL_Color c)
  }
  return s;
 }
+
+void simpleZoomAnimation(MNG_Image *animation, int xMult, int yMult)
+{
+ int i;
+ for (i = 0; i < animation->frame_count; ++i)
+ {
+  SDL_Surface *img2 = simpleZoomSurface(animation->frame[i], xMult, yMult);
+  SDL_FreeSurface(animation->frame[i]);
+  animation->frame[i] = img2;
+ }
+}
+

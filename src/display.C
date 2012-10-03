@@ -260,12 +260,7 @@ void BTDisplay::drawImage(int pic)
    {
     if ((xMult > 1) || (yMult > 1))
     {
-     for (int i = 0; i < animation->frame_count; ++i)
-     {
-      SDL_Surface *img2 = simpleZoomSurface(animation->frame[i], xMult, yMult);
-      SDL_FreeSurface(animation->frame[i]);
-      animation->frame[i] = img2;
-     }
+     simpleZoomAnimation(animation, xMult, yMult);
     }
     drawAnimationFrame();
     animationTime = SDL_GetTicks();

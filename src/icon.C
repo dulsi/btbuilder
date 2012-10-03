@@ -17,6 +17,10 @@ BTIcon::~BTIcon()
  {
   SDL_FreeSurface(img);
  }
+ if (animation)
+ {
+  IMG_FreeMNG(animation);
+ }
 }
 
 void BTIcon::clear(BTDisplay &d)
@@ -36,23 +40,42 @@ void BTIcon::draw(BTDisplay &d)
  int xMult, yMult;
  SDL_Rect dst;
  d.getMultiplier(xMult, yMult);
- if (NULL == img)
+ if ((NULL == img) && (NULL == animation))
  {
   SDL_RWops *f = PHYSFSRWOPS_openRead(image);
-  img = IMG_Load_RW(f, 1);
-  if (position.w != img->w)
+  if (IMG_isMNG(f))
   {
-   position.w = img->w;
+   animation = IMG_LoadMNG_RW(f);
+   if (position.w != animation->frame[0]->w)
+   {
+    position.w = animation->frame[0]->w;
+   }
+   if (position.h != animation->frame[0]->h)
+   {
+    position.h = animation->frame[0]->h;
+   }
+   if ((xMult > 1) || (yMult > 1))
+   {
+    simpleZoomAnimation(animation, xMult, yMult);
+   }
   }
-  if (position.h != img->h)
+  else
   {
-   position.h = img->h;
-  }
-  if ((xMult > 1) || (yMult > 1))
-  {
-   SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
-   SDL_FreeSurface(img);
-   img = img2;
+   img = IMG_Load_RW(f, 1);
+   if (position.w != img->w)
+   {
+    position.w = img->w;
+   }
+   if (position.h != img->h)
+   {
+    position.h = img->h;
+   }
+   if ((xMult > 1) || (yMult > 1))
+   {
+    SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
+    SDL_FreeSurface(img);
+    img = img2;
+   }
   }
  }
  dst.x = position.x * xMult;
@@ -60,7 +83,10 @@ void BTIcon::draw(BTDisplay &d)
  dst.w = position.w * xMult;
  dst.h = position.h * yMult;
  d.clear(dst, false);
- d.drawImage(dst, img);
+ if (img)
+  d.drawImage(dst, img);
+ else
+  d.drawImage(dst, animation->frame[0]);
 }
 
 bool BTIcon::isActive()
@@ -78,7 +104,10 @@ void BTIcon::serialize(ObjectSerializer* s)
 BTFacingIcon::BTFacingIcon()
 {
  for (int i = 0; i < BT_DIRECTIONS; ++i)
+ {
   dirImg[i] = 0;
+  dirAni[i] = 0;
+ }
 }
 
 BTFacingIcon::~BTFacingIcon()
@@ -88,6 +117,10 @@ BTFacingIcon::~BTFacingIcon()
   if (dirImg[i])
   {
    SDL_FreeSurface(dirImg[i]);
+  }
+  if (dirAni[i])
+  {
+   IMG_FreeMNG(dirAni[i]);
   }
  }
 }
@@ -100,33 +133,55 @@ void BTFacingIcon::draw(BTDisplay &d)
  BTGame *g = BTGame::getGame();
  int facing = g->getFacing();
  d.getMultiplier(xMult, yMult);
- if (NULL == dirImg[facing])
+ if ((NULL == dirImg[facing]) && (NULL == dirAni[facing]))
  {
   const char *period = strrchr(image, '.');
   std::string filename(image, period - image);
   filename.append(1, '0' + facing);
   filename += period;
   SDL_RWops *f = PHYSFSRWOPS_openRead(filename.c_str());
-  dirImg[facing] = IMG_Load_RW(f, 1);
-  if (position.w != dirImg[facing]->w)
+  if (IMG_isMNG(f))
   {
-   position.w = dirImg[facing]->w;
+   dirAni[facing] = IMG_LoadMNG_RW(f);
+   if (position.w != dirAni[facing]->frame[0]->w)
+   {
+    position.w = dirAni[facing]->frame[0]->w;
+   }
+   if (position.h != dirAni[facing]->frame[0]->h)
+   {
+    position.h = dirAni[facing]->frame[0]->h;
+   }
+   if ((xMult > 1) || (yMult > 1))
+   {
+    simpleZoomAnimation(dirAni[facing], xMult, yMult);
+   }
   }
-  if (position.h != dirImg[facing]->h)
+  else
   {
-   position.h = dirImg[facing]->h;
-  }
-  if ((xMult > 1) || (yMult > 1))
-  {
-   SDL_Surface *img2 = simpleZoomSurface(dirImg[facing], xMult, yMult);
-   SDL_FreeSurface(dirImg[facing]);
-   dirImg[facing] = img2;
+   dirImg[facing] = IMG_Load_RW(f, 1);
+   if (position.w != dirImg[facing]->w)
+   {
+    position.w = dirImg[facing]->w;
+   }
+   if (position.h != dirImg[facing]->h)
+   {
+    position.h = dirImg[facing]->h;
+   }
+   if ((xMult > 1) || (yMult > 1))
+   {
+    SDL_Surface *img2 = simpleZoomSurface(dirImg[facing], xMult, yMult);
+    SDL_FreeSurface(dirImg[facing]);
+    dirImg[facing] = img2;
+   }
   }
  }
  dst.x = position.x * xMult;
  dst.y = position.y * yMult;
  dst.w = position.w * xMult;
  dst.h = position.h * yMult;
- d.drawImage(dst, dirImg[facing]);
+ if (dirImg[facing])
+  d.drawImage(dst, dirImg[facing]);
+ else
+  d.drawImage(dst, dirAni[facing]->frame[0]);
 }
 
