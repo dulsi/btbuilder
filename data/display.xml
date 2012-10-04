@@ -129,22 +129,22 @@
 		<align>right</align>
 	</statBlock>
 	<icon>
-		<image>image/light.png</image>
+		<image>image/light.mng</image>
 		<position><x>133</x><y>10</y><w>25</w><h>25</h></position>
 		<effect>22</effect>
 	</icon>
 	<icon>
-		<image>image/armor.png</image>
+		<image>image/shield.png</image>
 		<position><x>133</x><y>35</y><w>25</w><h>25</h></position>
 		<effect>23</effect>
 	</icon>
 	<icon>
-		<image>image/sight.png</image>
+		<image>image/sight.mng</image>
 		<position><x>133</x><y>60</y><w>25</w><h>25</h></position>
 		<effect>25</effect>
 	</icon>
 	<facingIcon>
-		<image>image/compass.png</image>
+		<image>image/compass.ng</image>
 		<position><x>133</x><y>95</y><w>25</w><h>25</h></position>
 		<effect>31</effect>
 	</facingIcon>
