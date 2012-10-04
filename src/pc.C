@@ -154,6 +154,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
  BTDice damageDice(1, 2);
  IShort chanceXSpecial(0);
  IShort xSpecial(BTEXTRADAMAGE_NONE);
+ bool melee = true;
  if (-1 == weapon)
  {
   if (BTMONSTER_NONE != monster)
@@ -183,6 +184,8 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
   damageDice = itemWeapon.getDamage();
   chanceXSpecial = itemWeapon.getChanceXSpecial();
   xSpecial = itemWeapon.getXSpecial();
+  if ((BTITEM_ARROW == itemWeapon.getType()) || (BTITEM_THROWNWEAPON == itemWeapon.getType()))
+   melee = false;
  }
  if (stat[BTSTAT_ST] > 14)
   damageDice.setModifier(damageDice.getModifier() + stat[BTSTAT_ST] - 14);
@@ -209,7 +212,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
   if ((effect.length() >= 4) && (0 == strcmp(effect.c_str() + effect.length() - 4, " for")))
    effect.resize(effect.length() - 4);
  }
- return BTCombatant::attack(defender, cause, effect, damageDice, chanceXSpecial, xSpecial, numAttacksLeft, activeNum);
+ return BTCombatant::attack(defender, melee, cause, effect, damageDice, chanceXSpecial, xSpecial, numAttacksLeft, activeNum);
 }
 
 void BTPc::changeJob(int newJob)
@@ -751,15 +754,20 @@ void BTPc::unequip(int index)
  item[index].equipped = BTITEM_NOTEQUIPPED;
 }
 
-void BTPc::useAutoCombatSkill(BitField &special)
+void BTPc::useAutoCombatSkill(bool melee, BitField &special)
 {
  BTGame *game = BTGame::getGame();
  BTSkillList &skillList = game->getSkillList();
  for (int i = 0; i < skillList.size(); ++i)
  {
-  if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) && ((-1 == skillList[i]->after) || (combat.skillUsed == skillList[i]->after)) && (useSkill(i)))
+  if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) ||
+   ((melee) && (skillList[i]->use == BTSKILLUSE_AUTOCOMBATMELEE)) ||
+   ((!melee) && (skillList[i]->use == BTSKILLUSE_AUTOCOMBAT)))
   {
-   special.set(skillList[i]->effect);
+   if (((-1 == skillList[i]->after) || (combat.skillUsed == skillList[i]->after)) && (useSkill(i)))
+   {
+    special.set(skillList[i]->effect);
+   }
   }
  }
 }

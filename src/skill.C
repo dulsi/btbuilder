@@ -12,6 +12,8 @@
 char *use[] =
 {
  "autocombat",
+ "autocombat-melee",
+ "autocombat-ranged",
  "combat",
  "any",
  "magic",

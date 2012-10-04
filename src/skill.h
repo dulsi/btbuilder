@@ -11,8 +11,10 @@
 #include "dice.h"
 #include "xmlserializer.h"
 
-#define BTSKILLUSE_AUTOCOMBAT 0
-#define BTSKILLUSE_MAGIC      3
+#define BTSKILLUSE_AUTOCOMBAT       0
+#define BTSKILLUSE_AUTOCOMBATMELEE  1
+#define BTSKILLUSE_AUTOCOMBATRANGED 2
+#define BTSKILLUSE_MAGIC            5
 
 #define BTSKILLSPECIAL_DISARM    0
 #define BTSKILLSPECIAL_HIDE      1

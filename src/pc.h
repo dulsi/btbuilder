@@ -86,7 +86,7 @@ class BTPc : public XMLObject, public BTCombatant
   void takeItemCharge(int index, int amount = 1);
   bool takeSP(int amount);
   void unequip(int index);
-  void useAutoCombatSkill(BitField &special);
+  void useAutoCombatSkill(bool melee, BitField &special);
   bool useSkill(int index, int difficulty = BTSKILL_DEFAULTDIFFICULTY);
   void youth();
 

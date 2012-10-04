@@ -712,7 +712,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
     if (findTargetPC(BT_BACK, target))
     {
      defender = party[target];
-     std::string text = mon.attack(defender, monList[grp.monsterType].getMeleeMessage(), "and hits", monList[grp.monsterType].getMeleeDamage(), 100, monList[grp.monsterType].getMeleeExtra(), attacks, active);
+     std::string text = mon.attack(defender, true, monList[grp.monsterType].getMeleeMessage(), "and hits", monList[grp.monsterType].getMeleeDamage(), 100, monList[grp.monsterType].getMeleeExtra(), attacks, active);
      d.drawStats();
      d.drawMessage(text.c_str(), game->getDelay());
     }
@@ -740,7 +740,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
     if (!findTargetPC(BT_PARTYSIZE, target))
      break;
     int attacks = 1;
-    std::string text = mon.attack(party[target], monList[grp.monsterType].getRangedMessage(), "and hits", monList[grp.monsterType].getRangedDamage(), 100, monList[grp.monsterType].getRangedExtra(), attacks, active);
+    std::string text = mon.attack(party[target], false, monList[grp.monsterType].getRangedMessage(), "and hits", monList[grp.monsterType].getRangedDamage(), 100, monList[grp.monsterType].getRangedExtra(), attacks, active);
     d.addText(text.c_str());
     d.addText(blank);
     d.process(BTDisplay::allKeys, game->getDelay());

@@ -21,7 +21,7 @@
 	</skill>
 	<skill>
 		<name>Critical hit</name>
-		<use>autocombat</use>
+		<use>autocombat-melee</use>
 		<effect>Critical hit</effect>
 		<roll><n>1</n><d>100</d><m>0</m></roll>
 		<defaultDifficulty>101</defaultDifficulty>
@@ -88,7 +88,7 @@
 	</skill>
 	<skill>
 		<name>Sneak Attack</name>
-		<use>autocombat</use>
+		<use>autocombat-melee</use>
 		<effect>Critical hit</effect>
 		<after>Hide in shadows</after>
 		<roll><n>1</n><d>100</d><m>0</m></roll>

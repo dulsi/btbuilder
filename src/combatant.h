@@ -20,7 +20,7 @@ class BTCombatant
   virtual ~BTCombatant() {}
 
   virtual bool age();
-  std::string attack(BTCombatant *defender, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum);
+  std::string attack(BTCombatant *defender, bool melee, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum);
   virtual void deactivate(int &activeNum);
   virtual bool drainItem(int amount);
   virtual bool drainLevel();
@@ -32,7 +32,7 @@ class BTCombatant
   virtual bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const = 0;
   bool takeHP(int amount);
   virtual bool takeSP(int amount);
-  virtual void useAutoCombatSkill(BitField &special);
+  virtual void useAutoCombatSkill(bool melee, BitField &special);
   virtual void youth();
 
   static std::string specialAttack(BTCombatant *defender, const BTDice &damageDice, IShort xSpecial, bool farRange, int &activeNum, bool *saved = NULL);

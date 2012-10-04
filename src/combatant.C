@@ -14,7 +14,7 @@ bool BTCombatant::age()
  return drainLevel();
 }
 
-std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum)
+std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum)
 {
  int hits = 0;
  int totalDamage = 0;
@@ -40,7 +40,7 @@ std::string BTCombatant::attack(BTCombatant *defender, const std::string &cause,
    }
    else
    {
-    useAutoCombatSkill(special);
+    useAutoCombatSkill(melee, special);
     int maxSpecial = special.getMaxSet();
     if (maxSpecial > -1)
     {
@@ -275,7 +275,7 @@ bool BTCombatant::takeSP(int amount)
  return false;
 }
 
-void BTCombatant::useAutoCombatSkill(BitField &special)
+void BTCombatant::useAutoCombatSkill(bool melee, BitField &special)
 {
 }
 
