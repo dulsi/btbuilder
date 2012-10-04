@@ -207,40 +207,12 @@ BTCombat::~BTCombat()
  free(partyLabel);
 }
 
-void BTCombat::addEffect(BTBaseEffect *e)
-{
- effect.push_back(e);
-}
-
 void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
  monsters.push_back(BTMonsterGroup());
  BTMonsterGroup &group = monsters.back();
  group.setMonsterType(monsterType, number);
-}
-
-void BTCombat::addPlayer(BTDisplay &d, int who)
-{
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
- {
-  if ((*itr)->targets(BTTARGET_PARTY, BTTARGET_INDIVIDUAL))
-  {
-   (*itr)->apply(d, this, BTTARGET_PARTY, who);
-  }
- }
-}
-
-void BTCombat::clearEffects(BTDisplay &d)
-{
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); itr = effect.begin())
- {
-  BTBaseEffect *current = *itr;
-  effect.erase(itr);
-  if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
-   current->finish(d, this);
-  delete current;
- }
 }
 
 void BTCombat::clearEncounters()
@@ -418,28 +390,6 @@ bool BTCombat::findTargetPC(int range, int &target, int ignore /*= BT_PARTYSIZE*
  return false;
 }
 
-bool BTCombat::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
-{
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
- {
-  if ((*itr)->type == type)
-  {
-   if (group != BTTARGET_NONE)
-   {
-    if ((*itr)->targets(group, target))
-     return true;
-    if ((*itr)->targets(group, BTTARGET_INDIVIDUAL))
-     return true;
-    if ((group != BTTARGET_PARTY) && ((*itr)->targets(BTTARGET_ALLMONSTERS, BTTARGET_INDIVIDUAL)))
-     return true;
-   }
-   else
-    return true;
-  }
- }
- return false;
-}
-
 BTMonsterGroup *BTCombat::getMonsterGroup(int group)
 {
  std::list<BTMonsterGroup>::iterator itr(monsters.begin());
@@ -525,36 +475,6 @@ void BTCombat::initScreen(BTDisplay &d)
  {
   setPicture(d, BTGame::getGame()->getParty()[0]->picture, partyLabel);
 //  optionState = true;
- }
-}
-
-void BTCombat::movedPlayer(BTDisplay &d, int who, int where)
-{
- if (where == BTPARTY_REMOVE)
- {
-  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end();)
-  {
-   if ((*itr)->targets(BTTARGET_PARTY, who))
-   {
-    BTBaseEffect *current = *itr;
-    itr = effect.erase(itr);
-    int size = effect.size();
-    if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
-     current->finish(d, this);
-    delete current;
-    if (size != effect.size())
-     itr = effect.begin();
-   }
-   else
-    ++itr;
-  }
- }
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
- {
-  if (BTPARTY_REMOVE == where)
-   (*itr)->remove(this, BTTARGET_PARTY, where);
-  else
-   (*itr)->move(BTTARGET_PARTY, who, where);
  }
 }
 
@@ -1141,30 +1061,10 @@ bool BTCombat::endRound(BTDisplay &d)
  BTFactory<BTMonster> &monList = game->getMonsterList();
  BTFactory<BTSpell> &spellList = game->getSpellList();
  int group;
+ checkExpiration(d, this);
+ maintain(d, this);
+ d.drawIcons();
  XMLVector<BTBaseEffect*>::iterator itrEffect = effect.begin();
- for (itrEffect = effect.begin(); itrEffect != effect.end();)
- {
-  if ((*itrEffect)->isExpired(game))
-  {
-   BTBaseEffect *current = *itrEffect;
-   itrEffect = effect.erase(itrEffect);
-   int size = effect.size();
-   if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
-    current->finish(d, this);
-   delete current;
-   if (size != effect.size())
-    itrEffect = effect.begin();
-  }
-  else
-   ++itrEffect;
- }
- for (itrEffect = effect.begin(); itrEffect != effect.end(); ++itrEffect)
- {
-  if ((*itrEffect)->first)
-   (*itrEffect)->first = false;
-  else if (BTTIME_PERMANENT != (*itrEffect)->expiration)
-   (*itrEffect)->maintain(d, this);
- }
  group = BTTARGET_MONSTER;
  int alive = 0;
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end();)

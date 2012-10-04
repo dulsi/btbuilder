@@ -35,7 +35,7 @@ class BTBaseEffect : public XMLObject
   virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   virtual void serialize(ObjectSerializer *s);
 
-  virtual bool targets(int g, int who);
+  virtual bool targets(int g, int who, bool exact = true);
   virtual bool targetsMonsters();
   virtual void move(int g, int who, int where);
   virtual void remove(BTCombat *combat, int g, int who);
@@ -44,6 +44,7 @@ class BTBaseEffect : public XMLObject
 
   int type;
   int expiration;
+  bool expire;
   bool first;
   int singer;
   int musicId;
@@ -54,7 +55,7 @@ class BTTargetedEffect : public BTBaseEffect
  public:
   BTTargetedEffect(int t, int x, int s, int m, int g, int trgt);
 
-  virtual bool targets(int g, int who);
+  virtual bool targets(int g, int who, bool exact = true);
   virtual bool targetsMonsters();
   virtual void move(int g, int who, int where);
   virtual void remove(BTCombat *combat, int g, int who);
@@ -165,6 +166,18 @@ class BTResurrectEffect : public BTTargetedEffect
   BTResurrectEffect(int t, int x, int s, int m, int g, int trgt);
 
   virtual int maintain(BTDisplay &d, BTCombat *combat);
+};
+
+class BTDispellMagicEffect : public BTTargetedEffect
+{
+ public:
+  BTDispellMagicEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  int range;
+  int effectiveRange;
+  int distance;
 };
 
 class BTPhaseDoorEffect : public BTBaseEffect

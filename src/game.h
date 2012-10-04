@@ -34,7 +34,7 @@ class BTPartyDead
   BTPartyDead() {}
 };
 
-class BTGame : public Psuedo3DMap
+class BTGame : public Psuedo3DMap, public BTEffectGroup
 {
  public:
   BTGame(BTModule *m);
@@ -98,11 +98,11 @@ class BTGame : public Psuedo3DMap
   void addEffect(BTBaseEffect *e);
   void clearEffects(BTDisplay &d);
   void clearEffectsByType(BTDisplay &d, int type);
-  void clearEffectsBySource(BTDisplay &d, bool song);
-  void clearMapEffects();
+  void clearEffectsBySource(BTDisplay &d, bool song, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   void addPlayer(BTDisplay &d, int who);
   void movedPlayer(BTDisplay &d, int who, int where);
+  void movedPlayer(BTDisplay &d, BTCombat *combatObj, int who, int where);
   unsigned int getExpiration(unsigned int duration);
   bool isExpired(unsigned int expiration);
   bool isDaytime();
@@ -114,9 +114,6 @@ class BTGame : public Psuedo3DMap
   void save();
 
   static BTGame *getGame();
-
- protected:
-  void checkMusic(BTDisplay &d, std::vector<int> &musicIds);
 
  private:
   BTModule *module;
@@ -136,7 +133,6 @@ class BTGame : public Psuedo3DMap
   int xPos, yPos, facing;
   BitField flags;
   BTParty party;
-  XMLVector<BTBaseEffect*> effect;
   std::string lastInput;
   int counter;
   BTChest chest;

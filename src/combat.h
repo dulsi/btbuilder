@@ -13,6 +13,7 @@
 #include "map.h"
 #include "screenset.h"
 #include "spelleffect.h"
+#include "effectgroup.h"
 #include <map>
 
 class BTCombatError
@@ -73,25 +74,20 @@ class BTCombatScreen : public BTScreenSetScreen
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 };
 
-class BTCombat : public BTScreenSet
+class BTCombat : public BTScreenSet, public BTEffectGroup
 {
  public:
   BTCombat();
   ~BTCombat();
 
-  void addEffect(BTBaseEffect *e);
   void addEncounter(int monsterType, int number = 0);
-  void addPlayer(BTDisplay &d, int who);
-  void clearEffects(BTDisplay &d);
   void clearEncounters();
   int findScreen(int num);
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
   bool findTargetPC(int range, int &target, int ignore = BT_PARTYSIZE);
-  bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   BTMonsterGroup *getMonsterGroup(int group);
   void initScreen(BTDisplay &d);
   bool isWinner() { return won; }
-  void movedPlayer(BTDisplay &d, int who, int where);
   virtual void open(const char *filename);
   void run(BTDisplay &d, bool partyAttack = false);
   void runCombat(BTDisplay &d);
@@ -120,7 +116,6 @@ class BTCombat : public BTScreenSet
   bool optionState;
   int round;
   std::list<BTMonsterGroup> monsters;
-  XMLVector<BTBaseEffect*> effect;
   char *partyLabel;
   int treasurePic;
   char *treasureLabel;

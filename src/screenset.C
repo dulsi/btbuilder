@@ -1229,6 +1229,8 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
  if (clearMagic)
  {
   game->clearEffects(d);
+  game->checkExpiration(d, NULL);
+  d.drawIcons();
   game->clearTimedSpecial();
   game->resetTime();
  }
@@ -2062,6 +2064,8 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  XMLVector<BTSkill*> &skill = game->getSkillList();
  BTFactory<BTItem> &itemList = game->getItemList();
  game->clearEffectsBySource(d, true);
+ game->checkExpiration(d, NULL);
+ d.drawIcons();
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skill.size(); ++i)
  {

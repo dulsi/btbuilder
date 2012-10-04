@@ -214,17 +214,26 @@ const BitField &BTGame::getFlags()
 void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
 {
  flags |= flagsToAdd;
+ bool effectChange = false;
  if (flagsToAdd.isSet(BTSPECIALFLAG_DARKNESS))
  {
   clearEffectsByType(d, BTSPELLTYPE_LIGHT);
+  effectChange = true;
  }
  if (flagsToAdd.isSet(BTSPECIALFLAG_SILENCE))
  {
   clearEffectsBySource(d, true);
+  effectChange = true;
  }
  if (flagsToAdd.isSet(BTSPECIALFLAG_ANTIMAGIC))
  {
   clearEffectsBySource(d, false);
+  effectChange = true;
+ }
+ if (effectChange)
+ {
+  checkExpiration(d, &combat);
+  d.drawIcons();
  }
 }
 
@@ -582,6 +591,7 @@ void BTGame::run(BTDisplay &d)
  catch (const BTSpecialQuit &)
  {
   clearEffects(d);
+  checkExpiration(d, &combat);
  }
 }
 
@@ -705,167 +715,49 @@ void BTGame::addEffect(BTBaseEffect *e)
  if ((BTTIME_COMBAT == e->expiration) || (e->targetsMonsters()))
   combat.addEffect(e);
  else
-  effect.push_back(e);
+  BTEffectGroup::addEffect(e);
 }
 
 void BTGame::clearEffects(BTDisplay &d)
 {
- d.stopMusic(BTMUSICID_ALL);
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); itr = effect.begin())
- {
-  BTBaseEffect *current = *itr;
-  effect.erase(itr);
-  if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
-   current->finish(d, NULL);
-  delete current;
- }
  combat.clearEffects(d);
- d.drawIcons();
+ BTEffectGroup::clearEffects(d);
 }
 
 void BTGame::clearEffectsByType(BTDisplay &d, int type)
 {
- bool found = true;
- std::vector<int> musicIds;
- while (found)
- {
-  found = false;
-  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
-  {
-   if ((*itr)->type == type)
-   {
-    BTBaseEffect *current = *itr;
-    effect.erase(itr);
-    bool musicFound = false;
-    for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
-    {
-     if (*itrId == current->musicId)
-      musicFound = true;
-    }
-    if (!musicFound)
-     musicIds.push_back(current->musicId);
-    if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
-     current->finish(d, NULL);
-    delete current;
-    found = true;
-    break;
-   }
-  }
- }
- checkMusic(d, musicIds);
- d.drawIcons();
+ combat.clearEffectsByType(d, type);
+ BTEffectGroup::clearEffectsByType(d, type);
 }
 
-void BTGame::clearEffectsBySource(BTDisplay &d, bool song)
+void BTGame::clearEffectsBySource(BTDisplay &d, bool song, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
 {
- if (song)
-  d.stopMusic(BTMUSICID_ALL);
- bool bFound = true;
- while (bFound)
- {
-  bFound = false;
-  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
-  {
-   if (((song == true) && ((*itr)->singer != BTTARGET_NOSINGER)) || ((song == false) && ((*itr)->singer == BTTARGET_NOSINGER)))
-   {
-    BTBaseEffect *current = *itr;
-    effect.erase(itr);
-    if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
-     current->finish(d, NULL);
-    delete current;
-    bFound = true;
-    break;
-   }
-  }
- }
- d.drawIcons();
-}
-
-void BTGame::clearMapEffects()
-{
- bool bFound = true;
- while (bFound)
- {
-  bFound = false;
-  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
-  {
-   if (BTTIME_MAP == (*itr)->expiration)
-   {
-    BTBaseEffect *current = *itr;
-    effect.erase(itr);
-//    current->finish(d, NULL);
-    delete current;
-    bFound = true;
-    break;
-   }
-  }
- }
+ combat.clearEffectsBySource(d, song, group, target);
+ BTEffectGroup::clearEffectsBySource(d, song, group, target);
 }
 
 bool BTGame::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
 {
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
- {
-  if ((*itr)->type == type)
-  {
-   if (group != BTTARGET_NONE)
-   {
-    if ((*itr)->targets(group, target))
-     return true;
-    if ((*itr)->targets(group, BTTARGET_INDIVIDUAL))
-     return true;
-    if ((group != BTTARGET_PARTY) && ((*itr)->targets(BTTARGET_ALLMONSTERS, BTTARGET_INDIVIDUAL)))
-     return true;
-   }
-   else
-    return true;
-  }
- }
+ if (BTEffectGroup::hasEffectOfType(type, group, target))
+  return true;
  return combat.hasEffectOfType(type, group, target);
 }
 
 void BTGame::addPlayer(BTDisplay &d, int who)
 {
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
- {
-  if ((*itr)->targets(BTTARGET_PARTY, BTTARGET_INDIVIDUAL))
-  {
-   (*itr)->apply(d, NULL, BTTARGET_PARTY, who);
-  }
- }
+ BTEffectGroup::addPlayer(d, who);
  combat.addPlayer(d, who);
 }
 
 void BTGame::movedPlayer(BTDisplay &d, int who, int where)
 {
- if (where == BTPARTY_REMOVE)
- {
-  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end();)
-  {
-   if ((*itr)->targets(BTTARGET_PARTY, who))
-   {
-    BTBaseEffect *current = *itr;
-    itr = effect.erase(itr);
-    int size = effect.size();
-    if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
-     current->finish(d, NULL);
-    delete current;
-    if (size != effect.size())
-     itr = effect.begin();
-   }
-   else
-    ++itr;
-  }
- }
- // Must finish combat spells before fixing targets
- combat.movedPlayer(d, who, where);
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
- {
-  if (BTPARTY_REMOVE == where)
-   (*itr)->remove(&combat, BTTARGET_PARTY, where);
-  else
-   (*itr)->move(BTTARGET_PARTY, who, where);
- }
+ movedPlayer(d, &combat, who, where);
+}
+
+void BTGame::movedPlayer(BTDisplay &d, BTCombat *combatObj, int who, int where)
+{
+ combatObj->movedPlayer(d, combatObj, who, where);
+ BTEffectGroup::movedPlayer(d, combatObj, who, where);
 }
 
 unsigned int BTGame::getExpiration(unsigned int duration)
@@ -896,39 +788,8 @@ bool BTGame::isDaytime()
 void BTGame::nextTurn(BTDisplay &d, BTCombat *combat /*= NULL*/)
 {
  ++gameTime;
- std::vector<int> musicIds;
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end();)
- {
-  if ((*itr)->isExpired(this))
-  {
-   BTBaseEffect *current = *itr;
-   itr = effect.erase(itr);
-   bool musicFound = false;
-   for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
-   {
-    if (*itrId == current->musicId)
-     musicFound = true;
-   }
-   if (!musicFound)
-    musicIds.push_back(current->musicId);
-   int size = effect.size();
-   current->finish(d, combat);
-   delete current;
-   if (size != effect.size())
-    itr = effect.begin();
-  }
-  else
-   ++itr;
- }
- checkMusic(d, musicIds);
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end();)
- {
-  if ((*itr)->first)
-   (*itr)->first = false;
-  else if (BTTIME_PERMANENT != (*itr)->expiration)
-   (*itr)->maintain(d, combat);
-  ++itr;
- }
+ checkExpiration(d, combat);
+ maintain(d, combat);
  bool spRegen = false;
  if ((0 == gameTime % BTSP_REGEN) && (isDaytime()) && (0 < levelMap->getLight()))
   spRegen = true;
@@ -970,26 +831,5 @@ void BTGame::save()
 BTGame *BTGame::getGame()
 {
  return game;
-}
-
-void BTGame::checkMusic(BTDisplay &d, std::vector<int> &musicIds)
-{
- for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
- {
-  if ((*itr)->musicId != BTMUSICID_NONE)
-  {
-   for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
-   {
-    if (*itrId == (*itr)->musicId)
-    {
-     musicIds.erase(itrId);
-    }
-   }
-  }
- }
- for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
- {
-  d.stopMusic(*itrId);
- }
 }
 

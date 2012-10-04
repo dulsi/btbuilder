@@ -15,7 +15,7 @@
 #define BTSPELLFLG_EXCLAMATION 2
 
 BTBaseEffect::BTBaseEffect(int t, int x, int s, int m)
- : type(t), expiration(x), first(true), singer(s), musicId(m)
+ : type(t), expiration(x), expire(false), first(true), singer(s), musicId(m)
 {
 }
 
@@ -42,7 +42,7 @@ void BTBaseEffect::serialize(ObjectSerializer *s)
  s->add("expiration", &expiration);
 }
 
-bool BTBaseEffect::targets(int g, int who)
+bool BTBaseEffect::targets(int g, int who, bool exact /*= true*/)
 {
  return false;
 }
@@ -74,6 +74,8 @@ void BTBaseEffect::remove(BTCombat *combat, int g, int who)
 
 bool BTBaseEffect::isExpired(BTGame *game)
 {
+ if (expire)
+  return true;
  if (game->isExpired(expiration))
  {
   return true;
@@ -95,9 +97,20 @@ BTTargetedEffect::BTTargetedEffect(int t, int x, int s, int m, int g, int trgt)
 {
 }
 
-bool BTTargetedEffect::targets(int g, int who)
+bool BTTargetedEffect::targets(int g, int who, bool exact /*= true*/)
 {
- return (g == group) && (who == target);
+ if ((g == group) && (who == target))
+  return true;
+ else if (!exact)
+ {
+  if ((g == BTTARGET_ALLMONSTERS) && (group >= BTTARGET_MONSTER))
+   return true;
+  if ((g == group) && (target == BTTARGET_INDIVIDUAL))
+   return true;
+  if ((g == group) && (who == BTTARGET_INDIVIDUAL))
+   return true;
+ }
+ return false;
 }
 
 bool BTTargetedEffect::targetsMonsters()
@@ -992,6 +1005,44 @@ int BTResurrectEffect::maintain(BTDisplay &d, BTCombat *combat)
    // BTCS either cancels spells on death or doesn't implement this
   }
  }
+}
+
+BTDispellMagicEffect::BTDispellMagicEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt)
+ : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d)
+{
+}
+
+int BTDispellMagicEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+ bool oldExpire = expire;
+ BTGame *game = BTGame::getGame();
+ if (BTTARGET_PARTY == group)
+ {
+  if (distance > (range * (1 + effectiveRange)))
+   return 0;
+  game->clearEffectsBySource(d, false, group, target);
+ }
+ else if (BTTARGET_ALLMONSTERS == group)
+ {
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   if (abs(grp->distance - distance) > (range * (1 + effectiveRange)))
+    continue;
+   game->clearEffectsBySource(d, false, i + BTTARGET_MONSTER, target);
+  }
+ }
+ else if (group >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
+  if (abs(grp->distance - distance) > (range * (1 + effectiveRange)))
+   return 0;
+  game->clearEffectsBySource(d, false, group, target);
+ }
+ expire = oldExpire;
+ return 0;
 }
 
 BTPhaseDoorEffect::BTPhaseDoorEffect(int t, int x, int s, int m, int mX, int mY, int f)
