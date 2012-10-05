@@ -713,9 +713,19 @@ void BTGame::clearTimedSpecial()
 void BTGame::addEffect(BTBaseEffect *e)
 {
  if ((BTTIME_COMBAT == e->expiration) || (e->targetsMonsters()))
+ {
   combat.addEffect(e);
+ }
  else
+ {
   BTEffectGroup::addEffect(e);
+ }
+}
+
+void BTGame::checkExpiration(BTDisplay &d, BTCombat *combatObj /*= NULL*/)
+{
+ combat.checkExpiration(d, &combat);
+ BTEffectGroup::checkExpiration(d, &combat);
 }
 
 void BTGame::clearEffects(BTDisplay &d)

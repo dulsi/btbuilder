@@ -1252,6 +1252,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
    d.clearText();
    if (init)
    {
+    partySize = party.size();
     initScreen(d);
     if (grp)
     {

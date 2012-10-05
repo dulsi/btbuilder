@@ -16,11 +16,11 @@ class BTEffectGroup
   ~BTEffectGroup();
 
   virtual void addEffect(BTBaseEffect *e);
+  virtual void checkExpiration(BTDisplay &d, BTCombat *combat = NULL);
   virtual void clearEffects(BTDisplay &d);
   virtual void clearEffectsByType(BTDisplay &d, int type);
   virtual void clearEffectsBySource(BTDisplay &d, bool song, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   virtual void clearMapEffects();
-  virtual void checkExpiration(BTDisplay &d, BTCombat *combat = NULL);
   virtual bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   virtual void addPlayer(BTDisplay &d, int who);
   virtual void movedPlayer(BTDisplay &d, BTCombat *combat, int who, int where);

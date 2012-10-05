@@ -523,6 +523,7 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
  }
  d.clearText();
  clearEffects(d);
+ checkExpiration(d, this);
  clearEncounters();
 }
 

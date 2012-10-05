@@ -96,6 +96,7 @@ class BTGame : public Psuedo3DMap, public BTEffectGroup
   void clearTimedSpecial();
 
   void addEffect(BTBaseEffect *e);
+  void checkExpiration(BTDisplay &d, BTCombat *combatObj = NULL);
   void clearEffects(BTDisplay &d);
   void clearEffectsByType(BTDisplay &d, int type);
   void clearEffectsBySource(BTDisplay &d, bool song, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
