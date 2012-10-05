@@ -440,6 +440,8 @@ void BTGame::run(BTDisplay &d)
       if (!hasEffectOfType(BTSPELLTYPE_BLOCKENCOUNTERS))
       {
        levelMap->generateRandomEncounter(d);
+       d.drawView();
+       d.drawLabel(levelMap->getName());
       }
      }
      key = d.readChar(6000);
