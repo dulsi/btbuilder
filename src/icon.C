@@ -42,41 +42,7 @@ void BTIcon::draw(BTDisplay &d)
  d.getMultiplier(xMult, yMult);
  if ((NULL == img) && (NULL == animation))
  {
-  SDL_RWops *f = PHYSFSRWOPS_openRead(image);
-  if (IMG_isMNG(f))
-  {
-   animation = IMG_LoadMNG_RW(f);
-   if (position.w != animation->frame[0]->w)
-   {
-    position.w = animation->frame[0]->w;
-   }
-   if (position.h != animation->frame[0]->h)
-   {
-    position.h = animation->frame[0]->h;
-   }
-   if ((xMult > 1) || (yMult > 1))
-   {
-    simpleZoomAnimation(animation, xMult, yMult);
-   }
-  }
-  else
-  {
-   img = IMG_Load_RW(f, 1);
-   if (position.w != img->w)
-   {
-    position.w = img->w;
-   }
-   if (position.h != img->h)
-   {
-    position.h = img->h;
-   }
-   if ((xMult > 1) || (yMult > 1))
-   {
-    SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
-    SDL_FreeSurface(img);
-    img = img2;
-   }
-  }
+  d.loadImageOrAnimation(image, &img, &animation);
  }
  dst.x = position.x * xMult;
  dst.y = position.y * yMult;
@@ -139,41 +105,7 @@ void BTFacingIcon::draw(BTDisplay &d)
   std::string filename(image, period - image);
   filename.append(1, '0' + facing);
   filename += period;
-  SDL_RWops *f = PHYSFSRWOPS_openRead(filename.c_str());
-  if (IMG_isMNG(f))
-  {
-   dirAni[facing] = IMG_LoadMNG_RW(f);
-   if (position.w != dirAni[facing]->frame[0]->w)
-   {
-    position.w = dirAni[facing]->frame[0]->w;
-   }
-   if (position.h != dirAni[facing]->frame[0]->h)
-   {
-    position.h = dirAni[facing]->frame[0]->h;
-   }
-   if ((xMult > 1) || (yMult > 1))
-   {
-    simpleZoomAnimation(dirAni[facing], xMult, yMult);
-   }
-  }
-  else
-  {
-   dirImg[facing] = IMG_Load_RW(f, 1);
-   if (position.w != dirImg[facing]->w)
-   {
-    position.w = dirImg[facing]->w;
-   }
-   if (position.h != dirImg[facing]->h)
-   {
-    position.h = dirImg[facing]->h;
-   }
-   if ((xMult > 1) || (yMult > 1))
-   {
-    SDL_Surface *img2 = simpleZoomSurface(dirImg[facing], xMult, yMult);
-    SDL_FreeSurface(dirImg[facing]);
-    dirImg[facing] = img2;
-   }
-  }
+  d.loadImageOrAnimation(filename.c_str(), &dirImg[facing], &dirAni[facing]);
  }
  dst.x = position.x * xMult;
  dst.y = position.y * yMult;
