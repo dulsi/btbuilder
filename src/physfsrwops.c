@@ -130,6 +130,7 @@ static int physfsrwops_close(SDL_RWops *rw)
         SDL_SetError("PhysicsFS error: %s", PHYSFS_getLastError());
         return(-1);
     } /* if */
+    rw->hidden.unknown.data1 = 0;
 
     SDL_FreeRW(rw);
     return(0);

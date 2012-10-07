@@ -106,7 +106,9 @@ MNG_Image *IMG_LoadMNG(const char *file)
             return NULL;
     }
 
-    return( MNG_iterate_chunks(src) );
+    MNG_Image *result = MNG_iterate_chunks(src);
+    SDL_RWclose(src);
+    return result;
 }
 
 MNG_Image *IMG_LoadMNG_RW(SDL_RWops *src)
@@ -139,7 +141,9 @@ MNG_Image *IMG_LoadMNG_RW(SDL_RWops *src)
             return NULL;
     }
 
-    return( MNG_iterate_chunks(src) );
+    MNG_Image *result = MNG_iterate_chunks(src);
+    SDL_RWclose(src);
+    return result;
 }
 
 /* Read a byte from the src stream */

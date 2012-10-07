@@ -9,12 +9,19 @@
 
 #include "psuedo3dconfig.h"
 #include "psuedo3dmap.h"
+#include "SDL_mng.h"
 #include <SDL.h>
+
+class ImageLoader
+{
+ public:
+  virtual void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs = true) = 0;
+};
 
 class Psuedo3D
 {
  public:
-  Psuedo3D(int xM, int yM);
+  Psuedo3D(ImageLoader *il, int xM, int yM);
   ~Psuedo3D();
 
   void clear();
@@ -37,6 +44,7 @@ class Psuedo3D
   typedef SDL_Surface *SDL_Surface_ptr;
   typedef SDL_Surface **SDL_Surface_ary;
   Psuedo3DConfig *config;
+  ImageLoader *imgLoad;
   int xMult, yMult;
   SDL_Surface *display;
   SDL_Surface *background;

@@ -11,8 +11,8 @@
 
 int Psuedo3D::changeXY[4][2] = { {0, -1}, {1, 0}, {0, 1}, {-1, 0} };
 
-Psuedo3D::Psuedo3D(int xM, int yM)
- : xMult(xM), yMult(yM), config(NULL), display(NULL), background(NULL), walls(NULL), mapWalls(NULL), mapSpecial(NULL), mapUnknown(NULL)
+Psuedo3D::Psuedo3D(ImageLoader *il, int xM, int yM)
+ : config(NULL), imgLoad(il), xMult(xM), yMult(yM), display(NULL), background(NULL), walls(NULL), mapWalls(NULL), mapSpecial(NULL), mapUnknown(NULL)
 {
  for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
  {
@@ -291,18 +291,12 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
 
 SDL_Surface *Psuedo3D::loadImage(const char *file)
 {
- std::string imagePath("image/");
- SDL_Surface *img = IMG_Load((imagePath + file).c_str());
+ SDL_Surface *img = NULL;
+ imgLoad->loadImageOrAnimation(file, &img, NULL);
  if (NULL == img)
  {
-  printf((std::string("Failed - Loading ") + imagePath + file + std::string("\n")).c_str());
+  printf((std::string("Failed - Loading image/") + file + std::string("\n")).c_str());
   exit(0);
- }
- if ((xMult > 1) || (yMult > 1))
- {
-  SDL_Surface *tmp = img;
-  img = simpleZoomSurface(tmp, xMult, yMult);
-  SDL_FreeSurface(tmp);
  }
  return img;
 }

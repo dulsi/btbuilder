@@ -1,7 +1,7 @@
 <display>
 	<width>320</width>
 	<height>200</height>
-	<background>image/mainscreen.png</background>
+	<background>mainscreen.png</background>
 	<label><x>0</x><y>0</y><w>1</w><h>1</h></label>
 	<text><x>165</x><y>24</y><w>120</w><h>133</h></text>
 </display>

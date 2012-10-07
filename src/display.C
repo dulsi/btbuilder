@@ -10,6 +10,7 @@
 #include "game.h"
 #include "physfsrwops.h"
 #include <SDL_image.h>
+#include "boost/filesystem/operations.hpp"
 
 const char *BTDisplay::allKeys = "allKeys";
 
@@ -22,7 +23,7 @@ BTMusic::~BTMusic()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(0, 0), mainScreen(0), mainBackground(0), animation(0), ttffont(0), sfont(&simple8x8)
+ : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), ttffont(0), sfont(&simple8x8)
 {
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
@@ -41,7 +42,16 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
    xMult = yMult;
   else
    yMult = xMult;
-  p3d.setMultiplier(xMult, yMult);
+  expanded = config->findExpanded(xMult, yMult);
+  if (expanded)
+  {
+   xMult = ((xFull - 10) / (config->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
+   yMult = ((yFull - 10) / (config->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
+   if (xMult > yMult)
+    xMult = yMult;
+   else
+    yMult = xMult;
+  }
  }
  label.x = config->label.x * xMult;
  label.y = config->label.y * yMult;
@@ -247,30 +257,15 @@ void BTDisplay::drawImage(int pic)
   animation = NULL;
   animationFrame = 0;
  }
- snprintf(filename, 50, "image/slot%d.ng", pic);
+ snprintf(filename, 50, "slot%d.ng", pic);
  SDL_Rect src, dst;
  SDL_Surface *img = NULL;
- if (PHYSFS_exists(filename))
+ loadImageOrAnimation(filename, &img, &animation);
+ if (animation)
  {
-  SDL_RWops *f = PHYSFSRWOPS_openRead(filename);
-  if (IMG_isMNG(f))
-  {
-   animation = IMG_LoadMNG_RW(f);
-   if (animation)
-   {
-    if ((xMult > 1) || (yMult > 1))
-    {
-     simpleZoomAnimation(animation, xMult, yMult);
-    }
-    drawAnimationFrame();
-    animationTime = SDL_GetTicks();
-    return;
-   }
-  }
-  else
-  {
-   img = IMG_Load_RW(f, 1);
-  }
+  drawAnimationFrame();
+  animationTime = SDL_GetTicks();
+  return;
  }
  if ((pic >= 45) && (img == NULL))
  {
@@ -298,6 +293,12 @@ void BTDisplay::drawImage(int pic)
     colors[c].g *= 4;
     colors[c].b *= 4;
    }
+   if ((xMult > 1) || (yMult > 1))
+   {
+    SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
+    SDL_FreeSurface(img);
+    img = img2;
+   }
   }
  }
  dst.x = config->x3d * xMult;
@@ -309,12 +310,6 @@ void BTDisplay::drawImage(int pic)
   SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
   SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
   return;
- }
- if ((xMult > 1) || (yMult > 1))
- {
-  SDL_Surface *img2 = simpleZoomSurface(img, xMult, yMult);
-  SDL_FreeSurface(img);
-  img = img2;
  }
  src.x = 0;
  src.y = 0;
@@ -898,19 +893,7 @@ void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
   SDL_FreeSurface(mainBackground);
   mainBackground = NULL;
  }
- SDL_RWops *f = NULL;
- if (physfs)
-  f = PHYSFSRWOPS_openRead(file);
- else
-  f = SDL_RWFromFile(file, "rb");
- SDL_Surface *img = IMG_Load_RW(f, 1);
- if ((xMult > 1) || (yMult > 1))
- {
-  mainBackground = simpleZoomSurface(img, xMult, yMult);
-  SDL_FreeSurface(img);
- }
- else
-  mainBackground = img;
+ loadImageOrAnimation(file, &mainBackground, NULL, physfs);
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
 }
@@ -923,6 +906,16 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   newXMult = newYMult;
  else
   newYMult = newXMult;
+ expanded = c->findExpanded(newXMult, newYMult);
+ if (expanded)
+ {
+  newXMult = ((xFull - 10) / (c->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
+  newYMult = ((yFull - 10) / (c->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
+  if (newXMult > newYMult)
+   newXMult = newYMult;
+  else
+   newYMult = newXMult;
+ }
  p3d.setMultiplier(newXMult, newYMult);
  label.x = c->label.x * newXMult;
  label.y = c->label.y * newYMult;
@@ -1096,6 +1089,99 @@ void BTDisplay::drawImage(SDL_Rect &dst, SDL_Surface *img)
 void BTDisplay::drawRect(SDL_Rect &dst, SDL_Color c)
 {
  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, c.r, c.g, c.b));
+}
+
+void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs /*= true*/)
+{
+ if (expanded)
+ {
+  std::string filename = "image/";
+  filename += expanded->directory;
+  filename += "/";
+  filename += file;
+  bool exists = false;
+  if (physfs)
+   exists = PHYSFS_exists(filename.c_str());
+  else
+   exists = boost::filesystem::exists(filename.c_str());
+  if (exists)
+  {
+   SDL_RWops *f = NULL;
+   if (physfs)
+    f = PHYSFSRWOPS_openRead(filename.c_str());
+   else
+    f = SDL_RWFromFile(filename.c_str(), "rb");
+   if (IMG_isMNG(f))
+   {
+    if (animation)
+    {
+     *animation = IMG_LoadMNG_RW(f);
+     if (*animation)
+     {
+      if (((xMult / expanded->xMult) > 1) || ((yMult / expanded->yMult) > 1))
+      {
+       simpleZoomAnimation(*animation, xMult / expanded->xMult, yMult / expanded->yMult);
+      }
+      return;
+     }
+    }
+    else
+     SDL_RWclose(f);
+   }
+   else
+   {
+    *img = IMG_Load_RW(f, 1);
+    if (((xMult / expanded->xMult) > 1) || ((yMult / expanded->yMult) > 1))
+    {
+     SDL_Surface *img2 = simpleZoomSurface(*img, xMult / expanded->xMult, yMult / expanded->yMult);
+     SDL_FreeSurface(*img);
+     *img = img2;
+    }
+    return;
+   }
+  }
+ }
+ std::string filename = "image/";
+ filename += file;
+ bool exists = false;
+ if (physfs)
+  exists = PHYSFS_exists(filename.c_str());
+ else
+  exists = boost::filesystem::exists(filename.c_str());
+ if (exists)
+ {
+  SDL_RWops *f = NULL;
+  if (physfs)
+   f = PHYSFSRWOPS_openRead(filename.c_str());
+  else
+   f = SDL_RWFromFile(filename.c_str(), "rb");
+  if (IMG_isMNG(f))
+  {
+   if (animation)
+   {
+    *animation = IMG_LoadMNG_RW(f);
+    if (*animation)
+    {
+     if ((xMult > 1) || (yMult > 1))
+     {
+      simpleZoomAnimation(*animation, xMult, yMult);
+     }
+    }
+   }
+   else
+    SDL_RWclose(f);
+  }
+  else
+  {
+   *img = IMG_Load_RW(f, 1);
+   if ((xMult > 1) || (yMult > 1))
+   {
+    SDL_Surface *img2 = simpleZoomSurface(*img, xMult, yMult);
+    SDL_FreeSurface(*img);
+    *img = img2;
+   }
+  }
+ }
 }
 
 void BTDisplay::drawAnimationFrame()

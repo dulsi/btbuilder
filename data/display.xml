@@ -1,7 +1,8 @@
 <display>
 	<width>320</width>
 	<height>200</height>
-	<background>image/gamescreen.png</background>
+	<expanded><xMult>2</xMult><yMult>2</yMult><directory>640x400</directory></expanded>
+	<background>gamescreen.png</background>
 	<x3d>16</x3d>
 	<y3d>15</y3d>
 	<label><x>16</x><y>103</y><w>112</w><h>13</h></label>

@@ -8,6 +8,22 @@
 #include "displayconfig.h"
 #include "xmlserializer.h"
 
+BTDisplayExpanded::BTDisplayExpanded()
+ : xMult(1), yMult(1)
+{
+}
+
+BTDisplayExpanded::~BTDisplayExpanded()
+{
+}
+
+void BTDisplayExpanded::serialize(ObjectSerializer* s)
+{
+ s->add("xMult", &xMult);
+ s->add("yMult", &yMult);
+ s->add("directory", &directory);
+}
+
 BTDisplayConfig::BTDisplayConfig()
  : x3d(0), y3d(0), background(0), font(0), xMap(0), yMap(0), widthMap(0), heightMap(0)
 {
@@ -25,6 +41,7 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
 {
  s->add("width", &width);
  s->add("height", &height);
+ s->add("expanded", &expanded, &BTDisplayExpanded::create);
  s->add("background", &background);
  s->add("font", &font);
  s->add("x3d", &x3d);
@@ -48,5 +65,19 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("yMap", &yMap);
  s->add("widthMap", &widthMap);
  s->add("heightMap", &heightMap);
+}
+
+BTDisplayExpanded *BTDisplayConfig::findExpanded(int xMult, int yMult)
+{
+ BTDisplayExpanded *result = NULL;
+ for (int i = 0; i < expanded.size(); ++i)
+ {
+  if ((expanded[i]->xMult <= xMult) && (expanded[i]->yMult <= yMult))
+  {
+   if ((!result) || ((expanded[i]->xMult > result->xMult) && (expanded[i]->xMult > result->xMult)))
+    result = expanded[i];
+  }
+ }
+ return result;
 }
 

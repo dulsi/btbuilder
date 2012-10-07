@@ -52,7 +52,7 @@ class BTMusic
   int musicId;
 };
 
-class BTDisplay
+class BTDisplay : public ImageLoader
 {
  public:
   BTDisplay(BTDisplayConfig *c, bool physfs = true);
@@ -107,6 +107,8 @@ class BTDisplay
   void drawImage(SDL_Rect &dst, SDL_Surface *img);
   void drawRect(SDL_Rect &dst, SDL_Color c);
 
+  void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs = true);
+
  private:
   void drawAnimationFrame();
   void scrollUp(int h);
@@ -118,6 +120,7 @@ class BTDisplay
  private:
   int xFull, yFull;
   BTDisplayConfig *config;
+  BTDisplayExpanded *expanded;
   int xMult, yMult;
   SDL_Rect label;
   SDL_Rect text;
