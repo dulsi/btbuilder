@@ -101,6 +101,7 @@ class BTDisplay : public ImageLoader
   void setPsuedo3DConfig(const char *file);
   Psuedo3DConfig *setWallGraphics(int type);
   void stopMusic(int id);
+  void toggleFullScreen();
 
   void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a);
   bool sizeFont(const char *text, int &w, int &h);
@@ -119,6 +120,7 @@ class BTDisplay : public ImageLoader
 
  private:
   int xFull, yFull;
+  bool fullScreen;
   BTDisplayConfig *config;
   BTDisplayExpanded *expanded;
   int xMult, yMult;

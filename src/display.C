@@ -23,7 +23,7 @@ BTMusic::~BTMusic()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), ttffont(0), sfont(&simple8x8)
+ : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), ttffont(0), sfont(&simple8x8)
 {
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
@@ -69,7 +69,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
  }
 #endif
  mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
-   SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
+   SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
  if (mainScreen == NULL)
  {
   printf("Failed - SDL_SetVideoMode\n");
@@ -802,6 +802,8 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     return BTKEY_LEFT;
    else if ((sdlevent.key.keysym.sym == SDLK_RIGHT) || (sdlevent.key.keysym.sym == SDLK_KP6))
     return BTKEY_RIGHT;
+   else if (sdlevent.key.keysym.sym == SDLK_F12)
+    toggleFullScreen();
    if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
     timer = SDL_AddTimer(animationDelay, timerCallback, NULL);
    else if (delay)
@@ -928,7 +930,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
  {
   mainScreen = SDL_SetVideoMode(c->width * newXMult, c->height * newYMult, 32,
-    SDL_SWSURFACE /*| (fullScreen ? SDL_FULLSCREEN : 0)*/);
+    SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
   if (mainScreen == NULL)
   {
    printf("Failed - SDL_SetVideoMode\n");
@@ -1026,6 +1028,29 @@ void BTDisplay::stopMusic(int id)
    }
   }
  }
+}
+
+void BTDisplay::toggleFullScreen()
+{
+ fullScreen = !fullScreen;
+ SDL_Rect src, dst;
+ dst.x = config->xMap * xMult;
+ dst.y = config->yMap * yMult;
+ src.w = dst.w = config->width * xMult;
+ src.h = dst.h = config->height * yMult;
+ src.x = dst.x = 0;
+ src.y = dst.y = 0;
+ SDL_Surface *backup = SDL_CreateRGBSurface(SDL_SWSURFACE, dst.w, dst.h, 32, mainScreen->format->Rmask, mainScreen->format->Gmask, mainScreen->format->Bmask, mainScreen->format->Amask);
+ SDL_BlitSurface(mainScreen, &dst, backup, &src);
+ mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
+    SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
+ if (mainScreen == NULL)
+ {
+  printf("Failed - SDL_SetVideoMode\n");
+  exit(0);
+ }
+ SDL_BlitSurface(backup, &src, mainScreen, &dst);
+ SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 
 void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a)
