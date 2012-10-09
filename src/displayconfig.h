@@ -51,6 +51,8 @@ class BTDisplayConfig : public XMLObject
   XMLVector<BTIcon*> icon;
   int xMap, yMap;
   int widthMap, heightMap;
+  int mapDisplayMode;
+  bool centerMap;
 };
 
 #endif

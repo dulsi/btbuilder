@@ -281,3 +281,11 @@ char *targetOverride[] =
 };
 ArrayLookup targetOverrideLookup(BT_TARGETOVERRIDES, targetOverride);
 
+char *mapDisplayMode[] =
+{
+ "request",
+ "no3d",
+ "always"
+};
+ArrayLookup mapDisplayModeLookup(BT_MAPDISPLAYMODES, mapDisplayMode);
+

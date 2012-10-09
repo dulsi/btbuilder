@@ -422,8 +422,8 @@ void BTDisplay::drawView()
   animation = NULL;
   animationFrame = 0;
  }
- BTGame *g = BTGame::getGame();
- p3d.draw(g, g->getX(), g->getY(), g->getFacing());
+ Psuedo3DMap *m = Psuedo3DMap::getMap();
+ p3d.draw(m, m->getX(), m->getY(), m->getFacing());
  SDL_Rect src, dst;
  src.x = 0;
  src.y = 0;
@@ -435,6 +435,9 @@ void BTDisplay::drawView()
  dst.h = p3d.config->height * yMult;
  SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+ if ((config->mapDisplayMode == BTMAPDISPLAYMODE_ALWAYS) ||
+  ((config->mapDisplayMode == BTMAPDISPLAYMODE_NO3D) && (p3d.getConfig()->wallType.empty())))
+  drawMap(false);
 }
 
 void BTDisplay::drawIcons()
@@ -451,10 +454,8 @@ void BTDisplay::drawIcons()
 
 void BTDisplay::drawMap(bool knowledge)
 {
- drawView();
  // Draw black
- BTGame *g = BTGame::getGame();
- BTMap *m = g->getMap();
+ Psuedo3DMap *m = Psuedo3DMap::getMap();
  SDL_Rect src, dst;
  dst.x = config->xMap * xMult;
  dst.y = config->yMap * yMult;
@@ -462,11 +463,20 @@ void BTDisplay::drawMap(bool knowledge)
  src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
  src.x = 0;
  src.y = 0;
- SDL_Surface *backup = SDL_CreateRGBSurface(SDL_SWSURFACE, dst.w, dst.h, 32, mainScreen->format->Rmask, mainScreen->format->Gmask, mainScreen->format->Bmask, mainScreen->format->Amask);
- SDL_BlitSurface(mainScreen, &dst, backup, &src);
+ SDL_Surface *backup = NULL;
+ if (mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
+ {
+  backup = SDL_CreateRGBSurface(SDL_SWSURFACE, dst.w, dst.h, 32, mainScreen->format->Rmask, mainScreen->format->Gmask, mainScreen->format->Bmask, mainScreen->format->Amask);
+  SDL_BlitSurface(mainScreen, &dst, backup, &src);
+ }
  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
- int xStart = g->getX() - (config->widthMap / 2);
- int yStart = g->getY() - (config->heightMap / 2);
+ int xStart = 0;
+ int yStart = 0;
+ if (config->centerMap)
+ {
+  xStart = m->getX() - (config->widthMap / 2);
+  yStart = m->getY() - (config->heightMap / 2);
+ }
  for (int i = 0; i < config->widthMap; ++i)
  {
   for (int k = 0; k < config->heightMap; ++k)
@@ -479,7 +489,7 @@ void BTDisplay::drawMap(bool knowledge)
    dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
    dst.w = p3d.config->mapWidth * xMult;
    dst.h = p3d.config->mapHeight * yMult;
-   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()) || ((!knowledge) && (!g->getKnowledge(xStart + i, yStart + k))))
+   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()) || ((!knowledge) && (!m->getKnowledge(xStart + i, yStart + k))))
    {
     SDL_Surface *unknown = p3d.getMapUnknown();
     if (unknown)
@@ -491,13 +501,13 @@ void BTDisplay::drawMap(bool knowledge)
    {
     for (int direction = 0; direction < CARDINAL_DIRECTIONS; ++direction)
     {
-     SDL_Surface *mapWall = p3d.getMapWall(m->getSquare(yStart + k, xStart + i).getWall(direction), direction, knowledge);
+     SDL_Surface *mapWall = p3d.getMapWall(m->getMapType(xStart + i, yStart + k, direction), direction, knowledge);
      if (mapWall)
      {
       SDL_BlitSurface(mapWall, &src, mainScreen, &dst);
      }
     }
-    if (m->getSquare(yStart + k, xStart + i).getSpecial() >= 0)
+    if (m->hasSpecial(xStart + i, yStart + k))
     {
      SDL_Surface *special = p3d.getMapSpecial();
      if (special)
@@ -505,9 +515,9 @@ void BTDisplay::drawMap(bool knowledge)
       SDL_BlitSurface(special, &src, mainScreen, &dst);
      }
     }
-    if ((yStart + k == g->getY()) && (xStart + i == g->getX()))
+    if ((yStart + k == m->getY()) && (xStart + i == m->getX()))
     {
-     SDL_Surface *arrow = p3d.getMapArrow(g->getFacing());
+     SDL_Surface *arrow = p3d.getMapArrow(m->getFacing());
      if (arrow)
      {
       SDL_BlitSurface(arrow, &src, mainScreen, &dst);
@@ -523,15 +533,21 @@ void BTDisplay::drawMap(bool knowledge)
  src.x = 0;
  src.y = 0;
  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
- unsigned char response = readChar();
- SDL_BlitSurface(backup, &src, mainScreen, &dst);
- SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
+ if (mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
+ {
+  unsigned char response = readChar();
+  SDL_BlitSurface(backup, &src, mainScreen, &dst);
+  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
+  SDL_FreeSurface(backup);
+ }
 }
 
 void BTDisplay::drawStats()
 {
  int i;
  SDL_Rect dst;
+ if (config->statusInfo.size() == 0)
+  return;
  for (i = 0; i < BT_PARTYSIZE; ++i)
  {
   dst.x = config->status[i].x * xMult;

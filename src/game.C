@@ -191,21 +191,6 @@ int BTGame::getLight()
  return light;
 }
 
-int BTGame::getFacing()
-{
- return facing;
-}
-
-int BTGame::getX()
-{
- return xPos;
-}
-
-int BTGame::getY()
-{
- return yPos;
-}
-
 const BitField &BTGame::getFlags()
 {
  return flags;
@@ -235,6 +220,11 @@ void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
   checkExpiration(d, &combat);
   d.drawIcons();
  }
+}
+
+int BTGame::getMapType(int x, int y, int direction)
+{
+ return getMap()->getSquare(y, x).getWall(direction);
 }
 
 int BTGame::getWallType(int x, int y, int direction)
@@ -274,6 +264,21 @@ int BTGame::getWallType(int x, int y, int direction)
    return p3dConfig->mapType[mapType - 1]->incompleteType;
  }
  return w;
+}
+
+int BTGame::getXSize() const
+{
+ return levelMap->getXSize();
+}
+
+int BTGame::getYSize() const
+{
+ return levelMap->getYSize();
+}
+
+bool BTGame::hasSpecial(int x, int y)
+{
+ return (levelMap->getSquare(y, x).getSpecial() >= 0);
 }
 
 void BTGame::setFacing(int f)
@@ -567,6 +572,7 @@ void BTGame::run(BTDisplay &d)
        }
        timeText = "The time is " + timeText;
        d.drawText(timeText.c_str());
+       d.drawView();
        d.drawMap(false);
        break;
       }

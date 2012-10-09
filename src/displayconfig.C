@@ -25,7 +25,7 @@ void BTDisplayExpanded::serialize(ObjectSerializer* s)
 }
 
 BTDisplayConfig::BTDisplayConfig()
- : x3d(0), y3d(0), background(0), font(0), xMap(0), yMap(0), widthMap(0), heightMap(0)
+ : x3d(0), y3d(0), background(0), font(0), xMap(0), yMap(0), widthMap(0), heightMap(0), mapDisplayMode(BTMAPDISPLAYMODE_REQUEST), centerMap(true)
 {
 }
 
@@ -65,6 +65,8 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("yMap", &yMap);
  s->add("widthMap", &widthMap);
  s->add("heightMap", &heightMap);
+ s->add("mapDisplayMode", &mapDisplayMode, NULL, &mapDisplayModeLookup);
+ s->add("centerMap", &centerMap);
 }
 
 BTDisplayExpanded *BTDisplayConfig::findExpanded(int xMult, int yMult)

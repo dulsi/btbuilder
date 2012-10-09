@@ -314,5 +314,12 @@ extern ArrayLookup restrictionLookup;
 extern char *targetOverride[];
 extern ArrayLookup targetOverrideLookup;
 
+#define BT_MAPDISPLAYMODES 3
+#define BTMAPDISPLAYMODE_REQUEST 0
+#define BTMAPDISPLAYMODE_NO3D    1
+#define BTMAPDISPLAYMODE_ALWAYS  2
+extern char *mapDisplayMode[];
+extern ArrayLookup mapDisplayModeLookup;
+
 #endif
 

@@ -10,8 +10,26 @@
 class Psuedo3DMap
 {
  public:
+  Psuedo3DMap();
+
   virtual int getLight() = 0;
+  int getFacing();
+  int getX();
+  int getY();
+  virtual int getXSize() const = 0;
+  virtual int getYSize() const = 0;
+  virtual bool getKnowledge(int x, int y) = 0;
+  virtual int getMapType(int x, int y, int direction) = 0;
   virtual int getWallType(int x, int y, int direction) = 0;
+  virtual bool hasSpecial(int x, int y) = 0;
+
+  static Psuedo3DMap *getMap();
+
+ protected:
+  int xPos, yPos, facing;
+
+ private:
+  static Psuedo3DMap *map;
 };
 
 #endif

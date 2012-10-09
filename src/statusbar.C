@@ -12,6 +12,8 @@ void BTStatusBar::draw()
 {
  XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
  XMLVector<BTStatusInfo*> &statusInfo = display.getConfig()->statusInfo;
+ if (statusInfo.size() == 0)
+  return;
  for (int i = 0; i < party.size(); ++i)
  {
   SDL_Rect &dst = display.getConfig()->status[i];

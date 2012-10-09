@@ -1288,6 +1288,7 @@ BTScrySightEffect::BTScrySightEffect(int t, int x, int s, int m)
 
 int BTScrySightEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
+ d.drawView();
  d.drawMap(true);
 }
 

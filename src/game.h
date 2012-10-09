@@ -59,12 +59,13 @@ class BTGame : public Psuedo3DMap, public BTEffectGroup
   BTParty &getParty();
 
   int getLight();
-  int getFacing();
-  int getX();
-  int getY();
   const BitField &getFlags();
   void addFlags(BTDisplay &d, const BitField &flagsToAdd);
+  int getMapType(int x, int y, int direction);
   int getWallType(int x, int y, int direction);
+  int getXSize() const;
+  int getYSize() const;
+  bool hasSpecial(int x, int y);
   void setFacing(int f);
   int testWallStrength(int x, int y, int direction);
 
@@ -131,7 +132,6 @@ class BTGame : public Psuedo3DMap, public BTEffectGroup
   BTFactory<BTSpell> spellList;
   BTXpChartList xpChartList;
   BTMap *levelMap;
-  int xPos, yPos, facing;
   BitField flags;
   BTParty party;
   std::string lastInput;
