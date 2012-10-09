@@ -765,8 +765,8 @@
  <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>wilderness_horizon.png</background>
-  <divide>1</divide>
+  <background>wilderness/wilderness_horizon.png</background>
+  <divide>4</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
   <mapSpecial>map_special.png</mapSpecial>
@@ -813,58 +813,145 @@
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
-   <wall direction="0">wilderness1_0_front1.png</wall>
-   <wall direction="1">wilderness1_0_front2.png</wall>
-   <wall direction="2">wilderness1_0_front3.png</wall>
-   <wall direction="3">wilderness1_0_front4.png</wall>
-   <wall direction="4">wilderness1_0_left1.png</wall>
-   <wall direction="5">wilderness1_0_right1.png</wall>
-   <wall direction="6">wilderness1_0_left2.png</wall>
-   <wall direction="7">wilderness1_0_right2.png</wall>
-   <wall direction="8">wilderness1_0_left3_2.png</wall>
-   <wall direction="9">wilderness1_0_left3_1.png</wall>
-   <wall direction="10">wilderness1_0_right3_1.png</wall>
-   <wall direction="11">wilderness1_0_right3_2.png</wall>
-   <wall direction="12">wilderness1_0_left4_3.png</wall>
-   <wall direction="13">wilderness1_0_left4_2.png</wall>
-   <wall direction="14">wilderness1_0_left4_1.png</wall>
-   <wall direction="15">wilderness1_0_right4_1.png</wall>
-   <wall direction="16">wilderness1_0_right4_2.png</wall>
-   <wall direction="17">wilderness1_0_right4_3.png</wall>
-   <wall direction="18">wilderness1_0_left5_3.png</wall>
-   <wall direction="19">wilderness1_0_left5_2.png</wall>
-   <wall direction="20">wilderness1_0_left5_1.png</wall>
-   <wall direction="21">wilderness1_0_right5_1.png</wall>
-   <wall direction="22">wilderness1_0_right5_2.png</wall>
-   <wall direction="23">wilderness1_0_right5_3.png</wall>
+   <wall direction="0">wilderness/wilderness1_0_front1.png</wall>
+   <wall direction="1">wilderness/wilderness1_0_front2.png</wall>
+   <wall direction="2">wilderness/wilderness1_0_front3.png</wall>
+   <wall direction="3">wilderness/wilderness1_0_front4.png</wall>
+   <wall direction="4">wilderness/wilderness1_0_left1.png</wall>
+   <wall direction="5">wilderness/wilderness1_0_right1.png</wall>
+   <wall direction="6">wilderness/wilderness1_0_left2.png</wall>
+   <wall direction="7">wilderness/wilderness1_0_right2.png</wall>
+   <wall direction="8">wilderness/wilderness1_0_left3_2.png</wall>
+   <wall direction="9">wilderness/wilderness1_0_left3_1.png</wall>
+   <wall direction="10">wilderness/wilderness1_0_right3_1.png</wall>
+   <wall direction="11">wilderness/wilderness1_0_right3_2.png</wall>
+   <wall direction="12">wilderness/wilderness1_0_left4_3.png</wall>
+   <wall direction="13">wilderness/wilderness1_0_left4_2.png</wall>
+   <wall direction="14">wilderness/wilderness1_0_left4_1.png</wall>
+   <wall direction="15">wilderness/wilderness1_0_right4_1.png</wall>
+   <wall direction="16">wilderness/wilderness1_0_right4_2.png</wall>
+   <wall direction="17">wilderness/wilderness1_0_right4_3.png</wall>
+   <wall direction="18">wilderness/wilderness1_0_left5_3.png</wall>
+   <wall direction="19">wilderness/wilderness1_0_left5_2.png</wall>
+   <wall direction="20">wilderness/wilderness1_0_left5_1.png</wall>
+   <wall direction="21">wilderness/wilderness1_0_right5_1.png</wall>
+   <wall direction="22">wilderness/wilderness1_0_right5_2.png</wall>
+   <wall direction="23">wilderness/wilderness1_0_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>1</modulus>
+   <wall direction="0">wilderness/wilderness1_1_front1.png</wall>
+   <wall direction="1">wilderness/wilderness1_1_front2.png</wall>
+   <wall direction="2">wilderness/wilderness1_1_front3.png</wall>
+   <wall direction="3">wilderness/wilderness1_1_front4.png</wall>
+   <wall direction="4">wilderness/wilderness1_1_left1.png</wall>
+   <wall direction="5">wilderness/wilderness1_1_right1.png</wall>
+   <wall direction="6">wilderness/wilderness1_1_left2.png</wall>
+   <wall direction="7">wilderness/wilderness1_1_right2.png</wall>
+   <wall direction="8">wilderness/wilderness1_1_left3_2.png</wall>
+   <wall direction="9">wilderness/wilderness1_1_left3_1.png</wall>
+   <wall direction="10">wilderness/wilderness1_1_right3_1.png</wall>
+   <wall direction="11">wilderness/wilderness1_1_right3_2.png</wall>
+   <wall direction="12">wilderness/wilderness1_1_left4_3.png</wall>
+   <wall direction="13">wilderness/wilderness1_1_left4_2.png</wall>
+   <wall direction="14">wilderness/wilderness1_1_left4_1.png</wall>
+   <wall direction="15">wilderness/wilderness1_1_right4_1.png</wall>
+   <wall direction="16">wilderness/wilderness1_1_right4_2.png</wall>
+   <wall direction="17">wilderness/wilderness1_1_right4_3.png</wall>
+   <wall direction="18">wilderness/wilderness1_1_left5_3.png</wall>
+   <wall direction="19">wilderness/wilderness1_1_left5_2.png</wall>
+   <wall direction="20">wilderness/wilderness1_1_left5_1.png</wall>
+   <wall direction="21">wilderness/wilderness1_1_right5_1.png</wall>
+   <wall direction="22">wilderness/wilderness1_1_right5_2.png</wall>
+   <wall direction="23">wilderness/wilderness1_1_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>2</modulus>
+   <wall direction="0">wilderness/wilderness1_2_front1.png</wall>
+   <wall direction="1">wilderness/wilderness1_2_front2.png</wall>
+   <wall direction="2">wilderness/wilderness1_2_front3.png</wall>
+   <wall direction="3">wilderness/wilderness1_2_front4.png</wall>
+   <wall direction="4">wilderness/wilderness1_2_left1.png</wall>
+   <wall direction="5">wilderness/wilderness1_2_right1.png</wall>
+   <wall direction="6">wilderness/wilderness1_2_left2.png</wall>
+   <wall direction="7">wilderness/wilderness1_2_right2.png</wall>
+   <wall direction="8">wilderness/wilderness1_2_left3_2.png</wall>
+   <wall direction="9">wilderness/wilderness1_2_left3_1.png</wall>
+   <wall direction="10">wilderness/wilderness1_2_right3_1.png</wall>
+   <wall direction="11">wilderness/wilderness1_2_right3_2.png</wall>
+   <wall direction="12">wilderness/wilderness1_2_left4_3.png</wall>
+   <wall direction="13">wilderness/wilderness1_2_left4_2.png</wall>
+   <wall direction="14">wilderness/wilderness1_2_left4_1.png</wall>
+   <wall direction="15">wilderness/wilderness1_2_right4_1.png</wall>
+   <wall direction="16">wilderness/wilderness1_2_right4_2.png</wall>
+   <wall direction="17">wilderness/wilderness1_2_right4_3.png</wall>
+   <wall direction="18">wilderness/wilderness1_2_left5_3.png</wall>
+   <wall direction="19">wilderness/wilderness1_2_left5_2.png</wall>
+   <wall direction="20">wilderness/wilderness1_2_left5_1.png</wall>
+   <wall direction="21">wilderness/wilderness1_2_right5_1.png</wall>
+   <wall direction="22">wilderness/wilderness1_2_right5_2.png</wall>
+   <wall direction="23">wilderness/wilderness1_2_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>3</modulus>
+   <wall direction="0">wilderness/wilderness1_3_front1.png</wall>
+   <wall direction="1">wilderness/wilderness1_3_front2.png</wall>
+   <wall direction="2">wilderness/wilderness1_3_front3.png</wall>
+   <wall direction="3">wilderness/wilderness1_3_front4.png</wall>
+   <wall direction="4">wilderness/wilderness1_3_left1.png</wall>
+   <wall direction="5">wilderness/wilderness1_3_right1.png</wall>
+   <wall direction="6">wilderness/wilderness1_3_left2.png</wall>
+   <wall direction="7">wilderness/wilderness1_3_right2.png</wall>
+   <wall direction="8">wilderness/wilderness1_3_left3_2.png</wall>
+   <wall direction="9">wilderness/wilderness1_3_left3_1.png</wall>
+   <wall direction="10">wilderness/wilderness1_3_right3_1.png</wall>
+   <wall direction="11">wilderness/wilderness1_3_right3_2.png</wall>
+   <wall direction="12">wilderness/wilderness1_3_left4_3.png</wall>
+   <wall direction="13">wilderness/wilderness1_3_left4_2.png</wall>
+   <wall direction="14">wilderness/wilderness1_3_left4_1.png</wall>
+   <wall direction="15">wilderness/wilderness1_3_right4_1.png</wall>
+   <wall direction="16">wilderness/wilderness1_3_right4_2.png</wall>
+   <wall direction="17">wilderness/wilderness1_3_right4_3.png</wall>
+   <wall direction="18">wilderness/wilderness1_3_left5_3.png</wall>
+   <wall direction="19">wilderness/wilderness1_3_left5_2.png</wall>
+   <wall direction="20">wilderness/wilderness1_3_left5_1.png</wall>
+   <wall direction="21">wilderness/wilderness1_3_right5_1.png</wall>
+   <wall direction="22">wilderness/wilderness1_3_right5_2.png</wall>
+   <wall direction="23">wilderness/wilderness1_3_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
    <modulus>0</modulus>
-   <wall direction="0">wilderness1_0_d0_front1.png</wall>
-   <wall direction="1">wilderness1_0_d0_front2.png</wall>
-   <wall direction="2">wilderness1_0_d0_front3.png</wall>
-   <wall direction="3">wilderness1_0_d0_front4.png</wall>
-   <wall direction="4">wilderness1_0_d0_left1.png</wall>
-   <wall direction="5">wilderness1_0_d0_right1.png</wall>
-   <wall direction="6">wilderness1_0_d0_left2.png</wall>
-   <wall direction="7">wilderness1_0_d0_right2.png</wall>
-   <wall direction="8">wilderness1_0_d0_left3_2.png</wall>
-   <wall direction="9">wilderness1_0_d0_left3_1.png</wall>
-   <wall direction="10">wilderness1_0_d0_right3_1.png</wall>
-   <wall direction="11">wilderness1_0_d0_right3_2.png</wall>
-   <wall direction="12">wilderness1_0_d0_left4_3.png</wall>
-   <wall direction="13">wilderness1_0_d0_left4_2.png</wall>
-   <wall direction="14">wilderness1_0_d0_left4_1.png</wall>
-   <wall direction="15">wilderness1_0_d0_right4_1.png</wall>
-   <wall direction="16">wilderness1_0_d0_right4_2.png</wall>
-   <wall direction="17">wilderness1_0_d0_right4_3.png</wall>
-   <wall direction="18">wilderness1_0_d0_left5_3.png</wall>
-   <wall direction="19">wilderness1_0_d0_left5_2.png</wall>
-   <wall direction="20">wilderness1_0_d0_left5_1.png</wall>
-   <wall direction="21">wilderness1_0_d0_right5_1.png</wall>
-   <wall direction="22">wilderness1_0_d0_right5_2.png</wall>
-   <wall direction="23">wilderness1_0_d0_right5_3.png</wall>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>3</modulus>
+   <wall direction="0">wilderness/wilderness1_0_d0_front1.png</wall>
+   <wall direction="1">wilderness/wilderness1_0_d0_front2.png</wall>
+   <wall direction="2">wilderness/wilderness1_0_d0_front3.png</wall>
+   <wall direction="3">wilderness/wilderness1_0_d0_front4.png</wall>
+   <wall direction="4">wilderness/wilderness1_0_d0_left1.png</wall>
+   <wall direction="5">wilderness/wilderness1_0_d0_right1.png</wall>
+   <wall direction="6">wilderness/wilderness1_0_d0_left2.png</wall>
+   <wall direction="7">wilderness/wilderness1_0_d0_right2.png</wall>
+   <wall direction="8">wilderness/wilderness1_0_d0_left3_2.png</wall>
+   <wall direction="9">wilderness/wilderness1_0_d0_left3_1.png</wall>
+   <wall direction="10">wilderness/wilderness1_0_d0_right3_1.png</wall>
+   <wall direction="11">wilderness/wilderness1_0_d0_right3_2.png</wall>
+   <wall direction="12">wilderness/wilderness1_0_d0_left4_3.png</wall>
+   <wall direction="13">wilderness/wilderness1_0_d0_left4_2.png</wall>
+   <wall direction="14">wilderness/wilderness1_0_d0_left4_1.png</wall>
+   <wall direction="15">wilderness/wilderness1_0_d0_right4_1.png</wall>
+   <wall direction="16">wilderness/wilderness1_0_d0_right4_2.png</wall>
+   <wall direction="17">wilderness/wilderness1_0_d0_right4_3.png</wall>
+   <wall direction="18">wilderness/wilderness1_0_d0_left5_3.png</wall>
+   <wall direction="19">wilderness/wilderness1_0_d0_left5_2.png</wall>
+   <wall direction="20">wilderness/wilderness1_0_d0_left5_1.png</wall>
+   <wall direction="21">wilderness/wilderness1_0_d0_right5_1.png</wall>
+   <wall direction="22">wilderness/wilderness1_0_d0_right5_2.png</wall>
+   <wall direction="23">wilderness/wilderness1_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
   <psuedo3d>
