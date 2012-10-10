@@ -440,7 +440,7 @@ void BTSpell::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
  s->add("code", &code);
- s->add("caster", &caster, NULL, &BTGame::getGame()->getSkillList());
+ s->add("caster", &caster, NULL, &BTCore::getCore()->getSkillList());
  s->add("level", &level);
  s->add("sp", &sp);
  s->add("range", &range);

@@ -9,84 +9,65 @@
 #include "game.h"
 #include "status.h"
 
+BTCore *BTCore::core = NULL;
 BTGame *BTGame::game = NULL;
 
-BTGame::BTGame(BTModule *m)
- : module(m), itemList(".ITM"), jobAbbrevList(&jobList), monsterList(".MON"), spellList(".SPL"), levelMap(NULL), gameTime(0), timedSpecial(-1), delay(1000)
+BTCore::BTCore(BTModule *m)
+ : module(m), itemList(".ITM"), monsterList(".MON"), spellList(".SPL"), levelMap(NULL)
 {
- BTDice::Init();
- if (NULL == game)
+ if (NULL == core)
  {
-  game = this;
+  core = this;
  }
  BTRace::readXML(m->race, raceList);
  BTSkill::readXML(m->skill, skillList);
  BTXpChart::readXML(m->xpChart, xpChartList);
  BTJob::readXML(m->job, jobList);
- BTPc::readXML("roster.xml", group, roster);
  BTShop::readXML("shops.xml", shops);
  spellList.load(m->spell);
  itemList.load(m->item);
  monsterList.load(m->monster);
  BTSong::readXML(m->song, songList);
- loadStart();
- combat.open("data/combat.xml");
- status.open("data/status.xml");
 }
 
-BTGame::~BTGame()
+BTCore::~BTCore()
 {
  if (levelMap)
  {
   delete levelMap;
  }
- if (game == this)
+ if (core == this)
  {
-  game = NULL;
+  core = NULL;
  }
 }
 
-XMLVector<BTGroup*> &BTGame::getGroup()
-{
- return group;
-}
-
-BTFactory<BTItem> &BTGame::getItemList()
+BTFactory<BTItem> &BTCore::getItemList()
 {
  return itemList;
 }
 
-BTJobList &BTGame::getJobList()
+BTJobList &BTCore::getJobList()
 {
  return jobList;
 }
 
-BTJobAbbrevList &BTGame::getJobAbbrevList()
-{
- return jobAbbrevList;
-}
-
-BTModule *BTGame::getModule()
+BTModule *BTCore::getModule()
 {
  return module;
 }
 
-BTFactory<BTMonster> &BTGame::getMonsterList()
+BTFactory<BTMonster> &BTCore::getMonsterList()
 {
  return monsterList;
 }
 
-BTRaceList &BTGame::getRaceList()
+BTRaceList &BTCore::getRaceList()
 {
  return raceList;
 }
 
-XMLVector<BTPc*> &BTGame::getRoster()
-{
- return roster;
-}
-
-BTShop *BTGame::getShop(int id)
+BTShop *BTCore::getShop(int id)
 {
  for (int i = 0; i < shops.size(); ++i)
  {
@@ -102,32 +83,32 @@ BTShop *BTGame::getShop(int id)
  return shop;
 }
 
-BTSkillList &BTGame::getSkillList()
+BTSkillList &BTCore::getSkillList()
 {
  return skillList;
 }
 
-XMLVector<BTSong*> &BTGame::getSongList()
+XMLVector<BTSong*> &BTCore::getSongList()
 {
  return songList;
 }
 
-BTFactory<BTSpell> &BTGame::getSpellList()
+BTFactory<BTSpell> &BTCore::getSpellList()
 {
  return spellList;
 }
 
-BTXpChartList &BTGame::getXpChartList()
+BTXpChartList &BTCore::getXpChartList()
 {
  return xpChartList;
 }
 
-BTMap *BTGame::getMap()
+BTMap *BTCore::getMap()
 {
  return levelMap;
 }
 
-BTMap *BTGame::loadMap(const char *filename)
+BTMap *BTCore::loadMap(const char *filename)
 {
  if (levelMap)
  {
@@ -136,10 +117,6 @@ BTMap *BTGame::loadMap(const char *filename)
    return levelMap;
   delete levelMap;
  }
- local.clearAll();
- knowledge.clearAll();
- clearTimedSpecial();
- clearMapEffects();
  int len = strlen(filename);
  if ((len > 4) && (strcmp(".MAP", filename + (len - 4)) == 0))
  {
@@ -155,6 +132,78 @@ BTMap *BTGame::loadMap(const char *filename)
  }
  levelMap->setFilename(filename);
  return levelMap;
+}
+
+int BTCore::getXSize() const
+{
+ return levelMap->getXSize();
+}
+
+int BTCore::getYSize() const
+{
+ return levelMap->getYSize();
+}
+
+bool BTCore::hasSpecial(int x, int y)
+{
+ return (levelMap->getSquare(y, x).getSpecial() >= 0);
+}
+
+BTCore *BTCore::getCore()
+{
+ return core;
+}
+
+BTGame::BTGame(BTModule *m)
+ : BTCore(m), jobAbbrevList(&jobList), gameTime(0), timedSpecial(-1), delay(1000)
+{
+ BTDice::Init();
+ if (NULL == game)
+ {
+  game = this;
+ }
+ BTPc::readXML("roster.xml", group, roster);
+ loadStart();
+ combat.open("data/combat.xml");
+ status.open("data/status.xml");
+}
+
+BTGame::~BTGame()
+{
+ if (game == this)
+ {
+  game = NULL;
+ }
+}
+
+XMLVector<BTGroup*> &BTGame::getGroup()
+{
+ return group;
+}
+
+BTJobAbbrevList &BTGame::getJobAbbrevList()
+{
+ return jobAbbrevList;
+}
+
+XMLVector<BTPc*> &BTGame::getRoster()
+{
+ return roster;
+}
+
+BTMap *BTGame::loadMap(const char *filename)
+{
+ if (levelMap)
+ {
+  std::string name = levelMap->getFilename();
+  if (name == filename)
+   return levelMap;
+ }
+ local.clearAll();
+ knowledge.clearAll();
+ clearTimedSpecial();
+ clearMapEffects();
+ BTCore::loadMap(filename);
 }
 
 void BTGame::loadStart()
@@ -222,7 +271,7 @@ void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
  }
 }
 
-int BTGame::getMapType(int x, int y, int direction)
+int BTCore::getMapType(int x, int y, int direction)
 {
  return getMap()->getSquare(y, x).getWall(direction);
 }
@@ -264,21 +313,6 @@ int BTGame::getWallType(int x, int y, int direction)
    return p3dConfig->mapType[mapType - 1]->incompleteType;
  }
  return w;
-}
-
-int BTGame::getXSize() const
-{
- return levelMap->getXSize();
-}
-
-int BTGame::getYSize() const
-{
- return levelMap->getYSize();
-}
-
-bool BTGame::hasSpecial(int x, int y)
-{
- return (levelMap->getSquare(y, x).getSpecial() >= 0);
 }
 
 void BTGame::setFacing(int f)

@@ -45,7 +45,7 @@ void BTSkill::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("use", &use, NULL, &useLookup);
  s->add("effect", &effect, NULL, &effectLookup);
- s->add("after", &after, NULL, &BTGame::getGame()->getSkillList());
+ s->add("after", &after, NULL, &BTCore::getCore()->getSkillList());
  s->add("limited", &limited);
  s->add("special", &special, NULL, &specialLookup);
  s->add("roll", &roll, &BTDice::create);

@@ -185,7 +185,7 @@ void BTItem::serialize(ObjectSerializer* s)
  s->add("chanceXSpecial", &chanceXSpecial);
  s->add("type", &type);
  s->add("spellCast", &spellCast);
- s->add("allowedJob", &classAllowed, &BTGame::getGame()->getJobList());
+ s->add("allowedJob", &classAllowed, &BTCore::getCore()->getJobList());
  s->add("price", &price);
  s->add("cause", &cause);
  s->add("effect", &effect);

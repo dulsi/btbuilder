@@ -34,26 +34,58 @@ class BTPartyDead
   BTPartyDead() {}
 };
 
-class BTGame : public Psuedo3DMap, public BTEffectGroup
+class BTCore : public Psuedo3DMap
 {
  public:
-  BTGame(BTModule *m);
-  ~BTGame();
+  BTCore(BTModule *m);
+  ~BTCore();
 
-  XMLVector<BTGroup*> &getGroup();
   BTFactory<BTItem> &getItemList();
   BTJobList &getJobList();
-  BTJobAbbrevList &getJobAbbrevList();
   BTModule *getModule();
   BTFactory<BTMonster> &getMonsterList();
   BTRaceList &getRaceList();
-  XMLVector<BTPc*> &getRoster();
   BTShop *getShop(int id);
   BTSkillList &getSkillList();
   XMLVector<BTSong*> &getSongList();
   BTFactory<BTSpell> &getSpellList();
   BTXpChartList &getXpChartList();
   BTMap *getMap();
+  virtual BTMap *loadMap(const char *filename);
+
+  int getMapType(int x, int y, int direction);
+  int getXSize() const;
+  int getYSize() const;
+  bool hasSpecial(int x, int y);
+
+  static BTCore *getCore();
+
+ protected:
+  BTModule *module;
+  BTFactory<BTItem> itemList;
+  BTJobList jobList;
+  BTFactory<BTMonster> monsterList;
+  BTRaceList raceList;
+  XMLVector<BTShop*> shops;
+  BTSkillList skillList;
+  XMLVector<BTSong*> songList;
+  BTFactory<BTSpell> spellList;
+  BTXpChartList xpChartList;
+  BTMap *levelMap;
+  Psuedo3DConfig *p3dConfig;
+
+  static BTCore *core;
+};
+
+class BTGame : public BTCore, public BTEffectGroup
+{
+ public:
+  BTGame(BTModule *m);
+  ~BTGame();
+
+  XMLVector<BTGroup*> &getGroup();
+  BTJobAbbrevList &getJobAbbrevList();
+  XMLVector<BTPc*> &getRoster();
   BTMap *loadMap(const char *filename);
   void loadStart();
   BTParty &getParty();
@@ -61,11 +93,7 @@ class BTGame : public Psuedo3DMap, public BTEffectGroup
   int getLight();
   const BitField &getFlags();
   void addFlags(BTDisplay &d, const BitField &flagsToAdd);
-  int getMapType(int x, int y, int direction);
   int getWallType(int x, int y, int direction);
-  int getXSize() const;
-  int getYSize() const;
-  bool hasSpecial(int x, int y);
   void setFacing(int f);
   int testWallStrength(int x, int y, int direction);
 
@@ -118,20 +146,9 @@ class BTGame : public Psuedo3DMap, public BTEffectGroup
   static BTGame *getGame();
 
  private:
-  BTModule *module;
-  BTFactory<BTItem> itemList;
-  BTJobList jobList;
   BTJobAbbrevList jobAbbrevList;
-  BTFactory<BTMonster> monsterList;
-  BTRaceList raceList;
   XMLVector<BTGroup*> group;
   XMLVector<BTPc*> roster;
-  XMLVector<BTShop*> shops;
-  BTSkillList skillList;
-  XMLVector<BTSong*> songList;
-  BTFactory<BTSpell> spellList;
-  BTXpChartList xpChartList;
-  BTMap *levelMap;
   BitField flags;
   BTParty party;
   std::string lastInput;
@@ -146,7 +163,6 @@ class BTGame : public Psuedo3DMap, public BTEffectGroup
   unsigned int timedExpiration;
   IShort timedSpecial;
   int delay;
-  Psuedo3DConfig *p3dConfig;
 
   static BTGame *game;
 };
