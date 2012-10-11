@@ -17,7 +17,7 @@ class BTEditor : public BTCore
 
   int getLight();
   int getWallType(int x, int y, int direction);
-  bool getKnowledge(int x, int y);
+  int getKnowledge(int x, int y);
 
   void editMap(BTDisplay &d, const char *filename);
 

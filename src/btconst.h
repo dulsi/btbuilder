@@ -321,5 +321,9 @@ extern ArrayLookup targetOverrideLookup;
 extern char *mapDisplayMode[];
 extern ArrayLookup mapDisplayModeLookup;
 
+#define BTKNOWLEDGE_NO   0
+#define BTKNOWLEDGE_YES  1
+#define BTKNOWLEDGE_FULL 2
+
 #endif
 

@@ -41,9 +41,9 @@ int BTEditor::getWallType(int x, int y, int direction)
  return w;
 }
 
-bool BTEditor::getKnowledge(int x, int y)
+int BTEditor::getKnowledge(int x, int y)
 {
- return true;
+ return BTKNOWLEDGE_FULL;
 }
 
 void BTEditor::editMap(BTDisplay &d, const char *filename)

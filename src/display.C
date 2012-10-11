@@ -490,7 +490,8 @@ void BTDisplay::drawMap(bool knowledge)
    dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
    dst.w = p3d.config->mapWidth * xMult;
    dst.h = p3d.config->mapHeight * yMult;
-   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()) || ((!knowledge) && (!m->getKnowledge(xStart + i, yStart + k))))
+   int know = m->getKnowledge(xStart + i, yStart + k);
+   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()) || ((!knowledge) && (know == BTKNOWLEDGE_NO)))
    {
     SDL_Surface *unknown = p3d.getMapUnknown();
     if (unknown)
@@ -502,7 +503,7 @@ void BTDisplay::drawMap(bool knowledge)
    {
     for (int direction = 0; direction < CARDINAL_DIRECTIONS; ++direction)
     {
-     SDL_Surface *mapWall = p3d.getMapWall(m->getMapType(xStart + i, yStart + k, direction), direction, knowledge);
+     SDL_Surface *mapWall = p3d.getMapWall(m->getMapType(xStart + i, yStart + k, direction), direction, knowledge || (know == BTKNOWLEDGE_FULL));
      if (mapWall)
      {
       SDL_BlitSurface(mapWall, &src, mainScreen, &dst);

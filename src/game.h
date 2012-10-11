@@ -108,7 +108,7 @@ class BTGame : public BTCore, public BTEffectGroup
   BTStatus &getStatus();
 
   bool getLocalFlag(int index);
-  bool getKnowledge(int x, int y);
+  int getKnowledge(int x, int y);
   bool getGlobalFlag(int index);
   void setLocalFlag(int index, bool value);
   void setKnowledge(int x, int y, bool value);

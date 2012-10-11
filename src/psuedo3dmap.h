@@ -18,7 +18,7 @@ class Psuedo3DMap
   int getY();
   virtual int getXSize() const = 0;
   virtual int getYSize() const = 0;
-  virtual bool getKnowledge(int x, int y) = 0;
+  virtual int getKnowledge(int x, int y) = 0;
   virtual int getMapType(int x, int y, int direction) = 0;
   virtual int getWallType(int x, int y, int direction) = 0;
   virtual bool hasSpecial(int x, int y) = 0;

@@ -389,10 +389,13 @@ bool BTGame::getLocalFlag(int index)
  return local.isSet(index);
 }
 
-bool BTGame::getKnowledge(int x, int y)
+int BTGame::getKnowledge(int x, int y)
 {
  int index = y * levelMap->getXSize() + x;
- return knowledge.isSet(index);
+ if (knowledge.isSet(index))
+  return BTKNOWLEDGE_YES;
+ else
+  return BTKNOWLEDGE_NO;
 }
 
 bool BTGame::getGlobalFlag(int index)
