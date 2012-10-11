@@ -46,10 +46,10 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -192,6 +192,7 @@
   <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
+   <name>Wall</name>
    <mapWall direction="0">map0_1.png</mapWall>
    <mapWall direction="1">map1_1.png</mapWall>
    <mapWall direction="2">map2_1.png</mapWall>
@@ -199,6 +200,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <name>Door</name>
    <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
@@ -207,6 +209,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <name>Secret Door</name>
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
@@ -217,13 +220,14 @@
   </maptype>
   <maptype>
    <type>4</type>
+   <name>Impassable</name>
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -365,6 +369,7 @@
   <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
+   <name>Wall</name>
    <mapWall direction="0">map0_1.png</mapWall>
    <mapWall direction="1">map1_1.png</mapWall>
    <mapWall direction="2">map2_1.png</mapWall>
@@ -372,6 +377,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <name>Door</name>
    <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
@@ -380,6 +386,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <name>Secret Door</name>
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
@@ -390,13 +397,14 @@
   </maptype>
   <maptype>
    <type>4</type>
+   <name>Impassable</name>
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -781,6 +789,7 @@
   <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
+   <name>Tree</name>
    <mapWall direction="0">map0_1.png</mapWall>
    <mapWall direction="1">map1_1.png</mapWall>
    <mapWall direction="2">map2_1.png</mapWall>
@@ -788,6 +797,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <name>Door</name>
    <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
@@ -796,6 +806,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <name>Secret Trail</name>
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
@@ -806,13 +817,14 @@
   </maptype>
   <maptype>
    <type>4</type>
+   <name>Impassable</name>
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -973,6 +985,7 @@
   <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
+   <name>Wall</name>
    <mapWall direction="0">map0_1.png</mapWall>
    <mapWall direction="1">map1_1.png</mapWall>
    <mapWall direction="2">map2_1.png</mapWall>
@@ -980,6 +993,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <name>Door</name>
    <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
@@ -988,6 +1002,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <name>Secret Door</name>
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
@@ -998,13 +1013,14 @@
   </maptype>
   <maptype>
    <type>4</type>
+   <name>Impassable</name>
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -1146,6 +1162,7 @@
   <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
+   <name>Wall</name>
    <mapWall direction="0">map0_1.png</mapWall>
    <mapWall direction="1">map1_1.png</mapWall>
    <mapWall direction="2">map2_1.png</mapWall>
@@ -1153,6 +1170,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <name>Door</name>
    <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
@@ -1161,6 +1179,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <name>Secret Door</name>
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
@@ -1171,13 +1190,14 @@
   </maptype>
   <maptype>
    <type>4</type>
+   <name>Impassable</name>
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -1319,6 +1339,7 @@
   <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
+   <name>Wall</name>
    <mapWall direction="0">map0_1.png</mapWall>
    <mapWall direction="1">map1_1.png</mapWall>
    <mapWall direction="2">map2_1.png</mapWall>
@@ -1326,6 +1347,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <name>Door</name>
    <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
@@ -1334,6 +1356,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <name>Secret Door</name>
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
@@ -1344,13 +1367,14 @@
   </maptype>
   <maptype>
    <type>4</type>
+   <name>Impassable</name>
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -1492,6 +1516,7 @@
   <mapArrow direction="3">map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
+   <name>Wall</name>
    <mapWall direction="0">map0_1.png</mapWall>
    <mapWall direction="1">map1_1.png</mapWall>
    <mapWall direction="2">map2_1.png</mapWall>
@@ -1499,6 +1524,7 @@
   </maptype>
   <maptype>
    <type>2</type>
+   <name>Door</name>
    <passable>true</passable>
    <mapWall direction="0">map0_2.png</mapWall>
    <mapWall direction="1">map1_2.png</mapWall>
@@ -1507,6 +1533,7 @@
   </maptype>
   <maptype>
    <type>3</type>
+   <name>Secret Door</name>
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
@@ -1517,13 +1544,14 @@
   </maptype>
   <maptype>
    <type>4</type>
+   <name>Impassable</name>
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">map0_4.png</mapWall>
+   <mapWall direction="1">map1_4.png</mapWall>
+   <mapWall direction="2">map2_4.png</mapWall>
+   <mapWall direction="3">map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
