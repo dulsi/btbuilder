@@ -9,7 +9,7 @@
 #include "editor.h"
 
 BTEditor::BTEditor(BTModule *m)
- : BTCore(m)
+ : BTCore(m), currentWall(0)
 {
 }
 
@@ -53,6 +53,10 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
  xPos = 0; yPos = 0; facing = 0;
  p3dConfig = d.setWallGraphics(levelMap->getType());
  unsigned char key = ' ';
+ if (currentWall < p3dConfig->mapType.size())
+  d.drawText(p3dConfig->mapType[currentWall]->name.c_str());
+ else
+  d.drawText("Clear");
  while (key != 'q')
  {
   if (levelMap->getSquare(yPos, xPos).getSpecial() > -1)
@@ -101,19 +105,30 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     break;
    case 13:
    {
-    levelMap->getSquare(yPos, xPos).setWall(facing, currentWall);
+    int wall = 0;
+    if (currentWall < p3dConfig->mapType.size())
+     wall = p3dConfig->mapType[currentWall]->type;
+    levelMap->getSquare(yPos, xPos).setWall(facing, wall);
     int xOpposite = xPos + Psuedo3D::changeXY[facing][0] + levelMap->getXSize();
     xOpposite = xOpposite % levelMap->getXSize();
     int yOpposite = yPos + Psuedo3D::changeXY[facing][1] + levelMap->getYSize();
     yOpposite = yOpposite % levelMap->getYSize();
-    levelMap->getSquare(yOpposite, xOpposite).setWall((facing + 2) % 4, currentWall);
+    levelMap->getSquare(yOpposite, xOpposite).setWall((facing + 2) % 4, wall);
     break;
    }
    case ' ':
-    if (currentWall < p3dConfig->mapType.size() - 1)
+    if (currentWall < p3dConfig->mapType.size())
+    {
      currentWall++;
+    }
     else
+    {
      currentWall = 0;
+    }
+    if (currentWall < p3dConfig->mapType.size())
+     d.drawText(p3dConfig->mapType[currentWall]->name.c_str());
+    else
+     d.drawText("Clear");
     break;
   }
  }

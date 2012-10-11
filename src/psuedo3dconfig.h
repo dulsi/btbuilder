@@ -86,6 +86,7 @@ class Psuedo3DMapType : public XMLObject
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DMapType; }
 
   int type;
+  std::string name;
   int incompleteType;
   int viewType;
   bool passable;

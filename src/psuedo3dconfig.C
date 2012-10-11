@@ -27,6 +27,7 @@ void Psuedo3DWallType::serialize(ObjectSerializer* s)
 void Psuedo3DMapType::serialize(ObjectSerializer* s)
 {
  s->add("type", &type);
+ s->add("name", &name);
  s->add("incompleteType", &incompleteType);
  s->add("viewType", &viewType);
  s->add("passable", &passable);
