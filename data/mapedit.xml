@@ -1,0 +1,16 @@
+<display>
+	<width>320</width>
+	<height>200</height>
+	<xexpanded><xMult>2</xMult><yMult>2</yMult><directory>640x400</directory></xexpanded>
+	<background>mapedit.png</background>
+	<x3d>4</x3d>
+	<y3d>4</y3d>
+	<text><x>4</x><y>107</y><w>100</w><h>90</h></text>
+	<label><x>4</x><y>93</y><w>112</w><h>13</h></label>
+	<xMap>128</xMap>
+	<yMap>4</yMap>
+	<widthMap>22</widthMap>
+	<heightMap>22</heightMap>
+	<mapDisplayMode>always</mapDisplayMode>
+	<centerMap>false</centerMap>
+</display>

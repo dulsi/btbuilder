@@ -13,6 +13,7 @@
 #include "map.h"
 #include "factory.h"
 #include "game.h"
+#include "editor.h"
 #include "boost/filesystem/operations.hpp"
 #include "boost/filesystem/path.hpp"
 #include <physfs.h>
@@ -42,7 +43,7 @@ void BTMainScreen::run()
  fs::directory_iterator end_iter;
  for (fs::directory_iterator dir_itr("module"); dir_itr != end_iter; ++dir_itr )
  {
-  if (fs::is_regular_file(dir_itr->status()))
+  if ((fs::is_regular_file(dir_itr->status())) && (dir_itr->path().extension().string() == ".xml"))
   {
    fileModule.push_back(dir_itr->path().string());
    BTModule *current = new BTModule;
@@ -75,9 +76,6 @@ void BTMainScreen::runModule(std::string moduleFile)
  BTModule module;
  loadModule(moduleFile, module);
  BTGame game(&module);
- BTFactory<BTMonster> &monList(game.getMonsterList());
- BTFactory<BTItem> &itmList(game.getItemList());
- BTFactory<BTSpell> &splList(game.getSpellList());
  BTDisplayConfig config;
  XMLSerializer parser;
  config.serialize(&parser);
@@ -91,6 +89,36 @@ void BTMainScreen::runModule(std::string moduleFile)
   display = new BTDisplay(&config);
  }
  BTGame::getGame()->run(*display);
+ if (mainConfig)
+ {
+  display->setConfig(mainConfig);
+ }
+ else
+ {
+  delete display;
+  display = NULL;
+ }
+ PHYSFS_deinit();
+}
+
+void BTMainScreen::editModule(std::string moduleFile, std::string mapFile)
+{
+ BTModule module;
+ loadModule(moduleFile, module);
+ BTEditor editor(&module);
+ BTDisplayConfig config;
+ XMLSerializer parser;
+ config.serialize(&parser);
+ parser.parse("data/mapedit.xml", true);
+ if (display)
+ {
+  display->setConfig(&config);
+ }
+ else
+ {
+  display = new BTDisplay(&config);
+ }
+ editor.editMap(*display, mapFile.c_str());
  if (mainConfig)
  {
   display->setConfig(mainConfig);

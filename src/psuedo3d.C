@@ -161,12 +161,14 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
  {
   walls[i] = new SDL_Surface_ptr[WALL_DIRECTIONS];
   for (int j = 0; j < WALL_DIRECTIONS; ++j)
+  {
    if (config->wallType[i]->walls[j])
    {
     walls[i][j] = loadImage(config->wallType[i]->walls[j]);
    }
    else
     walls[i][j] = NULL;
+  }
  }
  mapWalls = new SDL_Surface_ary[config->mapType.size()];
  for (int i = 0; i < config->mapType.size(); ++i)

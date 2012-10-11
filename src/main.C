@@ -77,6 +77,7 @@ IUByte sideWallsUTF8[4][4] =
 #define MODE_MONSTER  3
 #define MODE_SPELL    4
 #define MODE_MAP      5
+#define MODE_EDITMAP  6
 
 int main(int argc, char *argv[])
 {
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
   {"monster", 0, 0, 'm'},
   {"spell", 0, 0, 's'},
   {"map", 1, 0, 'p'},
+  {"editmap", 1, 0, 'e'},
   {"ascii", 0, 0, 'a'},
   {"xml", 1, 0, 'x'},
   {0, 0, 0, 0}
@@ -96,7 +98,7 @@ int main(int argc, char *argv[])
  int mode = MODE_STANDARD;
  char *mapFile = NULL;
  char *xmlFile = NULL;
- while ((opt = getopt_long(argc,argv,"imsap:x:", long_options, NULL)) != EOF)
+ while ((opt = getopt_long(argc,argv,"imsap:x:e:", long_options, NULL)) != EOF)
  {
   switch (opt)
   {
@@ -111,6 +113,13 @@ int main(int argc, char *argv[])
     break;
    case 'p':
     mode = MODE_MAP;
+    if (optarg)
+    {
+     mapFile = strdup(optarg);
+    }
+    break;
+   case 'e':
+    mode = MODE_EDITMAP;
     if (optarg)
     {
      mapFile = strdup(optarg);
@@ -144,6 +153,14 @@ int main(int argc, char *argv[])
   moduleFile += argv[optind];
   moduleFile += ".xml";
   mainScreen.runModule(moduleFile);
+  return 0;
+ }
+ else if (mode == MODE_EDITMAP)
+ {
+  std::string moduleFile("module/");
+  moduleFile += argv[optind];
+  moduleFile += ".xml";
+  mainScreen.editModule(moduleFile, mapFile);
   return 0;
  }
  std::string moduleFile("module/");

@@ -23,7 +23,7 @@ BTMusic::~BTMusic()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), ttffont(0), sfont(&simple8x8)
+ : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), animationFrame(0), ttffont(0), sfont(&simple8x8)
 {
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
@@ -53,6 +53,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
     yMult = xMult;
   }
  }
+ p3d.setMultiplier(xMult, yMult);
  label.x = config->label.x * xMult;
  label.y = config->label.y * yMult;
  label.w = config->label.w * xMult;
@@ -434,10 +435,10 @@ void BTDisplay::drawView()
  dst.w = p3d.config->width * xMult;
  dst.h = p3d.config->height * yMult;
  SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
- SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
  if ((config->mapDisplayMode == BTMAPDISPLAYMODE_ALWAYS) ||
   ((config->mapDisplayMode == BTMAPDISPLAYMODE_NO3D) && (p3d.getConfig()->wallType.empty())))
   drawMap(false);
+ SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
 }
 
 void BTDisplay::drawIcons()
@@ -818,6 +819,10 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     return BTKEY_LEFT;
    else if ((sdlevent.key.keysym.sym == SDLK_RIGHT) || (sdlevent.key.keysym.sym == SDLK_KP6))
     return BTKEY_RIGHT;
+   else if ((sdlevent.key.keysym.sym == SDLK_PAGEDOWN) || (sdlevent.key.keysym.sym == SDLK_KP3))
+    return BTKEY_PGDN;
+   else if ((sdlevent.key.keysym.sym == SDLK_END) || (sdlevent.key.keysym.sym == SDLK_KP1))
+    return BTKEY_END;
    else if (sdlevent.key.keysym.sym == SDLK_F12)
     toggleFullScreen();
    if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))

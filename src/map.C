@@ -41,6 +41,11 @@ void BTMapSquare::read(BinaryReadFile &f)
  f.readShort(special);
 }
 
+void BTMapSquare::setWall(IShort dir, IShort wall)
+{
+ wallInfo[dir] = wall;
+}
+
 void BTMapSquare::setSpecial(IShort s)
 {
  special = s;
@@ -1244,7 +1249,7 @@ const BTSpecial *BTMap::getSpecial(IShort num) const
  return ((specials.size() > num) ? specials[num] : NULL);
 }
 
-const BTMapSquare &BTMap::getSquare(IShort y, IShort x) const
+BTMapSquare &BTMap::getSquare(IShort y, IShort x)
 {
  while (y < 0)
   y += ySize;

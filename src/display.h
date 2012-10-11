@@ -28,6 +28,8 @@
 #define BTKEY_DOWN 2
 #define BTKEY_LEFT 3
 #define BTKEY_RIGHT 4
+#define BTKEY_PGDN 5
+#define BTKEY_END 6
 
 #define BTMUSICID_ALL 0
 

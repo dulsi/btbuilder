@@ -62,6 +62,7 @@ class BTMapSquare : public XMLObject
   IShort getWall(IShort dir) const;
   IShort getSpecial() const;
   void read(BinaryReadFile &f);
+  void setWall(IShort dir, IShort wall);
   void setSpecial(IShort s);
   virtual void serialize(ObjectSerializer* s);
 
@@ -246,7 +247,7 @@ class BTMap : public XMLObject
   const char *getName() const;
   void generateRandomEncounter(BTDisplay &d) const;
   const BTSpecial *getSpecial(IShort num) const;
-  const BTMapSquare &getSquare(IShort y, IShort x) const;
+  BTMapSquare &getSquare(IShort y, IShort x);
   IShort getType() const;
   IShort getXSize() const;
   IShort getYSize() const;

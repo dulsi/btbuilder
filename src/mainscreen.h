@@ -18,6 +18,7 @@ class BTMainScreen
 
   void run();
   void runModule(std::string moduleFile);
+  void editModule(std::string moduleFile, std::string mapFile);
 
   void loadModule(std::string moduleFile, BTModule &module);
 

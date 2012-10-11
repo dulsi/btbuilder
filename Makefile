@@ -16,7 +16,8 @@ BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/statusinfo.o src/valuelookup.o src/screenset.o src/combat.o \
 	src/xpchart.o src/spelleffect.o src/combatant.o src/group.o \
 	src/icon.o src/song.o src/manifest.o src/chest.o src/mainscreen.o \
-	src/shop.o src/effectgroup.o src/psuedo3dmap.o src/SDL_mng.o
+	src/shop.o src/effectgroup.o src/psuedo3dmap.o src/editor.o \
+	src/SDL_mng.o
 BTBUILDER_EXE = btbuilder
 
 all: $(BTBUILDER_EXE)

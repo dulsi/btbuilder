@@ -134,6 +134,11 @@ BTMap *BTCore::loadMap(const char *filename)
  return levelMap;
 }
 
+int BTCore::getMapType(int x, int y, int direction)
+{
+ return getMap()->getSquare(y, x).getWall(direction);
+}
+
 int BTCore::getXSize() const
 {
  return levelMap->getXSize();
@@ -269,11 +274,6 @@ void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
   checkExpiration(d, &combat);
   d.drawIcons();
  }
-}
-
-int BTCore::getMapType(int x, int y, int direction)
-{
- return getMap()->getSquare(y, x).getWall(direction);
 }
 
 int BTGame::getWallType(int x, int y, int direction)
