@@ -146,12 +146,14 @@ void BTMainScreen::loadModule(std::string moduleFile, BTModule &module)
   if (0 == Alternative_setSaneConfig("btbsave"))
    return;
  }
+ PHYSFS_removeFromSearchPath(PHYSFS_getBaseDir());
  std::string contentPath("module");
  contentPath += PHYSFS_getDirSeparator();
  contentPath += "content";
  contentPath += PHYSFS_getDirSeparator();
  contentPath += module.content;
  PHYSFS_addToSearchPath(contentPath.c_str(), 1);
+ PHYSFS_addToSearchPath(PHYSFS_getBaseDir(), 1);
 }
 
 int BTMainScreen::Alternative_setSaneConfig(std::string appName)
