@@ -22,7 +22,8 @@ void SwapBytes(IUByte *value, int size)
  value[size - 1] = first;
 }
 
-FileException::FileException()
+FileException::FileException(const std::string &reason)
+ : std::runtime_error(reason)
 {
 }
 
@@ -64,7 +65,7 @@ void BinaryReadFile::readByte(IByte &a)
  size_t ans = PHYSFS_read(file, &a, 1, 1);
  if (ans != 1)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
 }
 
@@ -73,7 +74,7 @@ void BinaryReadFile::readByteArray(const int size, IByte *a)
  size_t ans = PHYSFS_read(file, a, 1, size);
  if (ans != size)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
 }
 
@@ -82,7 +83,7 @@ void BinaryReadFile::readShort(IShort &a)
  size_t ans = PHYSFS_read(file, &a, 2, 1);
  if (ans != 1)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {
@@ -95,7 +96,7 @@ void BinaryReadFile::readShortArray(const int size, IShort *a)
  size_t ans = PHYSFS_read(file, a, 2, size);
  if (ans != size)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {
@@ -111,7 +112,7 @@ void BinaryReadFile::readLong(ILong &a)
  size_t ans = PHYSFS_read(file, &a, 4, 1);
  if (ans != 1)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {
@@ -124,7 +125,7 @@ void BinaryReadFile::readLongArray(const int size, ILong *a)
  size_t ans = PHYSFS_read(file, a, 4, size);
  if (ans != size)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {
@@ -140,7 +141,7 @@ void BinaryReadFile::readUByte(IUByte &a)
  size_t ans = PHYSFS_read(file, &a, 1, 1);
  if (ans != 1)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
 }
 
@@ -149,7 +150,7 @@ void BinaryReadFile::readUByteArray(const int size, IUByte *a)
  size_t ans = PHYSFS_read(file, a, 1, size);
  if (ans != size)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
 }
 
@@ -158,7 +159,7 @@ void BinaryReadFile::readUShort(IUShort &a)
  size_t ans = PHYSFS_read(file, &a, 2, 1);
  if (ans != 1)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {
@@ -171,7 +172,7 @@ void BinaryReadFile::readUShortArray(const int size, IUShort *a)
  size_t ans = PHYSFS_read(file, a, 2, size);
  if (ans != size)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {
@@ -187,7 +188,7 @@ void BinaryReadFile::readULong(IULong &a)
  size_t ans = PHYSFS_read(file, &a, 4, 1);
  if (ans != 1)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {
@@ -200,7 +201,7 @@ void BinaryReadFile::readULongArray(const int size, IULong *a)
  size_t ans = PHYSFS_read(file, a, 4, size);
  if (ans != size)
  {
-  throw FileException();
+  throw FileException("Data read failure");
  }
  if (swap)
  {

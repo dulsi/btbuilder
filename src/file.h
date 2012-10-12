@@ -12,6 +12,7 @@
 \* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #include "istdlib.h"
 #include <physfs.h>
+#include <stdexcept>
 
 /* Error Note:
        At this time very little if any error checking is done in the binary
@@ -19,10 +20,10 @@
   error.
 */
 
-class FileException
+class FileException : public std::runtime_error
 {
  public:
-  FileException();
+  FileException(const std::string &reason);
 };
 
 class BinaryReadFile

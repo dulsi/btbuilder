@@ -60,6 +60,24 @@ void BTMapSquare::serialize(ObjectSerializer* s)
  s->add("special", &special);
 }
 
+void BTMapSquare::write(BinaryWriteFile &f)
+{
+ IUByte tmp;
+
+ tmp = 0;
+ for (int i = BT_DIRECTIONS; i > 0; --i)
+ {
+  if (wallInfo[i - 1] > 3)
+   throw FileException("Wall type not supported.");
+  tmp = tmp << 2;
+  tmp += wallInfo[i - 1];
+ }
+ f.writeUByte(tmp);
+ tmp = 0;
+ f.writeUByte(tmp); // Unknown
+ f.writeShort(special);
+}
+
 IBool BTSpecialBody::isNothing() const
 {
  int i = 0;
@@ -776,6 +794,19 @@ void BTSpecialCommand::serialize(ObjectSerializer* s)
  }
 }
 
+void BTSpecialCommand::write(BinaryWriteFile &f)
+{
+ char tmp[26];
+ size_t len = strlen(text);
+ if (len > 25)
+  throw FileException("Text is too long.");
+ f.writeShort(type);
+ strcpy(tmp, text);
+ memset(tmp + len, 0, 26 - len);
+ f.writeUByteArray(26, (IUByte *)tmp);
+ f.writeShortArray(3, (IShort *)number);
+}
+
 BTSpecialCommand BTSpecialCommand::Guild(BTSPECIALCOMMAND_GUILD);
 
 BTSpecialConditional::BTSpecialConditional()
@@ -1008,6 +1039,40 @@ void BTSpecialConditional::serialize(ObjectSerializer* s)
  s->add("else", &elseClause);
 }
 
+void BTSpecialConditional::write(BinaryWriteFile &f)
+{
+ char tmp[26];
+ size_t len = strlen(text);
+ if (len > 25)
+  throw FileException("Text is too long.");
+ if (thenClause.ops.size() > 1)
+  throw FileException("Too many operations in then clause.");
+ if (elseClause.ops.size() > 1)
+  throw FileException("Too many operations in else clause.");
+ BTSpecialCommand empty;
+ BTSpecialCommand *thenCmd = &empty;
+ BTSpecialCommand *elseCmd = &empty;
+ if (thenClause.ops.size() == 1)
+ {
+  thenCmd = dynamic_cast<BTSpecialCommand*>(thenClause.ops[0]);
+  if (NULL == thenCmd)
+   throw FileException("Then clause not a simple command.");
+ }
+ if (elseClause.ops.size() == 1)
+ {
+  elseCmd = dynamic_cast<BTSpecialCommand*>(elseClause.ops[0]);
+  if (NULL == elseCmd)
+   throw FileException("Else clause not a simple command.");
+ }
+ f.writeShort(type);
+ strcpy(tmp, text);
+ memset(tmp + len, 0, 26 - len);
+ f.writeUByteArray(26, (IUByte *)tmp);
+ f.writeShort(number);
+ thenCmd->write(f);
+ elseCmd->write(f);
+}
+
 BTSpecial::BTSpecial()
 {
  name = new char[1];
@@ -1130,6 +1195,58 @@ void BTSpecial::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("flag", &flags, &specialFlagLookup);
  s->add("body", &body);
+}
+
+void BTSpecial::write(BinaryWriteFile &f)
+{
+ char tmp[26];
+ IUByte unknown;
+
+ if (strlen(name) > 25)
+  throw FileException(std::string("Special name '") + name + std::string("' is too large."));
+ int i;
+ memset(tmp, 0, 26);
+ strcpy(tmp, name);
+ f.writeUByteArray(26, (IUByte *)tmp);
+ if (body.ops.size() > 20)
+  throw FileException(std::string("Too many commands in the special '") + name + std::string("'."));
+ for (i = 0; i < body.ops.size(); ++i)
+ {
+  BTSpecialConditional *conditional = dynamic_cast<BTSpecialConditional*>(body.ops[i]);
+  if (conditional)
+  {
+   conditional->write(f);
+  }
+  else
+  {
+   BTSpecialCommand *cmd = dynamic_cast<BTSpecialCommand*>(body.ops[i]);
+   if (cmd)
+   {
+    IShort type(-1);
+    f.writeShort(type);
+    memset(tmp, 0, 26);
+    f.writeUByteArray(26, (IUByte *)tmp);
+    type = 0;
+    f.writeShort(type);
+    cmd->write(f);
+    cmd->write(f);
+   }
+   else
+    throw FileException("Unhandled special operation");
+  }
+ }
+ if (body.ops.size() < 20)
+ {
+  IShort type(-99);
+  f.writeShort(type);
+  memset(tmp, 0, 26);
+  f.writeUByteArray(26, (IUByte *)tmp);
+  type = 0;
+  f.writeShort(type);
+  BTSpecialCommand emptyCmd;
+  emptyCmd.write(f);
+  emptyCmd.write(f);
+ }
 }
 
 BTMap::BTMap(BinaryReadFile &f)
@@ -1329,5 +1446,54 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("monsterLevel", &monsterLevel);
  s->add("square", &square, &BTMapSquare::create);
  s->add("special", &specials, &BTSpecial::create);
+}
+
+void BTMap::write(BinaryWriteFile &f)
+{
+ IUByte unknown;
+ char tmp[26];
+
+ if (strlen(name) > 25)
+  throw FileException(std::string("Map name '") + name + std::string("' is too large."));
+ if (xSize > 22)
+  throw FileException("X size is too large.");
+ if (ySize > 22)
+  throw FileException("Y size is too large.");
+ int len = strlen(filename);
+ if ((len <= 4) || (strcmp(".MAP", filename + (len - 4)) != 0))
+  throw FileException("Filename does not end in \".MAP\".");
+ if (len - 4 > 8)
+  throw FileException("Filename is too long.");
+ if (specials.size() > 30)
+  throw FileException("Too many specials.");
+ memset(tmp, 0, 26);
+ strcpy(tmp, name);
+ f.writeUByteArray(26, (IUByte *)tmp);
+ f.writeShort(type);
+ f.writeShort(level);
+ f.writeShort(monsterLevel);
+ f.writeShort(monsterChance);
+ // Ignore filename
+ strcpy(tmp, filename);
+ memset(tmp + len - 4, 0, 10 - len + 4);
+ for (int i = len - 4; i < 10; ++i)
+  tmp[i] = 0;
+ f.writeUByteArray(10, (IUByte *)tmp);
+ BTMapSquare empty;
+ for (int y = 0; y < 22; y++)
+ {
+  for (int x = 0; x < 22; x++)
+  {
+   if ((x >= getXSize()) && (y >= getYSize()))
+    empty.write(f);
+   else
+    getSquare(y, x).write(f);
+  }
+ }
+ int i;
+ for (i = 0; i < specials.size(); i++)
+ {
+  specials[i]->write(f);
+ }
 }
 

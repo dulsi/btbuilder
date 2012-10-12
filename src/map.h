@@ -65,6 +65,7 @@ class BTMapSquare : public XMLObject
   void setWall(IShort dir, IShort wall);
   void setSpecial(IShort s);
   virtual void serialize(ObjectSerializer* s);
+  void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTMapSquare; }
 
@@ -146,6 +147,10 @@ class BTSpecialOperation : public XMLObject
 class BTSpecialBody : public BTSpecialOperation
 {
  public:
+  friend class BTSpecialConditional;
+  friend class BTSpecial;
+
+ public:
   void addOperation(BTSpecialOperation *op) { ops.push_back(op); }
   IBool isNothing() const;
   virtual void print(FILE *f) const;
@@ -156,7 +161,7 @@ class BTSpecialBody : public BTSpecialOperation
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialBody; }
 
- private:
+ protected:
   XMLVector<BTSpecialOperation*> ops;
 };
 
@@ -173,6 +178,7 @@ class BTSpecialCommand : public BTSpecialOperation
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
   virtual void serialize(ObjectSerializer* s);
+  void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialCommand; }
 
@@ -200,6 +206,7 @@ class BTSpecialConditional : public BTSpecialOperation
   void run(BTDisplay &d) const;
   void setType(IShort val);
   virtual void serialize(ObjectSerializer* s);
+  void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialConditional; }
 
@@ -222,6 +229,7 @@ class BTSpecial : public XMLObject
   void print(FILE *f) const;
   void run(BTDisplay &d) const;
   virtual void serialize(ObjectSerializer* s);
+  void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecial; }
 
@@ -254,6 +262,7 @@ class BTMap : public XMLObject
   void resize(IShort newXSize, IShort newYSize);
   void setFilename(const char *f);
   virtual void serialize(ObjectSerializer* s);
+  void write(BinaryWriteFile &f);
 
  private:
   char *name;

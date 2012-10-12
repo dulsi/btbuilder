@@ -155,9 +155,31 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
  }
  if (key == 'y')
  {
-  XMLSerializer parser;
-  parser.add("map", levelMap);
-  parser.write(filename, true);
+  bool wrote = false;
+  int len = strlen(levelMap->getFilename());
+  if ((len > 4) && (strcmp(".MAP", levelMap->getFilename() + (len - 4)) == 0))
+  {
+   try
+   {
+    BinaryWriteFile f(levelMap->getFilename());
+    levelMap->write(f);
+    wrote = true;
+   }
+   catch (const FileException &e)
+   {
+    printf("Failed to write old map file: %s\n", e.what());
+    char tmp[len + 1];
+    strcpy(tmp, levelMap->getFilename());
+    strcpy(tmp + len - 3, "xml");
+    levelMap->setFilename(tmp);
+   }
+  }
+  if (!wrote)
+  {
+   XMLSerializer parser;
+   parser.add("map", levelMap);
+   parser.write(levelMap->getFilename(), true);
+  }
  }
 }
 
