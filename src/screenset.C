@@ -1837,7 +1837,6 @@ int BTScreenSet::removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
   if ((*itr) == b.grp)
   {
    group.erase(itr);
-   delete b.grp;
    b.setGroup(NULL);
    return 0;
   }
@@ -1846,7 +1845,7 @@ int BTScreenSet::removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  {
   if ((*itr) == b.pc)
   {
-   roster.erase(itr);
+   roster.erase(itr, false);
    bool found = false;
    for (int i = 0; i < party.size(); ++i)
     if (party[i] == b.pc)

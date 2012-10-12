@@ -64,7 +64,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
   else
    d.drawLabel("");
   d.drawView();
-  key = d.readChar(6000);
+  key = d.readChar();
   switch (key)
   {
    case BTKEY_UP:
@@ -130,6 +130,34 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     else
      d.drawText("Clear");
     break;
+   case 'r':
+   {
+    std::string tmp = d.readString("X Size?", 3);
+    int newXSize = atol(tmp.c_str());
+    if (newXSize < 1)
+     break;
+    tmp = d.readString("Y Size?", 3);
+    int newYSize = atol(tmp.c_str());
+    if (newYSize < 1)
+     break;
+    levelMap->resize(newXSize, newYSize);
+    break;
+   }
+   case 'c':
+    levelMap->getSquare(yPos, xPos).setSpecial(-1);
+    break;
   }
  }
+ d.drawText("Save?");
+ while ((key != 'y') && (key != 'n'))
+ {
+  key = d.readChar();
+ }
+ if (key == 'y')
+ {
+  XMLSerializer parser;
+  parser.add("map", levelMap);
+  parser.write(filename, true);
+ }
 }
+

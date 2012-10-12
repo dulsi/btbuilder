@@ -251,6 +251,7 @@ class BTMap : public XMLObject
   IShort getType() const;
   IShort getXSize() const;
   IShort getYSize() const;
+  void resize(IShort newXSize, IShort newYSize);
   void setFilename(const char *f);
   virtual void serialize(ObjectSerializer* s);
 

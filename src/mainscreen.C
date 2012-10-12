@@ -151,7 +151,7 @@ void BTMainScreen::loadModule(std::string moduleFile, BTModule &module)
  contentPath += "content";
  contentPath += PHYSFS_getDirSeparator();
  contentPath += module.content;
- PHYSFS_addToSearchPath(contentPath.c_str(), 0);
+ PHYSFS_addToSearchPath(contentPath.c_str(), 1);
 }
 
 int BTMainScreen::Alternative_setSaneConfig(std::string appName)

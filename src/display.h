@@ -146,6 +146,7 @@ class BTDisplay : public ImageLoader
   simpleFont *sfont;
   SDL_Color white, black;
   std::vector<BTUIElement*> element;
+  int mapXStart, mapYStart;
 };
 
 class BTUIText : public BTUIElement

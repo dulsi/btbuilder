@@ -43,10 +43,15 @@ BTPc::BTPc(int monsterType, int j)
  // spell bind can be implemented.
  BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
  BTJobList &jobList = BTGame::getGame()->getJobList();
+ BTXpChartList &xpChartList = BTGame::getGame()->getXpChartList();
  name = new char[monsterList[monster].getName().length() + 1];
  strcpy(name, monsterList[monster].getName().c_str());
- level = maxLevel = monsterList[monster].getLevel();
  job = j;
+ level = maxLevel = monsterList[monster].getLevel();
+ if (level == 0)
+  level = maxLevel = 1;
+ else if (level > 1)
+  xp = xpChartList[jobList[job]->xpChart]->getXpNeeded(level - 1);
  gender = monsterList[monster].getGender();
  picture = monsterList[monster].getPicture();
  ac = monsterList[monster].getAc();

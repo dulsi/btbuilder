@@ -1275,6 +1275,43 @@ IShort BTMap::getYSize() const
  return ySize;
 }
 
+void BTMap::resize(IShort newXSize, IShort newYSize)
+{
+ if (newYSize < ySize)
+ {
+  square.erase(square.begin() + (newYSize * xSize), square.end());
+  ySize = newYSize;
+ }
+ if (newXSize < xSize)
+ {
+  for (int i = 0; i < ySize; ++i)
+  {
+   square.erase(square.begin() + (i * newXSize + newXSize), square.begin() + (i * newXSize + xSize));
+  }
+  xSize = newXSize;
+ }
+ else if (newXSize > xSize)
+ {
+  for (int i = 0; i < ySize; ++i)
+  {
+   for (int k = xSize; k < newXSize; ++k)
+   {
+    square.insert(square.begin() + (i * newXSize + k), new BTMapSquare);
+   }
+  }
+  xSize = newXSize;
+ }
+ if (newYSize > ySize)
+ {
+  for (int i = ySize; i < newYSize; ++i)
+  {
+   for (int k = 0; k < xSize; ++k)
+    square.push_back(new BTMapSquare);
+  }
+  ySize = newYSize;
+ }
+}
+
 void BTMap::setFilename(const char *f)
 {
  filename = new char[strlen(f) + 1];

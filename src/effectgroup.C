@@ -69,7 +69,7 @@ void BTEffectGroup::clearMapEffects()
    if (BTTIME_MAP == (*itr)->expiration)
    {
     BTBaseEffect *current = *itr;
-    effect.erase(itr);
+    effect.erase(itr, false);
 //    current->finish(d, NULL);
     delete current;
     bFound = true;
@@ -140,7 +140,7 @@ void BTEffectGroup::checkExpiration(BTDisplay &d, BTCombat *combat /*= NULL*/)
   if ((*itr)->isExpired(BTGame::getGame()))
   {
    BTBaseEffect *current = *itr;
-   itr = effect.erase(itr);
+   itr = effect.erase(itr, false);
    bool musicFound = false;
    for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
    {

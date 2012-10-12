@@ -1097,7 +1097,7 @@ bool BTCombat::endRound(BTDisplay &d)
      if ((*itrEffect)->targets(group, monster - itr->individual.begin()))
      {
       BTBaseEffect *current = *itrEffect;
-      itrEffect = effect.erase(itrEffect);
+      itrEffect = effect.erase(itrEffect, false);
       int size = effect.size();
       if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
        current->finish(d, this);
@@ -1128,7 +1128,7 @@ bool BTCombat::endRound(BTDisplay &d)
     if ((*itrEffect)->targets(group, BTTARGET_INDIVIDUAL))
     {
      BTBaseEffect *current = *itrEffect;
-     itrEffect = effect.erase(itrEffect);
+     itrEffect = effect.erase(itrEffect, false);
      int size = effect.size();
      if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
       current->finish(d, this);

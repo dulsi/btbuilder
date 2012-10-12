@@ -23,7 +23,7 @@ BTMusic::~BTMusic()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), animationFrame(0), ttffont(0), sfont(&simple8x8)
+ : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), animationFrame(0), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
@@ -465,18 +465,29 @@ void BTDisplay::drawMap(bool knowledge)
  src.x = 0;
  src.y = 0;
  SDL_Surface *backup = NULL;
- if (mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
+ if (config->mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
  {
   backup = SDL_CreateRGBSurface(SDL_SWSURFACE, dst.w, dst.h, 32, mainScreen->format->Rmask, mainScreen->format->Gmask, mainScreen->format->Bmask, mainScreen->format->Amask);
   SDL_BlitSurface(mainScreen, &dst, backup, &src);
  }
  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
- int xStart = 0;
- int yStart = 0;
  if (config->centerMap)
  {
-  xStart = m->getX() - (config->widthMap / 2);
-  yStart = m->getY() - (config->heightMap / 2);
+  mapXStart = m->getX() - (config->widthMap / 2);
+  mapYStart = m->getY() - (config->heightMap / 2);
+ }
+ else
+ {
+  int curX = m->getX();
+  if (mapXStart > curX)
+   mapXStart = curX;
+  if (mapXStart + config->widthMap <= curX)
+   mapXStart = curX - config->widthMap + 1;
+  int curY = m->getY();
+  if (mapYStart > curY)
+   mapYStart = curY;
+  if (mapYStart + config->heightMap <= curY)
+   mapYStart = curY - config->heightMap + 1;
  }
  for (int i = 0; i < config->widthMap; ++i)
  {
@@ -490,8 +501,8 @@ void BTDisplay::drawMap(bool knowledge)
    dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
    dst.w = p3d.config->mapWidth * xMult;
    dst.h = p3d.config->mapHeight * yMult;
-   int know = m->getKnowledge(xStart + i, yStart + k);
-   if ((xStart + i < 0) || (yStart + k < 0) || (xStart + i >= m->getXSize()) || (yStart + k >= m->getYSize()) || ((!knowledge) && (know == BTKNOWLEDGE_NO)))
+   int know = m->getKnowledge(mapXStart + i, mapYStart + k);
+   if ((mapXStart + i < 0) || (mapYStart + k < 0) || (mapXStart + i >= m->getXSize()) || (mapYStart + k >= m->getYSize()) || ((!knowledge) && (know == BTKNOWLEDGE_NO)))
    {
     SDL_Surface *unknown = p3d.getMapUnknown();
     if (unknown)
@@ -503,13 +514,13 @@ void BTDisplay::drawMap(bool knowledge)
    {
     for (int direction = 0; direction < CARDINAL_DIRECTIONS; ++direction)
     {
-     SDL_Surface *mapWall = p3d.getMapWall(m->getMapType(xStart + i, yStart + k, direction), direction, knowledge || (know == BTKNOWLEDGE_FULL));
+     SDL_Surface *mapWall = p3d.getMapWall(m->getMapType(mapXStart + i, mapYStart + k, direction), direction, knowledge || (know == BTKNOWLEDGE_FULL));
      if (mapWall)
      {
       SDL_BlitSurface(mapWall, &src, mainScreen, &dst);
      }
     }
-    if (m->hasSpecial(xStart + i, yStart + k))
+    if (m->hasSpecial(mapXStart + i, mapYStart + k))
     {
      SDL_Surface *special = p3d.getMapSpecial();
      if (special)
@@ -517,7 +528,7 @@ void BTDisplay::drawMap(bool knowledge)
       SDL_BlitSurface(special, &src, mainScreen, &dst);
      }
     }
-    if ((yStart + k == m->getY()) && (xStart + i == m->getX()))
+    if ((mapYStart + k == m->getY()) && (mapXStart + i == m->getX()))
     {
      SDL_Surface *arrow = p3d.getMapArrow(m->getFacing());
      if (arrow)
@@ -535,7 +546,7 @@ void BTDisplay::drawMap(bool knowledge)
  src.x = 0;
  src.y = 0;
  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
- if (mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
+ if (config->mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
  {
   unsigned char response = readChar();
   SDL_BlitSurface(backup, &src, mainScreen, &dst);

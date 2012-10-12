@@ -698,7 +698,6 @@ bool BTGame::move(BTDisplay &d, int dir)
     {
      w = 0;
      effect.erase(itr);
-     delete phaseDoor;
      break;
     }
    }
