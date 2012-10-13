@@ -23,6 +23,8 @@ class BTEditor : public BTCore
 
  protected:
   int currentWall;
+  int startSpecial;
+  int currentSpecial;
 };
 
 #endif

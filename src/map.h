@@ -253,6 +253,7 @@ class BTMap : public XMLObject
   IShort getMonsterChance() const;
   IShort getMonsterLevel() const;
   const char *getName() const;
+  int getNumOfSpecials() const;
   void generateRandomEncounter(BTDisplay &d) const;
   const BTSpecial *getSpecial(IShort num) const;
   BTMapSquare &getSquare(IShort y, IShort x);

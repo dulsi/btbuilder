@@ -9,7 +9,7 @@
 #include "editor.h"
 
 BTEditor::BTEditor(BTModule *m)
- : BTCore(m), currentWall(0)
+ : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0)
 {
 }
 
@@ -145,6 +145,29 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    }
    case 'c':
     levelMap->getSquare(yPos, xPos).setSpecial(-1);
+    break;
+   case 's':
+   {
+    d.clearText();
+    int len = levelMap->getNumOfSpecials();
+    BTDisplay::selectItem list[len];
+    for (int i = 0; i < len; ++i)
+    {
+     list[i].name = levelMap->getSpecial(i)->getName();
+    }
+    d.addSelection(list, len, startSpecial, currentSpecial);
+    int key = d.process();
+    if (key == '\r')
+     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
+    d.clearText();
+    if (currentWall < p3dConfig->mapType.size())
+     d.drawText(p3dConfig->mapType[currentWall]->name.c_str());
+    else
+     d.drawText("Clear");
+    break;
+   }
+   case 'l':
+    levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
     break;
   }
  }

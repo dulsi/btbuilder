@@ -1341,6 +1341,11 @@ const char *BTMap::getName() const
  return name;
 }
 
+int BTMap::getNumOfSpecials() const
+{
+ return specials.size();
+}
+
 void BTMap::generateRandomEncounter(BTDisplay &d) const
 {
  BTGame *game = BTGame::getGame();
