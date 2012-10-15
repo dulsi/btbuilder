@@ -29,18 +29,18 @@ BTMainScreen::~BTMainScreen()
 {
  if (display)
   delete display;
+ if (mainConfig)
+  delete mainConfig;
 }
 
 void BTMainScreen::run()
 {
- mainConfig = new BTDisplayConfig;
- XMLSerializer parser;
- mainConfig->serialize(&parser);
- parser.parse("data/mainscreen.xml", false);
+ loadMainConfig();
  display = new BTDisplay(mainConfig, false);
  std::vector<std::string> fileModule;
  XMLVector<BTModule*> module;
  fs::directory_iterator end_iter;
+ XMLSerializer parser;
  for (fs::directory_iterator dir_itr("module"); dir_itr != end_iter; ++dir_itr )
  {
   if ((fs::is_regular_file(dir_itr->status())) && (dir_itr->path().extension().string() == ".xml"))
@@ -61,10 +61,14 @@ void BTMainScreen::run()
  int start(0);
  int select(0);
  display->addSelection(list, module.size(), start, select);
- unsigned int key = display->process();
+ unsigned int key = display->process("eq");
  if (key == 13)
  {
   runModule(fileModule[select]);
+ }
+ else if (key == 'e')
+ {
+  editModule(fileModule[select]);
  }
  delete [] list;
  delete display;
@@ -101,24 +105,20 @@ void BTMainScreen::runModule(std::string moduleFile)
  PHYSFS_deinit();
 }
 
-void BTMainScreen::editModule(std::string moduleFile, std::string mapFile)
+void BTMainScreen::editModule(std::string moduleFile, std::string mapFile /*= std::string()*/)
 {
  BTModule module;
  loadModule(moduleFile, module);
  BTEditor editor(&module);
- BTDisplayConfig config;
- XMLSerializer parser;
- config.serialize(&parser);
- parser.parse("data/mapedit.xml", true);
- if (display)
+ if (!display)
  {
-  display->setConfig(&config);
+  loadMainConfig();
+  display = new BTDisplay(mainConfig);
  }
+ if (mapFile.empty())
+  editor.edit(*display);
  else
- {
-  display = new BTDisplay(&config);
- }
- editor.editMap(*display, mapFile.c_str());
+  editor.editMap(*display, mapFile.c_str());
  if (mainConfig)
  {
   display->setConfig(mainConfig);
@@ -184,5 +184,13 @@ int BTMainScreen::Alternative_setSaneConfig(std::string appName)
  PHYSFS_addToSearchPath(writedir.c_str(), 0);
  PHYSFS_addToSearchPath(basedir, 1);
  return 1;
+}
+
+void BTMainScreen::loadMainConfig()
+{
+ mainConfig = new BTDisplayConfig;
+ XMLSerializer parser;
+ mainConfig->serialize(&parser);
+ parser.parse("data/mainscreen.xml", false);
 }
 

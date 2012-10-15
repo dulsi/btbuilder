@@ -19,6 +19,7 @@ class BTEditor : public BTCore
   int getWallType(int x, int y, int direction);
   int getKnowledge(int x, int y);
 
+  void edit(BTDisplay &d);
   void editMap(BTDisplay &d, const char *filename);
 
  protected:

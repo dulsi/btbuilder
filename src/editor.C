@@ -46,8 +46,55 @@ int BTEditor::getKnowledge(int x, int y)
  return BTKNOWLEDGE_FULL;
 }
 
+void BTEditor::edit(BTDisplay &d)
+{
+ char **files = PHYSFS_enumerateFiles(".");
+ char **i;
+ int count(0);
+
+ for (i = files; *i != NULL; i++)
+ {
+  if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+   continue;
+  int len = strlen(*i);
+  if ((len > 4) && ((strcmp(".MAP", (*i) + (len - 4)) == 0) || (strcmp(".xml", (*i) + (len - 4)) == 0)))
+  {
+   count++;
+  }
+ }
+ BTDisplay::selectItem *list = new BTDisplay::selectItem[count];
+ int current = 0;
+ for (i = files; *i != NULL; i++)
+ {
+  if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+   continue;
+  int len = strlen(*i);
+  if ((len > 4) && ((strcmp(".MAP", (*i) + (len - 4)) == 0) || (strcmp(".xml", (*i) + (len - 4)) == 0)))
+  {
+   list[current].name = *i;
+   current++;
+  }
+ }
+ PHYSFS_freeList(files);
+ int start(0);
+ int select(0);
+ d.clearElements();
+ d.addSelection(list, count, start, select);
+ unsigned int key = d.process();
+ if (key == 13)
+ {
+  editMap(d, list[select].name.c_str());
+ }
+}
+
 void BTEditor::editMap(BTDisplay &d, const char *filename)
 {
+ BTDisplayConfig *oldConfig = d.getConfig();
+ BTDisplayConfig config;
+ XMLSerializer parser;
+ config.serialize(&parser);
+ parser.parse("data/mapedit.xml", true);
+ d.setConfig(&config);
  d.setPsuedo3DConfig(module->wall);
  loadMap(filename);
  xPos = 0; yPos = 0; facing = 0;
@@ -204,5 +251,6 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    parser.write(levelMap->getFilename(), true);
   }
  }
+ d.setConfig(oldConfig);
 }
 

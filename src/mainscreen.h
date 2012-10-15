@@ -18,12 +18,13 @@ class BTMainScreen
 
   void run();
   void runModule(std::string moduleFile);
-  void editModule(std::string moduleFile, std::string mapFile);
+  void editModule(std::string moduleFile, std::string mapFile = std::string());
 
   void loadModule(std::string moduleFile, BTModule &module);
 
  protected:
   int Alternative_setSaneConfig(std::string appName);
+  void loadMainConfig();
 
  private:
   const char *argv0;
