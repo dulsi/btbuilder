@@ -491,6 +491,8 @@ void BTCombat::open(const char *filename)
 
 void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
 {
+ previousPic = d.getCurrentImage();
+ previousLabel = d.getCurrentLabel();
  setPc(NULL);
  optionState = false;
  won = false;
@@ -525,6 +527,11 @@ void BTCombat::run(BTDisplay &d, bool partyAttack /*= false*/)
  clearEffects(d);
  checkExpiration(d, this);
  clearEncounters();
+ if (previousPic != -1)
+  d.drawImage(previousPic);
+ else
+  d.drawView();
+ d.drawLabel(previousLabel.c_str());
 }
 
 void BTCombat::runCombat(BTDisplay &d)

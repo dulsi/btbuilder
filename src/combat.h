@@ -121,6 +121,8 @@ class BTCombat : public BTScreenSet, public BTEffectGroup
   char *treasureLabel;
   unsigned int xp;
   unsigned int gold;
+  int previousPic;
+  std::string previousLabel;
 
   char* monsterNames;
   bool canAdvance;

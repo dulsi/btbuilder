@@ -91,6 +91,8 @@ class BTDisplay : public ImageLoader
   void drawStats();
   SDL_Color &getBlack();
   BTDisplayConfig *getConfig();
+  int getCurrentImage();
+  std::string getCurrentLabel();
   void getMultiplier(int &x, int &y);
   SDL_Color &getWhite();
   int playMusic(const char *file, bool physfs = true);
@@ -127,6 +129,7 @@ class BTDisplay : public ImageLoader
   BTDisplayExpanded *expanded;
   int xMult, yMult;
   SDL_Rect label;
+  std::string labelText;
   SDL_Rect text;
   BTStatusBar status;
   int textPos;
@@ -135,6 +138,7 @@ class BTDisplay : public ImageLoader
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
   std::list<BTMusic*> music;
+  int picture;
   MNG_Image *animation;
   int animationFrame;
   unsigned long animationTime;

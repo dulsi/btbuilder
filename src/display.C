@@ -23,7 +23,7 @@ BTMusic::~BTMusic()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), animation(0), animationFrame(0), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
+ : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), picture(-1), animation(0), animationFrame(0), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
@@ -251,6 +251,7 @@ void BTDisplay::drawFullScreen(const char *file, int delay)
 
 void BTDisplay::drawImage(int pic)
 {
+ picture = pic;
  char filename[50];
  if (animation)
  {
@@ -326,6 +327,7 @@ void BTDisplay::drawLabel(const char *name)
  int w, h;
  if (!sizeFont(name, w, h))
   return;
+ labelText = name;
  SDL_BlitSurface(mainBackground, &label, mainScreen, &label);
  drawFont(name, label, white, center);
  SDL_UpdateRect(mainScreen, label.x, label.y, label.w, label.h);
@@ -417,6 +419,7 @@ void BTDisplay::drawText(const char *words, alignment a /*= left*/)
 
 void BTDisplay::drawView()
 {
+ picture = -1;
  if (animation)
  {
   IMG_FreeMNG(animation);
@@ -584,6 +587,16 @@ SDL_Color &BTDisplay::getBlack()
 BTDisplayConfig *BTDisplay::getConfig()
 {
  return config;
+}
+
+int BTDisplay::getCurrentImage()
+{
+ return picture;
+}
+
+std::string BTDisplay::getCurrentLabel()
+{
+ return labelText;
 }
 
 void BTDisplay::getMultiplier(int &x, int &y)
