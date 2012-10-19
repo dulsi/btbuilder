@@ -1403,6 +1403,10 @@ void BTMap::resize(IShort newXSize, IShort newYSize)
  {
   square.erase(square.begin() + (newYSize * xSize), square.end());
   ySize = newYSize;
+  for (int i = 0; i < xSize; ++i)
+  {
+   getSquare(ySize - 1, i).setWall(BTDIRECTION_SOUTH, getSquare(0, i).getWall(BTDIRECTION_NORTH));
+  }
  }
  if (newXSize < xSize)
  {
@@ -1411,6 +1415,10 @@ void BTMap::resize(IShort newXSize, IShort newYSize)
    square.erase(square.begin() + (i * newXSize + newXSize), square.begin() + (i * newXSize + xSize));
   }
   xSize = newXSize;
+  for (int i = 0; i < ySize; ++i)
+  {
+   getSquare(i, xSize - 1).setWall(BTDIRECTION_EAST, getSquare(i, 0).getWall(BTDIRECTION_WEST));
+  }
  }
  else if (newXSize > xSize)
  {
@@ -1421,7 +1429,13 @@ void BTMap::resize(IShort newXSize, IShort newYSize)
     square.insert(square.begin() + (i * newXSize + k), new BTMapSquare);
    }
   }
+  int oldXSize = xSize;
   xSize = newXSize;
+  for (int i = 0; i < ySize; ++i)
+  {
+   getSquare(i, oldXSize).setWall(BTDIRECTION_WEST, getSquare(i, oldXSize - 1).getWall(BTDIRECTION_EAST));
+   getSquare(i, xSize - 1).setWall(BTDIRECTION_EAST, getSquare(i, 0).getWall(BTDIRECTION_WEST));
+  }
  }
  if (newYSize > ySize)
  {
@@ -1430,7 +1444,13 @@ void BTMap::resize(IShort newXSize, IShort newYSize)
    for (int k = 0; k < xSize; ++k)
     square.push_back(new BTMapSquare);
   }
+  int oldYSize = ySize;
   ySize = newYSize;
+  for (int i = 0; i < xSize; ++i)
+  {
+   getSquare(oldYSize, i).setWall(BTDIRECTION_NORTH, getSquare(oldYSize - 1, i).getWall(BTDIRECTION_SOUTH));
+   getSquare(ySize - 1, i).setWall(BTDIRECTION_SOUTH, getSquare(0, i).getWall(BTDIRECTION_NORTH));
+  }
  }
 }
 
