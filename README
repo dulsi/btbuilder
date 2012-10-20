@@ -3,22 +3,37 @@
                   http://www.identicalsoftware.com/btbuilder/
 
 Bt Builder is the beginnings of an open source Bard's Tale Construction
-Set.  It is extremely early in development.  To build it you will need
-the source code, SDL, SDL_Image, boost, expat and PhysFS.  SDL_ttf is
-optional and not built in the windows version.  It will only be usable
-in Bt Builder modules instead of BTCS modules.  Run make to compile.
-The programs found in the util directory need the Identical Software
-Graphics Library to build.
+Set. To build it you will need the source code, SDL, SDL_Image, SDL_mixer,
+libpng, boost, expat and PhysFS. SDL_ttf is optional and not built in the
+windows version. It will only be usable in Bt Builder modules instead of
+BTCS modules. Run make to compile. The programs found in the util directory
+need the Identical Software Graphics Library to build.
 
-The program can read the BTCS files.  The core game engine is still a
-work in progress.  Most specials have been implemented but combat and
-spells are still not complete.  It can also print information about
+The program can read the BTCS files. The core game engine is still a
+work in progress. Most specials have been implemented but combat and
+spells are still not complete. It can also print information about
 monsters, spells, items and maps.
 
-Running Bt Builder will bring up the module selection screen.  A sample
-game is included.
+Running Bt Builder will bring up the module selection screen. Two sample
+games are included. They are largely the same game at the moment. The first
+is being built with BTCS restrictions. The second game is going to use the
+full functionality of Bt Builder. At the moment it has a more well stocked
+Garth's and allows 12 items per character.
 
-To directly run the sample game, run:
+Work on an editor has begun. Right now it only allows you to edit maps.
+It allows you to place walls and specials. You cannot create specials nor
+adjust map features like the level of monsters or random encounter chance.
+To enter the editor arrow up or down to the module you want to edit in the
+module selection screen. Instead of pressing return to run the module press
+'e'. This will bring up a list of map files to edit.
+
+The map editor works similar to the BTCS. Unlike the BTCS the arrow keys move
+you in the specified direction. To change facing press End or PgDn for left
+right respectively. In addition to 's', 'c', and 'l' from BTCS, it support
+'r' to resize the map. If the map is too large to fit on one screen, the map
+will scroll when you move past the view section.
+
+To directly run a sample game, run:
 
 btbuilder sample
 
