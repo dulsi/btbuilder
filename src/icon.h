@@ -18,11 +18,10 @@ class BTDisplay;
 class BTIcon : public XMLObject
 {
  public:
-  BTIcon() : image(0), effect(0), img(0), animation(0) {}
+  BTIcon() : image(0), effect(0), active(false), img(0) { animation.animation = 0; }
   ~BTIcon();
 
-  void clear(BTDisplay &d);
-  virtual void draw(BTDisplay &d);
+  virtual void draw(BTDisplay &d, unsigned long ticks);
   bool isActive();
   virtual void serialize(ObjectSerializer* s);
 
@@ -32,8 +31,9 @@ class BTIcon : public XMLObject
   char *image;
   SerialRect position;
   int effect;
+  bool active;
   SDL_Surface *img;
-  MNG_Image *animation;
+  MNG_AnimationState animation;
 };
 
 class BTFacingIcon : public BTIcon
@@ -42,13 +42,14 @@ class BTFacingIcon : public BTIcon
   BTFacingIcon();
   ~BTFacingIcon();
 
-  void draw(BTDisplay &d);
+  void draw(BTDisplay &d, unsigned long ticks);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTFacingIcon; }
 
  private:
   SDL_Surface *dirImg[BT_DIRECTIONS];
-  MNG_Image *dirAni[BT_DIRECTIONS];
+  MNG_AnimationState dirAni[BT_DIRECTIONS];
+  int facing;
 };
 
 #endif

@@ -23,8 +23,10 @@ BTMusic::~BTMusic()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), picture(-1), animation(0), animationFrame(0), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
+ : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
+ animation.animation = 0;
+ animation.frame = 0;
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
   printf("Failed - SDL_Init\n");
@@ -109,6 +111,11 @@ BTDisplay::~BTDisplay()
  element.clear();
  Mix_Quit();
  SDL_Quit();
+}
+
+void BTDisplay::addAnimation(MNG_AnimationState *animState)
+{
+ activeAnimation.push_back(animState);
 }
 
 void BTDisplay::addBarrier(const char *keys)
@@ -253,20 +260,25 @@ void BTDisplay::drawImage(int pic)
 {
  picture = pic;
  char filename[50];
- if (animation)
+ if (animation.animation)
  {
-  IMG_FreeMNG(animation);
-  animation = NULL;
-  animationFrame = 0;
+  IMG_FreeMNG(animation.animation);
+  animation.animation = NULL;
+  removeAnimation(&animation);
  }
  snprintf(filename, 50, "slot%d.ng", pic);
  SDL_Rect src, dst;
  SDL_Surface *img = NULL;
- loadImageOrAnimation(filename, &img, &animation);
- if (animation)
+ loadImageOrAnimation(filename, &img, &animation.animation);
+ if (animation.animation)
  {
+  IMG_SetAnimationState(&animation, -1, 0);
+  animation.dst.x = config->x3d * xMult;
+  animation.dst.y = config->y3d * yMult;
+  animation.dst.w = p3d.config->width * xMult;
+  animation.dst.h = p3d.config->height * yMult;
+  addAnimation(&animation);
   drawAnimationFrame();
-  animationTime = SDL_GetTicks();
   return;
  }
  if ((pic >= 45) && (img == NULL))
@@ -420,11 +432,11 @@ void BTDisplay::drawText(const char *words, alignment a /*= left*/)
 void BTDisplay::drawView()
 {
  picture = -1;
- if (animation)
+ if (animation.animation)
  {
-  IMG_FreeMNG(animation);
-  animation = NULL;
-  animationFrame = 0;
+  IMG_FreeMNG(animation.animation);
+  animation.animation = NULL;
+  removeAnimation(&animation);
  }
  Psuedo3DMap *m = Psuedo3DMap::getMap();
  p3d.draw(m, m->getX(), m->getY(), m->getFacing());
@@ -449,10 +461,7 @@ void BTDisplay::drawIcons()
  for (int i = 0; i < config->icon.size(); ++i)
  {
   // Should cache this to not constantly redraw.
-  if (config->icon[i]->isActive())
-   config->icon[i]->draw(*this);
-  else
-   config->icon[i]->clear(*this);
+  config->icon[i]->draw(*this, SDL_GetTicks());
  }
 }
 
@@ -811,18 +820,7 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
  SDL_Event sdlevent;
  SDL_TimerID timer;
  unsigned long animationDelay = 0;
- if (animation)
- {
-  unsigned long currentTime = SDL_GetTicks();
-  if (currentTime - animationTime > animation->frame_delay[animationFrame])
-  {
-   ++animationFrame;
-   animationFrame = animationFrame % animation->frame_count;
-   drawAnimationFrame();
-   animationTime = currentTime;
-  }
-  animationDelay = animation->frame_delay[animationFrame] - (currentTime - animationTime);
- }
+ animationDelay = drawAnimationFrame();
  if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
   timer = SDL_AddTimer(animationDelay, timerCallback, NULL);
  else if (delay)
@@ -865,13 +863,8 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
   {
    if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
    {
-    unsigned long currentTime = SDL_GetTicks();
     delay -= animationDelay;
-    ++animationFrame;
-    animationFrame = animationFrame % animation->frame_count;
-    drawAnimationFrame();
-    animationTime = currentTime;
-    animationDelay = animation->frame_delay[animationFrame];
+    animationDelay = drawAnimationFrame();
     if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
      timer = SDL_AddTimer(animationDelay, timerCallback, NULL);
     else if (delay)
@@ -932,6 +925,11 @@ void BTDisplay::refresh()
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  drawStats();
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+}
+
+void BTDisplay::removeAnimation(MNG_AnimationState *animState)
+{
+ activeAnimation.remove(animState);
 }
 
 void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
@@ -1255,19 +1253,22 @@ void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Im
  }
 }
 
-void BTDisplay::drawAnimationFrame()
+unsigned long BTDisplay::drawAnimationFrame()
 {
- SDL_Rect src, dst;
- dst.x = config->x3d * xMult;
- dst.y = config->y3d * yMult;
- dst.w = p3d.config->width * xMult;
- dst.h = p3d.config->height * yMult;
- src.x = 0;
- src.y = 0;
- src.w = p3d.config->width * xMult;
- src.h = p3d.config->height * yMult;
- SDL_BlitSurface(animation->frame[animationFrame], &src, mainScreen, &dst);
- SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
+ unsigned long ticks = SDL_GetTicks();
+ unsigned long next = 0;
+ for (std::list<MNG_AnimationState*>::iterator itr = activeAnimation.begin(); itr != activeAnimation.end(); itr++)
+ {
+  SDL_Surface *nextImg = IMG_TimeUpdate(*itr, ticks);
+  if (nextImg)
+  {
+   drawImage((*itr)->dst, nextImg);
+  }
+  unsigned long possible = IMG_TimeToNextFrame(*itr, ticks);
+  if ((next == 0) || (possible < next))
+   next = possible;
+ }
+ return next;
 }
 
 void BTDisplay::scrollUp(int h)

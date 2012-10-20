@@ -70,6 +70,7 @@ class BTDisplay : public ImageLoader
    int value;
   };
 
+  void addAnimation(MNG_AnimationState *animState);
   void addBarrier(const char *keys);
   void addChoice(const char *keys, const char *words, alignment a = left);
   void addText(const char *words, alignment a = left);
@@ -100,6 +101,7 @@ class BTDisplay : public ImageLoader
   unsigned int readChar(int delay = 0);
   std::string readString(const char *prompt, int max);
   void refresh();
+  void removeAnimation(MNG_AnimationState *animState);
   void setBackground(const char *file, bool physfs = true);
   void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(const char *file);
@@ -115,7 +117,7 @@ class BTDisplay : public ImageLoader
   void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs = true);
 
  private:
-  void drawAnimationFrame();
+  unsigned long drawAnimationFrame();
   void scrollUp(int h);
   static Uint32 timerCallback(Uint32 interval, void *param);
 
@@ -139,9 +141,7 @@ class BTDisplay : public ImageLoader
   SDL_Surface *mainBackground;
   std::list<BTMusic*> music;
   int picture;
-  MNG_Image *animation;
-  int animationFrame;
-  unsigned long animationTime;
+  MNG_AnimationState animation;
 #ifdef BTBUILDER_NOTTF
   void *ttffont;
 #else
@@ -151,6 +151,7 @@ class BTDisplay : public ImageLoader
   SDL_Color white, black;
   std::vector<BTUIElement*> element;
   int mapXStart, mapYStart;
+  std::list<MNG_AnimationState*> activeAnimation;
 };
 
 class BTUIText : public BTUIElement

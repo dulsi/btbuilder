@@ -28,23 +28,23 @@ extern "C" {
 
 typedef struct
 {
-    unsigned int Frame_width;
-    unsigned int Frame_height;
-    unsigned int Ticks_per_second;
-    unsigned int Nominal_layer_count;
-    unsigned int Nominal_frame_count;
-    unsigned int Nominal_play_time;
-    unsigned int Simplicity_profile;
+	unsigned int Frame_width;
+	unsigned int Frame_height;
+	unsigned int Ticks_per_second;
+	unsigned int Nominal_layer_count;
+	unsigned int Nominal_frame_count;
+	unsigned int Nominal_play_time;
+	unsigned int Simplicity_profile;
 }
 MHDR_chunk;
 
 /* MNG_Image type */
 typedef struct
 {
-    MHDR_chunk    mhdr;
-    unsigned int  frame_count;
-    unsigned int  *frame_delay;
-    SDL_Surface **frame;
+	MHDR_chunk    mhdr;
+	unsigned int  frame_count;
+	unsigned int  *frame_delay;
+	SDL_Surface **frame;
 }
 MNG_Image;
 
@@ -59,6 +59,21 @@ MNG_Image *IMG_LoadMNG_RW(SDL_RWops *src);
 
 /* Free all memory used by the image */
 int IMG_FreeMNG(MNG_Image *img);
+
+typedef struct
+{
+	MNG_Image *animation;
+	int frame;
+	unsigned long ticks;
+	SDL_Rect dst;
+}
+MNG_AnimationState;
+
+void IMG_SetAnimationState(MNG_AnimationState *state, int frame, int ticks);
+
+unsigned long IMG_TimeToNextFrame(MNG_AnimationState *state, int ticks);
+
+SDL_Surface *IMG_TimeUpdate(MNG_AnimationState *state, int ticks);
 
 #ifdef __cplusplus
 }

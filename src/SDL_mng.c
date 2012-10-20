@@ -534,3 +534,28 @@ done:	/* Clean up and return */
 	}
 	return(surface); 
 }
+
+void IMG_SetAnimationState(MNG_AnimationState *state, int frame, int ticks)
+{
+	state->frame = frame;
+	state->ticks = ticks;
+}
+
+unsigned long IMG_TimeToNextFrame(MNG_AnimationState *state, int ticks)
+{
+	return state->animation->frame_delay[state->frame] - (ticks - state->ticks);
+}
+
+SDL_Surface *IMG_TimeUpdate(MNG_AnimationState *state, int ticks)
+{
+	if ((state->frame == -1) || (state->animation->frame_delay[state->frame] <= (ticks - state->ticks)))
+	{
+		state->frame++;
+		state->frame = state->frame % state->animation->frame_count;
+		state->ticks = ticks;
+		return state->animation->frame[state->frame];
+	}
+	else
+		return NULL;
+}
+
