@@ -10,7 +10,7 @@
 	<screen number="2" escapeScreen="2">
 		<line>Select battle option for <name /></line>
 		<line />
-		<can option="attack"><choice keys="aA" action="attack" screen="3">Attack foes</choice></can>
+		<can option="attack"><choice keys="aA" action="attack" screen="3">Attack foes <hidden /></choice></can>
 		<choice keys="pP" action="partyAttack" screen="6">Party attack</choice>
 		<choice keys="dD" action="defend" screen="3">Defend</choice>
 		<can option="maxsp"><choice keys="cC" screen="8">Cast a spell</choice></can>
