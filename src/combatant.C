@@ -302,7 +302,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
  {
   totalDamage = totalDamage / 2;
  }
- else
+ else if (BTEXTRADAMAGE_NONE != xSpecial)
  {
   special.set(xSpecial);
  }
