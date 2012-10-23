@@ -492,6 +492,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
   file = fopen(filename, "w");
  }
  write(physFile, file, "<data>\n", 7);
+ void *prevObject = NULL;
  for (std::vector<XMLAction*>::iterator itr(action.begin()); (itr != action.end()) || (!level.empty()); ++itr)
  {
   if (itr == action.end())
@@ -563,6 +564,9 @@ void XMLSerializer::write(const char *filename, bool physfs)
     continue;
    }
   }
+  if (prevObject == (*itr)->object)
+   continue;
+  prevObject = (*itr)->object;
   int type = (*itr)->getType();
   if ((XMLTYPE_CREATE != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
   {
