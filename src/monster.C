@@ -14,7 +14,7 @@
 #define MONSTER_RANGEDTYPEMAGIC  3
 
 BTMonster::BTMonster(BinaryReadFile &f)
- : gender(BTGENDER_MALE)
+ : gender(BTGENDER_MALE), wandering(true)
 {
  IUByte unknown;
  char tmp[15];
@@ -62,7 +62,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
 }
 
 BTMonster::BTMonster()
- : gender(BTGENDER_MALE)
+ : gender(BTGENDER_MALE), wandering(true)
 {
  meleeMessage = new char[1];
  meleeMessage[0] = 0;
@@ -203,6 +203,11 @@ IBool BTMonster::isIllusion() const
  return illusion;
 }
 
+bool BTMonster::isWandering() const
+{
+ return wandering;
+}
+
 bool BTMonster::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
@@ -303,6 +308,7 @@ void BTMonster::serialize(ObjectSerializer* s)
  s->add("hp", &hp);
  s->add("gold", &gold);
  s->add("magicResistance", &magicResistance);
+ s->add("wandering", &wandering);
  s->add("meleeMessage", &meleeMessage);
  s->add("meleeDamage", &meleeDamage);
  s->add("meleeExtra", &meleeExtra);

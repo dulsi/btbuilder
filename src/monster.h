@@ -73,6 +73,7 @@ class BTMonster : public XMLObject
   IShort getStartDistance() const;
   unsigned int getXp() const;
   IBool isIllusion() const;
+  bool isWandering() const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
   void useRangedOnGroup(BTDisplay &d, BTCombatantCollection *grp, int distance, int &activeNum);
   void write(BinaryWriteFile &f);
@@ -99,6 +100,7 @@ class BTMonster : public XMLObject
   BTDice hp;
   BTDice gold;
   IShort magicResistance;
+  bool wandering;
 
   char *meleeMessage;
   BTDice meleeDamage;

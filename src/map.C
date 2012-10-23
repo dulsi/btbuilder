@@ -1353,7 +1353,7 @@ void BTMap::generateRandomEncounter(BTDisplay &d) const
  std::vector<int> monsters;
  for (int i = 0; i < monList.size(); ++i)
  {
-  if (monList[i].getLevel() == getMonsterLevel())
+  if ((monList[i].getLevel() == getMonsterLevel()) && (monList[i].isWandering()))
   {
    monsters.push_back(i);
   }
