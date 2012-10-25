@@ -638,6 +638,13 @@ void BTSpecialCommand::run(BTDisplay &d) const
    }
    break;
   }
+  case BTSPECIALCOMMAND_PLAYSOUND:
+  {
+   char tmp[100];
+   snprintf(tmp, 100, "sound/sound%d.wav", number[0]);
+   d.playSound(tmp, true);
+   break;
+  }
   case BTSPECIALCOMMAND_SETCOUNTER:
    game->setCounter(number[0]);
    break;

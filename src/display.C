@@ -22,6 +22,14 @@ BTMusic::~BTMusic()
  }
 }
 
+BTSound::~BTSound()
+{
+ if (sound)
+ {
+  Mix_FreeChunk(sound);
+ }
+}
+
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
  : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
@@ -650,6 +658,39 @@ int BTDisplay::playMusic(const char *file, bool physfs /*= true*/)
  }
  music.push_front(m);
  return musicID;
+}
+
+void BTDisplay::playSound(const char *file, bool physfs /*= true*/)
+{
+ for (std::list<BTSound*>::iterator itr(sound.begin()); itr != sound.end(); )
+ {
+  // Look for finished sounds
+  if (0 == Mix_Playing((*itr)->channel))
+  {
+   Mix_FreeChunk((*itr)->sound);
+   itr = sound.erase(itr);
+  }
+  else
+   ++itr;
+ }
+ if ((file == NULL) || (file[0] == 0))
+ {
+  return ;
+ }
+ SDL_RWops *soundFile;
+ if (physfs)
+  soundFile = PHYSFSRWOPS_openRead(file);
+ else
+  soundFile = SDL_RWFromFile(file, "rb");
+ if (soundFile)
+ {
+  Mix_Chunk *soundObj = Mix_LoadWAV_RW(soundFile, 1);
+  if (soundObj)
+  {
+   sound.push_back(new BTSound(soundObj, Mix_PlayChannel(-1, soundObj, 0)));
+  }
+ }
+ return ;
 }
 
 unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*= 0*/)

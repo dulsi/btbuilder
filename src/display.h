@@ -54,6 +54,16 @@ class BTMusic
   int musicId;
 };
 
+class BTSound
+{
+ public:
+  BTSound(Mix_Chunk *soundObj, int c) : sound(soundObj), channel(c) {}
+  ~BTSound();
+
+  Mix_Chunk *sound;
+  int channel;
+};
+
 class BTDisplay : public ImageLoader
 {
  public:
@@ -97,6 +107,7 @@ class BTDisplay : public ImageLoader
   void getMultiplier(int &x, int &y);
   SDL_Color &getWhite();
   int playMusic(const char *file, bool physfs = true);
+  void playSound(const char *file, bool physfs = true);
   unsigned int process(const char *specialKeys = NULL, int delay = 0);
   unsigned int readChar(int delay = 0);
   std::string readString(const char *prompt, int max);
@@ -140,6 +151,7 @@ class BTDisplay : public ImageLoader
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
   std::list<BTMusic*> music;
+  std::list<BTSound*> sound;
   int picture;
   MNG_AnimationState animation;
 #ifdef BTBUILDER_NOTTF
