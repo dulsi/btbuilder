@@ -48,13 +48,15 @@ int BTEditor::getKnowledge(int x, int y)
 
 void BTEditor::edit(BTDisplay &d)
 {
- char **files = PHYSFS_enumerateFiles(".");
+ char **files = PHYSFS_enumerateFiles("");
  char **i;
  int count(0);
 
  for (i = files; *i != NULL; i++)
  {
   if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+   continue;
+  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
    continue;
   int len = strlen(*i);
   if ((len > 4) && ((strcmp(".MAP", (*i) + (len - 4)) == 0) || (strcmp(".xml", (*i) + (len - 4)) == 0)))
@@ -67,6 +69,8 @@ void BTEditor::edit(BTDisplay &d)
  for (i = files; *i != NULL; i++)
  {
   if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+   continue;
+  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
    continue;
   int len = strlen(*i);
   if ((len > 4) && ((strcmp(".MAP", (*i) + (len - 4)) == 0) || (strcmp(".xml", (*i) + (len - 4)) == 0)))
