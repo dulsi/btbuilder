@@ -456,6 +456,14 @@ void BTGame::run(BTDisplay &d)
     nextTurn(d);
     d.drawView();
     d.drawLabel(levelMap->getName());
+    if ((flags.isSet(BTSPECIALFLAG_DARKNESS)) && (hasEffectOfType(BTSPELLTYPE_LIGHT)))
+    {
+     SDL_Delay(500); // pause for bit to show a flash of light.
+     clearEffectsByType(d, BTSPELLTYPE_LIGHT);
+     checkExpiration(d, &combat);
+     d.drawView();
+     d.drawIcons();
+    }
     if (special)
     {
      special = false;

@@ -9,10 +9,9 @@ windows version. It will only be usable in Bt Builder modules instead of
 BTCS modules. Run make to compile. The programs found in the util directory
 need the Identical Software Graphics Library to build.
 
-The program can read the BTCS files. The core game engine is still a
-work in progress. Most specials have been implemented but combat and
-spells are still not complete. It can also print information about
-monsters, spells, items and maps.
+The program can read the BTCS files. The core game engine is almost complete
+for BTCS functionality. It can also print information about monsters,
+spells, items and maps.
 
 Running Bt Builder will bring up the module selection screen. Two sample
 games are included. They are largely the same game at the moment. The first
@@ -59,10 +58,6 @@ Questions or comments can be sent to dulsi@identicalsoftware.com
 
 BTCS Incomplete Functionality
 
-Special Commands
-* darkness zone (works initially but doesn't stop new light effects)
-
-Other features
 * Bard songs not restricted to one person singing
 * Chance of failure for running away
 * Insanity and possession do not affect monster's actions at the moment.

@@ -1271,6 +1271,10 @@ BTMap::BTMap(BinaryReadFile &f)
  f.readShort(level);
  f.readShort(monsterLevel);
  f.readShort(monsterChance);
+ if ((BTMAPTYPE_CITY == type) || (BTMAPTYPE_WILDERNESS == type))
+  light = 5;
+ else
+  light = 0;
  // Ignore filename
  f.readUByteArray(9, (IUByte *)tmp);
  f.readUByte(unknown);
@@ -1298,7 +1302,7 @@ BTMap::BTMap(BinaryReadFile &f)
 }
 
 BTMap::BTMap()
- : name(NULL), filename(NULL)
+ : name(NULL), light(0), filename(NULL)
 {
 }
 
@@ -1327,10 +1331,7 @@ IShort BTMap::getLevel() const
 
 int BTMap::getLight() const
 {
- if ((BTMAPTYPE_CITY == type) || (BTMAPTYPE_WILDERNESS == type))
-  return 5;
- else
-  return 0;
+ return light;
 }
 
 IShort BTMap::getMonsterChance() const
@@ -1476,6 +1477,7 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("ySize", &ySize);
  s->add("monsterChance", &monsterChance);
  s->add("monsterLevel", &monsterLevel);
+ s->add("light", &light);
  s->add("square", &square, &BTMapSquare::create);
  s->add("special", &specials, &BTSpecial::create);
 }

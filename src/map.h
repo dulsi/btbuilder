@@ -273,6 +273,7 @@ class BTMap : public XMLObject
   IShort ySize;
   IShort monsterChance;
   IShort monsterLevel;
+  int light;
   char *filename;
   XMLVector<BTMapSquare*> square;
   XMLVector<BTSpecial*> specials;
