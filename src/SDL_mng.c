@@ -282,7 +282,7 @@ MNG_Image *MNG_iterate_chunks(SDL_RWops *src)
                 break;
 
 	    case MNG_UINT_FRAM:
-		frame_delay = read_FRAM(&current_chunk);
+		frame_delay = read_FRAM(&current_chunk) * 1000 / image->mhdr.Ticks_per_second;
 		break;
 
             default:

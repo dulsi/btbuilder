@@ -46,7 +46,7 @@ void BTIcon::draw(BTDisplay &d, unsigned long ticks)
   {
    IMG_SetAnimationState(&animation, -1, 0);
    animation.dst = dst;
-   d.addAnimation(&animation);
+   d.addAnimation(&animation, true);
   }
   active = true;
  }

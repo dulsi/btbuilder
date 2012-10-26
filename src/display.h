@@ -64,6 +64,17 @@ class BTSound
   int channel;
 };
 
+class BTAnimation
+{
+ public:
+  BTAnimation(MNG_AnimationState *ani, bool c) : animation(ani), clear(c) {}
+
+  bool operator==(const BTAnimation &other) { return animation == other.animation; }
+
+  MNG_AnimationState *animation;
+  bool clear;
+};
+
 class BTDisplay : public ImageLoader
 {
  public:
@@ -80,7 +91,7 @@ class BTDisplay : public ImageLoader
    int value;
   };
 
-  void addAnimation(MNG_AnimationState *animState);
+  void addAnimation(MNG_AnimationState *animState, bool clear = false);
   void addBarrier(const char *keys);
   void addChoice(const char *keys, const char *words, alignment a = left);
   void addText(const char *words, alignment a = left);
@@ -163,7 +174,7 @@ class BTDisplay : public ImageLoader
   SDL_Color white, black;
   std::vector<BTUIElement*> element;
   int mapXStart, mapYStart;
-  std::list<MNG_AnimationState*> activeAnimation;
+  std::list<BTAnimation> activeAnimation;
 };
 
 class BTUIText : public BTUIElement

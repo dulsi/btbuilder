@@ -121,9 +121,9 @@ BTDisplay::~BTDisplay()
  SDL_Quit();
 }
 
-void BTDisplay::addAnimation(MNG_AnimationState *animState)
+void BTDisplay::addAnimation(MNG_AnimationState *animState, bool clear /*= false*/)
 {
- activeAnimation.push_back(animState);
+ activeAnimation.push_back(BTAnimation(animState, clear));
 }
 
 void BTDisplay::addBarrier(const char *keys)
@@ -970,7 +970,7 @@ void BTDisplay::refresh()
 
 void BTDisplay::removeAnimation(MNG_AnimationState *animState)
 {
- activeAnimation.remove(animState);
+ activeAnimation.remove(BTAnimation(animState, false));
 }
 
 void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
@@ -1298,14 +1298,16 @@ unsigned long BTDisplay::drawAnimationFrame()
 {
  unsigned long ticks = SDL_GetTicks();
  unsigned long next = 0;
- for (std::list<MNG_AnimationState*>::iterator itr = activeAnimation.begin(); itr != activeAnimation.end(); itr++)
+ for (std::list<BTAnimation>::iterator itr = activeAnimation.begin(); itr != activeAnimation.end(); itr++)
  {
-  SDL_Surface *nextImg = IMG_TimeUpdate(*itr, ticks);
+  SDL_Surface *nextImg = IMG_TimeUpdate(itr->animation, ticks);
   if (nextImg)
   {
-   drawImage((*itr)->dst, nextImg);
+   if (itr->clear)
+    clear(itr->animation->dst, false);
+   drawImage(itr->animation->dst, nextImg);
   }
-  unsigned long possible = IMG_TimeToNextFrame(*itr, ticks);
+  unsigned long possible = IMG_TimeToNextFrame(itr->animation, ticks);
   if ((next == 0) || (possible < next))
    next = possible;
  }
