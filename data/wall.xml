@@ -748,30 +748,30 @@
   <walltype>
    <type>2</type>
    <modulus>7</modulus>
-   <wall direction="0">city1/city1_3_1_d1_front1.png</wall>
-   <wall direction="1">city1/city1_3_1_d1_front2.png</wall>
-   <wall direction="2">city1/city1_3_1_d1_front3.png</wall>
-   <wall direction="3">city1/city1_3_1_d1_front4.png</wall>
-   <wall direction="4">city1/city1_3_1_d1_left1.png</wall>
-   <wall direction="5">city1/city1_3_1_d1_right1.png</wall>
-   <wall direction="6">city1/city1_3_1_d1_left2.png</wall>
-   <wall direction="7">city1/city1_3_1_d1_right2.png</wall>
-   <wall direction="8">city1/city1_3_1_d1_left3_2.png</wall>
-   <wall direction="9">city1/city1_3_1_d1_left3_1.png</wall>
-   <wall direction="10">city1/city1_3_1_d1_right3_1.png</wall>
-   <wall direction="11">city1/city1_3_1_d1_right3_2.png</wall>
-   <wall direction="12">city1/city1_3_1_d1_left4_3.png</wall>
-   <wall direction="13">city1/city1_3_1_d1_left4_2.png</wall>
-   <wall direction="14">city1/city1_3_1_d1_left4_1.png</wall>
-   <wall direction="15">city1/city1_3_1_d1_right4_1.png</wall>
-   <wall direction="16">city1/city1_3_1_d1_right4_2.png</wall>
-   <wall direction="17">city1/city1_3_1_d1_right4_3.png</wall>
-   <wall direction="18">city1/city1_3_1_d1_left5_3.png</wall>
-   <wall direction="19">city1/city1_3_1_d1_left5_2.png</wall>
-   <wall direction="20">city1/city1_3_1_d1_left5_1.png</wall>
-   <wall direction="21">city1/city1_3_1_d1_right5_1.png</wall>
-   <wall direction="22">city1/city1_3_1_d1_right5_2.png</wall>
-   <wall direction="23">city1/city1_3_1_d1_right5_3.png</wall>
+   <wall direction="0">city1/city1_3_1_d0_front1.png</wall>
+   <wall direction="1">city1/city1_3_1_d0_front2.png</wall>
+   <wall direction="2">city1/city1_3_1_d0_front3.png</wall>
+   <wall direction="3">city1/city1_3_1_d0_front4.png</wall>
+   <wall direction="4">city1/city1_3_1_d0_left1.png</wall>
+   <wall direction="5">city1/city1_3_1_d0_right1.png</wall>
+   <wall direction="6">city1/city1_3_1_d0_left2.png</wall>
+   <wall direction="7">city1/city1_3_1_d0_right2.png</wall>
+   <wall direction="8">city1/city1_3_1_d0_left3_2.png</wall>
+   <wall direction="9">city1/city1_3_1_d0_left3_1.png</wall>
+   <wall direction="10">city1/city1_3_1_d0_right3_1.png</wall>
+   <wall direction="11">city1/city1_3_1_d0_right3_2.png</wall>
+   <wall direction="12">city1/city1_3_1_d0_left4_3.png</wall>
+   <wall direction="13">city1/city1_3_1_d0_left4_2.png</wall>
+   <wall direction="14">city1/city1_3_1_d0_left4_1.png</wall>
+   <wall direction="15">city1/city1_3_1_d0_right4_1.png</wall>
+   <wall direction="16">city1/city1_3_1_d0_right4_2.png</wall>
+   <wall direction="17">city1/city1_3_1_d0_right4_3.png</wall>
+   <wall direction="18">city1/city1_3_1_d0_left5_3.png</wall>
+   <wall direction="19">city1/city1_3_1_d0_left5_2.png</wall>
+   <wall direction="20">city1/city1_3_1_d0_left5_1.png</wall>
+   <wall direction="21">city1/city1_3_1_d0_right5_1.png</wall>
+   <wall direction="22">city1/city1_3_1_d0_right5_2.png</wall>
+   <wall direction="23">city1/city1_3_1_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
  <psuedo3d>
