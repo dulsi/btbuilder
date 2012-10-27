@@ -98,6 +98,7 @@ BTFacingIcon::~BTFacingIcon()
 
 void BTFacingIcon::draw(BTDisplay &d, unsigned long ticks)
 {
+ bool oldActive = active;
  BTIcon::draw(d, ticks);
  if (active)
  {
@@ -141,6 +142,12 @@ void BTFacingIcon::draw(BTDisplay &d, unsigned long ticks)
   }
  }
  else
+ {
+  if (oldActive)
+  {
+   d.removeAnimation(&dirAni[facing]);
+  }
   facing = -1;
+ }
 }
 
