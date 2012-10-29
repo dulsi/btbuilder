@@ -743,7 +743,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    game->getMap()->setSpecial(game->getX(), game->getY(), number[0]);
    break;
   case BTSPECIALCOMMAND_RANDOMENCOUNTER:
-   game->getMap()->generateRandomEncounter(d);
+   game->getMap()->generateRandomEncounter(d, 1);
    break;
   case BTSPECIALCOMMAND_CLEARTEXT:
    d.clearText();
@@ -1256,6 +1256,27 @@ void BTSpecial::write(BinaryWriteFile &f)
  }
 }
 
+BTMonsterChance::BTMonsterChance(int c /*= 0*/, int g /*= 1*/)
+ : chance(c), groups(g)
+{
+}
+
+int BTMonsterChance::getChance() const
+{
+ return chance;
+}
+
+int BTMonsterChance::getGroups() const
+{
+ return groups;
+}
+
+void BTMonsterChance::serialize(ObjectSerializer* s)
+{
+ s->add("chance", &chance);
+ s->add("groups", &groups);
+}
+
 BTMap::BTMap(BinaryReadFile &f)
  : filename(0)
 {
@@ -1270,7 +1291,9 @@ BTMap::BTMap(BinaryReadFile &f)
  f.readShort(type);
  f.readShort(level);
  f.readShort(monsterLevel);
- f.readShort(monsterChance);
+ IShort chance;
+ f.readShort(chance);
+ monsterChance.push_back(new BTMonsterChance(chance, 1));
  if ((BTMAPTYPE_CITY == type) || (BTMAPTYPE_WILDERNESS == type))
   light = 5;
  else
@@ -1319,6 +1342,21 @@ void BTMap::setSpecial(IShort x, IShort y, IShort special)
  square[y * xSize + x]->setSpecial(special);
 }
 
+void BTMap::checkRandomEncounter(BTDisplay &d) const
+{
+ int chance = 0;
+ int roll = BTDice(1, 100).roll();
+ for (int i = 0; i < monsterChance.size(); ++i)
+ {
+  chance += monsterChance[i]->getChance();
+  if (roll <= chance)
+  {
+   generateRandomEncounter(d, monsterChance[i]->getGroups());
+   break;
+  }
+ }
+}
+
 const char *BTMap::getFilename() const
 {
  return filename;
@@ -1334,9 +1372,14 @@ int BTMap::getLight() const
  return light;
 }
 
-IShort BTMap::getMonsterChance() const
+int BTMap::getMonsterChance() const
 {
- return monsterChance;
+ int chance = 0;
+ for (int i = 0; i < monsterChance.size(); ++i)
+ {
+  chance += monsterChance[i]->getChance();
+ }
+ return chance;
 }
 
 IShort BTMap::getMonsterLevel() const
@@ -1354,7 +1397,7 @@ int BTMap::getNumOfSpecials() const
  return specials.size();
 }
 
-void BTMap::generateRandomEncounter(BTDisplay &d) const
+void BTMap::generateRandomEncounter(BTDisplay &d, int groups) const
 {
  BTGame *game = BTGame::getGame();
  BTFactory<BTMonster> &monList = game->getMonsterList();
@@ -1368,8 +1411,11 @@ void BTMap::generateRandomEncounter(BTDisplay &d) const
  }
  if (monsters.size() > 0)
  {
-  int monIndex = BTDice(1, monsters.size(), -1).roll();
-  game->getCombat().addEncounter(monsters[monIndex]);
+  for (int i = groups; i > 0; --i)
+  {
+   int monIndex = BTDice(1, monsters.size(), -1).roll();
+   game->getCombat().addEncounter(monsters[monIndex]);
+  }
   game->getCombat().run(d);
  }
 }
@@ -1475,7 +1521,7 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("level", &level);
  s->add("xSize", &xSize);
  s->add("ySize", &ySize);
- s->add("monsterChance", &monsterChance);
+ s->add("monsterChance", &monsterChance, &BTMonsterChance::create);
  s->add("monsterLevel", &monsterLevel);
  s->add("light", &light);
  s->add("square", &square, &BTMapSquare::create);
@@ -1506,7 +1552,8 @@ void BTMap::write(BinaryWriteFile &f)
  f.writeShort(type);
  f.writeShort(level);
  f.writeShort(monsterLevel);
- f.writeShort(monsterChance);
+ IShort chance = getMonsterChance();
+ f.writeShort(chance);
  // Ignore filename
  strcpy(tmp, filename);
  memset(tmp + len - 4, 0, 10 - len + 4);

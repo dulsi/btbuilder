@@ -1,6 +1,6 @@
 <data>
 <map><name>Small Dungeon</name><type>0</type><level>1</level><xSize>10</xSize><ySize>3</ySize>
-<monsterChance>1</monsterChance><monsterLevel>1</monsterLevel>
+<monsterChance><chance>2</chance><groups>1</groups></monsterChance><monsterChance><chance>3</chance><groups>2</groups></monsterChance><monsterLevel>1</monsterLevel>
 <square><northgfx>1</northgfx><eastgfx>0</eastgfx><southgfx>0</southgfx><westgfx>1</westgfx><special>-1</special></square>
 <square><northgfx>1</northgfx><eastgfx>1</eastgfx><southgfx>0</southgfx><westgfx>0</westgfx><special>-1</special></square>
 <square><northgfx>0</northgfx><eastgfx>0</eastgfx><southgfx>1</southgfx><westgfx>1</westgfx><special>-1</special></square>

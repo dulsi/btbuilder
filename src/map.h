@@ -239,6 +239,22 @@ class BTSpecial : public XMLObject
   BTSpecialBody body;
 };
 
+class BTMonsterChance : public XMLObject
+{
+ public:
+  BTMonsterChance(int c = 0, int g = 1);
+
+  int getChance() const;
+  int getGroups() const;
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTMonsterChance; }
+
+ private:
+  int chance;
+  int groups;
+};
+
 class BTMap : public XMLObject
 {
  public:
@@ -246,15 +262,15 @@ class BTMap : public XMLObject
   BTMap();
   ~BTMap();
 
-  void setSpecial(IShort x, IShort y, IShort special);
+  void checkRandomEncounter(BTDisplay &d) const;
   const char *getFilename() const;
   IShort getLevel() const;
   int getLight() const;
-  IShort getMonsterChance() const;
+  int getMonsterChance() const;
   IShort getMonsterLevel() const;
   const char *getName() const;
   int getNumOfSpecials() const;
-  void generateRandomEncounter(BTDisplay &d) const;
+  void generateRandomEncounter(BTDisplay &d, int groups) const;
   const BTSpecial *getSpecial(IShort num) const;
   BTMapSquare &getSquare(IShort y, IShort x);
   IShort getType() const;
@@ -262,6 +278,7 @@ class BTMap : public XMLObject
   IShort getYSize() const;
   void resize(IShort newXSize, IShort newYSize);
   void setFilename(const char *f);
+  void setSpecial(IShort x, IShort y, IShort special);
   virtual void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
 
@@ -271,10 +288,10 @@ class BTMap : public XMLObject
   IShort level;
   IShort xSize;
   IShort ySize;
-  IShort monsterChance;
   IShort monsterLevel;
   int light;
   char *filename;
+  XMLVector<BTMonsterChance*> monsterChance;
   XMLVector<BTMapSquare*> square;
   XMLVector<BTSpecial*> specials;
 };

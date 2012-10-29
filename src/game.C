@@ -485,14 +485,9 @@ void BTGame::run(BTDisplay &d)
     d.drawLabel(levelMap->getName());
     if (!special)
     {
-     if (levelMap->getMonsterChance() >= BTDice(1, 100).roll())
+     if (!hasEffectOfType(BTSPELLTYPE_BLOCKENCOUNTERS))
      {
-      if (!hasEffectOfType(BTSPELLTYPE_BLOCKENCOUNTERS))
-      {
-       levelMap->generateRandomEncounter(d);
-       d.drawView();
-       d.drawLabel(levelMap->getName());
-      }
+      levelMap->checkRandomEncounter(d);
      }
      key = d.readChar(6000);
      switch (key)
