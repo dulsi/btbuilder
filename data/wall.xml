@@ -2,32 +2,32 @@
   <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>dungeon0/dungeon0_horizon.png</background>
+  <background>tilesets/dungeon0/dungeon0_horizon.png</background>
   <divide>8</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <name>Wall</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
   </maptype>
   <maptype>
    <type>2</type>
    <name>Door</name>
    <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
   </maptype>
   <maptype>
    <type>3</type>
@@ -35,10 +35,10 @@
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
   </maptype>
   <maptype>
    <type>4</type>
@@ -46,10 +46,10 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -59,86 +59,86 @@
    <modulus>4</modulus>
    <modulus>5</modulus>
    <modulus>6</modulus>
-   <wall direction="0">dungeon0/dungeon0_0_front1.png</wall>
-   <wall direction="1">dungeon0/dungeon0_0_front2.png</wall>
-   <wall direction="2">dungeon0/dungeon0_0_front3.png</wall>
-   <wall direction="3">dungeon0/dungeon0_0_front4.png</wall>
-   <wall direction="4">dungeon0/dungeon0_0_left1.png</wall>
-   <wall direction="5">dungeon0/dungeon0_0_right1.png</wall>
-   <wall direction="6">dungeon0/dungeon0_0_left2.png</wall>
-   <wall direction="7">dungeon0/dungeon0_0_right2.png</wall>
-   <wall direction="8">dungeon0/dungeon0_0_left3_2.png</wall>
-   <wall direction="9">dungeon0/dungeon0_0_left3_1.png</wall>
-   <wall direction="10">dungeon0/dungeon0_0_right3_1.png</wall>
-   <wall direction="11">dungeon0/dungeon0_0_right3_2.png</wall>
-   <wall direction="12">dungeon0/dungeon0_0_left4_3.png</wall>
-   <wall direction="13">dungeon0/dungeon0_0_left4_2.png</wall>
-   <wall direction="14">dungeon0/dungeon0_0_left4_1.png</wall>
-   <wall direction="15">dungeon0/dungeon0_0_right4_1.png</wall>
-   <wall direction="16">dungeon0/dungeon0_0_right4_2.png</wall>
-   <wall direction="17">dungeon0/dungeon0_0_right4_3.png</wall>
-   <wall direction="18">dungeon0/dungeon0_0_left5_3.png</wall>
-   <wall direction="19">dungeon0/dungeon0_0_left5_2.png</wall>
-   <wall direction="20">dungeon0/dungeon0_0_left5_1.png</wall>
-   <wall direction="21">dungeon0/dungeon0_0_right5_1.png</wall>
-   <wall direction="22">dungeon0/dungeon0_0_right5_2.png</wall>
-   <wall direction="23">dungeon0/dungeon0_0_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon0/dungeon0_0_front1.png</wall>
+   <wall direction="1">tilesets/dungeon0/dungeon0_0_front2.png</wall>
+   <wall direction="2">tilesets/dungeon0/dungeon0_0_front3.png</wall>
+   <wall direction="3">tilesets/dungeon0/dungeon0_0_front4.png</wall>
+   <wall direction="4">tilesets/dungeon0/dungeon0_0_left1.png</wall>
+   <wall direction="5">tilesets/dungeon0/dungeon0_0_right1.png</wall>
+   <wall direction="6">tilesets/dungeon0/dungeon0_0_left2.png</wall>
+   <wall direction="7">tilesets/dungeon0/dungeon0_0_right2.png</wall>
+   <wall direction="8">tilesets/dungeon0/dungeon0_0_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon0/dungeon0_0_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon0/dungeon0_0_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon0/dungeon0_0_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon0/dungeon0_0_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon0/dungeon0_0_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon0/dungeon0_0_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon0/dungeon0_0_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon0/dungeon0_0_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon0/dungeon0_0_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon0/dungeon0_0_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon0/dungeon0_0_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon0/dungeon0_0_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon0/dungeon0_0_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon0/dungeon0_0_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon0/dungeon0_0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>3</modulus>
-   <wall direction="0">dungeon0/dungeon0_1_front1.png</wall>
-   <wall direction="1">dungeon0/dungeon0_1_front2.png</wall>
-   <wall direction="2">dungeon0/dungeon0_1_front3.png</wall>
-   <wall direction="3">dungeon0/dungeon0_1_front4.png</wall>
-   <wall direction="4">dungeon0/dungeon0_1_left1.png</wall>
-   <wall direction="5">dungeon0/dungeon0_1_right1.png</wall>
-   <wall direction="6">dungeon0/dungeon0_1_left2.png</wall>
-   <wall direction="7">dungeon0/dungeon0_1_right2.png</wall>
-   <wall direction="8">dungeon0/dungeon0_1_left3_2.png</wall>
-   <wall direction="9">dungeon0/dungeon0_1_left3_1.png</wall>
-   <wall direction="10">dungeon0/dungeon0_1_right3_1.png</wall>
-   <wall direction="11">dungeon0/dungeon0_1_right3_2.png</wall>
-   <wall direction="12">dungeon0/dungeon0_1_left4_3.png</wall>
-   <wall direction="13">dungeon0/dungeon0_1_left4_2.png</wall>
-   <wall direction="14">dungeon0/dungeon0_1_left4_1.png</wall>
-   <wall direction="15">dungeon0/dungeon0_1_right4_1.png</wall>
-   <wall direction="16">dungeon0/dungeon0_1_right4_2.png</wall>
-   <wall direction="17">dungeon0/dungeon0_1_right4_3.png</wall>
-   <wall direction="18">dungeon0/dungeon0_1_left5_3.png</wall>
-   <wall direction="19">dungeon0/dungeon0_1_left5_2.png</wall>
-   <wall direction="20">dungeon0/dungeon0_1_left5_1.png</wall>
-   <wall direction="21">dungeon0/dungeon0_1_right5_1.png</wall>
-   <wall direction="22">dungeon0/dungeon0_1_right5_2.png</wall>
-   <wall direction="23">dungeon0/dungeon0_1_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon0/dungeon0_1_front1.png</wall>
+   <wall direction="1">tilesets/dungeon0/dungeon0_1_front2.png</wall>
+   <wall direction="2">tilesets/dungeon0/dungeon0_1_front3.png</wall>
+   <wall direction="3">tilesets/dungeon0/dungeon0_1_front4.png</wall>
+   <wall direction="4">tilesets/dungeon0/dungeon0_1_left1.png</wall>
+   <wall direction="5">tilesets/dungeon0/dungeon0_1_right1.png</wall>
+   <wall direction="6">tilesets/dungeon0/dungeon0_1_left2.png</wall>
+   <wall direction="7">tilesets/dungeon0/dungeon0_1_right2.png</wall>
+   <wall direction="8">tilesets/dungeon0/dungeon0_1_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon0/dungeon0_1_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon0/dungeon0_1_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon0/dungeon0_1_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon0/dungeon0_1_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon0/dungeon0_1_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon0/dungeon0_1_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon0/dungeon0_1_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon0/dungeon0_1_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon0/dungeon0_1_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon0/dungeon0_1_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon0/dungeon0_1_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon0/dungeon0_1_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon0/dungeon0_1_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon0/dungeon0_1_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon0/dungeon0_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>7</modulus>
-   <wall direction="0">dungeon0/dungeon0_2_front1.png</wall>
-   <wall direction="1">dungeon0/dungeon0_2_front2.png</wall>
-   <wall direction="2">dungeon0/dungeon0_2_front3.png</wall>
-   <wall direction="3">dungeon0/dungeon0_2_front4.png</wall>
-   <wall direction="4">dungeon0/dungeon0_2_left1.png</wall>
-   <wall direction="5">dungeon0/dungeon0_2_right1.png</wall>
-   <wall direction="6">dungeon0/dungeon0_2_left2.png</wall>
-   <wall direction="7">dungeon0/dungeon0_2_right2.png</wall>
-   <wall direction="8">dungeon0/dungeon0_2_left3_2.png</wall>
-   <wall direction="9">dungeon0/dungeon0_2_left3_1.png</wall>
-   <wall direction="10">dungeon0/dungeon0_2_right3_1.png</wall>
-   <wall direction="11">dungeon0/dungeon0_2_right3_2.png</wall>
-   <wall direction="12">dungeon0/dungeon0_2_left4_3.png</wall>
-   <wall direction="13">dungeon0/dungeon0_2_left4_2.png</wall>
-   <wall direction="14">dungeon0/dungeon0_2_left4_1.png</wall>
-   <wall direction="15">dungeon0/dungeon0_2_right4_1.png</wall>
-   <wall direction="16">dungeon0/dungeon0_2_right4_2.png</wall>
-   <wall direction="17">dungeon0/dungeon0_2_right4_3.png</wall>
-   <wall direction="18">dungeon0/dungeon0_2_left5_3.png</wall>
-   <wall direction="19">dungeon0/dungeon0_2_left5_2.png</wall>
-   <wall direction="20">dungeon0/dungeon0_2_left5_1.png</wall>
-   <wall direction="21">dungeon0/dungeon0_2_right5_1.png</wall>
-   <wall direction="22">dungeon0/dungeon0_2_right5_2.png</wall>
-   <wall direction="23">dungeon0/dungeon0_2_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon0/dungeon0_2_front1.png</wall>
+   <wall direction="1">tilesets/dungeon0/dungeon0_2_front2.png</wall>
+   <wall direction="2">tilesets/dungeon0/dungeon0_2_front3.png</wall>
+   <wall direction="3">tilesets/dungeon0/dungeon0_2_front4.png</wall>
+   <wall direction="4">tilesets/dungeon0/dungeon0_2_left1.png</wall>
+   <wall direction="5">tilesets/dungeon0/dungeon0_2_right1.png</wall>
+   <wall direction="6">tilesets/dungeon0/dungeon0_2_left2.png</wall>
+   <wall direction="7">tilesets/dungeon0/dungeon0_2_right2.png</wall>
+   <wall direction="8">tilesets/dungeon0/dungeon0_2_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon0/dungeon0_2_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon0/dungeon0_2_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon0/dungeon0_2_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon0/dungeon0_2_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon0/dungeon0_2_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon0/dungeon0_2_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon0/dungeon0_2_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon0/dungeon0_2_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon0/dungeon0_2_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon0/dungeon0_2_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon0/dungeon0_2_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon0/dungeon0_2_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon0/dungeon0_2_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon0/dungeon0_2_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon0/dungeon0_2_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
@@ -150,62 +150,62 @@
    <modulus>5</modulus>
    <modulus>6</modulus>
    <modulus>7</modulus>
-   <wall direction="0">dungeon0/dungeon0_0_d0_front1.png</wall>
-   <wall direction="1">dungeon0/dungeon0_0_d0_front2.png</wall>
-   <wall direction="2">dungeon0/dungeon0_0_d0_front3.png</wall>
-   <wall direction="3">dungeon0/dungeon0_0_d0_front4.png</wall>
-   <wall direction="4">dungeon0/dungeon0_0_d0_left1.png</wall>
-   <wall direction="5">dungeon0/dungeon0_0_d0_right1.png</wall>
-   <wall direction="6">dungeon0/dungeon0_0_d0_left2.png</wall>
-   <wall direction="7">dungeon0/dungeon0_0_d0_right2.png</wall>
-   <wall direction="8">dungeon0/dungeon0_0_d0_left3_2.png</wall>
-   <wall direction="9">dungeon0/dungeon0_0_d0_left3_1.png</wall>
-   <wall direction="10">dungeon0/dungeon0_0_d0_right3_1.png</wall>
-   <wall direction="11">dungeon0/dungeon0_0_d0_right3_2.png</wall>
-   <wall direction="12">dungeon0/dungeon0_0_d0_left4_3.png</wall>
-   <wall direction="13">dungeon0/dungeon0_0_d0_left4_2.png</wall>
-   <wall direction="14">dungeon0/dungeon0_0_d0_left4_1.png</wall>
-   <wall direction="15">dungeon0/dungeon0_0_d0_right4_1.png</wall>
-   <wall direction="16">dungeon0/dungeon0_0_d0_right4_2.png</wall>
-   <wall direction="17">dungeon0/dungeon0_0_d0_right4_3.png</wall>
-   <wall direction="18">dungeon0/dungeon0_0_d0_left5_3.png</wall>
-   <wall direction="19">dungeon0/dungeon0_0_d0_left5_2.png</wall>
-   <wall direction="20">dungeon0/dungeon0_0_d0_left5_1.png</wall>
-   <wall direction="21">dungeon0/dungeon0_0_d0_right5_1.png</wall>
-   <wall direction="22">dungeon0/dungeon0_0_d0_right5_2.png</wall>
-   <wall direction="23">dungeon0/dungeon0_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon0/dungeon0_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/dungeon0/dungeon0_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/dungeon0/dungeon0_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/dungeon0/dungeon0_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/dungeon0/dungeon0_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/dungeon0/dungeon0_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/dungeon0/dungeon0_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/dungeon0/dungeon0_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/dungeon0/dungeon0_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon0/dungeon0_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon0/dungeon0_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon0/dungeon0_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon0/dungeon0_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon0/dungeon0_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon0/dungeon0_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon0/dungeon0_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon0/dungeon0_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon0/dungeon0_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon0/dungeon0_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon0/dungeon0_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon0/dungeon0_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon0/dungeon0_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon0/dungeon0_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon0/dungeon0_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
 <configs>
   <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>dungeon1/dungeon1_horizon.png</background>
+  <background>tilesets/dungeon1/dungeon1_horizon.png</background>
   <divide>8</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <name>Wall</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
   </maptype>
   <maptype>
    <type>2</type>
    <name>Door</name>
    <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
   </maptype>
   <maptype>
    <type>3</type>
@@ -213,10 +213,10 @@
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
   </maptype>
   <maptype>
    <type>4</type>
@@ -224,10 +224,10 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -237,86 +237,86 @@
    <modulus>4</modulus>
    <modulus>5</modulus>
    <modulus>6</modulus>
-   <wall direction="0">dungeon1/dungeon1_0_front1.png</wall>
-   <wall direction="1">dungeon1/dungeon1_0_front2.png</wall>
-   <wall direction="2">dungeon1/dungeon1_0_front3.png</wall>
-   <wall direction="3">dungeon1/dungeon1_0_front4.png</wall>
-   <wall direction="4">dungeon1/dungeon1_0_left1.png</wall>
-   <wall direction="5">dungeon1/dungeon1_0_right1.png</wall>
-   <wall direction="6">dungeon1/dungeon1_0_left2.png</wall>
-   <wall direction="7">dungeon1/dungeon1_0_right2.png</wall>
-   <wall direction="8">dungeon1/dungeon1_0_left3_2.png</wall>
-   <wall direction="9">dungeon1/dungeon1_0_left3_1.png</wall>
-   <wall direction="10">dungeon1/dungeon1_0_right3_1.png</wall>
-   <wall direction="11">dungeon1/dungeon1_0_right3_2.png</wall>
-   <wall direction="12">dungeon1/dungeon1_0_left4_3.png</wall>
-   <wall direction="13">dungeon1/dungeon1_0_left4_2.png</wall>
-   <wall direction="14">dungeon1/dungeon1_0_left4_1.png</wall>
-   <wall direction="15">dungeon1/dungeon1_0_right4_1.png</wall>
-   <wall direction="16">dungeon1/dungeon1_0_right4_2.png</wall>
-   <wall direction="17">dungeon1/dungeon1_0_right4_3.png</wall>
-   <wall direction="18">dungeon1/dungeon1_0_left5_3.png</wall>
-   <wall direction="19">dungeon1/dungeon1_0_left5_2.png</wall>
-   <wall direction="20">dungeon1/dungeon1_0_left5_1.png</wall>
-   <wall direction="21">dungeon1/dungeon1_0_right5_1.png</wall>
-   <wall direction="22">dungeon1/dungeon1_0_right5_2.png</wall>
-   <wall direction="23">dungeon1/dungeon1_0_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon1/dungeon1_0_front1.png</wall>
+   <wall direction="1">tilesets/dungeon1/dungeon1_0_front2.png</wall>
+   <wall direction="2">tilesets/dungeon1/dungeon1_0_front3.png</wall>
+   <wall direction="3">tilesets/dungeon1/dungeon1_0_front4.png</wall>
+   <wall direction="4">tilesets/dungeon1/dungeon1_0_left1.png</wall>
+   <wall direction="5">tilesets/dungeon1/dungeon1_0_right1.png</wall>
+   <wall direction="6">tilesets/dungeon1/dungeon1_0_left2.png</wall>
+   <wall direction="7">tilesets/dungeon1/dungeon1_0_right2.png</wall>
+   <wall direction="8">tilesets/dungeon1/dungeon1_0_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon1/dungeon1_0_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon1/dungeon1_0_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon1/dungeon1_0_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon1/dungeon1_0_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon1/dungeon1_0_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon1/dungeon1_0_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon1/dungeon1_0_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon1/dungeon1_0_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon1/dungeon1_0_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon1/dungeon1_0_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon1/dungeon1_0_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon1/dungeon1_0_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon1/dungeon1_0_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon1/dungeon1_0_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon1/dungeon1_0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>3</modulus>
-   <wall direction="0">dungeon1/dungeon1_1_front1.png</wall>
-   <wall direction="1">dungeon1/dungeon1_1_front2.png</wall>
-   <wall direction="2">dungeon1/dungeon1_1_front3.png</wall>
-   <wall direction="3">dungeon1/dungeon1_1_front4.png</wall>
-   <wall direction="4">dungeon1/dungeon1_1_left1.png</wall>
-   <wall direction="5">dungeon1/dungeon1_1_right1.png</wall>
-   <wall direction="6">dungeon1/dungeon1_1_left2.png</wall>
-   <wall direction="7">dungeon1/dungeon1_1_right2.png</wall>
-   <wall direction="8">dungeon1/dungeon1_1_left3_2.png</wall>
-   <wall direction="9">dungeon1/dungeon1_1_left3_1.png</wall>
-   <wall direction="10">dungeon1/dungeon1_1_right3_1.png</wall>
-   <wall direction="11">dungeon1/dungeon1_1_right3_2.png</wall>
-   <wall direction="12">dungeon1/dungeon1_1_left4_3.png</wall>
-   <wall direction="13">dungeon1/dungeon1_1_left4_2.png</wall>
-   <wall direction="14">dungeon1/dungeon1_1_left4_1.png</wall>
-   <wall direction="15">dungeon1/dungeon1_1_right4_1.png</wall>
-   <wall direction="16">dungeon1/dungeon1_1_right4_2.png</wall>
-   <wall direction="17">dungeon1/dungeon1_1_right4_3.png</wall>
-   <wall direction="18">dungeon1/dungeon1_1_left5_3.png</wall>
-   <wall direction="19">dungeon1/dungeon1_1_left5_2.png</wall>
-   <wall direction="20">dungeon1/dungeon1_1_left5_1.png</wall>
-   <wall direction="21">dungeon1/dungeon1_1_right5_1.png</wall>
-   <wall direction="22">dungeon1/dungeon1_1_right5_2.png</wall>
-   <wall direction="23">dungeon1/dungeon1_1_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon1/dungeon1_1_front1.png</wall>
+   <wall direction="1">tilesets/dungeon1/dungeon1_1_front2.png</wall>
+   <wall direction="2">tilesets/dungeon1/dungeon1_1_front3.png</wall>
+   <wall direction="3">tilesets/dungeon1/dungeon1_1_front4.png</wall>
+   <wall direction="4">tilesets/dungeon1/dungeon1_1_left1.png</wall>
+   <wall direction="5">tilesets/dungeon1/dungeon1_1_right1.png</wall>
+   <wall direction="6">tilesets/dungeon1/dungeon1_1_left2.png</wall>
+   <wall direction="7">tilesets/dungeon1/dungeon1_1_right2.png</wall>
+   <wall direction="8">tilesets/dungeon1/dungeon1_1_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon1/dungeon1_1_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon1/dungeon1_1_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon1/dungeon1_1_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon1/dungeon1_1_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon1/dungeon1_1_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon1/dungeon1_1_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon1/dungeon1_1_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon1/dungeon1_1_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon1/dungeon1_1_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon1/dungeon1_1_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon1/dungeon1_1_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon1/dungeon1_1_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon1/dungeon1_1_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon1/dungeon1_1_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon1/dungeon1_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>7</modulus>
-   <wall direction="0">dungeon1/dungeon1_2_front1.png</wall>
-   <wall direction="1">dungeon1/dungeon1_2_front2.png</wall>
-   <wall direction="2">dungeon1/dungeon1_2_front3.png</wall>
-   <wall direction="3">dungeon1/dungeon1_2_front4.png</wall>
-   <wall direction="4">dungeon1/dungeon1_2_left1.png</wall>
-   <wall direction="5">dungeon1/dungeon1_2_right1.png</wall>
-   <wall direction="6">dungeon1/dungeon1_2_left2.png</wall>
-   <wall direction="7">dungeon1/dungeon1_2_right2.png</wall>
-   <wall direction="8">dungeon1/dungeon1_2_left3_2.png</wall>
-   <wall direction="9">dungeon1/dungeon1_2_left3_1.png</wall>
-   <wall direction="10">dungeon1/dungeon1_2_right3_1.png</wall>
-   <wall direction="11">dungeon1/dungeon1_2_right3_2.png</wall>
-   <wall direction="12">dungeon1/dungeon1_2_left4_3.png</wall>
-   <wall direction="13">dungeon1/dungeon1_2_left4_2.png</wall>
-   <wall direction="14">dungeon1/dungeon1_2_left4_1.png</wall>
-   <wall direction="15">dungeon1/dungeon1_2_right4_1.png</wall>
-   <wall direction="16">dungeon1/dungeon1_2_right4_2.png</wall>
-   <wall direction="17">dungeon1/dungeon1_2_right4_3.png</wall>
-   <wall direction="18">dungeon1/dungeon1_2_left5_3.png</wall>
-   <wall direction="19">dungeon1/dungeon1_2_left5_2.png</wall>
-   <wall direction="20">dungeon1/dungeon1_2_left5_1.png</wall>
-   <wall direction="21">dungeon1/dungeon1_2_right5_1.png</wall>
-   <wall direction="22">dungeon1/dungeon1_2_right5_2.png</wall>
-   <wall direction="23">dungeon1/dungeon1_2_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon1/dungeon1_2_front1.png</wall>
+   <wall direction="1">tilesets/dungeon1/dungeon1_2_front2.png</wall>
+   <wall direction="2">tilesets/dungeon1/dungeon1_2_front3.png</wall>
+   <wall direction="3">tilesets/dungeon1/dungeon1_2_front4.png</wall>
+   <wall direction="4">tilesets/dungeon1/dungeon1_2_left1.png</wall>
+   <wall direction="5">tilesets/dungeon1/dungeon1_2_right1.png</wall>
+   <wall direction="6">tilesets/dungeon1/dungeon1_2_left2.png</wall>
+   <wall direction="7">tilesets/dungeon1/dungeon1_2_right2.png</wall>
+   <wall direction="8">tilesets/dungeon1/dungeon1_2_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon1/dungeon1_2_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon1/dungeon1_2_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon1/dungeon1_2_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon1/dungeon1_2_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon1/dungeon1_2_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon1/dungeon1_2_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon1/dungeon1_2_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon1/dungeon1_2_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon1/dungeon1_2_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon1/dungeon1_2_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon1/dungeon1_2_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon1/dungeon1_2_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon1/dungeon1_2_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon1/dungeon1_2_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon1/dungeon1_2_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
@@ -328,61 +328,61 @@
    <modulus>5</modulus>
    <modulus>6</modulus>
    <modulus>7</modulus>
-   <wall direction="0">dungeon1/dungeon1_0_d0_front1.png</wall>
-   <wall direction="1">dungeon1/dungeon1_0_d0_front2.png</wall>
-   <wall direction="2">dungeon1/dungeon1_0_d0_front3.png</wall>
-   <wall direction="3">dungeon1/dungeon1_0_d0_front4.png</wall>
-   <wall direction="4">dungeon1/dungeon1_0_d0_left1.png</wall>
-   <wall direction="5">dungeon1/dungeon1_0_d0_right1.png</wall>
-   <wall direction="6">dungeon1/dungeon1_0_d0_left2.png</wall>
-   <wall direction="7">dungeon1/dungeon1_0_d0_right2.png</wall>
-   <wall direction="8">dungeon1/dungeon1_0_d0_left3_2.png</wall>
-   <wall direction="9">dungeon1/dungeon1_0_d0_left3_1.png</wall>
-   <wall direction="10">dungeon1/dungeon1_0_d0_right3_1.png</wall>
-   <wall direction="11">dungeon1/dungeon1_0_d0_right3_2.png</wall>
-   <wall direction="12">dungeon1/dungeon1_0_d0_left4_3.png</wall>
-   <wall direction="13">dungeon1/dungeon1_0_d0_left4_2.png</wall>
-   <wall direction="14">dungeon1/dungeon1_0_d0_left4_1.png</wall>
-   <wall direction="15">dungeon1/dungeon1_0_d0_right4_1.png</wall>
-   <wall direction="16">dungeon1/dungeon1_0_d0_right4_2.png</wall>
-   <wall direction="17">dungeon1/dungeon1_0_d0_right4_3.png</wall>
-   <wall direction="18">dungeon1/dungeon1_0_d0_left5_3.png</wall>
-   <wall direction="19">dungeon1/dungeon1_0_d0_left5_2.png</wall>
-   <wall direction="20">dungeon1/dungeon1_0_d0_left5_1.png</wall>
-   <wall direction="21">dungeon1/dungeon1_0_d0_right5_1.png</wall>
-   <wall direction="22">dungeon1/dungeon1_0_d0_right5_2.png</wall>
-   <wall direction="23">dungeon1/dungeon1_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/dungeon1/dungeon1_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/dungeon1/dungeon1_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/dungeon1/dungeon1_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/dungeon1/dungeon1_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/dungeon1/dungeon1_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/dungeon1/dungeon1_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/dungeon1/dungeon1_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/dungeon1/dungeon1_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/dungeon1/dungeon1_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/dungeon1/dungeon1_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/dungeon1/dungeon1_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/dungeon1/dungeon1_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/dungeon1/dungeon1_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/dungeon1/dungeon1_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/dungeon1/dungeon1_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/dungeon1/dungeon1_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/dungeon1/dungeon1_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/dungeon1/dungeon1_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/dungeon1/dungeon1_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/dungeon1/dungeon1_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/dungeon1/dungeon1_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/dungeon1/dungeon1_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/dungeon1/dungeon1_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/dungeon1/dungeon1_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
  <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>city1/city1_horizon.png</background>
+  <background>tilesets/city1/city1_horizon.png</background>
   <divide>8</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <name>Wall</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
   </maptype>
   <maptype>
    <type>2</type>
    <name>Door</name>
    <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
   </maptype>
   <maptype>
    <type>3</type>
@@ -390,10 +390,10 @@
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
   </maptype>
   <maptype>
    <type>4</type>
@@ -401,604 +401,408 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
-   <wall direction="0">city1/city1_0_0_front1.png</wall>
-   <wall direction="1">city1/city1_0_0_front2.png</wall>
-   <wall direction="2">city1/city1_0_0_front3.png</wall>
-   <wall direction="3">city1/city1_0_0_front4.png</wall>
-   <wall direction="4">city1/city1_0_0_left1.png</wall>
-   <wall direction="5">city1/city1_0_0_right1.png</wall>
-   <wall direction="6">city1/city1_0_0_left2.png</wall>
-   <wall direction="7">city1/city1_0_0_right2.png</wall>
-   <wall direction="8">city1/city1_0_0_left3_2.png</wall>
-   <wall direction="9">city1/city1_0_0_left3_1.png</wall>
-   <wall direction="10">city1/city1_0_0_right3_1.png</wall>
-   <wall direction="11">city1/city1_0_0_right3_2.png</wall>
-   <wall direction="12">city1/city1_0_0_left4_3.png</wall>
-   <wall direction="13">city1/city1_0_0_left4_2.png</wall>
-   <wall direction="14">city1/city1_0_0_left4_1.png</wall>
-   <wall direction="15">city1/city1_0_0_right4_1.png</wall>
-   <wall direction="16">city1/city1_0_0_right4_2.png</wall>
-   <wall direction="17">city1/city1_0_0_right4_3.png</wall>
-   <wall direction="18">city1/city1_0_0_left5_3.png</wall>
-   <wall direction="19">city1/city1_0_0_left5_2.png</wall>
-   <wall direction="20">city1/city1_0_0_left5_1.png</wall>
-   <wall direction="21">city1/city1_0_0_right5_1.png</wall>
-   <wall direction="22">city1/city1_0_0_right5_2.png</wall>
-   <wall direction="23">city1/city1_0_0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/0/city1_0_0_front1.png</wall>
+   <wall direction="1">tilesets/city1/0/city1_0_0_front2.png</wall>
+   <wall direction="2">tilesets/city1/0/city1_0_0_front3.png</wall>
+   <wall direction="3">tilesets/city1/0/city1_0_0_front4.png</wall>
+   <wall direction="4">tilesets/city1/0/city1_0_0_left1.png</wall>
+   <wall direction="5">tilesets/city1/0/city1_0_0_right1.png</wall>
+   <wall direction="6">tilesets/city1/0/city1_0_0_left2.png</wall>
+   <wall direction="7">tilesets/city1/0/city1_0_0_right2.png</wall>
+   <wall direction="8">tilesets/city1/0/city1_0_0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/0/city1_0_0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/0/city1_0_0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/0/city1_0_0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/0/city1_0_0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/0/city1_0_0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/0/city1_0_0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/0/city1_0_0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/0/city1_0_0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/0/city1_0_0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/0/city1_0_0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/0/city1_0_0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/0/city1_0_0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/0/city1_0_0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/0/city1_0_0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/0/city1_0_0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>1</modulus>
-   <wall direction="0">city1/city1_1_0_front1.png</wall>
-   <wall direction="1">city1/city1_1_0_front2.png</wall>
-   <wall direction="2">city1/city1_1_0_front3.png</wall>
-   <wall direction="3">city1/city1_1_0_front4.png</wall>
-   <wall direction="4">city1/city1_1_0_left1.png</wall>
-   <wall direction="5">city1/city1_1_0_right1.png</wall>
-   <wall direction="6">city1/city1_1_0_left2.png</wall>
-   <wall direction="7">city1/city1_1_0_right2.png</wall>
-   <wall direction="8">city1/city1_1_0_left3_2.png</wall>
-   <wall direction="9">city1/city1_1_0_left3_1.png</wall>
-   <wall direction="10">city1/city1_1_0_right3_1.png</wall>
-   <wall direction="11">city1/city1_1_0_right3_2.png</wall>
-   <wall direction="12">city1/city1_1_0_left4_3.png</wall>
-   <wall direction="13">city1/city1_1_0_left4_2.png</wall>
-   <wall direction="14">city1/city1_1_0_left4_1.png</wall>
-   <wall direction="15">city1/city1_1_0_right4_1.png</wall>
-   <wall direction="16">city1/city1_1_0_right4_2.png</wall>
-   <wall direction="17">city1/city1_1_0_right4_3.png</wall>
-   <wall direction="18">city1/city1_1_0_left5_3.png</wall>
-   <wall direction="19">city1/city1_1_0_left5_2.png</wall>
-   <wall direction="20">city1/city1_1_0_left5_1.png</wall>
-   <wall direction="21">city1/city1_1_0_right5_1.png</wall>
-   <wall direction="22">city1/city1_1_0_right5_2.png</wall>
-   <wall direction="23">city1/city1_1_0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/1/city1_1_0_front1.png</wall>
+   <wall direction="1">tilesets/city1/1/city1_1_0_front2.png</wall>
+   <wall direction="2">tilesets/city1/1/city1_1_0_front3.png</wall>
+   <wall direction="3">tilesets/city1/1/city1_1_0_front4.png</wall>
+   <wall direction="4">tilesets/city1/1/city1_1_0_left1.png</wall>
+   <wall direction="5">tilesets/city1/1/city1_1_0_right1.png</wall>
+   <wall direction="6">tilesets/city1/1/city1_1_0_left2.png</wall>
+   <wall direction="7">tilesets/city1/1/city1_1_0_right2.png</wall>
+   <wall direction="8">tilesets/city1/1/city1_1_0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/1/city1_1_0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/1/city1_1_0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/1/city1_1_0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/1/city1_1_0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/1/city1_1_0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/1/city1_1_0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/1/city1_1_0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/1/city1_1_0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/1/city1_1_0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/1/city1_1_0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/1/city1_1_0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/1/city1_1_0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/1/city1_1_0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/1/city1_1_0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/1/city1_1_0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>2</modulus>
-   <wall direction="0">city1/city1_2_0_front1.png</wall>
-   <wall direction="1">city1/city1_2_0_front2.png</wall>
-   <wall direction="2">city1/city1_2_0_front3.png</wall>
-   <wall direction="3">city1/city1_2_0_front4.png</wall>
-   <wall direction="4">city1/city1_2_0_left1.png</wall>
-   <wall direction="5">city1/city1_2_0_right1.png</wall>
-   <wall direction="6">city1/city1_2_0_left2.png</wall>
-   <wall direction="7">city1/city1_2_0_right2.png</wall>
-   <wall direction="8">city1/city1_2_0_left3_2.png</wall>
-   <wall direction="9">city1/city1_2_0_left3_1.png</wall>
-   <wall direction="10">city1/city1_2_0_right3_1.png</wall>
-   <wall direction="11">city1/city1_2_0_right3_2.png</wall>
-   <wall direction="12">city1/city1_2_0_left4_3.png</wall>
-   <wall direction="13">city1/city1_2_0_left4_2.png</wall>
-   <wall direction="14">city1/city1_2_0_left4_1.png</wall>
-   <wall direction="15">city1/city1_2_0_right4_1.png</wall>
-   <wall direction="16">city1/city1_2_0_right4_2.png</wall>
-   <wall direction="17">city1/city1_2_0_right4_3.png</wall>
-   <wall direction="18">city1/city1_2_0_left5_3.png</wall>
-   <wall direction="19">city1/city1_2_0_left5_2.png</wall>
-   <wall direction="20">city1/city1_2_0_left5_1.png</wall>
-   <wall direction="21">city1/city1_2_0_right5_1.png</wall>
-   <wall direction="22">city1/city1_2_0_right5_2.png</wall>
-   <wall direction="23">city1/city1_2_0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/2/city1_2_0_front1.png</wall>
+   <wall direction="1">tilesets/city1/2/city1_2_0_front2.png</wall>
+   <wall direction="2">tilesets/city1/2/city1_2_0_front3.png</wall>
+   <wall direction="3">tilesets/city1/2/city1_2_0_front4.png</wall>
+   <wall direction="4">tilesets/city1/2/city1_2_0_left1.png</wall>
+   <wall direction="5">tilesets/city1/2/city1_2_0_right1.png</wall>
+   <wall direction="6">tilesets/city1/2/city1_2_0_left2.png</wall>
+   <wall direction="7">tilesets/city1/2/city1_2_0_right2.png</wall>
+   <wall direction="8">tilesets/city1/2/city1_2_0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/2/city1_2_0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/2/city1_2_0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/2/city1_2_0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/2/city1_2_0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/2/city1_2_0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/2/city1_2_0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/2/city1_2_0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/2/city1_2_0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/2/city1_2_0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/2/city1_2_0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/2/city1_2_0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/2/city1_2_0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/2/city1_2_0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/2/city1_2_0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/2/city1_2_0_right5_3.png</wall>
   </walltype>
    <walltype>
    <type>1</type>
    <modulus>3</modulus>
-   <wall direction="0">city1/city1_3_0_front1.png</wall>
-   <wall direction="1">city1/city1_3_0_front2.png</wall>
-   <wall direction="2">city1/city1_3_0_front3.png</wall>
-   <wall direction="3">city1/city1_3_0_front4.png</wall>
-   <wall direction="4">city1/city1_3_0_left1.png</wall>
-   <wall direction="5">city1/city1_3_0_right1.png</wall>
-   <wall direction="6">city1/city1_3_0_left2.png</wall>
-   <wall direction="7">city1/city1_3_0_right2.png</wall>
-   <wall direction="8">city1/city1_3_0_left3_2.png</wall>
-   <wall direction="9">city1/city1_3_0_left3_1.png</wall>
-   <wall direction="10">city1/city1_3_0_right3_1.png</wall>
-   <wall direction="11">city1/city1_3_0_right3_2.png</wall>
-   <wall direction="12">city1/city1_3_0_left4_3.png</wall>
-   <wall direction="13">city1/city1_3_0_left4_2.png</wall>
-   <wall direction="14">city1/city1_3_0_left4_1.png</wall>
-   <wall direction="15">city1/city1_3_0_right4_1.png</wall>
-   <wall direction="16">city1/city1_3_0_right4_2.png</wall>
-   <wall direction="17">city1/city1_3_0_right4_3.png</wall>
-   <wall direction="18">city1/city1_3_0_left5_3.png</wall>
-   <wall direction="19">city1/city1_3_0_left5_2.png</wall>
-   <wall direction="20">city1/city1_3_0_left5_1.png</wall>
-   <wall direction="21">city1/city1_3_0_right5_1.png</wall>
-   <wall direction="22">city1/city1_3_0_right5_2.png</wall>
-   <wall direction="23">city1/city1_3_0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/3/city1_3_0_front1.png</wall>
+   <wall direction="1">tilesets/city1/3/city1_3_0_front2.png</wall>
+   <wall direction="2">tilesets/city1/3/city1_3_0_front3.png</wall>
+   <wall direction="3">tilesets/city1/3/city1_3_0_front4.png</wall>
+   <wall direction="4">tilesets/city1/3/city1_3_0_left1.png</wall>
+   <wall direction="5">tilesets/city1/3/city1_3_0_right1.png</wall>
+   <wall direction="6">tilesets/city1/3/city1_3_0_left2.png</wall>
+   <wall direction="7">tilesets/city1/3/city1_3_0_right2.png</wall>
+   <wall direction="8">tilesets/city1/3/city1_3_0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/3/city1_3_0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/3/city1_3_0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/3/city1_3_0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/3/city1_3_0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/3/city1_3_0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/3/city1_3_0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/3/city1_3_0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/3/city1_3_0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/3/city1_3_0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/3/city1_3_0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/3/city1_3_0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/3/city1_3_0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/3/city1_3_0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/3/city1_3_0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/3/city1_3_0_right5_3.png</wall>
   </walltype>
    <walltype>
    <type>1</type>
    <modulus>4</modulus>
-   <wall direction="0">city1/city1_0_1_front1.png</wall>
-   <wall direction="1">city1/city1_0_1_front2.png</wall>
-   <wall direction="2">city1/city1_0_1_front3.png</wall>
-   <wall direction="3">city1/city1_0_1_front4.png</wall>
-   <wall direction="4">city1/city1_0_1_left1.png</wall>
-   <wall direction="5">city1/city1_0_1_right1.png</wall>
-   <wall direction="6">city1/city1_0_1_left2.png</wall>
-   <wall direction="7">city1/city1_0_1_right2.png</wall>
-   <wall direction="8">city1/city1_0_1_left3_2.png</wall>
-   <wall direction="9">city1/city1_0_1_left3_1.png</wall>
-   <wall direction="10">city1/city1_0_1_right3_1.png</wall>
-   <wall direction="11">city1/city1_0_1_right3_2.png</wall>
-   <wall direction="12">city1/city1_0_1_left4_3.png</wall>
-   <wall direction="13">city1/city1_0_1_left4_2.png</wall>
-   <wall direction="14">city1/city1_0_1_left4_1.png</wall>
-   <wall direction="15">city1/city1_0_1_right4_1.png</wall>
-   <wall direction="16">city1/city1_0_1_right4_2.png</wall>
-   <wall direction="17">city1/city1_0_1_right4_3.png</wall>
-   <wall direction="18">city1/city1_0_1_left5_3.png</wall>
-   <wall direction="19">city1/city1_0_1_left5_2.png</wall>
-   <wall direction="20">city1/city1_0_1_left5_1.png</wall>
-   <wall direction="21">city1/city1_0_1_right5_1.png</wall>
-   <wall direction="22">city1/city1_0_1_right5_2.png</wall>
-   <wall direction="23">city1/city1_0_1_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/0/city1_0_1_front1.png</wall>
+   <wall direction="1">tilesets/city1/0/city1_0_1_front2.png</wall>
+   <wall direction="2">tilesets/city1/0/city1_0_1_front3.png</wall>
+   <wall direction="3">tilesets/city1/0/city1_0_1_front4.png</wall>
+   <wall direction="4">tilesets/city1/0/city1_0_1_left1.png</wall>
+   <wall direction="5">tilesets/city1/0/city1_0_1_right1.png</wall>
+   <wall direction="6">tilesets/city1/0/city1_0_1_left2.png</wall>
+   <wall direction="7">tilesets/city1/0/city1_0_1_right2.png</wall>
+   <wall direction="8">tilesets/city1/0/city1_0_1_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/0/city1_0_1_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/0/city1_0_1_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/0/city1_0_1_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/0/city1_0_1_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/0/city1_0_1_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/0/city1_0_1_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/0/city1_0_1_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/0/city1_0_1_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/0/city1_0_1_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/0/city1_0_1_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/0/city1_0_1_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/0/city1_0_1_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/0/city1_0_1_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/0/city1_0_1_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/0/city1_0_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>5</modulus>
-   <wall direction="0">city1/city1_1_1_front1.png</wall>
-   <wall direction="1">city1/city1_1_1_front2.png</wall>
-   <wall direction="2">city1/city1_1_1_front3.png</wall>
-   <wall direction="3">city1/city1_1_1_front4.png</wall>
-   <wall direction="4">city1/city1_1_1_left1.png</wall>
-   <wall direction="5">city1/city1_1_1_right1.png</wall>
-   <wall direction="6">city1/city1_1_1_left2.png</wall>
-   <wall direction="7">city1/city1_1_1_right2.png</wall>
-   <wall direction="8">city1/city1_1_1_left3_2.png</wall>
-   <wall direction="9">city1/city1_1_1_left3_1.png</wall>
-   <wall direction="10">city1/city1_1_1_right3_1.png</wall>
-   <wall direction="11">city1/city1_1_1_right3_2.png</wall>
-   <wall direction="12">city1/city1_1_1_left4_3.png</wall>
-   <wall direction="13">city1/city1_1_1_left4_2.png</wall>
-   <wall direction="14">city1/city1_1_1_left4_1.png</wall>
-   <wall direction="15">city1/city1_1_1_right4_1.png</wall>
-   <wall direction="16">city1/city1_1_1_right4_2.png</wall>
-   <wall direction="17">city1/city1_1_1_right4_3.png</wall>
-   <wall direction="18">city1/city1_1_1_left5_3.png</wall>
-   <wall direction="19">city1/city1_1_1_left5_2.png</wall>
-   <wall direction="20">city1/city1_1_1_left5_1.png</wall>
-   <wall direction="21">city1/city1_1_1_right5_1.png</wall>
-   <wall direction="22">city1/city1_1_1_right5_2.png</wall>
-   <wall direction="23">city1/city1_1_1_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/1/city1_1_1_front1.png</wall>
+   <wall direction="1">tilesets/city1/1/city1_1_1_front2.png</wall>
+   <wall direction="2">tilesets/city1/1/city1_1_1_front3.png</wall>
+   <wall direction="3">tilesets/city1/1/city1_1_1_front4.png</wall>
+   <wall direction="4">tilesets/city1/1/city1_1_1_left1.png</wall>
+   <wall direction="5">tilesets/city1/1/city1_1_1_right1.png</wall>
+   <wall direction="6">tilesets/city1/1/city1_1_1_left2.png</wall>
+   <wall direction="7">tilesets/city1/1/city1_1_1_right2.png</wall>
+   <wall direction="8">tilesets/city1/1/city1_1_1_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/1/city1_1_1_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/1/city1_1_1_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/1/city1_1_1_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/1/city1_1_1_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/1/city1_1_1_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/1/city1_1_1_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/1/city1_1_1_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/1/city1_1_1_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/1/city1_1_1_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/1/city1_1_1_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/1/city1_1_1_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/1/city1_1_1_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/1/city1_1_1_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/1/city1_1_1_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/1/city1_1_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>6</modulus>
-   <wall direction="0">city1/city1_2_1_front1.png</wall>
-   <wall direction="1">city1/city1_2_1_front2.png</wall>
-   <wall direction="2">city1/city1_2_1_front3.png</wall>
-   <wall direction="3">city1/city1_2_1_front4.png</wall>
-   <wall direction="4">city1/city1_2_1_left1.png</wall>
-   <wall direction="5">city1/city1_2_1_right1.png</wall>
-   <wall direction="6">city1/city1_2_1_left2.png</wall>
-   <wall direction="7">city1/city1_2_1_right2.png</wall>
-   <wall direction="8">city1/city1_2_1_left3_2.png</wall>
-   <wall direction="9">city1/city1_2_1_left3_1.png</wall>
-   <wall direction="10">city1/city1_2_1_right3_1.png</wall>
-   <wall direction="11">city1/city1_2_1_right3_2.png</wall>
-   <wall direction="12">city1/city1_2_1_left4_3.png</wall>
-   <wall direction="13">city1/city1_2_1_left4_2.png</wall>
-   <wall direction="14">city1/city1_2_1_left4_1.png</wall>
-   <wall direction="15">city1/city1_2_1_right4_1.png</wall>
-   <wall direction="16">city1/city1_2_1_right4_2.png</wall>
-   <wall direction="17">city1/city1_2_1_right4_3.png</wall>
-   <wall direction="18">city1/city1_2_1_left5_3.png</wall>
-   <wall direction="19">city1/city1_2_1_left5_2.png</wall>
-   <wall direction="20">city1/city1_2_1_left5_1.png</wall>
-   <wall direction="21">city1/city1_2_1_right5_1.png</wall>
-   <wall direction="22">city1/city1_2_1_right5_2.png</wall>
-   <wall direction="23">city1/city1_2_1_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/2/city1_2_1_front1.png</wall>
+   <wall direction="1">tilesets/city1/2/city1_2_1_front2.png</wall>
+   <wall direction="2">tilesets/city1/2/city1_2_1_front3.png</wall>
+   <wall direction="3">tilesets/city1/2/city1_2_1_front4.png</wall>
+   <wall direction="4">tilesets/city1/2/city1_2_1_left1.png</wall>
+   <wall direction="5">tilesets/city1/2/city1_2_1_right1.png</wall>
+   <wall direction="6">tilesets/city1/2/city1_2_1_left2.png</wall>
+   <wall direction="7">tilesets/city1/2/city1_2_1_right2.png</wall>
+   <wall direction="8">tilesets/city1/2/city1_2_1_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/2/city1_2_1_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/2/city1_2_1_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/2/city1_2_1_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/2/city1_2_1_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/2/city1_2_1_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/2/city1_2_1_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/2/city1_2_1_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/2/city1_2_1_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/2/city1_2_1_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/2/city1_2_1_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/2/city1_2_1_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/2/city1_2_1_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/2/city1_2_1_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/2/city1_2_1_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/2/city1_2_1_right5_3.png</wall>
   </walltype>
    <walltype>
    <type>1</type>
    <modulus>7</modulus>
-   <wall direction="0">city1/city1_3_1_front1.png</wall>
-   <wall direction="1">city1/city1_3_1_front2.png</wall>
-   <wall direction="2">city1/city1_3_1_front3.png</wall>
-   <wall direction="3">city1/city1_3_1_front4.png</wall>
-   <wall direction="4">city1/city1_3_1_left1.png</wall>
-   <wall direction="5">city1/city1_3_1_right1.png</wall>
-   <wall direction="6">city1/city1_3_1_left2.png</wall>
-   <wall direction="7">city1/city1_3_1_right2.png</wall>
-   <wall direction="8">city1/city1_3_1_left3_2.png</wall>
-   <wall direction="9">city1/city1_3_1_left3_1.png</wall>
-   <wall direction="10">city1/city1_3_1_right3_1.png</wall>
-   <wall direction="11">city1/city1_3_1_right3_2.png</wall>
-   <wall direction="12">city1/city1_3_1_left4_3.png</wall>
-   <wall direction="13">city1/city1_3_1_left4_2.png</wall>
-   <wall direction="14">city1/city1_3_1_left4_1.png</wall>
-   <wall direction="15">city1/city1_3_1_right4_1.png</wall>
-   <wall direction="16">city1/city1_3_1_right4_2.png</wall>
-   <wall direction="17">city1/city1_3_1_right4_3.png</wall>
-   <wall direction="18">city1/city1_3_1_left5_3.png</wall>
-   <wall direction="19">city1/city1_3_1_left5_2.png</wall>
-   <wall direction="20">city1/city1_3_1_left5_1.png</wall>
-   <wall direction="21">city1/city1_3_1_right5_1.png</wall>
-   <wall direction="22">city1/city1_3_1_right5_2.png</wall>
-   <wall direction="23">city1/city1_3_1_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/3/city1_3_1_front1.png</wall>
+   <wall direction="1">tilesets/city1/3/city1_3_1_front2.png</wall>
+   <wall direction="2">tilesets/city1/3/city1_3_1_front3.png</wall>
+   <wall direction="3">tilesets/city1/3/city1_3_1_front4.png</wall>
+   <wall direction="4">tilesets/city1/3/city1_3_1_left1.png</wall>
+   <wall direction="5">tilesets/city1/3/city1_3_1_right1.png</wall>
+   <wall direction="6">tilesets/city1/3/city1_3_1_left2.png</wall>
+   <wall direction="7">tilesets/city1/3/city1_3_1_right2.png</wall>
+   <wall direction="8">tilesets/city1/3/city1_3_1_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/3/city1_3_1_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/3/city1_3_1_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/3/city1_3_1_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/3/city1_3_1_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/3/city1_3_1_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/3/city1_3_1_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/3/city1_3_1_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/3/city1_3_1_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/3/city1_3_1_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/3/city1_3_1_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/3/city1_3_1_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/3/city1_3_1_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/3/city1_3_1_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/3/city1_3_1_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/3/city1_3_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
    <modulus>0</modulus>
    <modulus>4</modulus>
-   <wall direction="0">city1/city1_0_0_d0_front1.png</wall>
-   <wall direction="1">city1/city1_0_0_d0_front2.png</wall>
-   <wall direction="2">city1/city1_0_0_d0_front3.png</wall>
-   <wall direction="3">city1/city1_0_0_d0_front4.png</wall>
-   <wall direction="4">city1/city1_0_0_d0_left1.png</wall>
-   <wall direction="5">city1/city1_0_0_d0_right1.png</wall>
-   <wall direction="6">city1/city1_0_0_d0_left2.png</wall>
-   <wall direction="7">city1/city1_0_0_d0_right2.png</wall>
-   <wall direction="8">city1/city1_0_0_d0_left3_2.png</wall>
-   <wall direction="9">city1/city1_0_0_d0_left3_1.png</wall>
-   <wall direction="10">city1/city1_0_0_d0_right3_1.png</wall>
-   <wall direction="11">city1/city1_0_0_d0_right3_2.png</wall>
-   <wall direction="12">city1/city1_0_0_d0_left4_3.png</wall>
-   <wall direction="13">city1/city1_0_0_d0_left4_2.png</wall>
-   <wall direction="14">city1/city1_0_0_d0_left4_1.png</wall>
-   <wall direction="15">city1/city1_0_0_d0_right4_1.png</wall>
-   <wall direction="16">city1/city1_0_0_d0_right4_2.png</wall>
-   <wall direction="17">city1/city1_0_0_d0_right4_3.png</wall>
-   <wall direction="18">city1/city1_0_0_d0_left5_3.png</wall>
-   <wall direction="19">city1/city1_0_0_d0_left5_2.png</wall>
-   <wall direction="20">city1/city1_0_0_d0_left5_1.png</wall>
-   <wall direction="21">city1/city1_0_0_d0_right5_1.png</wall>
-   <wall direction="22">city1/city1_0_0_d0_right5_2.png</wall>
-   <wall direction="23">city1/city1_0_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/0/city1_0_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/city1/0/city1_0_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/city1/0/city1_0_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/city1/0/city1_0_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/city1/0/city1_0_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/city1/0/city1_0_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/city1/0/city1_0_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/city1/0/city1_0_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/city1/0/city1_0_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/0/city1_0_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/0/city1_0_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/0/city1_0_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/0/city1_0_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/0/city1_0_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/0/city1_0_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/0/city1_0_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/0/city1_0_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/0/city1_0_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/0/city1_0_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/0/city1_0_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/0/city1_0_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/0/city1_0_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/0/city1_0_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/0/city1_0_0_d0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
    <modulus>1</modulus>
    <modulus>5</modulus>
-   <wall direction="0">city1/city1_1_0_d0_front1.png</wall>
-   <wall direction="1">city1/city1_1_0_d0_front2.png</wall>
-   <wall direction="2">city1/city1_1_0_d0_front3.png</wall>
-   <wall direction="3">city1/city1_1_0_d0_front4.png</wall>
-   <wall direction="4">city1/city1_1_0_d0_left1.png</wall>
-   <wall direction="5">city1/city1_1_0_d0_right1.png</wall>
-   <wall direction="6">city1/city1_1_0_d0_left2.png</wall>
-   <wall direction="7">city1/city1_1_0_d0_right2.png</wall>
-   <wall direction="8">city1/city1_1_0_d0_left3_2.png</wall>
-   <wall direction="9">city1/city1_1_0_d0_left3_1.png</wall>
-   <wall direction="10">city1/city1_1_0_d0_right3_1.png</wall>
-   <wall direction="11">city1/city1_1_0_d0_right3_2.png</wall>
-   <wall direction="12">city1/city1_1_0_d0_left4_3.png</wall>
-   <wall direction="13">city1/city1_1_0_d0_left4_2.png</wall>
-   <wall direction="14">city1/city1_1_0_d0_left4_1.png</wall>
-   <wall direction="15">city1/city1_1_0_d0_right4_1.png</wall>
-   <wall direction="16">city1/city1_1_0_d0_right4_2.png</wall>
-   <wall direction="17">city1/city1_1_0_d0_right4_3.png</wall>
-   <wall direction="18">city1/city1_1_0_d0_left5_3.png</wall>
-   <wall direction="19">city1/city1_1_0_d0_left5_2.png</wall>
-   <wall direction="20">city1/city1_1_0_d0_left5_1.png</wall>
-   <wall direction="21">city1/city1_1_0_d0_right5_1.png</wall>
-   <wall direction="22">city1/city1_1_0_d0_right5_2.png</wall>
-   <wall direction="23">city1/city1_1_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/1/city1_1_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/city1/1/city1_1_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/city1/1/city1_1_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/city1/1/city1_1_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/city1/1/city1_1_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/city1/1/city1_1_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/city1/1/city1_1_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/city1/1/city1_1_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/city1/1/city1_1_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/1/city1_1_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/1/city1_1_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/1/city1_1_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/1/city1_1_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/1/city1_1_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/1/city1_1_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/1/city1_1_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/1/city1_1_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/1/city1_1_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/1/city1_1_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/1/city1_1_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/1/city1_1_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/1/city1_1_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/1/city1_1_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/1/city1_1_0_d0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
    <modulus>2</modulus>
    <modulus>6</modulus>
-   <wall direction="0">city1/city1_2_0_d0_front1.png</wall>
-   <wall direction="1">city1/city1_2_0_d0_front2.png</wall>
-   <wall direction="2">city1/city1_2_0_d0_front3.png</wall>
-   <wall direction="3">city1/city1_2_0_d0_front4.png</wall>
-   <wall direction="4">city1/city1_2_0_d0_left1.png</wall>
-   <wall direction="5">city1/city1_2_0_d0_right1.png</wall>
-   <wall direction="6">city1/city1_2_0_d0_left2.png</wall>
-   <wall direction="7">city1/city1_2_0_d0_right2.png</wall>
-   <wall direction="8">city1/city1_2_0_d0_left3_2.png</wall>
-   <wall direction="9">city1/city1_2_0_d0_left3_1.png</wall>
-   <wall direction="10">city1/city1_2_0_d0_right3_1.png</wall>
-   <wall direction="11">city1/city1_2_0_d0_right3_2.png</wall>
-   <wall direction="12">city1/city1_2_0_d0_left4_3.png</wall>
-   <wall direction="13">city1/city1_2_0_d0_left4_2.png</wall>
-   <wall direction="14">city1/city1_2_0_d0_left4_1.png</wall>
-   <wall direction="15">city1/city1_2_0_d0_right4_1.png</wall>
-   <wall direction="16">city1/city1_2_0_d0_right4_2.png</wall>
-   <wall direction="17">city1/city1_2_0_d0_right4_3.png</wall>
-   <wall direction="18">city1/city1_2_0_d0_left5_3.png</wall>
-   <wall direction="19">city1/city1_2_0_d0_left5_2.png</wall>
-   <wall direction="20">city1/city1_2_0_d0_left5_1.png</wall>
-   <wall direction="21">city1/city1_2_0_d0_right5_1.png</wall>
-   <wall direction="22">city1/city1_2_0_d0_right5_2.png</wall>
-   <wall direction="23">city1/city1_2_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/2/city1_2_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/city1/2/city1_2_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/city1/2/city1_2_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/city1/2/city1_2_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/city1/2/city1_2_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/city1/2/city1_2_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/city1/2/city1_2_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/city1/2/city1_2_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/city1/2/city1_2_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/2/city1_2_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/2/city1_2_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/2/city1_2_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/2/city1_2_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/2/city1_2_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/2/city1_2_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/2/city1_2_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/2/city1_2_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/2/city1_2_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/2/city1_2_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/2/city1_2_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/2/city1_2_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/2/city1_2_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/2/city1_2_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/2/city1_2_0_d0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
    <modulus>3</modulus>
-   <wall direction="0">city1/city1_3_0_d0_front1.png</wall>
-   <wall direction="1">city1/city1_3_0_d0_front2.png</wall>
-   <wall direction="2">city1/city1_3_0_d0_front3.png</wall>
-   <wall direction="3">city1/city1_3_0_d0_front4.png</wall>
-   <wall direction="4">city1/city1_3_0_d0_left1.png</wall>
-   <wall direction="5">city1/city1_3_0_d0_right1.png</wall>
-   <wall direction="6">city1/city1_3_0_d0_left2.png</wall>
-   <wall direction="7">city1/city1_3_0_d0_right2.png</wall>
-   <wall direction="8">city1/city1_3_0_d0_left3_2.png</wall>
-   <wall direction="9">city1/city1_3_0_d0_left3_1.png</wall>
-   <wall direction="10">city1/city1_3_0_d0_right3_1.png</wall>
-   <wall direction="11">city1/city1_3_0_d0_right3_2.png</wall>
-   <wall direction="12">city1/city1_3_0_d0_left4_3.png</wall>
-   <wall direction="13">city1/city1_3_0_d0_left4_2.png</wall>
-   <wall direction="14">city1/city1_3_0_d0_left4_1.png</wall>
-   <wall direction="15">city1/city1_3_0_d0_right4_1.png</wall>
-   <wall direction="16">city1/city1_3_0_d0_right4_2.png</wall>
-   <wall direction="17">city1/city1_3_0_d0_right4_3.png</wall>
-   <wall direction="18">city1/city1_3_0_d0_left5_3.png</wall>
-   <wall direction="19">city1/city1_3_0_d0_left5_2.png</wall>
-   <wall direction="20">city1/city1_3_0_d0_left5_1.png</wall>
-   <wall direction="21">city1/city1_3_0_d0_right5_1.png</wall>
-   <wall direction="22">city1/city1_3_0_d0_right5_2.png</wall>
-   <wall direction="23">city1/city1_3_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/3/city1_3_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/city1/3/city1_3_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/city1/3/city1_3_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/city1/3/city1_3_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/city1/3/city1_3_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/city1/3/city1_3_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/city1/3/city1_3_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/city1/3/city1_3_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/city1/3/city1_3_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/3/city1_3_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/3/city1_3_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/3/city1_3_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/3/city1_3_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/3/city1_3_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/3/city1_3_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/3/city1_3_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/3/city1_3_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/3/city1_3_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/3/city1_3_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/3/city1_3_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/3/city1_3_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/3/city1_3_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/3/city1_3_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/3/city1_3_0_d0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
    <modulus>7</modulus>
-   <wall direction="0">city1/city1_3_1_d0_front1.png</wall>
-   <wall direction="1">city1/city1_3_1_d0_front2.png</wall>
-   <wall direction="2">city1/city1_3_1_d0_front3.png</wall>
-   <wall direction="3">city1/city1_3_1_d0_front4.png</wall>
-   <wall direction="4">city1/city1_3_1_d0_left1.png</wall>
-   <wall direction="5">city1/city1_3_1_d0_right1.png</wall>
-   <wall direction="6">city1/city1_3_1_d0_left2.png</wall>
-   <wall direction="7">city1/city1_3_1_d0_right2.png</wall>
-   <wall direction="8">city1/city1_3_1_d0_left3_2.png</wall>
-   <wall direction="9">city1/city1_3_1_d0_left3_1.png</wall>
-   <wall direction="10">city1/city1_3_1_d0_right3_1.png</wall>
-   <wall direction="11">city1/city1_3_1_d0_right3_2.png</wall>
-   <wall direction="12">city1/city1_3_1_d0_left4_3.png</wall>
-   <wall direction="13">city1/city1_3_1_d0_left4_2.png</wall>
-   <wall direction="14">city1/city1_3_1_d0_left4_1.png</wall>
-   <wall direction="15">city1/city1_3_1_d0_right4_1.png</wall>
-   <wall direction="16">city1/city1_3_1_d0_right4_2.png</wall>
-   <wall direction="17">city1/city1_3_1_d0_right4_3.png</wall>
-   <wall direction="18">city1/city1_3_1_d0_left5_3.png</wall>
-   <wall direction="19">city1/city1_3_1_d0_left5_2.png</wall>
-   <wall direction="20">city1/city1_3_1_d0_left5_1.png</wall>
-   <wall direction="21">city1/city1_3_1_d0_right5_1.png</wall>
-   <wall direction="22">city1/city1_3_1_d0_right5_2.png</wall>
-   <wall direction="23">city1/city1_3_1_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/city1/3/city1_3_1_d0_front1.png</wall>
+   <wall direction="1">tilesets/city1/3/city1_3_1_d0_front2.png</wall>
+   <wall direction="2">tilesets/city1/3/city1_3_1_d0_front3.png</wall>
+   <wall direction="3">tilesets/city1/3/city1_3_1_d0_front4.png</wall>
+   <wall direction="4">tilesets/city1/3/city1_3_1_d0_left1.png</wall>
+   <wall direction="5">tilesets/city1/3/city1_3_1_d0_right1.png</wall>
+   <wall direction="6">tilesets/city1/3/city1_3_1_d0_left2.png</wall>
+   <wall direction="7">tilesets/city1/3/city1_3_1_d0_right2.png</wall>
+   <wall direction="8">tilesets/city1/3/city1_3_1_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/city1/3/city1_3_1_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/city1/3/city1_3_1_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/city1/3/city1_3_1_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/city1/3/city1_3_1_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/city1/3/city1_3_1_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/city1/3/city1_3_1_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/city1/3/city1_3_1_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/city1/3/city1_3_1_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/city1/3/city1_3_1_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/city1/3/city1_3_1_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/city1/3/city1_3_1_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/city1/3/city1_3_1_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/city1/3/city1_3_1_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/city1/3/city1_3_1_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/city1/3/city1_3_1_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
  <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>wilderness/wilderness_horizon.png</background>
+  <background>tilesets/wilderness/wilderness_horizon.png</background>
   <divide>4</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
-  <maptype>
-   <type>1</type>
-   <name>Tree</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
-  </maptype>
-  <maptype>
-   <type>2</type>
-   <name>Door</name>
-   <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
-  </maptype>
-  <maptype>
-   <type>3</type>
-   <name>Secret Trail</name>
-   <incompleteType>1</incompleteType>
-   <viewType>2</viewType>
-   <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
-  </maptype>
-  <maptype>
-   <type>4</type>
-   <name>Impassable</name>
-   <incompleteType>1</incompleteType>
-   <viewType>1</viewType>
-   <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
-  </maptype>
-  <walltype>
-   <type>1</type>
-   <modulus>0</modulus>
-   <wall direction="0">wilderness/wilderness1_0_front1.png</wall>
-   <wall direction="1">wilderness/wilderness1_0_front2.png</wall>
-   <wall direction="2">wilderness/wilderness1_0_front3.png</wall>
-   <wall direction="3">wilderness/wilderness1_0_front4.png</wall>
-   <wall direction="4">wilderness/wilderness1_0_left1.png</wall>
-   <wall direction="5">wilderness/wilderness1_0_right1.png</wall>
-   <wall direction="6">wilderness/wilderness1_0_left2.png</wall>
-   <wall direction="7">wilderness/wilderness1_0_right2.png</wall>
-   <wall direction="8">wilderness/wilderness1_0_left3_2.png</wall>
-   <wall direction="9">wilderness/wilderness1_0_left3_1.png</wall>
-   <wall direction="10">wilderness/wilderness1_0_right3_1.png</wall>
-   <wall direction="11">wilderness/wilderness1_0_right3_2.png</wall>
-   <wall direction="12">wilderness/wilderness1_0_left4_3.png</wall>
-   <wall direction="13">wilderness/wilderness1_0_left4_2.png</wall>
-   <wall direction="14">wilderness/wilderness1_0_left4_1.png</wall>
-   <wall direction="15">wilderness/wilderness1_0_right4_1.png</wall>
-   <wall direction="16">wilderness/wilderness1_0_right4_2.png</wall>
-   <wall direction="17">wilderness/wilderness1_0_right4_3.png</wall>
-   <wall direction="18">wilderness/wilderness1_0_left5_3.png</wall>
-   <wall direction="19">wilderness/wilderness1_0_left5_2.png</wall>
-   <wall direction="20">wilderness/wilderness1_0_left5_1.png</wall>
-   <wall direction="21">wilderness/wilderness1_0_right5_1.png</wall>
-   <wall direction="22">wilderness/wilderness1_0_right5_2.png</wall>
-   <wall direction="23">wilderness/wilderness1_0_right5_3.png</wall>
-  </walltype>
-  <walltype>
-   <type>1</type>
-   <modulus>1</modulus>
-   <wall direction="0">wilderness/wilderness1_1_front1.png</wall>
-   <wall direction="1">wilderness/wilderness1_1_front2.png</wall>
-   <wall direction="2">wilderness/wilderness1_1_front3.png</wall>
-   <wall direction="3">wilderness/wilderness1_1_front4.png</wall>
-   <wall direction="4">wilderness/wilderness1_1_left1.png</wall>
-   <wall direction="5">wilderness/wilderness1_1_right1.png</wall>
-   <wall direction="6">wilderness/wilderness1_1_left2.png</wall>
-   <wall direction="7">wilderness/wilderness1_1_right2.png</wall>
-   <wall direction="8">wilderness/wilderness1_1_left3_2.png</wall>
-   <wall direction="9">wilderness/wilderness1_1_left3_1.png</wall>
-   <wall direction="10">wilderness/wilderness1_1_right3_1.png</wall>
-   <wall direction="11">wilderness/wilderness1_1_right3_2.png</wall>
-   <wall direction="12">wilderness/wilderness1_1_left4_3.png</wall>
-   <wall direction="13">wilderness/wilderness1_1_left4_2.png</wall>
-   <wall direction="14">wilderness/wilderness1_1_left4_1.png</wall>
-   <wall direction="15">wilderness/wilderness1_1_right4_1.png</wall>
-   <wall direction="16">wilderness/wilderness1_1_right4_2.png</wall>
-   <wall direction="17">wilderness/wilderness1_1_right4_3.png</wall>
-   <wall direction="18">wilderness/wilderness1_1_left5_3.png</wall>
-   <wall direction="19">wilderness/wilderness1_1_left5_2.png</wall>
-   <wall direction="20">wilderness/wilderness1_1_left5_1.png</wall>
-   <wall direction="21">wilderness/wilderness1_1_right5_1.png</wall>
-   <wall direction="22">wilderness/wilderness1_1_right5_2.png</wall>
-   <wall direction="23">wilderness/wilderness1_1_right5_3.png</wall>
-  </walltype>
-  <walltype>
-   <type>1</type>
-   <modulus>2</modulus>
-   <wall direction="0">wilderness/wilderness1_2_front1.png</wall>
-   <wall direction="1">wilderness/wilderness1_2_front2.png</wall>
-   <wall direction="2">wilderness/wilderness1_2_front3.png</wall>
-   <wall direction="3">wilderness/wilderness1_2_front4.png</wall>
-   <wall direction="4">wilderness/wilderness1_2_left1.png</wall>
-   <wall direction="5">wilderness/wilderness1_2_right1.png</wall>
-   <wall direction="6">wilderness/wilderness1_2_left2.png</wall>
-   <wall direction="7">wilderness/wilderness1_2_right2.png</wall>
-   <wall direction="8">wilderness/wilderness1_2_left3_2.png</wall>
-   <wall direction="9">wilderness/wilderness1_2_left3_1.png</wall>
-   <wall direction="10">wilderness/wilderness1_2_right3_1.png</wall>
-   <wall direction="11">wilderness/wilderness1_2_right3_2.png</wall>
-   <wall direction="12">wilderness/wilderness1_2_left4_3.png</wall>
-   <wall direction="13">wilderness/wilderness1_2_left4_2.png</wall>
-   <wall direction="14">wilderness/wilderness1_2_left4_1.png</wall>
-   <wall direction="15">wilderness/wilderness1_2_right4_1.png</wall>
-   <wall direction="16">wilderness/wilderness1_2_right4_2.png</wall>
-   <wall direction="17">wilderness/wilderness1_2_right4_3.png</wall>
-   <wall direction="18">wilderness/wilderness1_2_left5_3.png</wall>
-   <wall direction="19">wilderness/wilderness1_2_left5_2.png</wall>
-   <wall direction="20">wilderness/wilderness1_2_left5_1.png</wall>
-   <wall direction="21">wilderness/wilderness1_2_right5_1.png</wall>
-   <wall direction="22">wilderness/wilderness1_2_right5_2.png</wall>
-   <wall direction="23">wilderness/wilderness1_2_right5_3.png</wall>
-  </walltype>
-  <walltype>
-   <type>1</type>
-   <modulus>3</modulus>
-   <wall direction="0">wilderness/wilderness1_3_front1.png</wall>
-   <wall direction="1">wilderness/wilderness1_3_front2.png</wall>
-   <wall direction="2">wilderness/wilderness1_3_front3.png</wall>
-   <wall direction="3">wilderness/wilderness1_3_front4.png</wall>
-   <wall direction="4">wilderness/wilderness1_3_left1.png</wall>
-   <wall direction="5">wilderness/wilderness1_3_right1.png</wall>
-   <wall direction="6">wilderness/wilderness1_3_left2.png</wall>
-   <wall direction="7">wilderness/wilderness1_3_right2.png</wall>
-   <wall direction="8">wilderness/wilderness1_3_left3_2.png</wall>
-   <wall direction="9">wilderness/wilderness1_3_left3_1.png</wall>
-   <wall direction="10">wilderness/wilderness1_3_right3_1.png</wall>
-   <wall direction="11">wilderness/wilderness1_3_right3_2.png</wall>
-   <wall direction="12">wilderness/wilderness1_3_left4_3.png</wall>
-   <wall direction="13">wilderness/wilderness1_3_left4_2.png</wall>
-   <wall direction="14">wilderness/wilderness1_3_left4_1.png</wall>
-   <wall direction="15">wilderness/wilderness1_3_right4_1.png</wall>
-   <wall direction="16">wilderness/wilderness1_3_right4_2.png</wall>
-   <wall direction="17">wilderness/wilderness1_3_right4_3.png</wall>
-   <wall direction="18">wilderness/wilderness1_3_left5_3.png</wall>
-   <wall direction="19">wilderness/wilderness1_3_left5_2.png</wall>
-   <wall direction="20">wilderness/wilderness1_3_left5_1.png</wall>
-   <wall direction="21">wilderness/wilderness1_3_right5_1.png</wall>
-   <wall direction="22">wilderness/wilderness1_3_right5_2.png</wall>
-   <wall direction="23">wilderness/wilderness1_3_right5_3.png</wall>
-  </walltype>
-  <walltype>
-   <type>2</type>
-   <modulus>0</modulus>
-   <modulus>1</modulus>
-   <modulus>2</modulus>
-   <modulus>3</modulus>
-   <wall direction="0">wilderness/wilderness1_0_d0_front1.png</wall>
-   <wall direction="1">wilderness/wilderness1_0_d0_front2.png</wall>
-   <wall direction="2">wilderness/wilderness1_0_d0_front3.png</wall>
-   <wall direction="3">wilderness/wilderness1_0_d0_front4.png</wall>
-   <wall direction="4">wilderness/wilderness1_0_d0_left1.png</wall>
-   <wall direction="5">wilderness/wilderness1_0_d0_right1.png</wall>
-   <wall direction="6">wilderness/wilderness1_0_d0_left2.png</wall>
-   <wall direction="7">wilderness/wilderness1_0_d0_right2.png</wall>
-   <wall direction="8">wilderness/wilderness1_0_d0_left3_2.png</wall>
-   <wall direction="9">wilderness/wilderness1_0_d0_left3_1.png</wall>
-   <wall direction="10">wilderness/wilderness1_0_d0_right3_1.png</wall>
-   <wall direction="11">wilderness/wilderness1_0_d0_right3_2.png</wall>
-   <wall direction="12">wilderness/wilderness1_0_d0_left4_3.png</wall>
-   <wall direction="13">wilderness/wilderness1_0_d0_left4_2.png</wall>
-   <wall direction="14">wilderness/wilderness1_0_d0_left4_1.png</wall>
-   <wall direction="15">wilderness/wilderness1_0_d0_right4_1.png</wall>
-   <wall direction="16">wilderness/wilderness1_0_d0_right4_2.png</wall>
-   <wall direction="17">wilderness/wilderness1_0_d0_right4_3.png</wall>
-   <wall direction="18">wilderness/wilderness1_0_d0_left5_3.png</wall>
-   <wall direction="19">wilderness/wilderness1_0_d0_left5_2.png</wall>
-   <wall direction="20">wilderness/wilderness1_0_d0_left5_1.png</wall>
-   <wall direction="21">wilderness/wilderness1_0_d0_right5_1.png</wall>
-   <wall direction="22">wilderness/wilderness1_0_d0_right5_2.png</wall>
-   <wall direction="23">wilderness/wilderness1_0_d0_right5_3.png</wall>
-  </walltype>
- </psuedo3d>
-  <psuedo3d>
-  <width>112</width>
-  <height>88</height>
-  <background>sewers/sewers_horizon.png</background>
-  <divide>8</divide>
-  <mapWidth>8</mapWidth>
-  <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <name>Wall</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
   </maptype>
   <maptype>
    <type>2</type>
    <name>Door</name>
    <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
   </maptype>
   <maptype>
    <type>3</type>
@@ -1006,10 +810,10 @@
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
   </maptype>
   <maptype>
    <type>4</type>
@@ -1017,99 +821,122 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
+   <wall direction="0">tilesets/wilderness/wilderness_0_front1.png</wall>
+   <wall direction="1">tilesets/wilderness/wilderness_0_front2.png</wall>
+   <wall direction="2">tilesets/wilderness/wilderness_0_front3.png</wall>
+   <wall direction="3">tilesets/wilderness/wilderness_0_front4.png</wall>
+   <wall direction="4">tilesets/wilderness/wilderness_0_left1.png</wall>
+   <wall direction="5">tilesets/wilderness/wilderness_0_right1.png</wall>
+   <wall direction="6">tilesets/wilderness/wilderness_0_left2.png</wall>
+   <wall direction="7">tilesets/wilderness/wilderness_0_right2.png</wall>
+   <wall direction="8">tilesets/wilderness/wilderness_0_left3_2.png</wall>
+   <wall direction="9">tilesets/wilderness/wilderness_0_left3_1.png</wall>
+   <wall direction="10">tilesets/wilderness/wilderness_0_right3_1.png</wall>
+   <wall direction="11">tilesets/wilderness/wilderness_0_right3_2.png</wall>
+   <wall direction="12">tilesets/wilderness/wilderness_0_left4_3.png</wall>
+   <wall direction="13">tilesets/wilderness/wilderness_0_left4_2.png</wall>
+   <wall direction="14">tilesets/wilderness/wilderness_0_left4_1.png</wall>
+   <wall direction="15">tilesets/wilderness/wilderness_0_right4_1.png</wall>
+   <wall direction="16">tilesets/wilderness/wilderness_0_right4_2.png</wall>
+   <wall direction="17">tilesets/wilderness/wilderness_0_right4_3.png</wall>
+   <wall direction="18">tilesets/wilderness/wilderness_0_left5_3.png</wall>
+   <wall direction="19">tilesets/wilderness/wilderness_0_left5_2.png</wall>
+   <wall direction="20">tilesets/wilderness/wilderness_0_left5_1.png</wall>
+   <wall direction="21">tilesets/wilderness/wilderness_0_right5_1.png</wall>
+   <wall direction="22">tilesets/wilderness/wilderness_0_right5_2.png</wall>
+   <wall direction="23">tilesets/wilderness/wilderness_0_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
    <modulus>1</modulus>
+   <wall direction="0">tilesets/wilderness/wilderness_1_front1.png</wall>
+   <wall direction="1">tilesets/wilderness/wilderness_1_front2.png</wall>
+   <wall direction="2">tilesets/wilderness/wilderness_1_front3.png</wall>
+   <wall direction="3">tilesets/wilderness/wilderness_1_front4.png</wall>
+   <wall direction="4">tilesets/wilderness/wilderness_1_left1.png</wall>
+   <wall direction="5">tilesets/wilderness/wilderness_1_right1.png</wall>
+   <wall direction="6">tilesets/wilderness/wilderness_1_left2.png</wall>
+   <wall direction="7">tilesets/wilderness/wilderness_1_right2.png</wall>
+   <wall direction="8">tilesets/wilderness/wilderness_1_left3_2.png</wall>
+   <wall direction="9">tilesets/wilderness/wilderness_1_left3_1.png</wall>
+   <wall direction="10">tilesets/wilderness/wilderness_1_right3_1.png</wall>
+   <wall direction="11">tilesets/wilderness/wilderness_1_right3_2.png</wall>
+   <wall direction="12">tilesets/wilderness/wilderness_1_left4_3.png</wall>
+   <wall direction="13">tilesets/wilderness/wilderness_1_left4_2.png</wall>
+   <wall direction="14">tilesets/wilderness/wilderness_1_left4_1.png</wall>
+   <wall direction="15">tilesets/wilderness/wilderness_1_right4_1.png</wall>
+   <wall direction="16">tilesets/wilderness/wilderness_1_right4_2.png</wall>
+   <wall direction="17">tilesets/wilderness/wilderness_1_right4_3.png</wall>
+   <wall direction="18">tilesets/wilderness/wilderness_1_left5_3.png</wall>
+   <wall direction="19">tilesets/wilderness/wilderness_1_left5_2.png</wall>
+   <wall direction="20">tilesets/wilderness/wilderness_1_left5_1.png</wall>
+   <wall direction="21">tilesets/wilderness/wilderness_1_right5_1.png</wall>
+   <wall direction="22">tilesets/wilderness/wilderness_1_right5_2.png</wall>
+   <wall direction="23">tilesets/wilderness/wilderness_1_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
    <modulus>2</modulus>
-   <modulus>4</modulus>
-   <modulus>5</modulus>
-   <modulus>6</modulus>
-   <wall direction="0">sewers/sewers_0_front1.png</wall>
-   <wall direction="1">sewers/sewers_0_front2.png</wall>
-   <wall direction="2">sewers/sewers_0_front3.png</wall>
-   <wall direction="3">sewers/sewers_0_front4.png</wall>
-   <wall direction="4">sewers/sewers_0_left1.png</wall>
-   <wall direction="5">sewers/sewers_0_right1.png</wall>
-   <wall direction="6">sewers/sewers_0_left2.png</wall>
-   <wall direction="7">sewers/sewers_0_right2.png</wall>
-   <wall direction="8">sewers/sewers_0_left3_2.png</wall>
-   <wall direction="9">sewers/sewers_0_left3_1.png</wall>
-   <wall direction="10">sewers/sewers_0_right3_1.png</wall>
-   <wall direction="11">sewers/sewers_0_right3_2.png</wall>
-   <wall direction="12">sewers/sewers_0_left4_3.png</wall>
-   <wall direction="13">sewers/sewers_0_left4_2.png</wall>
-   <wall direction="14">sewers/sewers_0_left4_1.png</wall>
-   <wall direction="15">sewers/sewers_0_right4_1.png</wall>
-   <wall direction="16">sewers/sewers_0_right4_2.png</wall>
-   <wall direction="17">sewers/sewers_0_right4_3.png</wall>
-   <wall direction="18">sewers/sewers_0_left5_3.png</wall>
-   <wall direction="19">sewers/sewers_0_left5_2.png</wall>
-   <wall direction="20">sewers/sewers_0_left5_1.png</wall>
-   <wall direction="21">sewers/sewers_0_right5_1.png</wall>
-   <wall direction="22">sewers/sewers_0_right5_2.png</wall>
-   <wall direction="23">sewers/sewers_0_right5_3.png</wall>
+   <wall direction="0">tilesets/wilderness/wilderness_2_front1.png</wall>
+   <wall direction="1">tilesets/wilderness/wilderness_2_front2.png</wall>
+   <wall direction="2">tilesets/wilderness/wilderness_2_front3.png</wall>
+   <wall direction="3">tilesets/wilderness/wilderness_2_front4.png</wall>
+   <wall direction="4">tilesets/wilderness/wilderness_2_left1.png</wall>
+   <wall direction="5">tilesets/wilderness/wilderness_2_right1.png</wall>
+   <wall direction="6">tilesets/wilderness/wilderness_2_left2.png</wall>
+   <wall direction="7">tilesets/wilderness/wilderness_2_right2.png</wall>
+   <wall direction="8">tilesets/wilderness/wilderness_2_left3_2.png</wall>
+   <wall direction="9">tilesets/wilderness/wilderness_2_left3_1.png</wall>
+   <wall direction="10">tilesets/wilderness/wilderness_2_right3_1.png</wall>
+   <wall direction="11">tilesets/wilderness/wilderness_2_right3_2.png</wall>
+   <wall direction="12">tilesets/wilderness/wilderness_2_left4_3.png</wall>
+   <wall direction="13">tilesets/wilderness/wilderness_2_left4_2.png</wall>
+   <wall direction="14">tilesets/wilderness/wilderness_2_left4_1.png</wall>
+   <wall direction="15">tilesets/wilderness/wilderness_2_right4_1.png</wall>
+   <wall direction="16">tilesets/wilderness/wilderness_2_right4_2.png</wall>
+   <wall direction="17">tilesets/wilderness/wilderness_2_right4_3.png</wall>
+   <wall direction="18">tilesets/wilderness/wilderness_2_left5_3.png</wall>
+   <wall direction="19">tilesets/wilderness/wilderness_2_left5_2.png</wall>
+   <wall direction="20">tilesets/wilderness/wilderness_2_left5_1.png</wall>
+   <wall direction="21">tilesets/wilderness/wilderness_2_right5_1.png</wall>
+   <wall direction="22">tilesets/wilderness/wilderness_2_right5_2.png</wall>
+   <wall direction="23">tilesets/wilderness/wilderness_2_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>3</modulus>
-   <wall direction="0">sewers/sewers_1_front1.png</wall>
-   <wall direction="1">sewers/sewers_1_front2.png</wall>
-   <wall direction="2">sewers/sewers_1_front3.png</wall>
-   <wall direction="3">sewers/sewers_1_front4.png</wall>
-   <wall direction="4">sewers/sewers_1_left1.png</wall>
-   <wall direction="5">sewers/sewers_1_right1.png</wall>
-   <wall direction="6">sewers/sewers_1_left2.png</wall>
-   <wall direction="7">sewers/sewers_1_right2.png</wall>
-   <wall direction="8">sewers/sewers_1_left3_2.png</wall>
-   <wall direction="9">sewers/sewers_1_left3_1.png</wall>
-   <wall direction="10">sewers/sewers_1_right3_1.png</wall>
-   <wall direction="11">sewers/sewers_1_right3_2.png</wall>
-   <wall direction="12">sewers/sewers_1_left4_3.png</wall>
-   <wall direction="13">sewers/sewers_1_left4_2.png</wall>
-   <wall direction="14">sewers/sewers_1_left4_1.png</wall>
-   <wall direction="15">sewers/sewers_1_right4_1.png</wall>
-   <wall direction="16">sewers/sewers_1_right4_2.png</wall>
-   <wall direction="17">sewers/sewers_1_right4_3.png</wall>
-   <wall direction="18">sewers/sewers_1_left5_3.png</wall>
-   <wall direction="19">sewers/sewers_1_left5_2.png</wall>
-   <wall direction="20">sewers/sewers_1_left5_1.png</wall>
-   <wall direction="21">sewers/sewers_1_right5_1.png</wall>
-   <wall direction="22">sewers/sewers_1_right5_2.png</wall>
-   <wall direction="23">sewers/sewers_1_right5_3.png</wall>
-  </walltype>
-  <walltype>
-   <type>1</type>
-   <modulus>7</modulus>
-   <wall direction="0">sewers/sewers_2_front1.png</wall>
-   <wall direction="1">sewers/sewers_2_front2.png</wall>
-   <wall direction="2">sewers/sewers_2_front3.png</wall>
-   <wall direction="3">sewers/sewers_2_front4.png</wall>
-   <wall direction="4">sewers/sewers_2_left1.png</wall>
-   <wall direction="5">sewers/sewers_2_right1.png</wall>
-   <wall direction="6">sewers/sewers_2_left2.png</wall>
-   <wall direction="7">sewers/sewers_2_right2.png</wall>
-   <wall direction="8">sewers/sewers_2_left3_2.png</wall>
-   <wall direction="9">sewers/sewers_2_left3_1.png</wall>
-   <wall direction="10">sewers/sewers_2_right3_1.png</wall>
-   <wall direction="11">sewers/sewers_2_right3_2.png</wall>
-   <wall direction="12">sewers/sewers_2_left4_3.png</wall>
-   <wall direction="13">sewers/sewers_2_left4_2.png</wall>
-   <wall direction="14">sewers/sewers_2_left4_1.png</wall>
-   <wall direction="15">sewers/sewers_2_right4_1.png</wall>
-   <wall direction="16">sewers/sewers_2_right4_2.png</wall>
-   <wall direction="17">sewers/sewers_2_right4_3.png</wall>
-   <wall direction="18">sewers/sewers_2_left5_3.png</wall>
-   <wall direction="19">sewers/sewers_2_left5_2.png</wall>
-   <wall direction="20">sewers/sewers_2_left5_1.png</wall>
-   <wall direction="21">sewers/sewers_2_right5_1.png</wall>
-   <wall direction="22">sewers/sewers_2_right5_2.png</wall>
-   <wall direction="23">sewers/sewers_2_right5_3.png</wall>
+   <wall direction="0">tilesets/wilderness/wilderness_3_front1.png</wall>
+   <wall direction="1">tilesets/wilderness/wilderness_3_front2.png</wall>
+   <wall direction="2">tilesets/wilderness/wilderness_3_front3.png</wall>
+   <wall direction="3">tilesets/wilderness/wilderness_3_front4.png</wall>
+   <wall direction="4">tilesets/wilderness/wilderness_3_left1.png</wall>
+   <wall direction="5">tilesets/wilderness/wilderness_3_right1.png</wall>
+   <wall direction="6">tilesets/wilderness/wilderness_3_left2.png</wall>
+   <wall direction="7">tilesets/wilderness/wilderness_3_right2.png</wall>
+   <wall direction="8">tilesets/wilderness/wilderness_3_left3_2.png</wall>
+   <wall direction="9">tilesets/wilderness/wilderness_3_left3_1.png</wall>
+   <wall direction="10">tilesets/wilderness/wilderness_3_right3_1.png</wall>
+   <wall direction="11">tilesets/wilderness/wilderness_3_right3_2.png</wall>
+   <wall direction="12">tilesets/wilderness/wilderness_3_left4_3.png</wall>
+   <wall direction="13">tilesets/wilderness/wilderness_3_left4_2.png</wall>
+   <wall direction="14">tilesets/wilderness/wilderness_3_left4_1.png</wall>
+   <wall direction="15">tilesets/wilderness/wilderness_3_right4_1.png</wall>
+   <wall direction="16">tilesets/wilderness/wilderness_3_right4_2.png</wall>
+   <wall direction="17">tilesets/wilderness/wilderness_3_right4_3.png</wall>
+   <wall direction="18">tilesets/wilderness/wilderness_3_left5_3.png</wall>
+   <wall direction="19">tilesets/wilderness/wilderness_3_left5_2.png</wall>
+   <wall direction="20">tilesets/wilderness/wilderness_3_left5_1.png</wall>
+   <wall direction="21">tilesets/wilderness/wilderness_3_right5_1.png</wall>
+   <wall direction="22">tilesets/wilderness/wilderness_3_right5_2.png</wall>
+   <wall direction="23">tilesets/wilderness/wilderness_3_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
@@ -1117,65 +944,61 @@
    <modulus>1</modulus>
    <modulus>2</modulus>
    <modulus>3</modulus>
-   <modulus>4</modulus>
-   <modulus>5</modulus>
-   <modulus>6</modulus>
-   <modulus>7</modulus>
-   <wall direction="0">sewers/sewers_0_d0_front1.png</wall>
-   <wall direction="1">sewers/sewers_0_d0_front2.png</wall>
-   <wall direction="2">sewers/sewers_0_d0_front3.png</wall>
-   <wall direction="3">sewers/sewers_0_d0_front4.png</wall>
-   <wall direction="4">sewers/sewers_0_d0_left1.png</wall>
-   <wall direction="5">sewers/sewers_0_d0_right1.png</wall>
-   <wall direction="6">sewers/sewers_0_d0_left2.png</wall>
-   <wall direction="7">sewers/sewers_0_d0_right2.png</wall>
-   <wall direction="8">sewers/sewers_0_d0_left3_2.png</wall>
-   <wall direction="9">sewers/sewers_0_d0_left3_1.png</wall>
-   <wall direction="10">sewers/sewers_0_d0_right3_1.png</wall>
-   <wall direction="11">sewers/sewers_0_d0_right3_2.png</wall>
-   <wall direction="12">sewers/sewers_0_d0_left4_3.png</wall>
-   <wall direction="13">sewers/sewers_0_d0_left4_2.png</wall>
-   <wall direction="14">sewers/sewers_0_d0_left4_1.png</wall>
-   <wall direction="15">sewers/sewers_0_d0_right4_1.png</wall>
-   <wall direction="16">sewers/sewers_0_d0_right4_2.png</wall>
-   <wall direction="17">sewers/sewers_0_d0_right4_3.png</wall>
-   <wall direction="18">sewers/sewers_0_d0_left5_3.png</wall>
-   <wall direction="19">sewers/sewers_0_d0_left5_2.png</wall>
-   <wall direction="20">sewers/sewers_0_d0_left5_1.png</wall>
-   <wall direction="21">sewers/sewers_0_d0_right5_1.png</wall>
-   <wall direction="22">sewers/sewers_0_d0_right5_2.png</wall>
-   <wall direction="23">sewers/sewers_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/wilderness/wilderness_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/wilderness/wilderness_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/wilderness/wilderness_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/wilderness/wilderness_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/wilderness/wilderness_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/wilderness/wilderness_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/wilderness/wilderness_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/wilderness/wilderness_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/wilderness/wilderness_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/wilderness/wilderness_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/wilderness/wilderness_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/wilderness/wilderness_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/wilderness/wilderness_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/wilderness/wilderness_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/wilderness/wilderness_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/wilderness/wilderness_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/wilderness/wilderness_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/wilderness/wilderness_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/wilderness/wilderness_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/wilderness/wilderness_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/wilderness/wilderness_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/wilderness/wilderness_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/wilderness/wilderness_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/wilderness/wilderness_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
   <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>harkyns_castle/harkyns_castle_horizon.png</background>
+  <background>tilesets/sewers/sewers_horizon.png</background>
   <divide>8</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <name>Wall</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
   </maptype>
   <maptype>
    <type>2</type>
    <name>Door</name>
    <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
   </maptype>
   <maptype>
    <type>3</type>
@@ -1183,10 +1006,10 @@
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
   </maptype>
   <maptype>
    <type>4</type>
@@ -1194,10 +1017,10 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -1207,86 +1030,86 @@
    <modulus>4</modulus>
    <modulus>5</modulus>
    <modulus>6</modulus>
-   <wall direction="0">harkyns_castle/harkyns_castle_0_front1.png</wall>
-   <wall direction="1">harkyns_castle/harkyns_castle_0_front2.png</wall>
-   <wall direction="2">harkyns_castle/harkyns_castle_0_front3.png</wall>
-   <wall direction="3">harkyns_castle/harkyns_castle_0_front4.png</wall>
-   <wall direction="4">harkyns_castle/harkyns_castle_0_left1.png</wall>
-   <wall direction="5">harkyns_castle/harkyns_castle_0_right1.png</wall>
-   <wall direction="6">harkyns_castle/harkyns_castle_0_left2.png</wall>
-   <wall direction="7">harkyns_castle/harkyns_castle_0_right2.png</wall>
-   <wall direction="8">harkyns_castle/harkyns_castle_0_left3_2.png</wall>
-   <wall direction="9">harkyns_castle/harkyns_castle_0_left3_1.png</wall>
-   <wall direction="10">harkyns_castle/harkyns_castle_0_right3_1.png</wall>
-   <wall direction="11">harkyns_castle/harkyns_castle_0_right3_2.png</wall>
-   <wall direction="12">harkyns_castle/harkyns_castle_0_left4_3.png</wall>
-   <wall direction="13">harkyns_castle/harkyns_castle_0_left4_2.png</wall>
-   <wall direction="14">harkyns_castle/harkyns_castle_0_left4_1.png</wall>
-   <wall direction="15">harkyns_castle/harkyns_castle_0_right4_1.png</wall>
-   <wall direction="16">harkyns_castle/harkyns_castle_0_right4_2.png</wall>
-   <wall direction="17">harkyns_castle/harkyns_castle_0_right4_3.png</wall>
-   <wall direction="18">harkyns_castle/harkyns_castle_0_left5_3.png</wall>
-   <wall direction="19">harkyns_castle/harkyns_castle_0_left5_2.png</wall>
-   <wall direction="20">harkyns_castle/harkyns_castle_0_left5_1.png</wall>
-   <wall direction="21">harkyns_castle/harkyns_castle_0_right5_1.png</wall>
-   <wall direction="22">harkyns_castle/harkyns_castle_0_right5_2.png</wall>
-   <wall direction="23">harkyns_castle/harkyns_castle_0_right5_3.png</wall>
+   <wall direction="0">tilesets/sewers/sewers_0_front1.png</wall>
+   <wall direction="1">tilesets/sewers/sewers_0_front2.png</wall>
+   <wall direction="2">tilesets/sewers/sewers_0_front3.png</wall>
+   <wall direction="3">tilesets/sewers/sewers_0_front4.png</wall>
+   <wall direction="4">tilesets/sewers/sewers_0_left1.png</wall>
+   <wall direction="5">tilesets/sewers/sewers_0_right1.png</wall>
+   <wall direction="6">tilesets/sewers/sewers_0_left2.png</wall>
+   <wall direction="7">tilesets/sewers/sewers_0_right2.png</wall>
+   <wall direction="8">tilesets/sewers/sewers_0_left3_2.png</wall>
+   <wall direction="9">tilesets/sewers/sewers_0_left3_1.png</wall>
+   <wall direction="10">tilesets/sewers/sewers_0_right3_1.png</wall>
+   <wall direction="11">tilesets/sewers/sewers_0_right3_2.png</wall>
+   <wall direction="12">tilesets/sewers/sewers_0_left4_3.png</wall>
+   <wall direction="13">tilesets/sewers/sewers_0_left4_2.png</wall>
+   <wall direction="14">tilesets/sewers/sewers_0_left4_1.png</wall>
+   <wall direction="15">tilesets/sewers/sewers_0_right4_1.png</wall>
+   <wall direction="16">tilesets/sewers/sewers_0_right4_2.png</wall>
+   <wall direction="17">tilesets/sewers/sewers_0_right4_3.png</wall>
+   <wall direction="18">tilesets/sewers/sewers_0_left5_3.png</wall>
+   <wall direction="19">tilesets/sewers/sewers_0_left5_2.png</wall>
+   <wall direction="20">tilesets/sewers/sewers_0_left5_1.png</wall>
+   <wall direction="21">tilesets/sewers/sewers_0_right5_1.png</wall>
+   <wall direction="22">tilesets/sewers/sewers_0_right5_2.png</wall>
+   <wall direction="23">tilesets/sewers/sewers_0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>3</modulus>
-   <wall direction="0">harkyns_castle/harkyns_castle_1_front1.png</wall>
-   <wall direction="1">harkyns_castle/harkyns_castle_1_front2.png</wall>
-   <wall direction="2">harkyns_castle/harkyns_castle_1_front3.png</wall>
-   <wall direction="3">harkyns_castle/harkyns_castle_1_front4.png</wall>
-   <wall direction="4">harkyns_castle/harkyns_castle_1_left1.png</wall>
-   <wall direction="5">harkyns_castle/harkyns_castle_1_right1.png</wall>
-   <wall direction="6">harkyns_castle/harkyns_castle_1_left2.png</wall>
-   <wall direction="7">harkyns_castle/harkyns_castle_1_right2.png</wall>
-   <wall direction="8">harkyns_castle/harkyns_castle_1_left3_2.png</wall>
-   <wall direction="9">harkyns_castle/harkyns_castle_1_left3_1.png</wall>
-   <wall direction="10">harkyns_castle/harkyns_castle_1_right3_1.png</wall>
-   <wall direction="11">harkyns_castle/harkyns_castle_1_right3_2.png</wall>
-   <wall direction="12">harkyns_castle/harkyns_castle_1_left4_3.png</wall>
-   <wall direction="13">harkyns_castle/harkyns_castle_1_left4_2.png</wall>
-   <wall direction="14">harkyns_castle/harkyns_castle_1_left4_1.png</wall>
-   <wall direction="15">harkyns_castle/harkyns_castle_1_right4_1.png</wall>
-   <wall direction="16">harkyns_castle/harkyns_castle_1_right4_2.png</wall>
-   <wall direction="17">harkyns_castle/harkyns_castle_1_right4_3.png</wall>
-   <wall direction="18">harkyns_castle/harkyns_castle_1_left5_3.png</wall>
-   <wall direction="19">harkyns_castle/harkyns_castle_1_left5_2.png</wall>
-   <wall direction="20">harkyns_castle/harkyns_castle_1_left5_1.png</wall>
-   <wall direction="21">harkyns_castle/harkyns_castle_1_right5_1.png</wall>
-   <wall direction="22">harkyns_castle/harkyns_castle_1_right5_2.png</wall>
-   <wall direction="23">harkyns_castle/harkyns_castle_1_right5_3.png</wall>
+   <wall direction="0">tilesets/sewers/sewers_1_front1.png</wall>
+   <wall direction="1">tilesets/sewers/sewers_1_front2.png</wall>
+   <wall direction="2">tilesets/sewers/sewers_1_front3.png</wall>
+   <wall direction="3">tilesets/sewers/sewers_1_front4.png</wall>
+   <wall direction="4">tilesets/sewers/sewers_1_left1.png</wall>
+   <wall direction="5">tilesets/sewers/sewers_1_right1.png</wall>
+   <wall direction="6">tilesets/sewers/sewers_1_left2.png</wall>
+   <wall direction="7">tilesets/sewers/sewers_1_right2.png</wall>
+   <wall direction="8">tilesets/sewers/sewers_1_left3_2.png</wall>
+   <wall direction="9">tilesets/sewers/sewers_1_left3_1.png</wall>
+   <wall direction="10">tilesets/sewers/sewers_1_right3_1.png</wall>
+   <wall direction="11">tilesets/sewers/sewers_1_right3_2.png</wall>
+   <wall direction="12">tilesets/sewers/sewers_1_left4_3.png</wall>
+   <wall direction="13">tilesets/sewers/sewers_1_left4_2.png</wall>
+   <wall direction="14">tilesets/sewers/sewers_1_left4_1.png</wall>
+   <wall direction="15">tilesets/sewers/sewers_1_right4_1.png</wall>
+   <wall direction="16">tilesets/sewers/sewers_1_right4_2.png</wall>
+   <wall direction="17">tilesets/sewers/sewers_1_right4_3.png</wall>
+   <wall direction="18">tilesets/sewers/sewers_1_left5_3.png</wall>
+   <wall direction="19">tilesets/sewers/sewers_1_left5_2.png</wall>
+   <wall direction="20">tilesets/sewers/sewers_1_left5_1.png</wall>
+   <wall direction="21">tilesets/sewers/sewers_1_right5_1.png</wall>
+   <wall direction="22">tilesets/sewers/sewers_1_right5_2.png</wall>
+   <wall direction="23">tilesets/sewers/sewers_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>7</modulus>
-   <wall direction="0">harkyns_castle/harkyns_castle_2_front1.png</wall>
-   <wall direction="1">harkyns_castle/harkyns_castle_2_front2.png</wall>
-   <wall direction="2">harkyns_castle/harkyns_castle_2_front3.png</wall>
-   <wall direction="3">harkyns_castle/harkyns_castle_2_front4.png</wall>
-   <wall direction="4">harkyns_castle/harkyns_castle_2_left1.png</wall>
-   <wall direction="5">harkyns_castle/harkyns_castle_2_right1.png</wall>
-   <wall direction="6">harkyns_castle/harkyns_castle_2_left2.png</wall>
-   <wall direction="7">harkyns_castle/harkyns_castle_2_right2.png</wall>
-   <wall direction="8">harkyns_castle/harkyns_castle_2_left3_2.png</wall>
-   <wall direction="9">harkyns_castle/harkyns_castle_2_left3_1.png</wall>
-   <wall direction="10">harkyns_castle/harkyns_castle_2_right3_1.png</wall>
-   <wall direction="11">harkyns_castle/harkyns_castle_2_right3_2.png</wall>
-   <wall direction="12">harkyns_castle/harkyns_castle_2_left4_3.png</wall>
-   <wall direction="13">harkyns_castle/harkyns_castle_2_left4_2.png</wall>
-   <wall direction="14">harkyns_castle/harkyns_castle_2_left4_1.png</wall>
-   <wall direction="15">harkyns_castle/harkyns_castle_2_right4_1.png</wall>
-   <wall direction="16">harkyns_castle/harkyns_castle_2_right4_2.png</wall>
-   <wall direction="17">harkyns_castle/harkyns_castle_2_right4_3.png</wall>
-   <wall direction="18">harkyns_castle/harkyns_castle_2_left5_3.png</wall>
-   <wall direction="19">harkyns_castle/harkyns_castle_2_left5_2.png</wall>
-   <wall direction="20">harkyns_castle/harkyns_castle_2_left5_1.png</wall>
-   <wall direction="21">harkyns_castle/harkyns_castle_2_right5_1.png</wall>
-   <wall direction="22">harkyns_castle/harkyns_castle_2_right5_2.png</wall>
-   <wall direction="23">harkyns_castle/harkyns_castle_2_right5_3.png</wall>
+   <wall direction="0">tilesets/sewers/sewers_2_front1.png</wall>
+   <wall direction="1">tilesets/sewers/sewers_2_front2.png</wall>
+   <wall direction="2">tilesets/sewers/sewers_2_front3.png</wall>
+   <wall direction="3">tilesets/sewers/sewers_2_front4.png</wall>
+   <wall direction="4">tilesets/sewers/sewers_2_left1.png</wall>
+   <wall direction="5">tilesets/sewers/sewers_2_right1.png</wall>
+   <wall direction="6">tilesets/sewers/sewers_2_left2.png</wall>
+   <wall direction="7">tilesets/sewers/sewers_2_right2.png</wall>
+   <wall direction="8">tilesets/sewers/sewers_2_left3_2.png</wall>
+   <wall direction="9">tilesets/sewers/sewers_2_left3_1.png</wall>
+   <wall direction="10">tilesets/sewers/sewers_2_right3_1.png</wall>
+   <wall direction="11">tilesets/sewers/sewers_2_right3_2.png</wall>
+   <wall direction="12">tilesets/sewers/sewers_2_left4_3.png</wall>
+   <wall direction="13">tilesets/sewers/sewers_2_left4_2.png</wall>
+   <wall direction="14">tilesets/sewers/sewers_2_left4_1.png</wall>
+   <wall direction="15">tilesets/sewers/sewers_2_right4_1.png</wall>
+   <wall direction="16">tilesets/sewers/sewers_2_right4_2.png</wall>
+   <wall direction="17">tilesets/sewers/sewers_2_right4_3.png</wall>
+   <wall direction="18">tilesets/sewers/sewers_2_left5_3.png</wall>
+   <wall direction="19">tilesets/sewers/sewers_2_left5_2.png</wall>
+   <wall direction="20">tilesets/sewers/sewers_2_left5_1.png</wall>
+   <wall direction="21">tilesets/sewers/sewers_2_right5_1.png</wall>
+   <wall direction="22">tilesets/sewers/sewers_2_right5_2.png</wall>
+   <wall direction="23">tilesets/sewers/sewers_2_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
@@ -1298,61 +1121,61 @@
    <modulus>5</modulus>
    <modulus>6</modulus>
    <modulus>7</modulus>
-   <wall direction="0">harkyns_castle/harkyns_castle_0_d0_front1.png</wall>
-   <wall direction="1">harkyns_castle/harkyns_castle_0_d0_front2.png</wall>
-   <wall direction="2">harkyns_castle/harkyns_castle_0_d0_front3.png</wall>
-   <wall direction="3">harkyns_castle/harkyns_castle_0_d0_front4.png</wall>
-   <wall direction="4">harkyns_castle/harkyns_castle_0_d0_left1.png</wall>
-   <wall direction="5">harkyns_castle/harkyns_castle_0_d0_right1.png</wall>
-   <wall direction="6">harkyns_castle/harkyns_castle_0_d0_left2.png</wall>
-   <wall direction="7">harkyns_castle/harkyns_castle_0_d0_right2.png</wall>
-   <wall direction="8">harkyns_castle/harkyns_castle_0_d0_left3_2.png</wall>
-   <wall direction="9">harkyns_castle/harkyns_castle_0_d0_left3_1.png</wall>
-   <wall direction="10">harkyns_castle/harkyns_castle_0_d0_right3_1.png</wall>
-   <wall direction="11">harkyns_castle/harkyns_castle_0_d0_right3_2.png</wall>
-   <wall direction="12">harkyns_castle/harkyns_castle_0_d0_left4_3.png</wall>
-   <wall direction="13">harkyns_castle/harkyns_castle_0_d0_left4_2.png</wall>
-   <wall direction="14">harkyns_castle/harkyns_castle_0_d0_left4_1.png</wall>
-   <wall direction="15">harkyns_castle/harkyns_castle_0_d0_right4_1.png</wall>
-   <wall direction="16">harkyns_castle/harkyns_castle_0_d0_right4_2.png</wall>
-   <wall direction="17">harkyns_castle/harkyns_castle_0_d0_right4_3.png</wall>
-   <wall direction="18">harkyns_castle/harkyns_castle_0_d0_left5_3.png</wall>
-   <wall direction="19">harkyns_castle/harkyns_castle_0_d0_left5_2.png</wall>
-   <wall direction="20">harkyns_castle/harkyns_castle_0_d0_left5_1.png</wall>
-   <wall direction="21">harkyns_castle/harkyns_castle_0_d0_right5_1.png</wall>
-   <wall direction="22">harkyns_castle/harkyns_castle_0_d0_right5_2.png</wall>
-   <wall direction="23">harkyns_castle/harkyns_castle_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/sewers/sewers_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/sewers/sewers_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/sewers/sewers_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/sewers/sewers_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/sewers/sewers_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/sewers/sewers_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/sewers/sewers_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/sewers/sewers_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/sewers/sewers_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/sewers/sewers_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/sewers/sewers_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/sewers/sewers_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/sewers/sewers_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/sewers/sewers_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/sewers/sewers_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/sewers/sewers_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/sewers/sewers_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/sewers/sewers_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/sewers/sewers_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/sewers/sewers_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/sewers/sewers_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/sewers/sewers_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/sewers/sewers_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/sewers/sewers_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
   <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>crypts/crypts_horizon.png</background>
-  <divide>8</divide>
+  <background>tilesets/wine_cellars/wine_cellars_horizon.png</background>
+  <divide>12</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <name>Wall</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
   </maptype>
   <maptype>
    <type>2</type>
    <name>Door</name>
    <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
   </maptype>
   <maptype>
    <type>3</type>
@@ -1360,10 +1183,10 @@
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
   </maptype>
   <maptype>
    <type>4</type>
@@ -1371,99 +1194,157 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
    <modulus>0</modulus>
-   <modulus>1</modulus>
    <modulus>2</modulus>
    <modulus>4</modulus>
-   <modulus>5</modulus>
    <modulus>6</modulus>
-   <wall direction="0">crypts/crypts_0_front1.png</wall>
-   <wall direction="1">crypts/crypts_0_front2.png</wall>
-   <wall direction="2">crypts/crypts_0_front3.png</wall>
-   <wall direction="3">crypts/crypts_0_front4.png</wall>
-   <wall direction="4">crypts/crypts_0_left1.png</wall>
-   <wall direction="5">crypts/crypts_0_right1.png</wall>
-   <wall direction="6">crypts/crypts_0_left2.png</wall>
-   <wall direction="7">crypts/crypts_0_right2.png</wall>
-   <wall direction="8">crypts/crypts_0_left3_2.png</wall>
-   <wall direction="9">crypts/crypts_0_left3_1.png</wall>
-   <wall direction="10">crypts/crypts_0_right3_1.png</wall>
-   <wall direction="11">crypts/crypts_0_right3_2.png</wall>
-   <wall direction="12">crypts/crypts_0_left4_3.png</wall>
-   <wall direction="13">crypts/crypts_0_left4_2.png</wall>
-   <wall direction="14">crypts/crypts_0_left4_1.png</wall>
-   <wall direction="15">crypts/crypts_0_right4_1.png</wall>
-   <wall direction="16">crypts/crypts_0_right4_2.png</wall>
-   <wall direction="17">crypts/crypts_0_right4_3.png</wall>
-   <wall direction="18">crypts/crypts_0_left5_3.png</wall>
-   <wall direction="19">crypts/crypts_0_left5_2.png</wall>
-   <wall direction="20">crypts/crypts_0_left5_1.png</wall>
-   <wall direction="21">crypts/crypts_0_right5_1.png</wall>
-   <wall direction="22">crypts/crypts_0_right5_2.png</wall>
-   <wall direction="23">crypts/crypts_0_right5_3.png</wall>
+   <modulus>8</modulus>
+   <modulus>10</modulus>
+   <wall direction="0">tilesets/wine_cellars/wine_cellars_0_front1.png</wall>
+   <wall direction="1">tilesets/wine_cellars/wine_cellars_0_front2.png</wall>
+   <wall direction="2">tilesets/wine_cellars/wine_cellars_0_front3.png</wall>
+   <wall direction="3">tilesets/wine_cellars/wine_cellars_0_front4.png</wall>
+   <wall direction="4">tilesets/wine_cellars/wine_cellars_0_left1.png</wall>
+   <wall direction="5">tilesets/wine_cellars/wine_cellars_0_right1.png</wall>
+   <wall direction="6">tilesets/wine_cellars/wine_cellars_0_left2.png</wall>
+   <wall direction="7">tilesets/wine_cellars/wine_cellars_0_right2.png</wall>
+   <wall direction="8">tilesets/wine_cellars/wine_cellars_0_left3_2.png</wall>
+   <wall direction="9">tilesets/wine_cellars/wine_cellars_0_left3_1.png</wall>
+   <wall direction="10">tilesets/wine_cellars/wine_cellars_0_right3_1.png</wall>
+   <wall direction="11">tilesets/wine_cellars/wine_cellars_0_right3_2.png</wall>
+   <wall direction="12">tilesets/wine_cellars/wine_cellars_0_left4_3.png</wall>
+   <wall direction="13">tilesets/wine_cellars/wine_cellars_0_left4_2.png</wall>
+   <wall direction="14">tilesets/wine_cellars/wine_cellars_0_left4_1.png</wall>
+   <wall direction="15">tilesets/wine_cellars/wine_cellars_0_right4_1.png</wall>
+   <wall direction="16">tilesets/wine_cellars/wine_cellars_0_right4_2.png</wall>
+   <wall direction="17">tilesets/wine_cellars/wine_cellars_0_right4_3.png</wall>
+   <wall direction="18">tilesets/wine_cellars/wine_cellars_0_left5_3.png</wall>
+   <wall direction="19">tilesets/wine_cellars/wine_cellars_0_left5_2.png</wall>
+   <wall direction="20">tilesets/wine_cellars/wine_cellars_0_left5_1.png</wall>
+   <wall direction="21">tilesets/wine_cellars/wine_cellars_0_right5_1.png</wall>
+   <wall direction="22">tilesets/wine_cellars/wine_cellars_0_right5_2.png</wall>
+   <wall direction="23">tilesets/wine_cellars/wine_cellars_0_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>1</modulus>
+   <modulus>5</modulus>
+   <modulus>9</modulus>
+   <wall direction="0">tilesets/wine_cellars/wine_cellars_1_front1.png</wall>
+   <wall direction="1">tilesets/wine_cellars/wine_cellars_1_front2.png</wall>
+   <wall direction="2">tilesets/wine_cellars/wine_cellars_1_front3.png</wall>
+   <wall direction="3">tilesets/wine_cellars/wine_cellars_1_front4.png</wall>
+   <wall direction="4">tilesets/wine_cellars/wine_cellars_1_left1.png</wall>
+   <wall direction="5">tilesets/wine_cellars/wine_cellars_1_right1.png</wall>
+   <wall direction="6">tilesets/wine_cellars/wine_cellars_1_left2.png</wall>
+   <wall direction="7">tilesets/wine_cellars/wine_cellars_1_right2.png</wall>
+   <wall direction="8">tilesets/wine_cellars/wine_cellars_1_left3_2.png</wall>
+   <wall direction="9">tilesets/wine_cellars/wine_cellars_1_left3_1.png</wall>
+   <wall direction="10">tilesets/wine_cellars/wine_cellars_1_right3_1.png</wall>
+   <wall direction="11">tilesets/wine_cellars/wine_cellars_1_right3_2.png</wall>
+   <wall direction="12">tilesets/wine_cellars/wine_cellars_1_left4_3.png</wall>
+   <wall direction="13">tilesets/wine_cellars/wine_cellars_1_left4_2.png</wall>
+   <wall direction="14">tilesets/wine_cellars/wine_cellars_1_left4_1.png</wall>
+   <wall direction="15">tilesets/wine_cellars/wine_cellars_1_right4_1.png</wall>
+   <wall direction="16">tilesets/wine_cellars/wine_cellars_1_right4_2.png</wall>
+   <wall direction="17">tilesets/wine_cellars/wine_cellars_1_right4_3.png</wall>
+   <wall direction="18">tilesets/wine_cellars/wine_cellars_1_left5_3.png</wall>
+   <wall direction="19">tilesets/wine_cellars/wine_cellars_1_left5_2.png</wall>
+   <wall direction="20">tilesets/wine_cellars/wine_cellars_1_left5_1.png</wall>
+   <wall direction="21">tilesets/wine_cellars/wine_cellars_1_right5_1.png</wall>
+   <wall direction="22">tilesets/wine_cellars/wine_cellars_1_right5_2.png</wall>
+   <wall direction="23">tilesets/wine_cellars/wine_cellars_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>3</modulus>
-   <wall direction="0">crypts/crypts_1_front1.png</wall>
-   <wall direction="1">crypts/crypts_1_front2.png</wall>
-   <wall direction="2">crypts/crypts_1_front3.png</wall>
-   <wall direction="3">crypts/crypts_1_front4.png</wall>
-   <wall direction="4">crypts/crypts_1_left1.png</wall>
-   <wall direction="5">crypts/crypts_1_right1.png</wall>
-   <wall direction="6">crypts/crypts_1_left2.png</wall>
-   <wall direction="7">crypts/crypts_1_right2.png</wall>
-   <wall direction="8">crypts/crypts_1_left3_2.png</wall>
-   <wall direction="9">crypts/crypts_1_left3_1.png</wall>
-   <wall direction="10">crypts/crypts_1_right3_1.png</wall>
-   <wall direction="11">crypts/crypts_1_right3_2.png</wall>
-   <wall direction="12">crypts/crypts_1_left4_3.png</wall>
-   <wall direction="13">crypts/crypts_1_left4_2.png</wall>
-   <wall direction="14">crypts/crypts_1_left4_1.png</wall>
-   <wall direction="15">crypts/crypts_1_right4_1.png</wall>
-   <wall direction="16">crypts/crypts_1_right4_2.png</wall>
-   <wall direction="17">crypts/crypts_1_right4_3.png</wall>
-   <wall direction="18">crypts/crypts_1_left5_3.png</wall>
-   <wall direction="19">crypts/crypts_1_left5_2.png</wall>
-   <wall direction="20">crypts/crypts_1_left5_1.png</wall>
-   <wall direction="21">crypts/crypts_1_right5_1.png</wall>
-   <wall direction="22">crypts/crypts_1_right5_2.png</wall>
-   <wall direction="23">crypts/crypts_1_right5_3.png</wall>
+   <wall direction="0">tilesets/wine_cellars/wine_cellars_2_front1.png</wall>
+   <wall direction="1">tilesets/wine_cellars/wine_cellars_2_front2.png</wall>
+   <wall direction="2">tilesets/wine_cellars/wine_cellars_2_front3.png</wall>
+   <wall direction="3">tilesets/wine_cellars/wine_cellars_2_front4.png</wall>
+   <wall direction="4">tilesets/wine_cellars/wine_cellars_2_left1.png</wall>
+   <wall direction="5">tilesets/wine_cellars/wine_cellars_2_right1.png</wall>
+   <wall direction="6">tilesets/wine_cellars/wine_cellars_2_left2.png</wall>
+   <wall direction="7">tilesets/wine_cellars/wine_cellars_2_right2.png</wall>
+   <wall direction="8">tilesets/wine_cellars/wine_cellars_2_left3_2.png</wall>
+   <wall direction="9">tilesets/wine_cellars/wine_cellars_2_left3_1.png</wall>
+   <wall direction="10">tilesets/wine_cellars/wine_cellars_2_right3_1.png</wall>
+   <wall direction="11">tilesets/wine_cellars/wine_cellars_2_right3_2.png</wall>
+   <wall direction="12">tilesets/wine_cellars/wine_cellars_2_left4_3.png</wall>
+   <wall direction="13">tilesets/wine_cellars/wine_cellars_2_left4_2.png</wall>
+   <wall direction="14">tilesets/wine_cellars/wine_cellars_2_left4_1.png</wall>
+   <wall direction="15">tilesets/wine_cellars/wine_cellars_2_right4_1.png</wall>
+   <wall direction="16">tilesets/wine_cellars/wine_cellars_2_right4_2.png</wall>
+   <wall direction="17">tilesets/wine_cellars/wine_cellars_2_right4_3.png</wall>
+   <wall direction="18">tilesets/wine_cellars/wine_cellars_2_left5_3.png</wall>
+   <wall direction="19">tilesets/wine_cellars/wine_cellars_2_left5_2.png</wall>
+   <wall direction="20">tilesets/wine_cellars/wine_cellars_2_left5_1.png</wall>
+   <wall direction="21">tilesets/wine_cellars/wine_cellars_2_right5_1.png</wall>
+   <wall direction="22">tilesets/wine_cellars/wine_cellars_2_right5_2.png</wall>
+   <wall direction="23">tilesets/wine_cellars/wine_cellars_2_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>7</modulus>
-   <wall direction="0">crypts/crypts_2_front1.png</wall>
-   <wall direction="1">crypts/crypts_2_front2.png</wall>
-   <wall direction="2">crypts/crypts_2_front3.png</wall>
-   <wall direction="3">crypts/crypts_2_front4.png</wall>
-   <wall direction="4">crypts/crypts_2_left1.png</wall>
-   <wall direction="5">crypts/crypts_2_right1.png</wall>
-   <wall direction="6">crypts/crypts_2_left2.png</wall>
-   <wall direction="7">crypts/crypts_2_right2.png</wall>
-   <wall direction="8">crypts/crypts_2_left3_2.png</wall>
-   <wall direction="9">crypts/crypts_2_left3_1.png</wall>
-   <wall direction="10">crypts/crypts_2_right3_1.png</wall>
-   <wall direction="11">crypts/crypts_2_right3_2.png</wall>
-   <wall direction="12">crypts/crypts_2_left4_3.png</wall>
-   <wall direction="13">crypts/crypts_2_left4_2.png</wall>
-   <wall direction="14">crypts/crypts_2_left4_1.png</wall>
-   <wall direction="15">crypts/crypts_2_right4_1.png</wall>
-   <wall direction="16">crypts/crypts_2_right4_2.png</wall>
-   <wall direction="17">crypts/crypts_2_right4_3.png</wall>
-   <wall direction="18">crypts/crypts_2_left5_3.png</wall>
-   <wall direction="19">crypts/crypts_2_left5_2.png</wall>
-   <wall direction="20">crypts/crypts_2_left5_1.png</wall>
-   <wall direction="21">crypts/crypts_2_right5_1.png</wall>
-   <wall direction="22">crypts/crypts_2_right5_2.png</wall>
-   <wall direction="23">crypts/crypts_2_right5_3.png</wall>
+   <wall direction="0">tilesets/wine_cellars/wine_cellars_3_front1.png</wall>
+   <wall direction="1">tilesets/wine_cellars/wine_cellars_3_front2.png</wall>
+   <wall direction="2">tilesets/wine_cellars/wine_cellars_3_front3.png</wall>
+   <wall direction="3">tilesets/wine_cellars/wine_cellars_3_front4.png</wall>
+   <wall direction="4">tilesets/wine_cellars/wine_cellars_3_left1.png</wall>
+   <wall direction="5">tilesets/wine_cellars/wine_cellars_3_right1.png</wall>
+   <wall direction="6">tilesets/wine_cellars/wine_cellars_3_left2.png</wall>
+   <wall direction="7">tilesets/wine_cellars/wine_cellars_3_right2.png</wall>
+   <wall direction="8">tilesets/wine_cellars/wine_cellars_3_left3_2.png</wall>
+   <wall direction="9">tilesets/wine_cellars/wine_cellars_3_left3_1.png</wall>
+   <wall direction="10">tilesets/wine_cellars/wine_cellars_3_right3_1.png</wall>
+   <wall direction="11">tilesets/wine_cellars/wine_cellars_3_right3_2.png</wall>
+   <wall direction="12">tilesets/wine_cellars/wine_cellars_3_left4_3.png</wall>
+   <wall direction="13">tilesets/wine_cellars/wine_cellars_3_left4_2.png</wall>
+   <wall direction="14">tilesets/wine_cellars/wine_cellars_3_left4_1.png</wall>
+   <wall direction="15">tilesets/wine_cellars/wine_cellars_3_right4_1.png</wall>
+   <wall direction="16">tilesets/wine_cellars/wine_cellars_3_right4_2.png</wall>
+   <wall direction="17">tilesets/wine_cellars/wine_cellars_3_right4_3.png</wall>
+   <wall direction="18">tilesets/wine_cellars/wine_cellars_3_left5_3.png</wall>
+   <wall direction="19">tilesets/wine_cellars/wine_cellars_3_left5_2.png</wall>
+   <wall direction="20">tilesets/wine_cellars/wine_cellars_3_left5_1.png</wall>
+   <wall direction="21">tilesets/wine_cellars/wine_cellars_3_right5_1.png</wall>
+   <wall direction="22">tilesets/wine_cellars/wine_cellars_3_right5_2.png</wall>
+   <wall direction="23">tilesets/wine_cellars/wine_cellars_3_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>11</modulus>
+   <wall direction="0">tilesets/wine_cellars/wine_cellars_4_front1.png</wall>
+   <wall direction="1">tilesets/wine_cellars/wine_cellars_4_front2.png</wall>
+   <wall direction="2">tilesets/wine_cellars/wine_cellars_4_front3.png</wall>
+   <wall direction="3">tilesets/wine_cellars/wine_cellars_4_front4.png</wall>
+   <wall direction="4">tilesets/wine_cellars/wine_cellars_4_left1.png</wall>
+   <wall direction="5">tilesets/wine_cellars/wine_cellars_4_right1.png</wall>
+   <wall direction="6">tilesets/wine_cellars/wine_cellars_4_left2.png</wall>
+   <wall direction="7">tilesets/wine_cellars/wine_cellars_4_right2.png</wall>
+   <wall direction="8">tilesets/wine_cellars/wine_cellars_4_left3_2.png</wall>
+   <wall direction="9">tilesets/wine_cellars/wine_cellars_4_left3_1.png</wall>
+   <wall direction="10">tilesets/wine_cellars/wine_cellars_4_right3_1.png</wall>
+   <wall direction="11">tilesets/wine_cellars/wine_cellars_4_right3_2.png</wall>
+   <wall direction="12">tilesets/wine_cellars/wine_cellars_4_left4_3.png</wall>
+   <wall direction="13">tilesets/wine_cellars/wine_cellars_4_left4_2.png</wall>
+   <wall direction="14">tilesets/wine_cellars/wine_cellars_4_left4_1.png</wall>
+   <wall direction="15">tilesets/wine_cellars/wine_cellars_4_right4_1.png</wall>
+   <wall direction="16">tilesets/wine_cellars/wine_cellars_4_right4_2.png</wall>
+   <wall direction="17">tilesets/wine_cellars/wine_cellars_4_right4_3.png</wall>
+   <wall direction="18">tilesets/wine_cellars/wine_cellars_4_left5_3.png</wall>
+   <wall direction="19">tilesets/wine_cellars/wine_cellars_4_left5_2.png</wall>
+   <wall direction="20">tilesets/wine_cellars/wine_cellars_4_left5_1.png</wall>
+   <wall direction="21">tilesets/wine_cellars/wine_cellars_4_right5_1.png</wall>
+   <wall direction="22">tilesets/wine_cellars/wine_cellars_4_right5_2.png</wall>
+   <wall direction="23">tilesets/wine_cellars/wine_cellars_4_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
@@ -1475,61 +1356,65 @@
    <modulus>5</modulus>
    <modulus>6</modulus>
    <modulus>7</modulus>
-   <wall direction="0">crypts/crypts_0_d0_front1.png</wall>
-   <wall direction="1">crypts/crypts_0_d0_front2.png</wall>
-   <wall direction="2">crypts/crypts_0_d0_front3.png</wall>
-   <wall direction="3">crypts/crypts_0_d0_front4.png</wall>
-   <wall direction="4">crypts/crypts_0_d0_left1.png</wall>
-   <wall direction="5">crypts/crypts_0_d0_right1.png</wall>
-   <wall direction="6">crypts/crypts_0_d0_left2.png</wall>
-   <wall direction="7">crypts/crypts_0_d0_right2.png</wall>
-   <wall direction="8">crypts/crypts_0_d0_left3_2.png</wall>
-   <wall direction="9">crypts/crypts_0_d0_left3_1.png</wall>
-   <wall direction="10">crypts/crypts_0_d0_right3_1.png</wall>
-   <wall direction="11">crypts/crypts_0_d0_right3_2.png</wall>
-   <wall direction="12">crypts/crypts_0_d0_left4_3.png</wall>
-   <wall direction="13">crypts/crypts_0_d0_left4_2.png</wall>
-   <wall direction="14">crypts/crypts_0_d0_left4_1.png</wall>
-   <wall direction="15">crypts/crypts_0_d0_right4_1.png</wall>
-   <wall direction="16">crypts/crypts_0_d0_right4_2.png</wall>
-   <wall direction="17">crypts/crypts_0_d0_right4_3.png</wall>
-   <wall direction="18">crypts/crypts_0_d0_left5_3.png</wall>
-   <wall direction="19">crypts/crypts_0_d0_left5_2.png</wall>
-   <wall direction="20">crypts/crypts_0_d0_left5_1.png</wall>
-   <wall direction="21">crypts/crypts_0_d0_right5_1.png</wall>
-   <wall direction="22">crypts/crypts_0_d0_right5_2.png</wall>
-   <wall direction="23">crypts/crypts_0_d0_right5_3.png</wall>
+   <modulus>8</modulus>
+   <modulus>9</modulus>
+   <modulus>10</modulus>
+   <modulus>11</modulus>
+   <wall direction="0">tilesets/wine_cellars/wine_cellars_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/wine_cellars/wine_cellars_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/wine_cellars/wine_cellars_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/wine_cellars/wine_cellars_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/wine_cellars/wine_cellars_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/wine_cellars/wine_cellars_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/wine_cellars/wine_cellars_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/wine_cellars/wine_cellars_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/wine_cellars/wine_cellars_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/wine_cellars/wine_cellars_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/wine_cellars/wine_cellars_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/wine_cellars/wine_cellars_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/wine_cellars/wine_cellars_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/wine_cellars/wine_cellars_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/wine_cellars/wine_cellars_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/wine_cellars/wine_cellars_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/wine_cellars/wine_cellars_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/wine_cellars/wine_cellars_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/wine_cellars/wine_cellars_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/wine_cellars/wine_cellars_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/wine_cellars/wine_cellars_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/wine_cellars/wine_cellars_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/wine_cellars/wine_cellars_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/wine_cellars/wine_cellars_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
   <psuedo3d>
   <width>112</width>
   <height>88</height>
-  <background>catacombs/catacombs_horizon.png</background>
+  <background>tilesets/crypts/crypts_horizon.png</background>
   <divide>8</divide>
   <mapWidth>8</mapWidth>
   <mapHeight>8</mapHeight>
-  <mapSpecial>map_special.png</mapSpecial>
-  <mapUnknown>map_unknown.png</mapUnknown>
-  <mapArrow direction="0">map_arrow0.png</mapArrow>
-  <mapArrow direction="1">map_arrow1.png</mapArrow>
-  <mapArrow direction="2">map_arrow2.png</mapArrow>
-  <mapArrow direction="3">map_arrow3.png</mapArrow>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
   <maptype>
    <type>1</type>
    <name>Wall</name>
-   <mapWall direction="0">map0_1.png</mapWall>
-   <mapWall direction="1">map1_1.png</mapWall>
-   <mapWall direction="2">map2_1.png</mapWall>
-   <mapWall direction="3">map3_1.png</mapWall>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
   </maptype>
   <maptype>
    <type>2</type>
    <name>Door</name>
    <passable>true</passable>
-   <mapWall direction="0">map0_2.png</mapWall>
-   <mapWall direction="1">map1_2.png</mapWall>
-   <mapWall direction="2">map2_2.png</mapWall>
-   <mapWall direction="3">map3_2.png</mapWall>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
   </maptype>
   <maptype>
    <type>3</type>
@@ -1537,10 +1422,10 @@
    <incompleteType>1</incompleteType>
    <viewType>2</viewType>
    <passable>true</passable>
-   <mapWall direction="0">map0_3.png</mapWall>
-   <mapWall direction="1">map1_3.png</mapWall>
-   <mapWall direction="2">map2_3.png</mapWall>
-   <mapWall direction="3">map3_3.png</mapWall>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
   </maptype>
   <maptype>
    <type>4</type>
@@ -1548,10 +1433,10 @@
    <incompleteType>1</incompleteType>
    <viewType>1</viewType>
    <invincible>true</invincible>
-   <mapWall direction="0">map0_4.png</mapWall>
-   <mapWall direction="1">map1_4.png</mapWall>
-   <mapWall direction="2">map2_4.png</mapWall>
-   <mapWall direction="3">map3_4.png</mapWall>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
   </maptype>
   <walltype>
    <type>1</type>
@@ -1561,86 +1446,86 @@
    <modulus>4</modulus>
    <modulus>5</modulus>
    <modulus>6</modulus>
-   <wall direction="0">catacombs/catacombs_0_front1.png</wall>
-   <wall direction="1">catacombs/catacombs_0_front2.png</wall>
-   <wall direction="2">catacombs/catacombs_0_front3.png</wall>
-   <wall direction="3">catacombs/catacombs_0_front4.png</wall>
-   <wall direction="4">catacombs/catacombs_0_left1.png</wall>
-   <wall direction="5">catacombs/catacombs_0_right1.png</wall>
-   <wall direction="6">catacombs/catacombs_0_left2.png</wall>
-   <wall direction="7">catacombs/catacombs_0_right2.png</wall>
-   <wall direction="8">catacombs/catacombs_0_left3_2.png</wall>
-   <wall direction="9">catacombs/catacombs_0_left3_1.png</wall>
-   <wall direction="10">catacombs/catacombs_0_right3_1.png</wall>
-   <wall direction="11">catacombs/catacombs_0_right3_2.png</wall>
-   <wall direction="12">catacombs/catacombs_0_left4_3.png</wall>
-   <wall direction="13">catacombs/catacombs_0_left4_2.png</wall>
-   <wall direction="14">catacombs/catacombs_0_left4_1.png</wall>
-   <wall direction="15">catacombs/catacombs_0_right4_1.png</wall>
-   <wall direction="16">catacombs/catacombs_0_right4_2.png</wall>
-   <wall direction="17">catacombs/catacombs_0_right4_3.png</wall>
-   <wall direction="18">catacombs/catacombs_0_left5_3.png</wall>
-   <wall direction="19">catacombs/catacombs_0_left5_2.png</wall>
-   <wall direction="20">catacombs/catacombs_0_left5_1.png</wall>
-   <wall direction="21">catacombs/catacombs_0_right5_1.png</wall>
-   <wall direction="22">catacombs/catacombs_0_right5_2.png</wall>
-   <wall direction="23">catacombs/catacombs_0_right5_3.png</wall>
+   <wall direction="0">tilesets/crypts/crypts_0_front1.png</wall>
+   <wall direction="1">tilesets/crypts/crypts_0_front2.png</wall>
+   <wall direction="2">tilesets/crypts/crypts_0_front3.png</wall>
+   <wall direction="3">tilesets/crypts/crypts_0_front4.png</wall>
+   <wall direction="4">tilesets/crypts/crypts_0_left1.png</wall>
+   <wall direction="5">tilesets/crypts/crypts_0_right1.png</wall>
+   <wall direction="6">tilesets/crypts/crypts_0_left2.png</wall>
+   <wall direction="7">tilesets/crypts/crypts_0_right2.png</wall>
+   <wall direction="8">tilesets/crypts/crypts_0_left3_2.png</wall>
+   <wall direction="9">tilesets/crypts/crypts_0_left3_1.png</wall>
+   <wall direction="10">tilesets/crypts/crypts_0_right3_1.png</wall>
+   <wall direction="11">tilesets/crypts/crypts_0_right3_2.png</wall>
+   <wall direction="12">tilesets/crypts/crypts_0_left4_3.png</wall>
+   <wall direction="13">tilesets/crypts/crypts_0_left4_2.png</wall>
+   <wall direction="14">tilesets/crypts/crypts_0_left4_1.png</wall>
+   <wall direction="15">tilesets/crypts/crypts_0_right4_1.png</wall>
+   <wall direction="16">tilesets/crypts/crypts_0_right4_2.png</wall>
+   <wall direction="17">tilesets/crypts/crypts_0_right4_3.png</wall>
+   <wall direction="18">tilesets/crypts/crypts_0_left5_3.png</wall>
+   <wall direction="19">tilesets/crypts/crypts_0_left5_2.png</wall>
+   <wall direction="20">tilesets/crypts/crypts_0_left5_1.png</wall>
+   <wall direction="21">tilesets/crypts/crypts_0_right5_1.png</wall>
+   <wall direction="22">tilesets/crypts/crypts_0_right5_2.png</wall>
+   <wall direction="23">tilesets/crypts/crypts_0_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>3</modulus>
-   <wall direction="0">catacombs/catacombs_1_front1.png</wall>
-   <wall direction="1">catacombs/catacombs_1_front2.png</wall>
-   <wall direction="2">catacombs/catacombs_1_front3.png</wall>
-   <wall direction="3">catacombs/catacombs_1_front4.png</wall>
-   <wall direction="4">catacombs/catacombs_1_left1.png</wall>
-   <wall direction="5">catacombs/catacombs_1_right1.png</wall>
-   <wall direction="6">catacombs/catacombs_1_left2.png</wall>
-   <wall direction="7">catacombs/catacombs_1_right2.png</wall>
-   <wall direction="8">catacombs/catacombs_1_left3_2.png</wall>
-   <wall direction="9">catacombs/catacombs_1_left3_1.png</wall>
-   <wall direction="10">catacombs/catacombs_1_right3_1.png</wall>
-   <wall direction="11">catacombs/catacombs_1_right3_2.png</wall>
-   <wall direction="12">catacombs/catacombs_1_left4_3.png</wall>
-   <wall direction="13">catacombs/catacombs_1_left4_2.png</wall>
-   <wall direction="14">catacombs/catacombs_1_left4_1.png</wall>
-   <wall direction="15">catacombs/catacombs_1_right4_1.png</wall>
-   <wall direction="16">catacombs/catacombs_1_right4_2.png</wall>
-   <wall direction="17">catacombs/catacombs_1_right4_3.png</wall>
-   <wall direction="18">catacombs/catacombs_1_left5_3.png</wall>
-   <wall direction="19">catacombs/catacombs_1_left5_2.png</wall>
-   <wall direction="20">catacombs/catacombs_1_left5_1.png</wall>
-   <wall direction="21">catacombs/catacombs_1_right5_1.png</wall>
-   <wall direction="22">catacombs/catacombs_1_right5_2.png</wall>
-   <wall direction="23">catacombs/catacombs_1_right5_3.png</wall>
+   <wall direction="0">tilesets/crypts/crypts_1_front1.png</wall>
+   <wall direction="1">tilesets/crypts/crypts_1_front2.png</wall>
+   <wall direction="2">tilesets/crypts/crypts_1_front3.png</wall>
+   <wall direction="3">tilesets/crypts/crypts_1_front4.png</wall>
+   <wall direction="4">tilesets/crypts/crypts_1_left1.png</wall>
+   <wall direction="5">tilesets/crypts/crypts_1_right1.png</wall>
+   <wall direction="6">tilesets/crypts/crypts_1_left2.png</wall>
+   <wall direction="7">tilesets/crypts/crypts_1_right2.png</wall>
+   <wall direction="8">tilesets/crypts/crypts_1_left3_2.png</wall>
+   <wall direction="9">tilesets/crypts/crypts_1_left3_1.png</wall>
+   <wall direction="10">tilesets/crypts/crypts_1_right3_1.png</wall>
+   <wall direction="11">tilesets/crypts/crypts_1_right3_2.png</wall>
+   <wall direction="12">tilesets/crypts/crypts_1_left4_3.png</wall>
+   <wall direction="13">tilesets/crypts/crypts_1_left4_2.png</wall>
+   <wall direction="14">tilesets/crypts/crypts_1_left4_1.png</wall>
+   <wall direction="15">tilesets/crypts/crypts_1_right4_1.png</wall>
+   <wall direction="16">tilesets/crypts/crypts_1_right4_2.png</wall>
+   <wall direction="17">tilesets/crypts/crypts_1_right4_3.png</wall>
+   <wall direction="18">tilesets/crypts/crypts_1_left5_3.png</wall>
+   <wall direction="19">tilesets/crypts/crypts_1_left5_2.png</wall>
+   <wall direction="20">tilesets/crypts/crypts_1_left5_1.png</wall>
+   <wall direction="21">tilesets/crypts/crypts_1_right5_1.png</wall>
+   <wall direction="22">tilesets/crypts/crypts_1_right5_2.png</wall>
+   <wall direction="23">tilesets/crypts/crypts_1_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>1</type>
    <modulus>7</modulus>
-   <wall direction="0">catacombs/catacombs_2_front1.png</wall>
-   <wall direction="1">catacombs/catacombs_2_front2.png</wall>
-   <wall direction="2">catacombs/catacombs_2_front3.png</wall>
-   <wall direction="3">catacombs/catacombs_2_front4.png</wall>
-   <wall direction="4">catacombs/catacombs_2_left1.png</wall>
-   <wall direction="5">catacombs/catacombs_2_right1.png</wall>
-   <wall direction="6">catacombs/catacombs_2_left2.png</wall>
-   <wall direction="7">catacombs/catacombs_2_right2.png</wall>
-   <wall direction="8">catacombs/catacombs_2_left3_2.png</wall>
-   <wall direction="9">catacombs/catacombs_2_left3_1.png</wall>
-   <wall direction="10">catacombs/catacombs_2_right3_1.png</wall>
-   <wall direction="11">catacombs/catacombs_2_right3_2.png</wall>
-   <wall direction="12">catacombs/catacombs_2_left4_3.png</wall>
-   <wall direction="13">catacombs/catacombs_2_left4_2.png</wall>
-   <wall direction="14">catacombs/catacombs_2_left4_1.png</wall>
-   <wall direction="15">catacombs/catacombs_2_right4_1.png</wall>
-   <wall direction="16">catacombs/catacombs_2_right4_2.png</wall>
-   <wall direction="17">catacombs/catacombs_2_right4_3.png</wall>
-   <wall direction="18">catacombs/catacombs_2_left5_3.png</wall>
-   <wall direction="19">catacombs/catacombs_2_left5_2.png</wall>
-   <wall direction="20">catacombs/catacombs_2_left5_1.png</wall>
-   <wall direction="21">catacombs/catacombs_2_right5_1.png</wall>
-   <wall direction="22">catacombs/catacombs_2_right5_2.png</wall>
-   <wall direction="23">catacombs/catacombs_2_right5_3.png</wall>
+   <wall direction="0">tilesets/crypts/crypts_2_front1.png</wall>
+   <wall direction="1">tilesets/crypts/crypts_2_front2.png</wall>
+   <wall direction="2">tilesets/crypts/crypts_2_front3.png</wall>
+   <wall direction="3">tilesets/crypts/crypts_2_front4.png</wall>
+   <wall direction="4">tilesets/crypts/crypts_2_left1.png</wall>
+   <wall direction="5">tilesets/crypts/crypts_2_right1.png</wall>
+   <wall direction="6">tilesets/crypts/crypts_2_left2.png</wall>
+   <wall direction="7">tilesets/crypts/crypts_2_right2.png</wall>
+   <wall direction="8">tilesets/crypts/crypts_2_left3_2.png</wall>
+   <wall direction="9">tilesets/crypts/crypts_2_left3_1.png</wall>
+   <wall direction="10">tilesets/crypts/crypts_2_right3_1.png</wall>
+   <wall direction="11">tilesets/crypts/crypts_2_right3_2.png</wall>
+   <wall direction="12">tilesets/crypts/crypts_2_left4_3.png</wall>
+   <wall direction="13">tilesets/crypts/crypts_2_left4_2.png</wall>
+   <wall direction="14">tilesets/crypts/crypts_2_left4_1.png</wall>
+   <wall direction="15">tilesets/crypts/crypts_2_right4_1.png</wall>
+   <wall direction="16">tilesets/crypts/crypts_2_right4_2.png</wall>
+   <wall direction="17">tilesets/crypts/crypts_2_right4_3.png</wall>
+   <wall direction="18">tilesets/crypts/crypts_2_left5_3.png</wall>
+   <wall direction="19">tilesets/crypts/crypts_2_left5_2.png</wall>
+   <wall direction="20">tilesets/crypts/crypts_2_left5_1.png</wall>
+   <wall direction="21">tilesets/crypts/crypts_2_right5_1.png</wall>
+   <wall direction="22">tilesets/crypts/crypts_2_right5_2.png</wall>
+   <wall direction="23">tilesets/crypts/crypts_2_right5_3.png</wall>
   </walltype>
   <walltype>
    <type>2</type>
@@ -1652,30 +1537,209 @@
    <modulus>5</modulus>
    <modulus>6</modulus>
    <modulus>7</modulus>
-   <wall direction="0">catacombs/catacombs_0_d0_front1.png</wall>
-   <wall direction="1">catacombs/catacombs_0_d0_front2.png</wall>
-   <wall direction="2">catacombs/catacombs_0_d0_front3.png</wall>
-   <wall direction="3">catacombs/catacombs_0_d0_front4.png</wall>
-   <wall direction="4">catacombs/catacombs_0_d0_left1.png</wall>
-   <wall direction="5">catacombs/catacombs_0_d0_right1.png</wall>
-   <wall direction="6">catacombs/catacombs_0_d0_left2.png</wall>
-   <wall direction="7">catacombs/catacombs_0_d0_right2.png</wall>
-   <wall direction="8">catacombs/catacombs_0_d0_left3_2.png</wall>
-   <wall direction="9">catacombs/catacombs_0_d0_left3_1.png</wall>
-   <wall direction="10">catacombs/catacombs_0_d0_right3_1.png</wall>
-   <wall direction="11">catacombs/catacombs_0_d0_right3_2.png</wall>
-   <wall direction="12">catacombs/catacombs_0_d0_left4_3.png</wall>
-   <wall direction="13">catacombs/catacombs_0_d0_left4_2.png</wall>
-   <wall direction="14">catacombs/catacombs_0_d0_left4_1.png</wall>
-   <wall direction="15">catacombs/catacombs_0_d0_right4_1.png</wall>
-   <wall direction="16">catacombs/catacombs_0_d0_right4_2.png</wall>
-   <wall direction="17">catacombs/catacombs_0_d0_right4_3.png</wall>
-   <wall direction="18">catacombs/catacombs_0_d0_left5_3.png</wall>
-   <wall direction="19">catacombs/catacombs_0_d0_left5_2.png</wall>
-   <wall direction="20">catacombs/catacombs_0_d0_left5_1.png</wall>
-   <wall direction="21">catacombs/catacombs_0_d0_right5_1.png</wall>
-   <wall direction="22">catacombs/catacombs_0_d0_right5_2.png</wall>
-   <wall direction="23">catacombs/catacombs_0_d0_right5_3.png</wall>
+   <wall direction="0">tilesets/crypts/crypts_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/crypts/crypts_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/crypts/crypts_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/crypts/crypts_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/crypts/crypts_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/crypts/crypts_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/crypts/crypts_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/crypts/crypts_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/crypts/crypts_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/crypts/crypts_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/crypts/crypts_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/crypts/crypts_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/crypts/crypts_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/crypts/crypts_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/crypts/crypts_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/crypts/crypts_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/crypts/crypts_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/crypts/crypts_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/crypts/crypts_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/crypts/crypts_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/crypts/crypts_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/crypts/crypts_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/crypts/crypts_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/crypts/crypts_0_d0_right5_3.png</wall>
+  </walltype>
+ </psuedo3d>
+  <psuedo3d>
+  <width>112</width>
+  <height>88</height>
+  <background>tilesets/catacombs/catacombs_horizon.png</background>
+  <divide>8</divide>
+  <mapWidth>8</mapWidth>
+  <mapHeight>8</mapHeight>
+  <mapWidth>8</mapWidth>
+  <mapHeight>8</mapHeight>
+  <mapSpecial>ui/map/map_special.png</mapSpecial>
+  <mapUnknown>ui/map/map_unknown.png</mapUnknown>
+  <mapArrow direction="0">ui/map/map_arrow0.png</mapArrow>
+  <mapArrow direction="1">ui/map/map_arrow1.png</mapArrow>
+  <mapArrow direction="2">ui/map/map_arrow2.png</mapArrow>
+  <mapArrow direction="3">ui/map/map_arrow3.png</mapArrow>
+  <maptype>
+   <type>1</type>
+   <name>Wall</name>
+   <mapWall direction="0">ui/map/map0_1.png</mapWall>
+   <mapWall direction="1">ui/map/map1_1.png</mapWall>
+   <mapWall direction="2">ui/map/map2_1.png</mapWall>
+   <mapWall direction="3">ui/map/map3_1.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>2</type>
+   <name>Door</name>
+   <passable>true</passable>
+   <mapWall direction="0">ui/map/map0_2.png</mapWall>
+   <mapWall direction="1">ui/map/map1_2.png</mapWall>
+   <mapWall direction="2">ui/map/map2_2.png</mapWall>
+   <mapWall direction="3">ui/map/map3_2.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>3</type>
+   <name>Secret Door</name>
+   <incompleteType>1</incompleteType>
+   <viewType>2</viewType>
+   <passable>true</passable>
+   <mapWall direction="0">ui/map/map0_3.png</mapWall>
+   <mapWall direction="1">ui/map/map1_3.png</mapWall>
+   <mapWall direction="2">ui/map/map2_3.png</mapWall>
+   <mapWall direction="3">ui/map/map3_3.png</mapWall>
+  </maptype>
+  <maptype>
+   <type>4</type>
+   <name>Impassable</name>
+   <incompleteType>1</incompleteType>
+   <viewType>1</viewType>
+   <invincible>true</invincible>
+   <mapWall direction="0">ui/map/map0_4.png</mapWall>
+   <mapWall direction="1">ui/map/map1_4.png</mapWall>
+   <mapWall direction="2">ui/map/map2_4.png</mapWall>
+   <mapWall direction="3">ui/map/map3_4.png</mapWall>
+  </maptype>
+  <walltype>
+   <type>1</type>
+   <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
+   <wall direction="0">tilesets/catacombs/catacombs_0_front1.png</wall>
+   <wall direction="1">tilesets/catacombs/catacombs_0_front2.png</wall>
+   <wall direction="2">tilesets/catacombs/catacombs_0_front3.png</wall>
+   <wall direction="3">tilesets/catacombs/catacombs_0_front4.png</wall>
+   <wall direction="4">tilesets/catacombs/catacombs_0_left1.png</wall>
+   <wall direction="5">tilesets/catacombs/catacombs_0_right1.png</wall>
+   <wall direction="6">tilesets/catacombs/catacombs_0_left2.png</wall>
+   <wall direction="7">tilesets/catacombs/catacombs_0_right2.png</wall>
+   <wall direction="8">tilesets/catacombs/catacombs_0_left3_2.png</wall>
+   <wall direction="9">tilesets/catacombs/catacombs_0_left3_1.png</wall>
+   <wall direction="10">tilesets/catacombs/catacombs_0_right3_1.png</wall>
+   <wall direction="11">tilesets/catacombs/catacombs_0_right3_2.png</wall>
+   <wall direction="12">tilesets/catacombs/catacombs_0_left4_3.png</wall>
+   <wall direction="13">tilesets/catacombs/catacombs_0_left4_2.png</wall>
+   <wall direction="14">tilesets/catacombs/catacombs_0_left4_1.png</wall>
+   <wall direction="15">tilesets/catacombs/catacombs_0_right4_1.png</wall>
+   <wall direction="16">tilesets/catacombs/catacombs_0_right4_2.png</wall>
+   <wall direction="17">tilesets/catacombs/catacombs_0_right4_3.png</wall>
+   <wall direction="18">tilesets/catacombs/catacombs_0_left5_3.png</wall>
+   <wall direction="19">tilesets/catacombs/catacombs_0_left5_2.png</wall>
+   <wall direction="20">tilesets/catacombs/catacombs_0_left5_1.png</wall>
+   <wall direction="21">tilesets/catacombs/catacombs_0_right5_1.png</wall>
+   <wall direction="22">tilesets/catacombs/catacombs_0_right5_2.png</wall>
+   <wall direction="23">tilesets/catacombs/catacombs_0_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>3</modulus>
+   <wall direction="0">tilesets/catacombs/catacombs_1_front1.png</wall>
+   <wall direction="1">tilesets/catacombs/catacombs_1_front2.png</wall>
+   <wall direction="2">tilesets/catacombs/catacombs_1_front3.png</wall>
+   <wall direction="3">tilesets/catacombs/catacombs_1_front4.png</wall>
+   <wall direction="4">tilesets/catacombs/catacombs_1_left1.png</wall>
+   <wall direction="5">tilesets/catacombs/catacombs_1_right1.png</wall>
+   <wall direction="6">tilesets/catacombs/catacombs_1_left2.png</wall>
+   <wall direction="7">tilesets/catacombs/catacombs_1_right2.png</wall>
+   <wall direction="8">tilesets/catacombs/catacombs_1_left3_2.png</wall>
+   <wall direction="9">tilesets/catacombs/catacombs_1_left3_1.png</wall>
+   <wall direction="10">tilesets/catacombs/catacombs_1_right3_1.png</wall>
+   <wall direction="11">tilesets/catacombs/catacombs_1_right3_2.png</wall>
+   <wall direction="12">tilesets/catacombs/catacombs_1_left4_3.png</wall>
+   <wall direction="13">tilesets/catacombs/catacombs_1_left4_2.png</wall>
+   <wall direction="14">tilesets/catacombs/catacombs_1_left4_1.png</wall>
+   <wall direction="15">tilesets/catacombs/catacombs_1_right4_1.png</wall>
+   <wall direction="16">tilesets/catacombs/catacombs_1_right4_2.png</wall>
+   <wall direction="17">tilesets/catacombs/catacombs_1_right4_3.png</wall>
+   <wall direction="18">tilesets/catacombs/catacombs_1_left5_3.png</wall>
+   <wall direction="19">tilesets/catacombs/catacombs_1_left5_2.png</wall>
+   <wall direction="20">tilesets/catacombs/catacombs_1_left5_1.png</wall>
+   <wall direction="21">tilesets/catacombs/catacombs_1_right5_1.png</wall>
+   <wall direction="22">tilesets/catacombs/catacombs_1_right5_2.png</wall>
+   <wall direction="23">tilesets/catacombs/catacombs_1_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>1</type>
+   <modulus>7</modulus>
+   <wall direction="0">tilesets/catacombs/catacombs_2_front1.png</wall>
+   <wall direction="1">tilesets/catacombs/catacombs_2_front2.png</wall>
+   <wall direction="2">tilesets/catacombs/catacombs_2_front3.png</wall>
+   <wall direction="3">tilesets/catacombs/catacombs_2_front4.png</wall>
+   <wall direction="4">tilesets/catacombs/catacombs_2_left1.png</wall>
+   <wall direction="5">tilesets/catacombs/catacombs_2_right1.png</wall>
+   <wall direction="6">tilesets/catacombs/catacombs_2_left2.png</wall>
+   <wall direction="7">tilesets/catacombs/catacombs_2_right2.png</wall>
+   <wall direction="8">tilesets/catacombs/catacombs_2_left3_2.png</wall>
+   <wall direction="9">tilesets/catacombs/catacombs_2_left3_1.png</wall>
+   <wall direction="10">tilesets/catacombs/catacombs_2_right3_1.png</wall>
+   <wall direction="11">tilesets/catacombs/catacombs_2_right3_2.png</wall>
+   <wall direction="12">tilesets/catacombs/catacombs_2_left4_3.png</wall>
+   <wall direction="13">tilesets/catacombs/catacombs_2_left4_2.png</wall>
+   <wall direction="14">tilesets/catacombs/catacombs_2_left4_1.png</wall>
+   <wall direction="15">tilesets/catacombs/catacombs_2_right4_1.png</wall>
+   <wall direction="16">tilesets/catacombs/catacombs_2_right4_2.png</wall>
+   <wall direction="17">tilesets/catacombs/catacombs_2_right4_3.png</wall>
+   <wall direction="18">tilesets/catacombs/catacombs_2_left5_3.png</wall>
+   <wall direction="19">tilesets/catacombs/catacombs_2_left5_2.png</wall>
+   <wall direction="20">tilesets/catacombs/catacombs_2_left5_1.png</wall>
+   <wall direction="21">tilesets/catacombs/catacombs_2_right5_1.png</wall>
+   <wall direction="22">tilesets/catacombs/catacombs_2_right5_2.png</wall>
+   <wall direction="23">tilesets/catacombs/catacombs_2_right5_3.png</wall>
+  </walltype>
+  <walltype>
+   <type>2</type>
+   <modulus>0</modulus>
+   <modulus>1</modulus>
+   <modulus>2</modulus>
+   <modulus>3</modulus>
+   <modulus>4</modulus>
+   <modulus>5</modulus>
+   <modulus>6</modulus>
+   <modulus>7</modulus>
+   <wall direction="0">tilesets/catacombs/catacombs_0_d0_front1.png</wall>
+   <wall direction="1">tilesets/catacombs/catacombs_0_d0_front2.png</wall>
+   <wall direction="2">tilesets/catacombs/catacombs_0_d0_front3.png</wall>
+   <wall direction="3">tilesets/catacombs/catacombs_0_d0_front4.png</wall>
+   <wall direction="4">tilesets/catacombs/catacombs_0_d0_left1.png</wall>
+   <wall direction="5">tilesets/catacombs/catacombs_0_d0_right1.png</wall>
+   <wall direction="6">tilesets/catacombs/catacombs_0_d0_left2.png</wall>
+   <wall direction="7">tilesets/catacombs/catacombs_0_d0_right2.png</wall>
+   <wall direction="8">tilesets/catacombs/catacombs_0_d0_left3_2.png</wall>
+   <wall direction="9">tilesets/catacombs/catacombs_0_d0_left3_1.png</wall>
+   <wall direction="10">tilesets/catacombs/catacombs_0_d0_right3_1.png</wall>
+   <wall direction="11">tilesets/catacombs/catacombs_0_d0_right3_2.png</wall>
+   <wall direction="12">tilesets/catacombs/catacombs_0_d0_left4_3.png</wall>
+   <wall direction="13">tilesets/catacombs/catacombs_0_d0_left4_2.png</wall>
+   <wall direction="14">tilesets/catacombs/catacombs_0_d0_left4_1.png</wall>
+   <wall direction="15">tilesets/catacombs/catacombs_0_d0_right4_1.png</wall>
+   <wall direction="16">tilesets/catacombs/catacombs_0_d0_right4_2.png</wall>
+   <wall direction="17">tilesets/catacombs/catacombs_0_d0_right4_3.png</wall>
+   <wall direction="18">tilesets/catacombs/catacombs_0_d0_left5_3.png</wall>
+   <wall direction="19">tilesets/catacombs/catacombs_0_d0_left5_2.png</wall>
+   <wall direction="20">tilesets/catacombs/catacombs_0_d0_left5_1.png</wall>
+   <wall direction="21">tilesets/catacombs/catacombs_0_d0_right5_1.png</wall>
+   <wall direction="22">tilesets/catacombs/catacombs_0_d0_right5_2.png</wall>
+   <wall direction="23">tilesets/catacombs/catacombs_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
 </configs>

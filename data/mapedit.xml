@@ -2,7 +2,7 @@
 	<width>320</width>
 	<height>200</height>
 	<expanded><xMult>2</xMult><yMult>2</yMult><directory>640x400</directory></expanded>
-	<background>mapedit.png</background>
+	<background>ui/mapedit.png</background>
 	<x3d>4</x3d>
 	<y3d>4</y3d>
 	<text><x>4</x><y>107</y><w>100</w><h>90</h></text>
