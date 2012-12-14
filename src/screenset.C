@@ -2063,9 +2063,6 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  XMLVector<BTSong*> &songList = game->getSongList();
  XMLVector<BTSkill*> &skill = game->getSkillList();
  BTFactory<BTItem> &itemList = game->getItemList();
- game->clearEffectsBySource(d, true);
- game->checkExpiration(d, NULL);
- d.drawIcons();
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skill.size(); ++i)
  {
@@ -2086,6 +2083,9 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
     throw BTSpecialError("silence");
    d.clearText();
    b.pc->giveSkillUse(i, -1);
+   game->clearEffectsBySource(d, true);
+   game->checkExpiration(d, NULL);
+   d.drawIcons();
    songList[select->select]->play(d, b.pc, NULL);
    d.drawIcons();
    d.drawStats();

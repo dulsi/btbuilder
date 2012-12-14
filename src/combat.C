@@ -947,6 +947,8 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
       }
       else
       {
+       clearEffectsBySource(d, true);
+       checkExpiration(d, NULL);
        pc.giveSkillUse(i, -1);
        songList[pc.combat.object]->play(d, &pc, this);
       }
