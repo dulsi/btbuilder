@@ -27,6 +27,10 @@ void BTStatus::run(BTDisplay &d, BTPc *pc)
  catch (const BTSpecialFlipGoForward &e)
  {
  }
+ catch (const BTSpecialDead &e)
+ {
+  throw BTSpecialStop();
+ }
  setPc(NULL);
  d.clearText();
 }
