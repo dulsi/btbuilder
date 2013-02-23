@@ -10,10 +10,14 @@
 #include "display.h"
 #include "module.h"
 
+class physfsException : public std::exception
+{
+};
+
 class BTMainScreen
 {
  public:
-  BTMainScreen(const char *a0);
+  BTMainScreen(const char *a0, std::string lDir);
   ~BTMainScreen();
 
   void run();
@@ -23,11 +27,12 @@ class BTMainScreen
   void loadModule(std::string moduleFile, BTModule &module);
 
  protected:
-  int Alternative_setSaneConfig(std::string appName);
+  void init(std::string moduleName = std::string(), std::string contentFile = std::string());
   void loadMainConfig();
 
  private:
   const char *argv0;
+  std::string libDir;
   BTDisplayConfig *mainConfig;
   BTDisplay *display;
 };

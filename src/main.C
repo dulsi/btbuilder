@@ -14,6 +14,9 @@
 #include <iostream>
 #include <physfs.h>
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 char *monFile = NULL;
 char *itmFile = NULL;
 char *splFile = NULL;
@@ -98,7 +101,8 @@ int main(int argc, char *argv[])
  int mode = MODE_STANDARD;
  char *mapFile = NULL;
  char *xmlFile = NULL;
- while ((opt = getopt_long(argc,argv,"imsap:x:e:", long_options, NULL)) != EOF)
+ std::string libDir(TOSTRING(BTBUILDERDIR));
+ while ((opt = getopt_long(argc,argv,"imsap:x:e:l:", long_options, NULL)) != EOF)
  {
   switch (opt)
   {
@@ -125,6 +129,12 @@ int main(int argc, char *argv[])
      mapFile = strdup(optarg);
     }
     break;
+   case 'l':
+    if (optarg)
+    {
+     libDir = optarg;
+    }
+    break;
    case 'a':
     utf8 = false;
     break;
@@ -139,7 +149,7 @@ int main(int argc, char *argv[])
   }
  }
 
- BTMainScreen mainScreen(argv[0]);
+ BTMainScreen mainScreen(argv[0], libDir);
  if (optind >= argc)
  {
   if (mode != MODE_STANDARD)

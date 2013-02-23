@@ -20,8 +20,8 @@
 
 namespace fs = boost::filesystem;
 
-BTMainScreen::BTMainScreen(const char *a0)
- : argv0(a0), mainConfig(0), display(0)
+BTMainScreen::BTMainScreen(const char *a0, std::string lDir)
+ : argv0(a0), libDir(lDir), mainConfig(0), display(0)
 {
 }
 
@@ -36,23 +36,28 @@ BTMainScreen::~BTMainScreen()
 void BTMainScreen::run()
 {
  loadMainConfig();
- display = new BTDisplay(mainConfig, false);
+ display = new BTDisplay(mainConfig, true);
  std::vector<std::string> fileModule;
  XMLVector<BTModule*> module;
  fs::directory_iterator end_iter;
  XMLSerializer parser;
- for (fs::directory_iterator dir_itr("module"); dir_itr != end_iter; ++dir_itr )
+ std::string moduleDir("module/");
+ char **files = PHYSFS_enumerateFiles(moduleDir.c_str());
+ for (char **i = files; *i != NULL; i++)
  {
-  if ((fs::is_regular_file(dir_itr->status())) && (dir_itr->path().extension().string() == ".xml"))
+  int len = strlen(*i);
+  if ((!PHYSFS_isDirectory(*i)) && (len > 4) && (strcmp(".xml", (*i) + (len - 4)) == 0))
   {
-   fileModule.push_back(dir_itr->path().string());
+   std::string fullName = moduleDir + *i;
+   fileModule.push_back(fullName);
    BTModule *current = new BTModule;
    module.push_back(current);
    parser.removeLevel();
    current->serialize(&parser);
-   parser.parse(dir_itr->path().string().c_str(), false);
+   parser.parse(fullName.c_str(), true);
   }
  }
+ PHYSFS_freeList(files);
  BTDisplay::selectItem *list = new BTDisplay::selectItem[module.size()];
  for (int i = 0; i < module.size(); ++i)
  {
@@ -62,6 +67,7 @@ void BTMainScreen::run()
  int select(0);
  display->addSelection(list, module.size(), start, select);
  unsigned int key = display->process("eq");
+ PHYSFS_deinit();
  if (key == 13)
  {
   runModule(fileModule[select]);
@@ -133,64 +139,76 @@ void BTMainScreen::editModule(std::string moduleFile, std::string mapFile /*= st
 
 void BTMainScreen::loadModule(std::string moduleFile, BTModule &module)
 {
- PHYSFS_init(argv0);
+ init();
  XMLSerializer parser;
  module.serialize(&parser);
- parser.parse(moduleFile.c_str(), false);
- std::string appName("btbuilder");
- appName += PHYSFS_getDirSeparator();
- appName += fs::path(moduleFile).stem().string();
- if (0 == PHYSFS_setSaneConfig("identical", appName.c_str(), NULL, 0, 0))
- {
-  // HACK: Something is wrong with PHYSFS_setSaneConfig on windows.
-  if (0 == Alternative_setSaneConfig("btbsave"))
-   return;
- }
- PHYSFS_removeFromSearchPath(PHYSFS_getBaseDir());
- std::string contentPath("module");
- contentPath += PHYSFS_getDirSeparator();
- contentPath += "content";
- contentPath += PHYSFS_getDirSeparator();
- contentPath += module.content;
- PHYSFS_addToSearchPath(contentPath.c_str(), 1);
- PHYSFS_addToSearchPath(PHYSFS_getBaseDir(), 1);
+ parser.parse(moduleFile.c_str(), true);
+ std::string moduleName(fs::path(moduleFile).stem().string());
+ PHYSFS_deinit();
+ init(moduleName, module.content);
 }
 
-int BTMainScreen::Alternative_setSaneConfig(std::string appName)
+void BTMainScreen::init(std::string moduleName, std::string contentFile)
 {
+ PHYSFS_init(argv0);
  const char *basedir = PHYSFS_getBaseDir();
  std::string userdir = PHYSFS_getUserDir();
+
+#ifdef _WIN32
+ std::string appName("identical");
+#else
+ std::string appName(".identical");
+#endif
+ std::string appNameUnix(appName + "/");
+ appName += PHYSFS_getDirSeparator();
+ appName += "btbuilder";
+ appNameUnix += "btbuilder";
+ if (!moduleName.empty())
+ {
+  appName += PHYSFS_getDirSeparator();
+  appName += moduleName;
+  appNameUnix += "/";
+  appNameUnix += moduleName;
+ }
  std::string writedir = userdir + appName;
 
  if (!PHYSFS_setWriteDir(writedir.c_str()))
  {
-  int no_write = 0;
-  if ( (PHYSFS_setWriteDir(userdir.c_str())) && (PHYSFS_mkdir(appName.c_str())) )
+  if ( (PHYSFS_setWriteDir(userdir.c_str())) && (PHYSFS_mkdir(appNameUnix.c_str())) )
   {
    if (!PHYSFS_setWriteDir(writedir.c_str()))
-    no_write = 1;
-  } /* if */
+    throw physfsException();
+  }
   else
   {
-   no_write = 1;
-  } /* else */
-
-  if (no_write)
-  {
-   PHYSFS_setWriteDir(NULL);   /* just in case. */
-   return 0;
-  } /* if */
- } /* if */
+   throw physfsException();
+  }
+ }
  PHYSFS_addToSearchPath(writedir.c_str(), 0);
- PHYSFS_addToSearchPath(basedir, 1);
- return 1;
+ if (!contentFile.empty())
+ {
+  std::string contentPath(libDir);
+  if (!contentPath.empty())
+   contentPath += PHYSFS_getDirSeparator();
+  contentPath += "module";
+  contentPath += PHYSFS_getDirSeparator();
+  contentPath += "content";
+  contentPath += PHYSFS_getDirSeparator();
+  contentPath += contentFile;
+  PHYSFS_addToSearchPath(contentPath.c_str(), 1);
+ }
+ if (libDir.empty())
+  PHYSFS_addToSearchPath(basedir, 1);
+ else
+  PHYSFS_addToSearchPath(libDir.c_str(), 1);
 }
 
 void BTMainScreen::loadMainConfig()
 {
+ init();
  mainConfig = new BTDisplayConfig;
  XMLSerializer parser;
  mainConfig->serialize(&parser);
- parser.parse("data/mainscreen.xml", false);
+ parser.parse("data/mainscreen.xml", true);
 }
 

@@ -20,16 +20,29 @@ BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/SDL_mng.o
 BTBUILDER_EXE = btbuilder
 
+ifndef prefix
+	prefix=
+endif
+BINDIR=${prefix}/usr/bin
+DATADIR=${prefix}/usr/share
+BTBUILDERDIR=${DATADIR}/btbuilder
+
 all: $(BTBUILDER_EXE)
 
 $(BTBUILDER_EXE): $(BTBUILDER_OBJ)
 	$(CXX) -o $(BTBUILDER_EXE) $(BTBUILDER_OBJ) $(LIBS)
 
 %.o: %.C
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -DBTBUILDERDIR=${BTBUILDERDIR} -c -o $@ $<
 
 %.o: %.c
-	$(CC) $(CXXFLAGS) -c -o $@ $<
+	$(CC) $(CXXFLAGS) -DBTBUILDERDIR=${BTBUILDERDIR} -c -o $@ $<
+
+install: all
+	if test ! -d $(BINDIR); then mkdir -p $(BINDIR); fi
+	if test ! -d $(DATADIR)/btbuilder; then mkdir -p $(DATADIR)/btbuilder; fi
+	cp -R data image module music $(DATADIR)/btbuilder/
+	cp btbuilder $(BINDIR)
 
 clean:
 	rm -f $(BTBUILDER_OBJ) $(BTBUILDER_EXE)
