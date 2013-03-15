@@ -41,7 +41,9 @@ $(BTBUILDER_EXE): $(BTBUILDER_OBJ)
 install: all
 	if test ! -d $(BINDIR); then mkdir -p $(BINDIR); fi
 	if test ! -d $(DATADIR)/btbuilder; then mkdir -p $(DATADIR)/btbuilder; fi
+	if test ! -d $(DATADIR)/icons/hicolor; then mkdir -p $(DATADIR)/icons/hicolor; fi
 	cp -R data image module music $(DATADIR)/btbuilder/
+	cp -R icons/* $(DATADIR)/icons/hicolor/
 	cp btbuilder $(BINDIR)
 
 clean:

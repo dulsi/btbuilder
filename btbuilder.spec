@@ -19,6 +19,21 @@ make %{?_smp_mflags}
 
 %install
 make prefix=%{buildroot} install
+desktop-file-install --dir=%{buildroot}/%{_datadir}/applications btbuilder.desktop
+
+%post
+update-desktop-database &> /dev/null ||:
+/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
+
+%postun
+update-desktop-database &> /dev/null ||:
+if [ $1 -eq 0 ] ; then
+    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+fi
+
+%posttrans
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -27,4 +42,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CONTRIBUTIONS.TXT
 %{_bindir}/*
 %{_datadir}/btbuilder
+%{_datadir}/applications/btbuilder.desktop
+%{_datadir}/icons/hicolor/16x16/btbuilder.png
+%{_datadir}/icons/hicolor/32x32/btbuilder.png
+%{_datadir}/icons/hicolor/48x48/btbuilder.png
 
