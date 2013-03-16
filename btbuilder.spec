@@ -1,12 +1,19 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-%define	version	0.3.12
-Version: %{version}
+Version: 0.3.12
 Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.identicalsoftware.com/btbuilder
 Group: Amusements/Games
-Source: http://www.identicalsoftware.com/btbuilder/btbuilder-%{version}.tgz
+Source: http://www.identicalsoftware.com/btbuilder/%{name}-%{version}.tgz
+BuildRequires: boost-devel
+BuildRequires: expat-devel
+BuildRequires: libpng-devel
+BuildRequires: physfs-devel
+BuildRequires: SDL-devel
+BuildRequires: SDL_image-devel
+BuildRequires: SDL_mixer-devel
+BuildRequires: SDL_ttf-devel
 
 %description
 Bt Builder is an open source implementation of the Bard's Tale Construction Set. The eventual goal is to make a game builder that can implement the three main Bard's Tale games in addition to Construction Set games.
@@ -19,7 +26,7 @@ make %{?_smp_mflags}
 
 %install
 make prefix=%{buildroot} install
-desktop-file-install --dir=%{buildroot}/%{_datadir}/applications btbuilder.desktop
+desktop-file-install --dir=%{buildroot}/%{_desktopdir} btbuilder.desktop
 
 %post
 update-desktop-database &> /dev/null ||:
@@ -43,7 +50,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{_datadir}/btbuilder
 %{_datadir}/applications/btbuilder.desktop
-%{_datadir}/icons/hicolor/16x16/btbuilder.png
-%{_datadir}/icons/hicolor/32x32/btbuilder.png
-%{_datadir}/icons/hicolor/48x48/btbuilder.png
+%{_datadir}/icons/hicolor/*/apps/btbuilder.png
 
