@@ -207,10 +207,15 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
      list[i].name = levelMap->getSpecial(i)->getName();
     }
     d.addSelection(list, len, startSpecial, currentSpecial);
-    int key = d.process();
-    if (key == '\r')
-     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
+    int key = d.process("e");
     d.clearText();
+    if (key == 'e')
+    {
+     editSpecial(d, levelMap->getSpecial(currentSpecial));
+     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
+    }
+    else if (key == '\r')
+     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
     if (currentWall < p3dConfig->mapType.size())
      d.drawText(p3dConfig->mapType[currentWall]->name.c_str());
     else
@@ -255,6 +260,36 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    parser.write(levelMap->getFilename(), true);
   }
  }
+ d.setConfig(oldConfig);
+}
+
+void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
+{
+ if (NULL == special)
+ {
+  special = new BTSpecial;
+  levelMap->addSpecial(special);
+ }
+ BTDisplayConfig *oldConfig = d.getConfig();
+ BTDisplayConfig config;
+ XMLSerializer parser;
+ config.serialize(&parser);
+ parser.parse("data/specialedit.xml", true);
+ d.setConfig(&config);
+ int start(0);
+ int current(0);
+ BTSpecialBody *body = special->getBody();
+ int len = body->numOfOperations(false);
+ BTDisplay::selectItem list[len + 2];
+ list[0].name = special->getName();
+ list[1].name = "Flags: ";
+ for (int i = 0; i < len; ++i)
+ {
+  list[i + 2].name = special->getBody()->getOperation(i)->print();
+ }
+ d.addSelection(list, len + 2, start, current);
+ int key = d.process();
+ d.clearText();
  d.setConfig(oldConfig);
 }
 

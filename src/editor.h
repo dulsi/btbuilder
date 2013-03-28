@@ -21,6 +21,7 @@ class BTEditor : public BTCore
 
   void edit(BTDisplay &d);
   void editMap(BTDisplay &d, const char *filename);
+  void editSpecial(BTDisplay &d, BTSpecial *special);
 
  protected:
   int currentWall;

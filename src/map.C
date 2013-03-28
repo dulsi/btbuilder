@@ -78,6 +78,13 @@ void BTMapSquare::write(BinaryWriteFile &f)
  f.writeShort(special);
 }
 
+BTSpecialOperation *BTSpecialBody::getOperation(int line)
+{
+ if (line < ops.size())
+  return ops[line];
+ return NULL;
+}
+
 IBool BTSpecialBody::isNothing() const
 {
  int i = 0;
@@ -88,6 +95,39 @@ IBool BTSpecialBody::isNothing() const
   ++i;
  }
  return true;
+}
+
+int BTSpecialBody::numOfOperations(bool recursive) const
+{
+ if (recursive)
+ {
+  int count = 0;
+  for (int i = 0; i < ops.size(); ++i)
+  {
+   ++count;
+   BTSpecialBody *pBody = dynamic_cast<BTSpecialBody*>(ops[i]);
+   if (pBody)
+   {
+    count += pBody->numOfOperations(recursive);
+   }
+   else
+   {
+    BTSpecialConditional *pConditional = dynamic_cast<BTSpecialConditional*>(ops[i]);
+    if (pConditional)
+    {
+     count += pConditional->getThenClause()->numOfOperations(recursive);
+     count += pConditional->getElseClause()->numOfOperations(recursive);
+    }
+   }
+  }
+ }
+ else
+  return ops.size();
+}
+
+std::string BTSpecialBody::print() const
+{
+ return "body";
 }
 
 void BTSpecialBody::print(FILE *f) const
@@ -155,49 +195,54 @@ IBool BTSpecialCommand::isNothing() const
  return (0 == getType());
 }
 
-void BTSpecialCommand::print(FILE *f) const
+std::string BTSpecialCommand::print() const
 {
  char *dollarSign;
  char *start;
  long len;
  int count;
+ std::string answer;
 
  count = 0;
  start = specialCommands[type];
  while (dollarSign = strchr(start, '$'))
  {
   len = (long)dollarSign - (long)start;
-  fwrite(start, 1, len, f);
+  answer += std::string(start, len);
   switch (dollarSign[1])
   {
    case 'S':
-    fprintf(f, "%s", BTGame::getGame()->getMap()->getSpecial(number[count++])->getName());
+    answer += BTCore::getCore()->getMap()->getSpecial(number[count++])->getName();
     break;
    case 'I':
-    fprintf(f, "%s", BTGame::getGame()->getItemList()[number[count++]].getName());
+    answer += BTCore::getCore()->getItemList()[number[count++]].getName();
     break;
    case 'A':
    case 'M':
-    fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number[count++]].getName().c_str());
+    answer += BTCore::getCore()->getMonsterList()[number[count++]].getName().c_str();
     break;
    case 'X':
-    fprintf(f, "%s", BTGame::getGame()->getSpellList()[number[count++]].getName());
+    answer += BTCore::getCore()->getSpellList()[number[count++]].getName();
     break;
    case 'L':
-    fprintf(f, "X:%d Y:%d", number[count], number[count + 1]);
+   {
+    char s[50];
+    snprintf(s, 50, "X:%d Y:%d", number[count], number[count + 1]);
     count += 2;
+    answer += s;
     break;
+   }
    case 'T':
-    fprintf(f, "%s", extraDamage[number[count++]]);
+    answer += extraDamage[number[count++]];
     break;
    case 'C':
-    fprintf(f, "%s", BTGame::getGame()->getJobList()[number[count++]]->name);
+    answer += BTCore::getCore()->getJobList()[number[count++]]->name;
     break;
    case 'R':
-    fprintf(f, "%s", BTGame::getGame()->getRaceList()[number[count++]]->name);
+    answer += BTCore::getCore()->getRaceList()[number[count++]]->name;
     break;
    case 'D':
-    fprintf(f, "%s", directions[number[count++]]);
+    answer += directions[number[count++]];
     break;
    case '#':
    case 'P':
@@ -205,17 +250,27 @@ void BTSpecialCommand::print(FILE *f) const
    case 'F':
    case '!':
    case 'J':
-    fprintf(f, "%d", number[count++]);
+   {
+    char s[50];
+    snprintf(s, 50, "%d", number[count++]);
+    answer += s;
     break;
+   }
    case '$':
    case 'N':
    default:
-    fprintf(f, "%s", text);
+    answer += text;
     break;
   }
   start = dollarSign + 2;
  }
- fprintf(f, "%s\n", start);
+ answer += start;
+ return answer;
+}
+
+void BTSpecialCommand::print(FILE *f) const
+{
+ fprintf(f, "%s\n", print().c_str());
 }
 
 void BTSpecialCommand::read(BinaryReadFile &f)
@@ -846,51 +901,62 @@ IBool BTSpecialConditional::isNothing() const
  return ((-1 == type) && (thenClause.isNothing()));
 }
 
-void BTSpecialConditional::print(FILE *f) const
+std::string BTSpecialConditional::print() const
 {
  char *dollarSign;
  long len;
+ std::string answer;
 
- fprintf(f, "IF   ");
+ answer += "IF   ";
  dollarSign = strchr(conditionalCommands[type], '$');
  if (dollarSign)
  {
   len = (long)dollarSign - (long)conditionalCommands[type];
-  fwrite(conditionalCommands[type], 1, len, f);
+  answer += std::string(conditionalCommands[type], len);
   switch (dollarSign[1])
   {
    case 'I':
-    fprintf(f, "%s", BTGame::getGame()->getItemList()[number].getName());
+    answer += BTCore::getCore()->getItemList()[number].getName();
     break;
    case 'A':
-    fprintf(f, "%s", BTGame::getGame()->getMonsterList()[number].getName().c_str());
+    answer += BTCore::getCore()->getMonsterList()[number].getName().c_str();
     break;
    case 'C':
-    fprintf(f, "%s", BTGame::getGame()->getJobList()[number]->name);
+    answer += BTCore::getCore()->getJobList()[number]->name;
     break;
    case 'R':
-    fprintf(f, "%s", BTGame::getGame()->getRaceList()[number]->name);
+    answer += BTCore::getCore()->getRaceList()[number]->name;
     break;
    case 'D':
-    fprintf(f, "%s", directions[number]);
+    answer += directions[number];
     break;
    case '#':
    case 'G':
    case 'F':
-    fprintf(f, "%d", number);
+   {
+    char s[50];
+    snprintf(s, 50, "%d", number);
+    answer += s;
     break;
+   }
    case '$':
    default:
-    fprintf(f, "%s", text);
+    answer += text;
     break;
   }
   dollarSign += 2;
+  answer += dollarSign;
  }
  else
  {
-  dollarSign = conditionalCommands[type];
+  answer = conditionalCommands[type];
  }
- fprintf(f, "%s\n", dollarSign);
+ return answer;
+}
+
+void BTSpecialConditional::print(FILE *f) const
+{
+ fprintf(f, "%s\n", print().c_str());
  fprintf(f, "    THEN ");
  thenClause.print(f);
  fprintf(f, "    ELSE ");
@@ -1159,6 +1225,11 @@ BTSpecial::~BTSpecial()
   delete [] name;
 }
 
+BTSpecialBody *BTSpecial::getBody()
+{
+ return &body;
+}
+
 const char *BTSpecial::getName() const
 {
  return name;
@@ -1337,6 +1408,11 @@ BTMap::~BTMap()
   delete [] filename;
 }
 
+void BTMap::addSpecial(BTSpecial *s)
+{
+ specials.push_back(s);
+}
+
 void BTMap::setSpecial(IShort x, IShort y, IShort special)
 {
  square[y * xSize + x]->setSpecial(special);
@@ -1420,7 +1496,7 @@ void BTMap::generateRandomEncounter(BTDisplay &d, int groups) const
  }
 }
 
-const BTSpecial *BTMap::getSpecial(IShort num) const
+BTSpecial *BTMap::getSpecial(IShort num)
 {
  return ((specials.size() > num) ? specials[num] : NULL);
 }

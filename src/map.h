@@ -140,6 +140,7 @@ class BTSpecialOperation : public XMLObject
 {
  public:
   virtual IBool isNothing() const = 0;
+  virtual std::string print() const = 0;
   virtual void print(FILE *f) const = 0;
   virtual void run(BTDisplay &d) const = 0;
 };
@@ -152,12 +153,15 @@ class BTSpecialBody : public BTSpecialOperation
 
  public:
   void addOperation(BTSpecialOperation *op) { ops.push_back(op); }
+  BTSpecialOperation *getOperation(int line);
   IBool isNothing() const;
-  virtual void print(FILE *f) const;
+  int numOfOperations(bool recursive) const;
+  std::string print() const;
+  void print(FILE *f) const;
   void print(FILE *f, bool lineNumbers) const;
-  virtual void run(BTDisplay &d) const;
+  void run(BTDisplay &d) const;
   void runFromLine(BTDisplay &d, int line) const;
-  virtual void serialize(ObjectSerializer* s);
+  void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialBody; }
 
@@ -174,10 +178,11 @@ class BTSpecialCommand : public BTSpecialOperation
 
   IShort getType() const;
   IBool isNothing() const;
+  std::string print() const;
   void print(FILE *f) const;
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
-  virtual void serialize(ObjectSerializer* s);
+  void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialCommand; }
@@ -200,12 +205,15 @@ class BTSpecialConditional : public BTSpecialOperation
   void addThenOperation(BTSpecialOperation *op) { thenClause.addOperation(op); }
   void addElseOperation(BTSpecialOperation *op) { elseClause.addOperation(op); }
   IShort getType() const;
+  BTSpecialBody *getThenClause() { return &thenClause; }
+  BTSpecialBody *getElseClause() { return &elseClause; }
   IBool isNothing() const;
+  std::string print() const;
   void print(FILE *f) const;
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
   void setType(IShort val);
-  virtual void serialize(ObjectSerializer* s);
+  void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialConditional; }
@@ -225,10 +233,11 @@ class BTSpecial : public XMLObject
   BTSpecial(BinaryReadFile &f);
   ~BTSpecial();
 
+  BTSpecialBody *getBody();
   const char *getName() const;
   void print(FILE *f) const;
   void run(BTDisplay &d) const;
-  virtual void serialize(ObjectSerializer* s);
+  void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecial; }
@@ -246,7 +255,7 @@ class BTMonsterChance : public XMLObject
 
   int getChance() const;
   int getGroups() const;
-  virtual void serialize(ObjectSerializer* s);
+  void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTMonsterChance; }
 
@@ -262,6 +271,7 @@ class BTMap : public XMLObject
   BTMap();
   ~BTMap();
 
+  void addSpecial(BTSpecial *s);
   void checkRandomEncounter(BTDisplay &d) const;
   const char *getFilename() const;
   IShort getLevel() const;
@@ -271,7 +281,7 @@ class BTMap : public XMLObject
   const char *getName() const;
   int getNumOfSpecials() const;
   void generateRandomEncounter(BTDisplay &d, int groups) const;
-  const BTSpecial *getSpecial(IShort num) const;
+  BTSpecial *getSpecial(IShort num);
   BTMapSquare &getSquare(IShort y, IShort x);
   IShort getType() const;
   IShort getXSize() const;
@@ -279,7 +289,7 @@ class BTMap : public XMLObject
   void resize(IShort newXSize, IShort newYSize);
   void setFilename(const char *f);
   void setSpecial(IShort x, IShort y, IShort special);
-  virtual void serialize(ObjectSerializer* s);
+  void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
 
  private:
