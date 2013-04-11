@@ -279,16 +279,40 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  int start(0);
  int current(0);
  BTSpecialBody *body = special->getBody();
- int len = body->numOfOperations(false);
- BTDisplay::selectItem list[len + 2];
- list[0].name = special->getName();
- list[1].name = "Flags: ";
- for (int i = 0; i < len; ++i)
+ std::list<std::string> lines;
+ body->print(lines);
+ int len = lines.size();
+ std::vector<BTDisplay::selectItem> list(len + 2);
+ list[0].name = std::string("Name: ") + special->getName();
+ list[1].name = "Flags: " + special->printFlags();
+ std::list<std::string>::iterator itr(lines.begin());
+ for (int i = 0; i < len; ++i, ++itr)
  {
-  list[i + 2].name = special->getBody()->getOperation(i)->print();
+  list[i + 2].name = *itr;
  }
- d.addSelection(list, len + 2, start, current);
- int key = d.process();
+ d.addSelection(list.data(), len + 2, start, current);
+ int key;
+ while (27 != (key = d.process()))
+ {
+  d.clearText();
+  if (current == 0)
+  {
+   std::string name = special->getName();
+   d.addReadString("Name: ", 25, name);
+   key = d.process();
+   if ('\r' == key)
+    special->setName(name);
+   d.clearText();
+   list[0].name = std::string("Name: ") + special->getName();
+  }
+  else if (current == 1)
+  {
+  }
+  else
+  {
+  }
+  d.addSelection(list.data(), len + 2, start, current);
+ }
  d.clearText();
  d.setConfig(oldConfig);
 }

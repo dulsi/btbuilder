@@ -887,6 +887,10 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     return BTKEY_PGDN;
    else if ((sdlevent.key.keysym.sym == SDLK_END) || (sdlevent.key.keysym.sym == SDLK_KP1))
     return BTKEY_END;
+   else if ((sdlevent.key.keysym.sym == SDLK_INSERT) || (sdlevent.key.keysym.sym == SDLK_KP0))
+    return BTKEY_INS;
+   else if ((sdlevent.key.keysym.sym == SDLK_DELETE) || (sdlevent.key.keysym.sym == SDLK_KP_PERIOD))
+    return BTKEY_DEL;
    else if (sdlevent.key.keysym.sym == SDLK_F12)
     toggleFullScreen();
    if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))

@@ -157,6 +157,7 @@ class BTSpecialBody : public BTSpecialOperation
   IBool isNothing() const;
   int numOfOperations(bool recursive) const;
   std::string print() const;
+  void print(std::list<std::string> &result, int level = 0) const;
   void print(FILE *f) const;
   void print(FILE *f, bool lineNumbers) const;
   void run(BTDisplay &d) const;
@@ -235,9 +236,11 @@ class BTSpecial : public XMLObject
 
   BTSpecialBody *getBody();
   const char *getName() const;
+  std::string printFlags() const;
   void print(FILE *f) const;
   void run(BTDisplay &d) const;
   void serialize(ObjectSerializer* s);
+  void setName(const std::string &nm);
   void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecial; }

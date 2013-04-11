@@ -116,7 +116,10 @@ int BTSpecialBody::numOfOperations(bool recursive) const
     if (pConditional)
     {
      count += pConditional->getThenClause()->numOfOperations(recursive);
-     count += pConditional->getElseClause()->numOfOperations(recursive);
+     if (pConditional->getElseClause()->numOfOperations(false) > 0)
+     {
+      count += 1 + pConditional->getElseClause()->numOfOperations(recursive);
+     }
     }
    }
   }
@@ -128,6 +131,38 @@ int BTSpecialBody::numOfOperations(bool recursive) const
 std::string BTSpecialBody::print() const
 {
  return "body";
+}
+
+void BTSpecialBody::print(std::list<std::string> &result, int level /*= 0*/) const
+{
+ std::string spaces(level, ' ');
+ for (int i = 0; i < ops.size(); ++i)
+ {
+  if (level == 0)
+  {
+   result.push_back(spaces + ops[i]->print());
+  }
+  else
+   result.push_back(spaces + ops[i]->print());
+  BTSpecialBody *pBody = dynamic_cast<BTSpecialBody*>(ops[i]);
+  if (pBody)
+  {
+   pBody->print(result, level + 1);
+  }
+  else
+  {
+   BTSpecialConditional *pConditional = dynamic_cast<BTSpecialConditional*>(ops[i]);
+   if (pConditional)
+   {
+    pConditional->getThenClause()->print(result, level + 1);
+    if (pConditional->getElseClause()->numOfOperations(false) > 0)
+    {
+     result.push_back(spaces + "ELSE");
+     pConditional->getElseClause()->print(result, level + 1);
+    }
+   }
+  }
+ }
 }
 
 void BTSpecialBody::print(FILE *f) const
@@ -1235,6 +1270,21 @@ const char *BTSpecial::getName() const
  return name;
 }
 
+std::string BTSpecial::printFlags() const
+{
+ std::string results;
+ for (int i = 0; i < BT_SPECIALFLAGS; ++i)
+ {
+  if (flags.isSet(i))
+  {
+   if (results.length() > 0)
+    results += " ";
+   results += specialFlag[i];
+  }
+ }
+ return results;
+}
+
 void BTSpecial::print(FILE *f) const
 {
  int i, last;
@@ -1273,6 +1323,13 @@ void BTSpecial::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("flag", &flags, &specialFlagLookup);
  s->add("body", &body);
+}
+
+void BTSpecial::setName(const std::string &nm)
+{
+ delete name;
+ name = new char[nm.length() + 1];
+ strcpy(name, nm.c_str());
 }
 
 void BTSpecial::write(BinaryWriteFile &f)

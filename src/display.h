@@ -30,6 +30,8 @@
 #define BTKEY_RIGHT 4
 #define BTKEY_PGDN 5
 #define BTKEY_END 6
+#define BTKEY_INS 7
+#define BTKEY_DEL 8
 
 #define BTMUSICID_ALL 0
 
@@ -85,6 +87,8 @@ class BTDisplay : public ImageLoader
   struct selectItem
   {
    selectItem() : first(0), value(0) {}
+
+   bool operator<(const selectItem& other) const { return name < other.name; }
 
    char first;
    std::string name;
