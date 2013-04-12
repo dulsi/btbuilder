@@ -24,6 +24,18 @@ class BTEditor : public BTCore
   void editSpecial(BTDisplay &d, BTSpecial *special);
 
  protected:
+  struct operationList
+  {
+   public:
+    operationList(BTSpecialBody *p, BTSpecialOperation *o) : parent(p), op(o) {}
+
+    BTSpecialBody *parent;
+    BTSpecialOperation *op;
+  };
+
+  void buildOperationList(BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level = 0);
+
+ protected:
   int currentWall;
   int startSpecial;
   int currentSpecial;

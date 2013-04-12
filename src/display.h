@@ -31,9 +31,11 @@
 #define BTKEY_PGDN 5
 #define BTKEY_END 6
 #define BTKEY_INS 7
-#define BTKEY_DEL 8
+#define BTKEY_DEL 127
 
 #define BTMUSICID_ALL 0
+
+#define BTSELECTFLAG_UNSELECTABLE 0
 
 class BTUIElement
 {
@@ -87,9 +89,11 @@ class BTDisplay : public ImageLoader
   struct selectItem
   {
    selectItem() : first(0), value(0) {}
+   selectItem(std::string nm) : first(0), name(nm), value(0) {}
 
    bool operator<(const selectItem& other) const { return name < other.name; }
 
+   BitField flags;
    char first;
    std::string name;
    int value;

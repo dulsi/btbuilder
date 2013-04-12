@@ -153,11 +153,14 @@ class BTSpecialBody : public BTSpecialOperation
 
  public:
   void addOperation(BTSpecialOperation *op) { ops.push_back(op); }
+  void eraseOperation(BTSpecialOperation *op);
   BTSpecialOperation *getOperation(int line);
+  void insertOperation(int line, BTSpecialOperation *op) { ops.insert(ops.begin() + line, op); }
+  void insertOperation(BTSpecialOperation *before, BTSpecialOperation *op);
+  void replaceOperation(BTSpecialOperation *opOld, BTSpecialOperation *opNew);
   IBool isNothing() const;
   int numOfOperations(bool recursive) const;
   std::string print() const;
-  void print(std::list<std::string> &result, int level = 0) const;
   void print(FILE *f) const;
   void print(FILE *f, bool lineNumbers) const;
   void run(BTDisplay &d) const;

@@ -889,7 +889,7 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     return BTKEY_END;
    else if ((sdlevent.key.keysym.sym == SDLK_INSERT) || (sdlevent.key.keysym.sym == SDLK_KP0))
     return BTKEY_INS;
-   else if ((sdlevent.key.keysym.sym == SDLK_DELETE) || (sdlevent.key.keysym.sym == SDLK_KP_PERIOD))
+   else if (sdlevent.key.keysym.sym == SDLK_KP_PERIOD)
     return BTKEY_DEL;
    else if (sdlevent.key.keysym.sym == SDLK_F12)
     toggleFullScreen();
@@ -1452,6 +1452,8 @@ void BTUISelect::moveDown(BTDisplay &d)
  if (select + 1 < size)
  {
   ++select;
+  while ((select + 1 < size) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
+   ++select;
   if (start + lines <= select)
    start = select - lines + 1;
  }
@@ -1462,6 +1464,8 @@ void BTUISelect::moveUp(BTDisplay &d)
  if (select > 0)
  {
   --select;
+  while ((select > 0) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
+   --select;
   if (start > select)
    start = select;
  }

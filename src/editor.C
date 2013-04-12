@@ -279,20 +279,16 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  int start(0);
  int current(0);
  BTSpecialBody *body = special->getBody();
- std::list<std::string> lines;
- body->print(lines);
- int len = lines.size();
- std::vector<BTDisplay::selectItem> list(len + 2);
+ std::vector<operationList> ops;
+ std::vector<BTDisplay::selectItem> list(2);
  list[0].name = std::string("Name: ") + special->getName();
  list[1].name = "Flags: " + special->printFlags();
- std::list<std::string>::iterator itr(lines.begin());
- for (int i = 0; i < len; ++i, ++itr)
- {
-  list[i + 2].name = *itr;
- }
- d.addSelection(list.data(), len + 2, start, current);
+ int spaces = 0;
+ buildOperationList(body, list, ops);
+ d.addSelection(list.data(), list.size(), start, current);
  int key;
- while (27 != (key = d.process()))
+ char extra[3] = {BTKEY_INS, BTKEY_DEL, 0};
+ while (27 != (key = d.process(extra)))
  {
   d.clearText();
   if (current == 0)
@@ -310,10 +306,62 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
   }
   else
   {
+   if (BTKEY_INS == key)
+   {
+    if ((ops[current - 2].op != NULL) && (ops[current - 2].parent != NULL))
+    {
+     ops[current - 2].parent->insertOperation(ops[current - 2].op, new BTSpecialCommand(BTSPECIALCOMMAND_NOTHING));
+    }
+   }
+   else if (BTKEY_DEL == key)
+   {
+    if ((ops[current - 2].op != NULL) && (ops[current - 2].parent != NULL))
+    {
+     ops[current - 2].parent->eraseOperation(ops[current - 2].op);
+    }
+   }
   }
-  d.addSelection(list.data(), len + 2, start, current);
+  ops.clear();
+  list.resize(2);
+  buildOperationList(body, list, ops);
+  d.addSelection(list.data(), list.size(), start, current);
  }
  d.clearText();
  d.setConfig(oldConfig);
+}
+
+void BTEditor::buildOperationList(BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level /*= 0*/)
+{
+ std::string spaces(level, ' ');
+ for (int i = 0; i < body->numOfOperations(false); ++i)
+ {
+  BTSpecialOperation *op = body->getOperation(i);
+  if (level == 0)
+  {
+   list.push_back(BTDisplay::selectItem(spaces + op->print()));
+  }
+  else
+   list.push_back(BTDisplay::selectItem(spaces + op->print()));
+  ops.push_back(operationList(body, op));
+  BTSpecialBody *subBody = dynamic_cast<BTSpecialBody*>(op);
+  if (subBody)
+  {
+   buildOperationList(subBody, list, ops, level + 1);
+  }
+  else
+  {
+   BTSpecialConditional *conditional = dynamic_cast<BTSpecialConditional*>(op);
+   if (conditional)
+   {
+    buildOperationList(conditional->getThenClause(), list, ops, level + 1);
+    list.push_back(BTDisplay::selectItem(spaces + "ELSE"));
+    list.back().flags.set(BTSELECTFLAG_UNSELECTABLE);
+    ops.push_back(operationList(NULL, NULL));
+    buildOperationList(conditional->getElseClause(), list, ops, level + 1);
+   }
+  }
+ }
+ list.push_back(BTDisplay::selectItem(spaces + "<New Operation>"));
+ ops.push_back(operationList(body, NULL));
 }
 

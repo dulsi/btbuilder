@@ -78,11 +78,48 @@ void BTMapSquare::write(BinaryWriteFile &f)
  f.writeShort(special);
 }
 
+void BTSpecialBody::eraseOperation(BTSpecialOperation *op)
+{
+ for (int i = 0; i < ops.size(); ++i)
+ {
+  if (ops[i] == op)
+  {
+   ops.erase(ops.begin() + i);
+   return;
+  }
+ }
+}
+
 BTSpecialOperation *BTSpecialBody::getOperation(int line)
 {
  if (line < ops.size())
   return ops[line];
  return NULL;
+}
+
+void BTSpecialBody::insertOperation(BTSpecialOperation *before, BTSpecialOperation *op)
+{
+ for (int i = 0; i < ops.size(); ++i)
+ {
+  if (ops[i] == before)
+  {
+   ops.insert(ops.begin() + i, op);
+   return;
+  }
+ }
+}
+
+void BTSpecialBody::replaceOperation(BTSpecialOperation *opOld, BTSpecialOperation *opNew)
+{
+ for (int i = 0; i < ops.size(); ++i)
+ {
+  if (ops[i] == opOld)
+  {
+   ops[i] = opNew;
+   delete opOld;
+   return;
+  }
+ }
 }
 
 IBool BTSpecialBody::isNothing() const
@@ -105,20 +142,20 @@ int BTSpecialBody::numOfOperations(bool recursive) const
   for (int i = 0; i < ops.size(); ++i)
   {
    ++count;
-   BTSpecialBody *pBody = dynamic_cast<BTSpecialBody*>(ops[i]);
-   if (pBody)
+   BTSpecialBody *subBody = dynamic_cast<BTSpecialBody*>(ops[i]);
+   if (subBody)
    {
-    count += pBody->numOfOperations(recursive);
+    count += subBody->numOfOperations(recursive);
    }
    else
    {
-    BTSpecialConditional *pConditional = dynamic_cast<BTSpecialConditional*>(ops[i]);
-    if (pConditional)
+    BTSpecialConditional *conditional = dynamic_cast<BTSpecialConditional*>(ops[i]);
+    if (conditional)
     {
-     count += pConditional->getThenClause()->numOfOperations(recursive);
-     if (pConditional->getElseClause()->numOfOperations(false) > 0)
+     count += conditional->getThenClause()->numOfOperations(recursive);
+     if (conditional->getElseClause()->numOfOperations(false) > 0)
      {
-      count += 1 + pConditional->getElseClause()->numOfOperations(recursive);
+      count += 1 + conditional->getElseClause()->numOfOperations(recursive);
      }
     }
    }
@@ -131,38 +168,6 @@ int BTSpecialBody::numOfOperations(bool recursive) const
 std::string BTSpecialBody::print() const
 {
  return "body";
-}
-
-void BTSpecialBody::print(std::list<std::string> &result, int level /*= 0*/) const
-{
- std::string spaces(level, ' ');
- for (int i = 0; i < ops.size(); ++i)
- {
-  if (level == 0)
-  {
-   result.push_back(spaces + ops[i]->print());
-  }
-  else
-   result.push_back(spaces + ops[i]->print());
-  BTSpecialBody *pBody = dynamic_cast<BTSpecialBody*>(ops[i]);
-  if (pBody)
-  {
-   pBody->print(result, level + 1);
-  }
-  else
-  {
-   BTSpecialConditional *pConditional = dynamic_cast<BTSpecialConditional*>(ops[i]);
-   if (pConditional)
-   {
-    pConditional->getThenClause()->print(result, level + 1);
-    if (pConditional->getElseClause()->numOfOperations(false) > 0)
-    {
-     result.push_back(spaces + "ELSE");
-     pConditional->getElseClause()->print(result, level + 1);
-    }
-   }
-  }
- }
 }
 
 void BTSpecialBody::print(FILE *f) const
