@@ -203,7 +203,7 @@ class BTSpecialConditional : public BTSpecialOperation
 {
  public:
   BTSpecialConditional();
-  BTSpecialConditional(IShort t, char *txt, IShort num);
+  BTSpecialConditional(IShort t, const char *txt, IShort num);
   ~BTSpecialConditional();
 
   void addThenOperation(BTSpecialOperation *op) { thenClause.addOperation(op); }

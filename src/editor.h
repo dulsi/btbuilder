@@ -34,6 +34,7 @@ class BTEditor : public BTCore
   };
 
   void buildOperationList(BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level = 0);
+  BTSpecialOperation *editSpecialOperation(BTDisplay &d, BTSpecialOperation *special);
 
  protected:
   int currentWall;

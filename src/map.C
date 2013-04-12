@@ -918,7 +918,7 @@ BTSpecialConditional::BTSpecialConditional()
  text[0] = 0;
 }
 
-BTSpecialConditional::BTSpecialConditional(IShort t, char *txt, IShort num)
+BTSpecialConditional::BTSpecialConditional(IShort t, const char *txt, IShort num)
 : type(t), number(num)
 {
  text = new char[strlen(txt) + 1];

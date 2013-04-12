@@ -7,6 +7,7 @@
 
 #include "btconst.h"
 #include "editor.h"
+#include <algorithm>
 
 BTEditor::BTEditor(BTModule *m)
  : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0)
@@ -320,6 +321,17 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
      ops[current - 2].parent->eraseOperation(ops[current - 2].op);
     }
    }
+   else if ('\r' == key)
+   {
+    BTSpecialOperation *op = editSpecialOperation(d, ops[current - 2].op);
+    if (op)
+    {
+     if (ops[current - 2].op)
+      ops[current - 2].parent->replaceOperation(ops[current - 2].op, op);
+     else
+      ops[current - 2].parent->addOperation(op);
+    }
+   }
   }
   ops.clear();
   list.resize(2);
@@ -363,5 +375,48 @@ void BTEditor::buildOperationList(BTSpecialBody *body, std::vector<BTDisplay::se
  }
  list.push_back(BTDisplay::selectItem(spaces + "<New Operation>"));
  ops.push_back(operationList(body, NULL));
+}
+
+BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperation *special)
+{
+ BTDisplay::selectItem cmds[BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS];
+ for (int i = 0; i < BT_CONDITIONALCOMMANDS; ++i)
+ {
+  cmds[i].name = std::string("if ") + conditionalCommands[i];
+  cmds[i].value = i;
+ }
+ for (int i = 0; i < BT_SPECIALCOMMANDS; ++i)
+ {
+  cmds[i + BT_CONDITIONALCOMMANDS].name = specialCommands[i];
+  cmds[i + BT_CONDITIONALCOMMANDS].value = i + BT_CONDITIONALCOMMANDS;
+ }
+ std::sort(cmds, cmds + BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS);
+ int start(0);
+ int current(0);
+ d.addSelection(cmds, BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS, start, current);
+ int key = d.process();
+ d.clearText();
+ if (key == 27)
+  return NULL;
+ std::string text;
+ int number[3];
+ int count = 0;
+ const char *cmd = NULL;
+ if (cmds[current].value < BT_CONDITIONALCOMMANDS)
+ {
+  cmd = conditionalCommands[cmds[current].value];
+ }
+ else
+ {
+  cmd = conditionalCommands[cmds[current].value - BT_CONDITIONALCOMMANDS];
+ }
+ if (cmds[current].value < BT_CONDITIONALCOMMANDS)
+ {
+  return new BTSpecialConditional(cmds[current].value, text.c_str(), number[0]);
+ }
+ else
+ {
+  return new BTSpecialCommand(cmds[current].value - BT_CONDITIONALCOMMANDS);
+ }
 }
 

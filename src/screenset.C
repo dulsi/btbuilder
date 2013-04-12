@@ -550,6 +550,7 @@ int BTSelectGoods::buildList(ObjectSerializer *obj)
    if (!itemList[shopObj->goods[i]->id].canUse(pc))
     list[i].first = '@';
    list[i].name = itemList[shopObj->goods[i]->id].getName();
+   list[i].flags.set(BTSELECTFLAG_SHOWVALUE);
    list[i].value = itemList[shopObj->goods[i]->id].getPrice();
    ++i;
   }
@@ -628,7 +629,10 @@ int BTSelectInventory::buildList(ObjectSerializer *obj)
   else
    list[i].name = itemList[id].getName();
   if (value)
+  {
+   list[i].flags.set(BTSELECTFLAG_SHOWVALUE);
    list[i].value = itemList[id].getPrice() / 2;
+  }
  }
  return len;
 }
