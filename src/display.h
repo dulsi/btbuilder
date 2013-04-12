@@ -29,6 +29,7 @@
 #define BTKEY_LEFT 3
 #define BTKEY_RIGHT 4
 #define BTKEY_PGDN 5
+#define BTKEY_PGUP SDLK_PAGEUP
 #define BTKEY_END 6
 #define BTKEY_INS 7
 #define BTKEY_DEL 127
@@ -241,6 +242,8 @@ class BTUISelect : public BTUIElement
 
   void moveDown(BTDisplay &d);
   void moveUp(BTDisplay &d);
+  void pageDown(BTDisplay &d);
+  void pageUp(BTDisplay &d);
 
   BTDisplay::selectItem *list;
   int size;

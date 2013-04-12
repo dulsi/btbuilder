@@ -819,6 +819,16 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
      select->moveDown(*this);
      continue;
     }
+    else if (key == BTKEY_PGUP)
+    {
+     select->pageUp(*this);
+     continue;
+    }
+    else if (key == BTKEY_PGDN)
+    {
+     select->pageDown(*this);
+     continue;
+    }
     else if ((key == 13) && (select->select >= 0))
      break;
    }
@@ -885,6 +895,8 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     return BTKEY_RIGHT;
    else if ((sdlevent.key.keysym.sym == SDLK_PAGEDOWN) || (sdlevent.key.keysym.sym == SDLK_KP3))
     return BTKEY_PGDN;
+   else if ((sdlevent.key.keysym.sym == SDLK_PAGEUP) || (sdlevent.key.keysym.sym == SDLK_KP9))
+    return BTKEY_PGUP;
    else if ((sdlevent.key.keysym.sym == SDLK_END) || (sdlevent.key.keysym.sym == SDLK_KP1))
     return BTKEY_END;
    else if ((sdlevent.key.keysym.sym == SDLK_INSERT) || (sdlevent.key.keysym.sym == SDLK_KP0))
@@ -1468,6 +1480,54 @@ void BTUISelect::moveUp(BTDisplay &d)
    --select;
   if (start > select)
    start = select;
+ }
+}
+
+void BTUISelect::pageDown(BTDisplay &d)
+{
+ int wFirst, h, lines;
+ d.sizeFont("", wFirst, h);
+ lines = position.h / h;
+ select += lines;
+ if (select >= size)
+  select = size - 1;
+ start += lines;
+ if (start + lines >= size)
+  start = size - lines;
+ if (start + (lines / 2) > select)
+ {
+  while ((select > 0) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
+   --select;
+ }
+ else
+ {
+  while ((select + 1 < size) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
+   ++select;
+ }
+}
+
+void BTUISelect::pageUp(BTDisplay &d)
+{
+ int wFirst, h, lines;
+ d.sizeFont("", wFirst, h);
+ lines = position.h / h;
+ if (select - lines < 0)
+  select = 0;
+ else
+  select -= lines;
+ if (start - lines < 0)
+  start = 0;
+ else
+  start -= lines;
+ if (start + (lines / 2) > select)
+ {
+  while ((select > 0) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
+   --select;
+ }
+ else
+ {
+  while ((select + 1 < size) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
+   ++select;
  }
 }
 
