@@ -896,6 +896,12 @@ void BTSpecialCommand::serialize(ObjectSerializer* s)
  }
 }
 
+void BTSpecialCommand::setText(const std::string &t)
+{
+ text = new char[t.length()];
+ strcpy(text, t.c_str());
+}
+
 void BTSpecialCommand::write(BinaryWriteFile &f)
 {
  char tmp[26];

@@ -187,6 +187,7 @@ class BTSpecialCommand : public BTSpecialOperation
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
   void serialize(ObjectSerializer* s);
+  void setText(const std::string &t);
   void write(BinaryWriteFile &f);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialCommand; }

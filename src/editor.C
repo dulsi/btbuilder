@@ -410,13 +410,32 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  {
   cmd = conditionalCommands[cmds[current].value - BT_CONDITIONALCOMMANDS];
  }
+ const char *dollarSign;
+ while (dollarSign = strchr(cmd, '$'))
+ {
+  switch (dollarSign[1])
+  {
+   case '$':
+   case 'N':
+   default:
+    d.addReadString(">", 100, text);
+    key = d.process();
+    d.clearText();
+    if (27 == key)
+     return NULL;
+    break;
+  }
+  cmd = dollarSign + 2;
+ }
  if (cmds[current].value < BT_CONDITIONALCOMMANDS)
  {
   return new BTSpecialConditional(cmds[current].value, text.c_str(), number[0]);
  }
  else
  {
-  return new BTSpecialCommand(cmds[current].value - BT_CONDITIONALCOMMANDS);
+  BTSpecialCommand *opNew = new BTSpecialCommand(cmds[current].value - BT_CONDITIONALCOMMANDS);
+  opNew->setText(text);
+  return opNew;
  }
 }
 
