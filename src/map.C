@@ -902,6 +902,11 @@ void BTSpecialCommand::setText(const std::string &t)
  strcpy(text, t.c_str());
 }
 
+void BTSpecialCommand::setNumber(int indx, IUShort value)
+{
+ number[indx] = value;
+}
+
 void BTSpecialCommand::write(BinaryWriteFile &f)
 {
  char tmp[26];

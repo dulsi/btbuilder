@@ -408,13 +408,27 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  }
  else
  {
-  cmd = conditionalCommands[cmds[current].value - BT_CONDITIONALCOMMANDS];
+  cmd = specialCommands[cmds[current].value - BT_CONDITIONALCOMMANDS];
  }
  const char *dollarSign;
  while (dollarSign = strchr(cmd, '$'))
  {
   switch (dollarSign[1])
   {
+   case 'D':
+   {
+    BTDisplay::selectItem dir[BT_DIRECTIONS];
+    for (int i = 0; i < BT_DIRECTIONS; ++i)
+     dir[i].name = directions[i];
+    int dirStart(0);
+    d.addSelection(dir, BT_DIRECTIONS, dirStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case '$':
    case 'N':
    default:
@@ -435,6 +449,8 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  {
   BTSpecialCommand *opNew = new BTSpecialCommand(cmds[current].value - BT_CONDITIONALCOMMANDS);
   opNew->setText(text);
+  for (int i = 0; i < count; ++i)
+   opNew->setNumber(i, number[i]);
   return opNew;
  }
 }
