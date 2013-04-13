@@ -415,6 +415,45 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  {
   switch (dollarSign[1])
   {
+   case 'S':
+   {
+    int len = levelMap->getNumOfSpecials();
+    BTDisplay::selectItem list[len];
+    for (int i = 0; i < len; ++i)
+    {
+     list[i].name = levelMap->getSpecial(i)->getName();
+    }
+    int specialStart(0);
+    d.addSelection(list, len, specialStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
+   case 'I':
+   case 'A':
+   case 'M':
+   case 'X':
+   case 'L':
+   case 'T':
+    break;
+   case 'C':
+   {
+    BTJobList &jobList = getJobList();
+    BTDisplay::selectItem jobs[jobList.size()];
+    for (int i = 0; i < jobList.size(); ++i)
+     jobs[i].name = jobList[i]->name;
+    int jobStart(0);
+    d.addSelection(jobs, jobList.size(), jobStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case 'R':
    {
     BTRaceList &raceList = getRaceList();
@@ -444,6 +483,13 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     count++;
     break;
    }
+   case '#':
+   case 'P':
+   case 'G':
+   case 'F':
+   case '!':
+   case 'J':
+    break;
    case '$':
    case 'N':
    default:
