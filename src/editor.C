@@ -399,7 +399,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  if (key == 27)
   return NULL;
  std::string text;
- int number[3];
+ int number[3] = {0, 0, 0};
  int count = 0;
  const char *cmd = NULL;
  if (cmds[current].value < BT_CONDITIONALCOMMANDS)
@@ -415,6 +415,21 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  {
   switch (dollarSign[1])
   {
+   case 'R':
+   {
+    BTRaceList &raceList = getRaceList();
+    BTDisplay::selectItem races[raceList.size()];
+    for (int i = 0; i < raceList.size(); ++i)
+     races[i].name = raceList[i]->name;
+    int raceStart(0);
+    d.addSelection(races, raceList.size(), raceStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case 'D':
    {
     BTDisplay::selectItem dir[BT_DIRECTIONS];
