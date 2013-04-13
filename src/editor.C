@@ -433,6 +433,20 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     break;
    }
    case 'I':
+   {
+    BTFactory<BTItem> &itemList = getItemList();
+    BTDisplay::selectItem items[itemList.size()];
+    for (int i = 0; i < itemList.size(); ++i)
+     items[i].name = itemList[i].getName();
+    int itemStart(0);
+    d.addSelection(items, itemList.size(), itemStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case 'A':
    case 'M':
    case 'X':
