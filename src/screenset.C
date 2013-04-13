@@ -315,6 +315,7 @@ void BTReadString::draw(BTDisplay &d, ObjectSerializer *obj)
  {
   line = eval(element.front(), obj);
  }
+ response = "";
  d.addReadString(line.c_str(), 13, response);
 }
 

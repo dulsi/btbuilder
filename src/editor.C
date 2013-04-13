@@ -184,11 +184,11 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     break;
    case 'r':
    {
-    std::string tmp = d.readString("X Size?", 3);
+    std::string tmp = d.readString("X Size?", 3, "");
     int newXSize = atol(tmp.c_str());
     if (newXSize < 1)
      break;
-    tmp = d.readString("Y Size?", 3);
+    tmp = d.readString("Y Size?", 3, "");
     int newYSize = atol(tmp.c_str());
     if (newYSize < 1)
      break;

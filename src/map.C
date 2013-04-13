@@ -360,7 +360,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   }
   case BTSPECIALCOMMAND_GETINPUT:
-   game->setLastInput(d.readString("", 13));
+   game->setLastInput(d.readString("", 13, ""));
    break;
   case BTSPECIALCOMMAND_SETLOCALFLAG:
    game->setLocalFlag(number[0], true);
@@ -1066,7 +1066,7 @@ void BTSpecialConditional::run(BTDisplay &d) const
   case BTCONDITION_ANSWERYES:
   {
    d.drawText(text);
-   std::string ans = d.readString("", 3);
+   std::string ans = d.readString("", 3, "");
    truth = ((strcmp(ans.c_str(), "y") == 0) ||
     (strcmp(ans.c_str(), "yes") == 0));
    break;

@@ -764,7 +764,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
   {
    BTUIReadString *item = static_cast<BTUIReadString*>(*top);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
-   item->response = readString(item->prompt.c_str(), item->maxLen);
+   item->response = readString(item->prompt.c_str(), item->maxLen, item->response);
    return 13;
   }
   else if (BTUI_SELECT == (*top)->getType())
@@ -933,15 +933,15 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
  }
 }
 
-std::string BTDisplay::readString(const char *prompt, int max)
+std::string BTDisplay::readString(const char *prompt, int max, const std::string &initial)
 {
- std::string s;
+ std::string s = initial;
  int w, h;
  sizeFont(s.c_str(), w, h);
  if (h + textPos > text.h)
   scrollUp(h);
  unsigned char key;
- int len = 0;
+ int len = s.length();
  SDL_Rect dst;
  dst.h = h;
  if (0 != *prompt)
@@ -956,6 +956,7 @@ std::string BTDisplay::readString(const char *prompt, int max)
  dst.x = text.x + w;
  dst.y = text.y + textPos;
  dst.w = text.w - w;
+ drawFont(s.c_str(), dst, black, left);
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  while (((key = readChar()) != 13) && (key !=  27))
  {

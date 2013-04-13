@@ -131,7 +131,7 @@ class BTDisplay : public ImageLoader
   void playSound(const char *file, bool physfs = true);
   unsigned int process(const char *specialKeys = NULL, int delay = 0);
   unsigned int readChar(int delay = 0);
-  std::string readString(const char *prompt, int max);
+  std::string readString(const char *prompt, int max, const std::string &initial);
   void refresh();
   void removeAnimation(MNG_AnimationState *animState);
   void setBackground(const char *file, bool physfs = true);
