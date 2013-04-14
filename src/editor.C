@@ -449,7 +449,35 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    }
    case 'A':
    case 'M':
+   {
+    BTFactory<BTMonster> &monsterList = getMonsterList();
+    BTDisplay::selectItem monsters[monsterList.size()];
+    for (int i = 0; i < monsterList.size(); ++i)
+     monsters[i].name = monsterList[i].getName();
+    int monsterStart(0);
+    d.addSelection(monsters, monsterList.size(), monsterStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case 'X':
+   {
+    BTFactory<BTSpell> &spellList = getSpellList();
+    BTDisplay::selectItem spells[spellList.size()];
+    for (int i = 0; i < spellList.size(); ++i)
+     spells[i].name = spellList[i].getName();
+    int spellStart(0);
+    d.addSelection(spells, spellList.size(), spellStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case 'L':
    case 'T':
     break;
@@ -503,7 +531,16 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    case 'F':
    case '!':
    case 'J':
+   {
+    std::string val;
+    d.addReadString("Number>", 100, val);
+    key = d.process();
+    d.clearText();
+    if (27 == key)
+     return NULL;
+    number[count++] = atol(val.c_str());
     break;
+   }
    case '$':
    case 'N':
    default:
