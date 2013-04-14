@@ -479,8 +479,37 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     break;
    }
    case 'L':
-   case 'T':
+   {
+    std::string val;
+    d.addReadString("X>", 100, val);
+    key = d.process();
+    d.clearText();
+    if (27 == key)
+     return NULL;
+    number[count++] = atol(val.c_str());
+    val = "";
+    d.addReadString("Y>", 100, val);
+    key = d.process();
+    d.clearText();
+    if (27 == key)
+     return NULL;
+    number[count++] = atol(val.c_str());
     break;
+   }
+   case 'T':
+   {
+    BTDisplay::selectItem damage[BT_MONSTEREXTRADAMAGE];
+    for (int i = 0; i < BT_MONSTEREXTRADAMAGE; ++i)
+     damage[i].name = extraDamage[i];
+    int damageStart(0);
+    d.addSelection(damage, BT_MONSTEREXTRADAMAGE, damageStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case 'C':
    {
     BTJobList &jobList = getJobList();
