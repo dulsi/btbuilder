@@ -584,7 +584,14 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  }
  if (cmds[current].value < BT_CONDITIONALCOMMANDS)
  {
-  return new BTSpecialConditional(cmds[current].value, text.c_str(), number[0]);
+  BTSpecialConditional *opNew = new BTSpecialConditional(cmds[current].value, text.c_str(), number[0]);
+  BTSpecialConditional *opOld = static_cast<BTSpecialConditional*>(special);
+  if (opOld)
+  {
+   opNew->getThenClause()->moveFrom(opOld->getThenClause());
+   opNew->getElseClause()->moveFrom(opOld->getElseClause());
+  }
+  return opNew;
  }
  else
  {

@@ -134,6 +134,15 @@ IBool BTSpecialBody::isNothing() const
  return true;
 }
 
+void BTSpecialBody::moveFrom(BTSpecialBody *body)
+{
+ for (int i = body->numOfOperations(false); i > 0; --i)
+ {
+  addOperation(body->getOperation(0));
+  body->ops.erase(body->ops.begin(), false);
+ }
+}
+
 int BTSpecialBody::numOfOperations(bool recursive) const
 {
  if (recursive)

@@ -159,6 +159,7 @@ class BTSpecialBody : public BTSpecialOperation
   void insertOperation(BTSpecialOperation *before, BTSpecialOperation *op);
   void replaceOperation(BTSpecialOperation *opOld, BTSpecialOperation *opNew);
   IBool isNothing() const;
+  void moveFrom(BTSpecialBody *body);
   int numOfOperations(bool recursive) const;
   std::string print() const;
   void print(FILE *f) const;
