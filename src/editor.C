@@ -202,21 +202,24 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    {
     d.clearText();
     int len = levelMap->getNumOfSpecials();
-    BTDisplay::selectItem list[len];
+    BTDisplay::selectItem list[len + 1];
     for (int i = 0; i < len; ++i)
     {
      list[i].name = levelMap->getSpecial(i)->getName();
     }
-    d.addSelection(list, len, startSpecial, currentSpecial);
+    list[len].name = "<New Special>";
+    d.addSelection(list, len + 1, startSpecial, currentSpecial);
     int key = d.process("e");
     d.clearText();
-    if (key == 'e')
+    if ((key == 'e') || ((currentSpecial == len) && (key == '\r')))
     {
      editSpecial(d, levelMap->getSpecial(currentSpecial));
      levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
     }
     else if (key == '\r')
+    {
      levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
+    }
     if (currentWall < p3dConfig->mapType.size())
      d.drawText(p3dConfig->mapType[currentWall]->name.c_str());
     else
