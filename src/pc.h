@@ -43,7 +43,7 @@ class BTPc : public XMLObject, public BTCombatant
 {
  public:
   BTPc();
-  BTPc(int monsterType, int job);
+  BTPc(int monsterType, int job, BTCombatant *c = NULL);
   ~BTPc() { delete [] name; delete [] item; }
 
   bool advanceLevel();

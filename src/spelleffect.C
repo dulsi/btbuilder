@@ -147,8 +147,114 @@ void BTTargetedEffect::remove(BTCombat *combat, int g, int who)
  }
 }
 
+BTResistedEffect::BTResistedEffect(int t, int x, int s, int m, int g, int trgt)
+ : BTTargetedEffect(t, x, s, m, g, trgt)
+{
+}
+
+bool BTResistedEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ BTGame *game = BTGame::getGame();
+ BTFactory<BTMonster> &monList = game->getMonsterList();
+ if (BTTARGET_ALLMONSTERS == g)
+ {
+  int total = 0;
+  bool allResists = true;
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   int resistance = monList[grp->monsterType].getMagicResistance();
+   if (resistance > 0)
+   {
+    for (int k = 0; k < grp->individual.size(); ++k)
+    {
+     if (BTDice(1, 100).roll() <= resistance)
+      resists.set(total + k);
+     else
+      allResists = false;
+    }
+   }
+   else
+    allResists = false;
+   total += grp->individual.size();
+  }
+  if (allResists)
+   return true;
+ }
+ else if (BTTARGET_PARTY == g)
+ {
+  BTParty &party = game->getParty();
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   bool allResists = true;
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (BTMONSTER_NONE != party[i]->monster)
+    {
+     if (BTDice(1, 100).roll() <= monList[party[i]->monster].getMagicResistance())
+      resists.set(i);
+     else
+      allResists = false;
+    }
+    else
+     allResists = false;
+   }
+   if (allResists)
+    return true;
+  }
+  else
+  {
+   if (BTMONSTER_NONE != party[trgt]->monster)
+   {
+    if (BTDice(1, 100).roll() <= monList[party[trgt]->monster].getMagicResistance())
+    {
+     if ((group == BTTARGET_PARTY) && (BTTARGET_INDIVIDUAL == target))
+      resists.set(trgt);
+     else
+      resists.set(0);
+     return true;
+    }
+   }
+  }
+ }
+ else if (g >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+  int resistance = monList[grp->monsterType].getMagicResistance();
+  if (resistance > 0)
+  {
+   if (BTTARGET_INDIVIDUAL == trgt)
+   {
+    bool allResists = true;
+    for (int i = 0; i < grp->individual.size(); ++i)
+    {
+     if (BTDice(1, 100).roll() <= resistance)
+      resists.set(i);
+     else
+      allResists = false;
+    }
+    if (allResists)
+     return true;
+   }
+   else if (BTDice(1, 100).roll() <= resistance)
+   {
+    resists.set(0);
+    return true;
+   }
+  }
+ }
+ return false;
+}
+
 BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts)
- : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts)
+ : BTResistedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts)
 {
 }
 
@@ -351,107 +457,6 @@ void BTAttackEffect::remove(BTCombat *combat, int g, int who)
  BTTargetedEffect::remove(combat, g, who);
 }
 
-bool BTAttackEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
-{
- if (g == BTTARGET_NONE)
- {
-  g = group;
-  trgt = target;
- }
- BTGame *game = BTGame::getGame();
- BTFactory<BTMonster> &monList = game->getMonsterList();
- if (BTTARGET_ALLMONSTERS == g)
- {
-  int total = 0;
-  bool allResists = true;
-  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
-  {
-   BTMonsterGroup *grp = combat->getMonsterGroup(i);
-   if (NULL == grp)
-    break;
-   int resistance = monList[grp->monsterType].getMagicResistance();
-   if (resistance > 0)
-   {
-    for (int k = 0; k < grp->individual.size(); ++k)
-    {
-     if (BTDice(1, 100).roll() <= resistance)
-      resists.set(total + k);
-     else
-      allResists = false;
-    }
-   }
-   else
-    allResists = false;
-   total += grp->individual.size();
-  }
-  if (allResists)
-   return true;
- }
- else if (BTTARGET_PARTY == g)
- {
-  BTParty &party = game->getParty();
-  if (BTTARGET_INDIVIDUAL == trgt)
-  {
-   bool allResists = true;
-   for (int i = 0; i < party.size(); ++i)
-   {
-    if (BTMONSTER_NONE != party[i]->monster)
-    {
-     if (BTDice(1, 100).roll() <= monList[party[i]->monster].getMagicResistance())
-      resists.set(i);
-     else
-      allResists = false;
-    }
-    else
-     allResists = false;
-   }
-   if (allResists)
-    return true;
-  }
-  else
-  {
-   if (BTMONSTER_NONE != party[trgt]->monster)
-   {
-    if (BTDice(1, 100).roll() <= monList[party[trgt]->monster].getMagicResistance())
-    {
-     if ((group == BTTARGET_PARTY) && (BTTARGET_INDIVIDUAL == target))
-      resists.set(trgt);
-     else
-      resists.set(0);
-     return true;
-    }
-   }
-  }
- }
- else if (g >= BTTARGET_MONSTER)
- {
-  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
-  int resistance = monList[grp->monsterType].getMagicResistance();
-  if (resistance > 0)
-  {
-   if (BTTARGET_INDIVIDUAL == trgt)
-   {
-    bool allResists = true;
-    for (int i = 0; i < grp->individual.size(); ++i)
-    {
-     if (BTDice(1, 100).roll() <= resistance)
-      resists.set(i);
-     else
-      allResists = false;
-    }
-    if (allResists)
-     return true;
-   }
-   else if (BTDice(1, 100).roll() <= resistance)
-   {
-    resists.set(0);
-    return true;
-   }
-  }
- }
- return false;
-}
-
 void BTAttackEffect::displayResists(BTDisplay &d, BTCombat *combat)
 {
  std::string text;
@@ -471,9 +476,10 @@ void BTAttackEffect::displayResists(BTDisplay &d, BTCombat *combat)
  {
   BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
   BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
-  text = monList[grp->monsterType].getName();
   if ((BTTARGET_INDIVIDUAL == target) && (1 < grp->individual.size()))
-   text += "(s)";
+   text = monList[grp->monsterType].getPluralName();
+  else
+   text = monList[grp->monsterType].getName();
  }
  text += " repelled the spell!";
  d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
@@ -1290,5 +1296,63 @@ int BTScrySightEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
  d.drawView();
  d.drawMap(true);
+}
+
+BTSpellBindEffect::BTSpellBindEffect(int t, int x, int s, int m, int g, int trgt)
+ : BTResistedEffect(t, x, s, m, g, trgt)
+{
+}
+
+int BTSpellBindEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ if (!targetsMonsters())
+  return 0;
+ if (target == BTTARGET_ALLMONSTERS)
+  return 0;
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+ BTFactory<BTMonster> &monsterList = game->getMonsterList();
+ if (checkResists(combat, g, trgt))
+ {
+  std::string text = monsterList[grp->monsterType].getName();
+  text += " resists!";
+  d.drawMessage(text.c_str(), game->getDelay());
+  throw BTAllResistException();
+ }
+ else
+ {
+  if (trgt == BTTARGET_INDIVIDUAL)
+  {
+  }
+  else
+  {
+   if (party.size() >= BT_PARTYSIZE)
+   {
+    std::string text = "No room in your party. ";
+    text += monsterList[grp->monsterType].getName();
+    text += " cannot join!";
+    d.drawMessage(text.c_str(), game->getDelay());
+   }
+   else
+   {
+    BTPc *pc = new BTPc(grp->monsterType, BTJOB_MONSTER, grp->at(trgt));
+    party.add(d, pc);
+    d.drawStats();
+    grp->at(trgt)->status.set(BTSTATUS_DEAD);
+    return 1;
+   }
+  }
+ }
+ return 0;
+}
+
+void BTSpellBindEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
 }
 

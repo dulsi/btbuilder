@@ -390,6 +390,11 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_SCRYSIGHT:
    effect = new BTScrySightEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
    break;
+  case BTSPELLTYPE_SPELLBIND:
+  {
+   effect = new BTSpellBindEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target);
+   break;
+  }
   default:
    break;
  }

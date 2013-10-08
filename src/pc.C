@@ -36,18 +36,25 @@ BTPc::BTPc()
  item = new BTEquipment[BTGame::getGame()->getModule()->maxItems];
 }
 
-BTPc::BTPc(int monsterType, int j)
+BTPc::BTPc(int monsterType, int j, BTCombatant *c /*= NULL*/)
  : race(-1), gender(BTGENDER_MALE), picture(-1), monster(monsterType), rateAttacks(1), save(0), sp(0), maxSp(0), gold(0), xp(0)
 {
- // TO DO: Modify to accept combatant as an optional argument so that
- // spell bind can be implemented.
  BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
  BTJobList &jobList = BTGame::getGame()->getJobList();
  BTXpChartList &xpChartList = BTGame::getGame()->getXpChartList();
  name = new char[monsterList[monster].getName().length() + 1];
  strcpy(name, monsterList[monster].getName().c_str());
- job = j;
- level = maxLevel = monsterList[monster].getLevel();
+ if (c == NULL)
+ {
+  job = j;
+  level = maxLevel = monsterList[monster].getLevel();
+ }
+ else
+ {
+  job = c->job;
+  level = c->level;
+  maxLevel = c->maxLevel;
+ }
  if (level == 0)
   level = maxLevel = 1;
  else if (level > 1)
@@ -56,8 +63,16 @@ BTPc::BTPc(int monsterType, int j)
  picture = monsterList[monster].getPicture();
  ac = monsterList[monster].getAc();
  toHit = jobList[job]->calcToHit(level);
+ if (c == NULL)
+ {
+  hp = maxHp = monsterList[monster].getHp().roll();
+ }
+ else
+ {
+  hp = c->hp;
+  maxHp = c->maxHp;
+ }
  save = jobList[job]->calcSave(level);
- hp = maxHp = monsterList[monster].getHp().roll();
  status.set(BTSTATUS_NPC);
  int i;
  for (i = 0; i < BT_STATS; ++i)

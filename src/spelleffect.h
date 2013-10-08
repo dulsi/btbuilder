@@ -64,7 +64,17 @@ class BTTargetedEffect : public BTBaseEffect
   int target;
 };
 
-class BTAttackEffect : public BTTargetedEffect
+class BTResistedEffect : public BTTargetedEffect
+{
+ public:
+  BTResistedEffect(int t, int x, int s, int m, int g, int trgt);
+
+  bool checkResists(BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+
+  BitField resists;
+};
+
+class BTAttackEffect : public BTResistedEffect
 {
  public:
   BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts);
@@ -75,14 +85,12 @@ class BTAttackEffect : public BTTargetedEffect
   virtual void move(int g, int who, int where);
   virtual void remove(BTCombat *combat, int g, int who);
 
-  bool checkResists(BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   void displayResists(BTDisplay &d, BTCombat *combat);
   int applyToGroup(BTDisplay &d, BTCombatantCollection *grp, int resistOffset = 0);
 
   int range;
   int effectiveRange;
   int distance;
-  BitField resists;
   BTDice damage;
   int status;
 };
@@ -249,6 +257,15 @@ class BTScrySightEffect : public BTBaseEffect
   BTScrySightEffect(int t, int x, int s, int m);
 
   virtual int maintain(BTDisplay &d, BTCombat *combat);
+};
+
+class BTSpellBindEffect : public BTResistedEffect
+{
+ public:
+  BTSpellBindEffect(int t, int x, int s, int m, int g, int trgt);
+
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
 };
 
 #endif

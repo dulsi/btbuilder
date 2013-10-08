@@ -47,7 +47,8 @@ char *spellTypes[] =
  "Regenerate Spell Points",
  "Save Bonus",
  "Block Random Encounters",
- "Block Spells"
+ "Block Spells",
+ "Spell Bind"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES, spellTypes);
 
