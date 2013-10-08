@@ -19,8 +19,8 @@ is being built with BTCS restrictions. The second game is going to use the
 full functionality of Bt Builder. At the moment it has a more well stocked
 Garth's and allows 12 items per character.
 
-Work on an editor has begun. Right now it only allows you to edit maps.
-It allows you to place walls and specials. You cannot create specials nor
+Work on an editor has begun. Right now it allows you to edit maps.
+It allows you to place walls and specials. Specials can be edited. You can't
 adjust map features like the level of monsters or random encounter chance.
 To enter the editor arrow up or down to the module you want to edit in the
 module selection screen. Instead of pressing return to run the module press
@@ -30,7 +30,8 @@ The map editor works similar to the BTCS. Unlike the BTCS the arrow keys move
 you in the specified direction. To change facing press End or PgDn for left
 right respectively. In addition to 's', 'c', and 'l' from BTCS, it support
 'r' to resize the map. If the map is too large to fit on one screen, the map
-will scroll when you move past the view section.
+will scroll when you move past the view section. When placing a special with
+'s', you can press 'e' to edit the special.
 
 To directly run a sample game, run:
 
