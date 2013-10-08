@@ -218,6 +218,7 @@ extern ArrayLookup specialFlagLookup;
 #define BTDIRECTION_SOUTH 2
 #define BTDIRECTION_WEST  3
 extern char *directions[];
+extern ArrayLookup directionsLookup;
 
 #define BT_MAPTYPES 4
 #define BTMAPTYPE_CITY       2

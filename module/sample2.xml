@@ -6,4 +6,8 @@
  <monster>monster.xml</monster>
  <spell>spell.xml</spell>
  <maxItems>12</maxItems>
+ <startMap>CITYBUIL.MAP</startMap>
+ <startX>1</startX>
+ <startY>0</startY>
+ <startFace>south</startFace>
 </module>

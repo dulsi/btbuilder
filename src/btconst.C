@@ -233,6 +233,7 @@ char *directions[] =
  "south",
  "west"
 };
+ArrayLookup directionsLookup(BT_DIRECTIONS, directions);
 
 char *mapTypes[] =
 {

@@ -28,9 +28,12 @@ class BTModule : public XMLObject
   char *song;
   char *xpChart;
   char *job;
-  char *start;
   char *title;
   char *wall;
+  std::string startMap;
+  int startX;
+  int startY;
+  int startFace;
   unsigned int maxItems;
   unsigned int maxTime;
   unsigned int nightTime;

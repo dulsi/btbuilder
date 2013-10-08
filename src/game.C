@@ -213,17 +213,25 @@ BTMap *BTGame::loadMap(const char *filename)
 
 void BTGame::loadStart()
 {
- PHYSFS_file *start = PHYSFS_openRead(module->start);
- char levelName[14];
- PHYSFS_read(start, levelName, 1, 14);
- loadMap(levelName);
- PHYSFS_uint16 tmp;
- PHYSFS_readULE16(start, &tmp);
- xPos = tmp;
- PHYSFS_readULE16(start, &tmp);
- yPos = levelMap->getYSize() - 1 - tmp;
- PHYSFS_readULE16(start, &tmp);
- facing = tmp;
+ if (module->startMap.empty())
+ {
+  PHYSFS_file *start = PHYSFS_openRead("START.BRD");
+  char levelName[15];
+  levelName[14] = 0; // Ensure it ends with a null
+  PHYSFS_read(start, levelName, 1, 14);
+  module->startMap = levelName;
+  PHYSFS_uint16 tmp;
+  PHYSFS_readULE16(start, &tmp);
+  module->startX = tmp;
+  PHYSFS_readULE16(start, &tmp);
+  module->startY = tmp;
+  PHYSFS_readULE16(start, &tmp);
+  module->startFace = tmp;
+ }
+ loadMap(module->startMap.c_str());
+ xPos = module->startX;
+ yPos = levelMap->getYSize() - 1 - module->startY;
+ facing = module->startFace;
 }
 
 BTParty &BTGame::getParty()
