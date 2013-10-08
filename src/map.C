@@ -1009,7 +1009,7 @@ std::string BTSpecialConditional::print() const
  }
  else
  {
-  answer = conditionalCommands[type];
+  answer += conditionalCommands[type];
  }
  return answer;
 }
