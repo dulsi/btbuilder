@@ -60,7 +60,17 @@ void BTEditor::edit(BTDisplay &d)
   if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
    continue;
   int len = strlen(*i);
-  if ((len > 4) && ((strcmp(".MAP", (*i) + (len - 4)) == 0) || (strcmp(".xml", (*i) + (len - 4)) == 0)))
+  if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
+  {
+   char tmp[len + 1];
+   strcpy(tmp, (*i));
+   strcpy(tmp + len - 3, "xml");
+   if (0 == PHYSFS_exists(tmp))
+   {
+    count++;
+   }
+  }
+  else if ((len > 4) && (strcmp(".xml", (*i) + (len - 4)) == 0))
   {
    count++;
   }
@@ -74,7 +84,18 @@ void BTEditor::edit(BTDisplay &d)
   if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
    continue;
   int len = strlen(*i);
-  if ((len > 4) && ((strcmp(".MAP", (*i) + (len - 4)) == 0) || (strcmp(".xml", (*i) + (len - 4)) == 0)))
+  if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
+  {
+   char tmp[len + 1];
+   strcpy(tmp, (*i));
+   strcpy(tmp + len - 3, "xml");
+   if (0 == PHYSFS_exists(tmp))
+   {
+    list[current].name = *i;
+    current++;
+   }
+  }
+  else if ((len > 4) && (strcmp(".xml", (*i) + (len - 4)) == 0))
   {
    list[current].name = *i;
    current++;
@@ -250,6 +271,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    }
    catch (const FileException &e)
    {
+    PHYSFS_delete(levelMap->getFilename());
     printf("Failed to write old map file: %s\n", e.what());
     char tmp[len + 1];
     strcpy(tmp, levelMap->getFilename());

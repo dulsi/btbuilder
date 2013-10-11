@@ -110,17 +110,29 @@ BTMap *BTCore::getMap()
 
 BTMap *BTCore::loadMap(const char *filename)
 {
- if (levelMap)
- {
-  std::string name = levelMap->getFilename();
-  if (name == filename)
-   return levelMap;
-  delete levelMap;
- }
+ std::string finalname = filename;
  int len = strlen(filename);
  if ((len > 4) && (strcmp(".MAP", filename + (len - 4)) == 0))
  {
-  BinaryReadFile levelFile(filename);
+  char tmp[len + 1];
+  strcpy(tmp, filename);
+  strcpy(tmp + len - 3, "xml");
+  if (0 != PHYSFS_exists(tmp))
+  {
+   finalname = tmp;
+   len = finalname.length();
+  }
+ }
+ if (levelMap)
+ {
+  std::string name = levelMap->getFilename();
+  if (name == finalname)
+   return levelMap;
+  delete levelMap;
+ }
+ if ((len > 4) && (strcmp(".MAP", finalname.c_str() + (len - 4)) == 0))
+ {
+  BinaryReadFile levelFile(finalname.c_str());
   levelMap = new BTMap(levelFile);
  }
  else
@@ -128,9 +140,9 @@ BTMap *BTCore::loadMap(const char *filename)
   levelMap = new BTMap;
   XMLSerializer parser;
   levelMap->serialize(&parser);
-  parser.parse(filename, true);
+  parser.parse(finalname.c_str(), true);
  }
- levelMap->setFilename(filename);
+ levelMap->setFilename(finalname.c_str());
  return levelMap;
 }
 
@@ -203,6 +215,17 @@ BTMap *BTGame::loadMap(const char *filename)
   std::string name = levelMap->getFilename();
   if (name == filename)
    return levelMap;
+  int len = strlen(filename);
+  if ((len > 4) && (strcmp(".MAP", filename + (len - 4)) == 0))
+  {
+   char tmp[len + 1];
+   strcpy(tmp, filename);
+   strcpy(tmp + len - 3, "xml");
+   if (name == tmp)
+   {
+    return levelMap;
+   }
+  }
  }
  local.clearAll();
  knowledge.clearAll();
