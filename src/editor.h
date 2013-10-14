@@ -22,6 +22,8 @@ class BTEditor : public BTCore
   void edit(BTDisplay &d);
   void editMap(BTDisplay &d, const char *filename);
   void editSpecial(BTDisplay &d, BTSpecial *special);
+  int editMonsterList(BTDisplay &d);
+  void editMonster(BTDisplay &d, BTMonster &monster);
 
  protected:
   struct operationList

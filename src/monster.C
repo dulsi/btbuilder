@@ -222,6 +222,31 @@ bool BTMonster::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
   return (roll >= difficulty);
 }
 
+void BTMonster::setName(const std::string &nm)
+{
+ name = nm;
+}
+
+void BTMonster::setPluralName(const std::string &nm)
+{
+ pluralName = nm;
+}
+
+void BTMonster::setLevel(IShort l)
+{
+ level = l;
+}
+
+void BTMonster::setPicture(IShort pic)
+{
+ picture = pic;
+}
+
+void BTMonster::setStartDistance(IShort d)
+{
+ startDistance = d;
+}
+
 void BTMonster::useRangedOnGroup(BTDisplay &d, BTCombatantCollection *grp, int distance, int &activeNum)
 {
  BTGame *game = BTGame::getGame();

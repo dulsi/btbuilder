@@ -75,6 +75,11 @@ class BTMonster : public XMLObject
   IBool isIllusion() const;
   bool isWandering() const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
+  void setName(const std::string &nm);
+  void setPluralName(const std::string &nm);
+  void setLevel(IShort l);
+  void setPicture(IShort pic);
+  void setStartDistance(IShort d);
   void useRangedOnGroup(BTDisplay &d, BTCombatantCollection *grp, int distance, int &activeNum);
   void write(BinaryWriteFile &f);
 

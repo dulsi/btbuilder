@@ -8,6 +8,7 @@
 #include "btconst.h"
 #include "editor.h"
 #include <algorithm>
+#include <sstream>
 
 BTEditor::BTEditor(BTModule *m)
  : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0)
@@ -55,7 +56,7 @@ void BTEditor::edit(BTDisplay &d)
 
  for (i = files; *i != NULL; i++)
  {
-  if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+  if (/*(0 == strcmp(module->monster, *i)) || */(0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
    continue;
   if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
    continue;
@@ -79,7 +80,7 @@ void BTEditor::edit(BTDisplay &d)
  int current = 0;
  for (i = files; *i != NULL; i++)
  {
-  if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+  if (/*(0 == strcmp(module->monster, *i)) || */(0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
    continue;
   if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
    continue;
@@ -107,9 +108,21 @@ void BTEditor::edit(BTDisplay &d)
  d.clearElements();
  d.addSelection(list, count, start, select);
  unsigned int key = d.process();
+ d.clearText();
  if (key == 13)
  {
-  editMap(d, list[select].name.c_str());
+  if (list[select].name == module->monster)
+  {
+   BTFactory<BTMonster> &monsterList = getMonsterList();
+   int monster = 0;
+   while (-1 != (monster = editMonsterList(d)))
+   {
+    editMonster(d, monsterList[monster]);
+   }
+   monsterList.save(module->monster);
+  }
+  else
+   editMap(d, list[select].name.c_str());
  }
 }
 
@@ -361,6 +374,121 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
   ops.clear();
   list.resize(2);
   buildOperationList(body, list, ops);
+  d.addSelection(list.data(), list.size(), start, current);
+ }
+ d.clearText();
+ d.setConfig(oldConfig);
+}
+
+int BTEditor::editMonsterList(BTDisplay &d)
+{
+ BTDisplayConfig *oldConfig = d.getConfig();
+ BTDisplayConfig config;
+ XMLSerializer parser;
+ config.serialize(&parser);
+ parser.parse("data/specialedit.xml", true);
+ d.setConfig(&config);
+ int start(0);
+ int current(0);
+ BTFactory<BTMonster> &monsterList = getMonsterList();
+ BTDisplay::selectItem monsters[monsterList.size() + 1];
+ for (int i = 0; i < monsterList.size(); ++i)
+  monsters[i].name = monsterList[i].getName();
+ monsters[monsterList.size()].name = "<New Monster>";
+ d.addSelection(monsters, monsterList.size() + 1, start, current);
+ int key = d.process();
+ d.clearText();
+ d.setConfig(oldConfig);
+ if (27 == key)
+  return -1;
+ else
+  return current;
+}
+
+void BTEditor::editMonster(BTDisplay &d, BTMonster &monster)
+{
+ BTDisplayConfig *oldConfig = d.getConfig();
+ BTDisplayConfig config;
+ XMLSerializer parser;
+ config.serialize(&parser);
+ parser.parse("data/specialedit.xml", true);
+ d.setConfig(&config);
+ int start(0);
+ int current(0);
+ ObjectSerializer serial;
+ monster.serialize(&serial);
+ std::vector<BTDisplay::selectItem> list(6);
+ list[0].name = std::string("Name: ") + monster.getName();
+ list[1].name = "Plural: " + monster.getPluralName();
+ list[2].name = std::string("Picture: ") + serial.find("picture", NULL)->createString();
+ list[3].name = std::string("Gender: ") + serial.find("gender", NULL)->createString();
+ list[4].name = std::string("Level: ") + serial.find("level", NULL)->createString();
+ list[5].name = std::string("Starting Distance: ") + serial.find("startDistance", NULL)->createString();
+ d.addSelection(list.data(), list.size(), start, current);
+ int key;
+ while (27 != (key = d.process()))
+ {
+  d.clearText();
+  switch (current)
+  {
+   case 0:
+   {
+    std::string name = monster.getName();
+    d.addReadString("Name: ", 100, name);
+    key = d.process();
+    if ('\r' == key)
+     monster.setName(name);
+    d.clearText();
+    list[0].name = std::string("Name: ") + monster.getName();
+    break;
+   }
+   case 1:
+   {
+    std::string name = monster.getPluralName();
+    d.addReadString("Plural: ", 100, name);
+    key = d.process();
+    if ('\r' == key)
+     monster.setPluralName(name);
+    d.clearText();
+    list[1].name = std::string("Plural: ") + monster.getPluralName();
+    break;
+   }
+   case 2:
+   {
+    std::string val = serial.find("picture", NULL)->createString();
+    d.addReadString("Picture: ", 100, val);
+    key = d.process();
+    if ('\r' == key)
+     monster.setPicture(atol(val.c_str()));
+    d.clearText();
+    list[2].name = std::string("Picture: ") + serial.find("picture", NULL)->createString();
+    break;
+   }
+   case 4:
+   {
+    std::string val = serial.find("level", NULL)->createString();
+    d.addReadString("Level: ", 100, val);
+    key = d.process();
+    if ('\r' == key)
+     monster.setLevel(atol(val.c_str()));
+    d.clearText();
+    list[4].name = std::string("Level: ") + serial.find("level", NULL)->createString();
+    break;
+   }
+   case 5:
+   {
+    std::string val = serial.find("startDistance", NULL)->createString();
+    d.addReadString("Starting Distance: ", 100, val);
+    key = d.process();
+    if ('\r' == key)
+     monster.setStartDistance(atol(val.c_str()));
+    d.clearText();
+    list[5].name = std::string("Starting Distance: ") + serial.find("startDistance", NULL)->createString();
+    break;
+   }
+   default:
+    break;
+  }
   d.addSelection(list.data(), list.size(), start, current);
  }
  d.clearText();

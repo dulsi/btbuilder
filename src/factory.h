@@ -132,7 +132,7 @@ item &BTFactory<item>::operator[](IShort num)
 {
  if (num >= items.size())
  {
-  for (int i = items.size(); i < num; i++)
+  for (int i = items.size(); i <= num; i++)
   {
    items.push_back(new item);
   } 
