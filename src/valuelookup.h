@@ -14,18 +14,20 @@ class ValueLookup
  public:
   virtual std::string getName(int index) = 0;
   virtual int getIndex(std::string name) = 0;
+  virtual size_t size() = 0;
 };
 
 class ArrayLookup : public ValueLookup
 {
  public:
-  ArrayLookup(int s, char **a) : size(s), array(a) {}
+  ArrayLookup(size_t s, char **a) : sz(s), array(a) {}
 
   virtual std::string getName(int index);
   virtual int getIndex(std::string name);
+  virtual size_t size();
 
  private:
-  int size;
+  size_t sz;
   char **array;
 };
 

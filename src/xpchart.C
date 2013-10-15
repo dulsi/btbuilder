@@ -44,3 +44,9 @@ int BTXpChartList::getIndex(std::string name)
    return i;
  return -1;
 }
+
+size_t BTXpChartList::size()
+{
+ return XMLVector<BTXpChart*>::size();
+}
+

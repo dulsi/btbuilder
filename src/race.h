@@ -36,6 +36,7 @@ class BTRaceList : public ValueLookup, public XMLVector<BTRace*>
  public:
   virtual std::string getName(int index);
   virtual int getIndex(std::string name);
+  virtual size_t size();
 };
 
 #endif

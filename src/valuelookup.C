@@ -10,7 +10,7 @@
 
 std::string ArrayLookup::getName(int index)
 {
- if ((index >= 0) && (index < size))
+ if ((index >= 0) && (index < sz))
   return array[index];
  else
   return "";
@@ -18,10 +18,16 @@ std::string ArrayLookup::getName(int index)
 
 int ArrayLookup::getIndex(std::string name)
 {
- for (int i = 0; i < size; ++i)
+ for (int i = 0; i < sz; ++i)
  {
   if (0 == strcmp(name.c_str(), array[i]))
    return i;
  }
  return -1;
 }
+
+size_t ArrayLookup::size()
+{
+ return sz;
+}
+

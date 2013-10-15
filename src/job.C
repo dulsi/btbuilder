@@ -181,6 +181,11 @@ int BTJobList::getIndex(std::string name)
  return -1;
 }
 
+size_t BTJobList::size()
+{
+ return XMLVector<BTJob*>::size();
+}
+
 BTJobAbbrevList::BTJobAbbrevList(BTJobList *l)
  : jbList(l)
 {
@@ -200,5 +205,10 @@ int BTJobAbbrevList::getIndex(std::string name)
   if (strcmp(name.c_str(), (*jbList)[i]->abbrev) == 0)
    return i;
  return -1;
+}
+
+size_t BTJobAbbrevList::size()
+{
+ return jbList->size();
 }
 

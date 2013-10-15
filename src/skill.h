@@ -56,6 +56,7 @@ class BTSkillList : public ValueLookup, public XMLVector<BTSkill*>
  public:
   virtual std::string getName(int index);
   virtual int getIndex(std::string name);
+  virtual size_t size();
 };
 
 #endif

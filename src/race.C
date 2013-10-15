@@ -43,3 +43,9 @@ int BTRaceList::getIndex(std::string name)
    return i;
  return -1;
 }
+
+size_t BTRaceList::size()
+{
+ return XMLVector<BTRace*>::size();
+}
+

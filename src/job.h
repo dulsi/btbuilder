@@ -125,6 +125,7 @@ class BTJobList : public ValueLookup, public XMLVector<BTJob*>
  public:
   virtual std::string getName(int index);
   virtual int getIndex(std::string name);
+  virtual size_t size();
 };
 
 class BTJobAbbrevList : public ValueLookup
@@ -134,6 +135,7 @@ class BTJobAbbrevList : public ValueLookup
 
   virtual std::string getName(int index);
   virtual int getIndex(std::string name);
+  virtual size_t size();
 
  private:
   BTJobList *jbList;

@@ -412,82 +412,76 @@ void BTEditor::editMonster(BTDisplay &d, BTMonster &monster)
  XMLSerializer parser;
  config.serialize(&parser);
  parser.parse("data/specialedit.xml", true);
+ const char *description[11] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Thaumaturigal Resistance" };
+ const char *field[11] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "magicResistance" };
  d.setConfig(&config);
  int start(0);
  int current(0);
  ObjectSerializer serial;
  monster.serialize(&serial);
- std::vector<BTDisplay::selectItem> list(6);
- list[0].name = std::string("Name: ") + monster.getName();
- list[1].name = "Plural: " + monster.getPluralName();
- list[2].name = std::string("Picture: ") + serial.find("picture", NULL)->createString();
- list[3].name = std::string("Gender: ") + serial.find("gender", NULL)->createString();
- list[4].name = std::string("Level: ") + serial.find("level", NULL)->createString();
- list[5].name = std::string("Starting Distance: ") + serial.find("startDistance", NULL)->createString();
+ std::vector<BTDisplay::selectItem> list(11);
+ for (int i = 0; i < 11; ++i)
+  list[i].name = std::string(description[i]) + ": " + serial.find(field[i], NULL)->createString();
  d.addSelection(list.data(), list.size(), start, current);
  int key;
  while (27 != (key = d.process()))
  {
   d.clearText();
-  switch (current)
+  XMLAction *curField = serial.find(field[current], NULL);
+  if (curField)
   {
-   case 0:
+   switch (curField->getType())
    {
-    std::string name = monster.getName();
-    d.addReadString("Name: ", 100, name);
-    key = d.process();
-    if ('\r' == key)
-     monster.setName(name);
-    d.clearText();
-    list[0].name = std::string("Name: ") + monster.getName();
-    break;
+    case XMLTYPE_STDSTRING:
+    {
+     std::string val = curField->createString();
+     d.addReadString(std::string(description[current]) + ": ", 100, val);
+     key = d.process();
+     if ('\r' == key)
+      *(reinterpret_cast<std::string*>(curField->object)) = val;
+     break;
+    }
+    case XMLTYPE_INT:
+    {
+     if (curField->data)
+     {
+      ValueLookup *lookup = reinterpret_cast<ValueLookup*>(curField->data);
+      BTDisplay::selectItem lookupItem[lookup->size()];
+      for (int i = 0; i < lookup->size(); ++i)
+       lookupItem[i].name = lookup->getName(i);
+      int lookupStart(0);
+      int lookupCurrent(*(reinterpret_cast<int*>(curField->object)));
+      d.addSelection(lookupItem, lookup->size(), lookupStart, lookupCurrent);
+      if (27 != d.process())
+      {
+       *(reinterpret_cast<int*>(curField->object)) = lookupCurrent;
+      }
+     }
+     else
+     {
+      std::string val = curField->createString();
+      d.addReadString(std::string(description[current]) + ": ", 100, val);
+      key = d.process();
+      if ('\r' == key)
+       *(reinterpret_cast<int*>(curField->object)) = atol(val.c_str());
+     }
+     break;
+    }
+    case XMLTYPE_INT16:
+    {
+     std::string val = curField->createString();
+     d.addReadString(std::string(description[current]) + ": ", 100, val);
+     key = d.process();
+     if ('\r' == key)
+      *(reinterpret_cast<int16_t*>(curField->object)) = atol(val.c_str());
+     break;
+    }
+    default:
+     printf("Unsuppported type: %d\n", curField->getType());
+     break;
    }
-   case 1:
-   {
-    std::string name = monster.getPluralName();
-    d.addReadString("Plural: ", 100, name);
-    key = d.process();
-    if ('\r' == key)
-     monster.setPluralName(name);
-    d.clearText();
-    list[1].name = std::string("Plural: ") + monster.getPluralName();
-    break;
-   }
-   case 2:
-   {
-    std::string val = serial.find("picture", NULL)->createString();
-    d.addReadString("Picture: ", 100, val);
-    key = d.process();
-    if ('\r' == key)
-     monster.setPicture(atol(val.c_str()));
-    d.clearText();
-    list[2].name = std::string("Picture: ") + serial.find("picture", NULL)->createString();
-    break;
-   }
-   case 4:
-   {
-    std::string val = serial.find("level", NULL)->createString();
-    d.addReadString("Level: ", 100, val);
-    key = d.process();
-    if ('\r' == key)
-     monster.setLevel(atol(val.c_str()));
-    d.clearText();
-    list[4].name = std::string("Level: ") + serial.find("level", NULL)->createString();
-    break;
-   }
-   case 5:
-   {
-    std::string val = serial.find("startDistance", NULL)->createString();
-    d.addReadString("Starting Distance: ", 100, val);
-    key = d.process();
-    if ('\r' == key)
-     monster.setStartDistance(atol(val.c_str()));
-    d.clearText();
-    list[5].name = std::string("Starting Distance: ") + serial.find("startDistance", NULL)->createString();
-    break;
-   }
-   default:
-    break;
+   d.clearText();
+   list[current].name = std::string(description[current]) + ": " + serial.find(field[current], NULL)->createString();
   }
   d.addSelection(list.data(), list.size(), start, current);
  }

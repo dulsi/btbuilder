@@ -206,7 +206,7 @@ void BTDisplay::addColumns(const std::list<std::string>& c)
  element.push_back(new BTUIMultiColumn(c));
 }
 
-void BTDisplay::addReadString(const char *prompt, int maxLen, std::string &response)
+void BTDisplay::addReadString(const std::string &prompt, int maxLen, std::string &response)
 {
  element.push_back(new BTUIReadString(prompt, maxLen, response));
 }

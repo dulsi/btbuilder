@@ -77,3 +77,9 @@ int BTSkillList::getIndex(std::string name)
    return i;
  return -1;
 }
+
+size_t BTSkillList::size()
+{
+ return XMLVector<BTSkill*>::size();
+}
+

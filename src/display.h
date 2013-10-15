@@ -106,7 +106,7 @@ class BTDisplay : public ImageLoader
   void addChoice(const char *keys, const char *words, alignment a = left);
   void addText(const char *words, alignment a = left);
   void addColumns(const std::list<std::string>& c);
-  void addReadString(const char *prompt, int maxLen, std::string &response);
+  void addReadString(const std::string &prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
   void clear(SDL_Rect &r, bool update = false);
   void clearElements();
