@@ -412,15 +412,15 @@ void BTEditor::editMonster(BTDisplay &d, BTMonster &monster)
  XMLSerializer parser;
  config.serialize(&parser);
  parser.parse("data/specialedit.xml", true);
- const char *description[11] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Thaumaturigal Resistance" };
- const char *field[11] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "magicResistance" };
+ const char *description[12] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Thaumaturigal Resistance", "Wandering" };
+ const char *field[12] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "magicResistance", "wandering" };
  d.setConfig(&config);
  int start(0);
  int current(0);
  ObjectSerializer serial;
  monster.serialize(&serial);
- std::vector<BTDisplay::selectItem> list(11);
- for (int i = 0; i < 11; ++i)
+ std::vector<BTDisplay::selectItem> list(12);
+ for (int i = 0; i < 12; ++i)
   list[i].name = std::string(description[i]) + ": " + serial.find(field[i], NULL)->createString();
  d.addSelection(list.data(), list.size(), start, current);
  int key;
@@ -439,6 +439,20 @@ void BTEditor::editMonster(BTDisplay &d, BTMonster &monster)
      key = d.process();
      if ('\r' == key)
       *(reinterpret_cast<std::string*>(curField->object)) = val;
+     break;
+    }
+    case XMLTYPE_BOOL:
+    {
+     BTDisplay::selectItem vals[2];
+     vals[0].name = "false";
+     vals[1].name = "true";
+     int lookupStart(0);
+     int lookupCurrent((*(reinterpret_cast<bool*>(curField->object)) ? 1 : 0));
+     d.addSelection(vals, 2, lookupStart, lookupCurrent);
+     if (27 != d.process())
+     {
+      *(reinterpret_cast<bool*>(curField->object)) = lookupCurrent;
+     }
      break;
     }
     case XMLTYPE_INT:
