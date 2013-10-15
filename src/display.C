@@ -1495,6 +1495,8 @@ void BTUISelect::pageDown(BTDisplay &d)
  start += lines;
  if (start + lines >= size)
   start = size - lines;
+ if (start < 0)
+  start = 0;
  if (start + (lines / 2) > select)
  {
   while ((select > 0) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
