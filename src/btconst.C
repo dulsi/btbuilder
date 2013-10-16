@@ -130,6 +130,7 @@ char *itemTypes[] =
  "arrow",
  "thrown weapon"
 };
+ArrayLookup itemTypesLookup(BT_ITEMTYPES, itemTypes);
 
 char *conditionalCommands[] =
 {

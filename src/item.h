@@ -70,7 +70,7 @@ class BTItem : public XMLObject
   IShort hitPlus;
   IShort xSpecial;
   IShort chanceXSpecial;
-  IShort type;
+  int type;
   IShort spellCast;
   BitField classAllowed;
   IShort price;

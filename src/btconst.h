@@ -113,6 +113,7 @@ extern char *combatActions[];
 #define BTITEM_ARROW        11
 #define BTITEM_THROWNWEAPON 12
 extern char *itemTypes[];
+extern ArrayLookup itemTypesLookup;
 
 #define BTITEMCAST_NONE -1
 

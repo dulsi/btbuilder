@@ -15,6 +15,7 @@ BTItem::BTItem(BinaryReadFile &f)
 {
  IUByte unknown;
  char tmp[26];
+ IShort num;
 
  f.readUByteArray(25, (IUByte *)tmp);
  tmp[25] = 0;
@@ -28,7 +29,8 @@ BTItem::BTItem(BinaryReadFile &f)
  f.readShort(hitPlus);
  f.readShort(xSpecial);
  f.readShort(chanceXSpecial);
- f.readShort(type);
+ f.readShort(num);
+ type = num;
  f.readShort(spellCast);
  IShort jobAllowed;
  f.readShort(jobAllowed);
@@ -147,6 +149,7 @@ void BTItem::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
  char tmp[25];
+ IShort num;
 
  strncpy(tmp, name, 25);
  f.writeUByteArray(25, (IUByte *)tmp);
@@ -158,7 +161,8 @@ void BTItem::write(BinaryWriteFile &f)
  f.writeShort(hitPlus);
  f.writeShort(xSpecial);
  f.writeShort(chanceXSpecial);
- f.writeShort(type);
+ num = type;
+ f.writeShort(num);
  f.writeShort(spellCast);
  IShort jobAllowed(0);
  for (int i = 0; i < 11; i++)
@@ -183,7 +187,7 @@ void BTItem::serialize(ObjectSerializer* s)
  s->add("hitPlus", &hitPlus);
  s->add("xSpecial", &xSpecial);
  s->add("chanceXSpecial", &chanceXSpecial);
- s->add("type", &type);
+ s->add("type", &type, NULL, &itemTypesLookup);
  s->add("spellCast", &spellCast);
  s->add("allowedJob", &classAllowed, &BTCore::getCore()->getJobList());
  s->add("price", &price);

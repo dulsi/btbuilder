@@ -387,6 +387,8 @@ void XMLSerializer::endElement(const XML_Char *name)
      if (state->data)
      {
       *(reinterpret_cast<int*>(state->object)) = reinterpret_cast<ValueLookup*>(state->data)->getIndex(content);
+      if (-1 == *(reinterpret_cast<int*>(state->object)))
+       *(reinterpret_cast<int*>(state->object)) = atoi(content.c_str());
      }
      else
       *(reinterpret_cast<int*>(state->object)) = atoi(content.c_str());
