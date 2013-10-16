@@ -401,14 +401,14 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  d.setConfig(oldConfig);
 }
 
-#define FIELDS_ITEM 9
+#define FIELDS_ITEM 11
 #define FIELDS_MONSTER 14
 #define FIELDS_SPELL 5
 
 void BTEditor::editItem(BTDisplay &d, BTItem &item)
 {
- const char *description[FIELDS_ITEM] = { "Name", "Type", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable" };
- const char *field[FIELDS_ITEM] = { "name", "type", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable" };
+ const char *description[FIELDS_ITEM] = { "Name", "Type", "User Class", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable", "Consumed" };
+ const char *field[FIELDS_ITEM] = { "name", "type", "allowedJob", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable", "consume" };
  ObjectSerializer serial;
  item.serialize(&serial);
  editSerialized(d, serial, FIELDS_ITEM, description, field);
@@ -508,6 +508,30 @@ void BTEditor::editSerialized(BTDisplay &d, ObjectSerializer &serial, int entrie
      if (27 != d.process())
      {
       *(reinterpret_cast<bool*>(curField->object)) = lookupCurrent;
+     }
+     break;
+    }
+    case XMLTYPE_BITFIELD:
+    {
+     ValueLookup *lookup = reinterpret_cast<ValueLookup*>(curField->data);
+     BitField *bits = reinterpret_cast<BitField*>(curField->object);
+     BTDisplay::selectItem lookupItem[lookup->size()];
+     for (int i = 0; i < lookup->size(); ++i)
+     {
+      lookupItem[i].name = lookup->getName(i);
+      if (bits->isSet(i))
+       lookupItem[i].first = '*';
+     }
+     int lookupStart(0);
+     int lookupCurrent(0);
+     d.addSelection(lookupItem, lookup->size(), lookupStart, lookupCurrent);
+     int key;
+     while (27 != (key = d.process()))
+     {
+      if (bits->toggle(lookupCurrent))
+       lookupItem[lookupCurrent].first = '*';
+      else
+       lookupItem[lookupCurrent].first = 0;
      }
      break;
     }

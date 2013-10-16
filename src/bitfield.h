@@ -21,6 +21,7 @@ class BitField
   void move(int index, int where);
   void remove(int index);
   void set(int index);
+  bool toggle(int index);
 
   BitField operator&(const BitField &other) const;
   BitField &operator|=(const BitField &other);

@@ -27,7 +27,8 @@ BTItem::BTItem(BinaryReadFile &f)
  f.readUByte(unknown);
  f.readShort(armorPlus);
  f.readShort(hitPlus);
- f.readShort(xSpecial);
+ f.readShort(num);
+ xSpecial = num;
  f.readShort(chanceXSpecial);
  f.readShort(num);
  type = num;
@@ -159,7 +160,8 @@ void BTItem::write(BinaryWriteFile &f)
  f.writeUByte(unknown);
  f.writeShort(armorPlus);
  f.writeShort(hitPlus);
- f.writeShort(xSpecial);
+ num = xSpecial;
+ f.writeShort(num);
  f.writeShort(chanceXSpecial);
  num = type;
  f.writeShort(num);
@@ -185,7 +187,7 @@ void BTItem::serialize(ObjectSerializer* s)
  s->add("damage", &damage);
  s->add("armorPlus", &armorPlus);
  s->add("hitPlus", &hitPlus);
- s->add("xSpecial", &xSpecial);
+ s->add("xSpecial", &xSpecial, NULL, &extraDamageLookup);
  s->add("chanceXSpecial", &chanceXSpecial);
  s->add("type", &type, NULL, &itemTypesLookup);
  s->add("spellCast", &spellCast);

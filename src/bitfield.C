@@ -258,6 +258,20 @@ void BitField::set(int index)
  }
 }
 
+bool BitField::toggle(int index)
+{
+ if (isSet(index))
+ {
+  clear(index);
+  return false;
+ }
+ else
+ {
+  set(index);
+  return true;
+ }
+}
+
 void BitField::expand(int newSize)
 {
  if (bits)

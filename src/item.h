@@ -68,7 +68,7 @@ class BTItem : public XMLObject
   BTDice damage;
   IShort armorPlus;
   IShort hitPlus;
-  IShort xSpecial;
+  int xSpecial;
   IShort chanceXSpecial;
   int type;
   IShort spellCast;
