@@ -22,7 +22,7 @@
  type: bits[3] {d2, d4, d6, d8, d10, d12, d20, d100}
 */
 
-#define DICE_VALIDTYPES 9
+#define DICE_VALIDTYPES 8
 
 typedef boost::minstd_rand base_generator_type;
 
@@ -33,6 +33,7 @@ class BTDice : public XMLObject
   BTDice(int n, int t, int m = 0);
   BTDice();
 
+  std::string createString();
   int getMax() const;
   int getMin() const;
   int getModifier() const;
