@@ -284,6 +284,11 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    case 'l':
     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
     break;
+   case 'p':
+    editMapProperties(d);
+    break;
+   default:
+    break;
   }
  }
  d.drawText("Save?");
@@ -321,6 +326,17 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
   }
  }
  d.setConfig(oldConfig);
+}
+
+#define FIELDS_MAP 4
+
+void BTEditor::editMapProperties(BTDisplay &d)
+{
+ const char *description[FIELDS_MAP] = { "Name", "Type", "Light", "Monster Level" };
+ const char *field[FIELDS_MAP] = { "name", "type", "light", "monsterLevel" };
+ ObjectSerializer serial;
+ levelMap->serialize(&serial);
+ editSerialized(d, serial, FIELDS_MAP, description, field);
 }
 
 void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)

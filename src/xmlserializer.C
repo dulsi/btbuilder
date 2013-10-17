@@ -53,6 +53,25 @@ std::string XMLAction::createString()
  std::string content;
  switch(getType())
  {
+  case XMLTYPE_BITFIELD:
+  {
+   BitField *field = reinterpret_cast<BitField*>(object);
+   ValueLookup *lookup = reinterpret_cast<ValueLookup*>(data);
+   for (int i = 0; i < lookup->size(); ++i)
+   {
+    if (field->isSet(i))
+    {
+     if (content.empty())
+      content = lookup->getName(i);
+     else
+     {
+      content = "Multiple";
+      break;
+     }
+    }
+   }
+   break;
+  }
   case XMLTYPE_BOOL:
    if (*(reinterpret_cast<bool*>(object)))
     content = "true";

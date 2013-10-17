@@ -21,6 +21,7 @@ class BTEditor : public BTCore
 
   void edit(BTDisplay &d);
   void editMap(BTDisplay &d, const char *filename);
+  void editMapProperties(BTDisplay &d);
   void editSpecial(BTDisplay &d, BTSpecial *special);
 
   template<typename item>
