@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
      level = mon.getLevel();
      printf("Level: %d\n\n", level);
     }
-    printf("Name: %s\n", mon.getName());
+    printf("Name: %s\n", mon.getName().c_str());
     printf("Code: %s\n", mon.getCode());
     printf("Points: %d   Range: %d   Extra range: %s\n", mon.getSp(),
       mon.getRange() * 10, effectiveRanges[mon.getEffectiveRange()]);
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
    for (i = 0; i < itmList.size(); i++)
    {
     BTItem &mon(itmList[i]);
-    printf("Name: %s\n", mon.getName());
+    printf("Name: %s\n", mon.getName().c_str());
     printf("Type: %s\n", itemTypes[mon.getType()]);
     printf("Price: %d   User class: Multiple\n", mon.getPrice());
     printf("Armor bonus: %d   Hit bonus: %d\n", mon.getArmorPlus(),
@@ -344,7 +344,7 @@ int main(int argc, char *argv[])
      printf("Times useable: %d", mon.getTimesUsable());
     printf("   Spell cast: %s\n",
       ((mon.getSpellCast() == BTITEMCAST_NONE) ? "(none)" :
-      splList[mon.getSpellCast()].getName()));
+      splList[mon.getSpellCast()].getName().c_str()));
     printf("Cause: <member> %s <opponent>\n", mon.getCause());
     printf("Effect: %s <damage>\n", mon.getEffect());
     printf("\n");

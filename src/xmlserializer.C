@@ -62,7 +62,10 @@ std::string XMLAction::createString()
   case XMLTYPE_INT:
    if (data)
    {
-    content = reinterpret_cast<ValueLookup*>(data)->getName(*(reinterpret_cast<int*>(object)));
+    if (extra == *(reinterpret_cast<int*>(object)))
+     content = extraText;
+    else
+     content = reinterpret_cast<ValueLookup*>(data)->getName(*(reinterpret_cast<int*>(object)));
    }
    else
    {
@@ -156,7 +159,7 @@ void ObjectSerializer::add(const char *name, bool *p, std::vector<XMLAttribute> 
  action.push_back(act);
 }
 
-void ObjectSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *atts /*= NULL*/, ValueLookup *lookup /*= NULL*/)
+void ObjectSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *atts /*= NULL*/, ValueLookup *lookup /*= NULL*/, int extra /*= EXTRA_NONE*/, const std::string &extraText /*= std::string()*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
@@ -165,6 +168,8 @@ void ObjectSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  act->data = reinterpret_cast<void*>(lookup);
+ act->extra = extra;
+ act->extraText = extraText;
  action.push_back(act);
 }
 

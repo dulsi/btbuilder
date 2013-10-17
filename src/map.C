@@ -412,7 +412,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
       if (party[n]->isAlive())
       {
        d.drawText(party[n]->name);
-       snprintf(tmp, 100, "%s costs %d gold coins.", itemList[number[0]].getName(), number[1]);
+       snprintf(tmp, 100, "%s costs %d gold coins.", itemList[number[0]].getName().c_str(), number[1]);
        d.drawText(tmp);
        d.drawText("Wilt thou pay?");
        d.drawText("Yes, or");
@@ -429,7 +429,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
          snprintf(tmp, 100, "%s does not have enough gold!", party[n]->name);
         else if (party[n]->isEquipmentFull())
         {
-         snprintf(tmp, 100, "%s has no room for %s!", party[n]->name, itemList[number[0]].getName());
+         snprintf(tmp, 100, "%s has no room for %s!", party[n]->name, itemList[number[0]].getName().c_str());
          d.drawText(tmp);
          snprintf(tmp, 100, "%s does not have room to carry it!", party[n]->name);
         }
@@ -437,7 +437,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
         {
          party[n]->takeGold(number[1]);
          party[n]->giveItem(number[0], true, itemList[number[0]].getTimesUsable());
-         snprintf(tmp, 100, "%s gets %s.", party[n]->name, itemList[number[0]].getName());
+         snprintf(tmp, 100, "%s gets %s.", party[n]->name, itemList[number[0]].getName().c_str());
         }
         d.drawText(tmp);
        }
@@ -462,7 +462,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    else
    {
     char tmp[100];
-    snprintf(tmp, 100, "Who desires %s?", spellList[number[0]].getName());
+    snprintf(tmp, 100, "Who desires %s?", spellList[number[0]].getName().c_str());
     d.drawText(tmp);
     d.drawText("");
     d.drawText("Pick a party member:");
@@ -478,7 +478,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
       if (n < party.size())
       {
        d.drawText(party[n]->name);
-       snprintf(tmp, 100, "%s costs %d gold coins.", spellList[number[0]].getName(), number[1]);
+       snprintf(tmp, 100, "%s costs %d gold coins.", spellList[number[0]].getName().c_str(), number[1]);
        d.drawText(tmp);
        d.drawText("Wilt thou pay?");
        d.drawText("Yes, or");

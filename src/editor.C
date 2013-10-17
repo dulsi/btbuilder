@@ -401,14 +401,14 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  d.setConfig(oldConfig);
 }
 
-#define FIELDS_ITEM 11
+#define FIELDS_ITEM 14
 #define FIELDS_MONSTER 14
 #define FIELDS_SPELL 5
 
 void BTEditor::editItem(BTDisplay &d, BTItem &item)
 {
- const char *description[FIELDS_ITEM] = { "Name", "Type", "User Class", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable", "Consumed" };
- const char *field[FIELDS_ITEM] = { "name", "type", "allowedJob", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable", "consume" };
+ const char *description[FIELDS_ITEM] = { "Name", "Type", "User Class", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable", "Consumed", "Spell Cast", "Cause", "Effect" };
+ const char *field[FIELDS_ITEM] = { "name", "type", "allowedJob", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable", "consume", "spell", "cause", "effect" };
  ObjectSerializer serial;
  item.serialize(&serial);
  editSerialized(d, serial, FIELDS_ITEM, description, field);
@@ -540,15 +540,18 @@ void BTEditor::editSerialized(BTDisplay &d, ObjectSerializer &serial, int entrie
      if (curField->data)
      {
       ValueLookup *lookup = reinterpret_cast<ValueLookup*>(curField->data);
-      BTDisplay::selectItem lookupItem[lookup->size()];
+      bool extra = ((curField->extra == EXTRA_NONE) ? false : true);
+      BTDisplay::selectItem lookupItem[lookup->size() + (extra ? 1 : 0)];
+      if (extra)
+       lookupItem[0].name = curField->extraText;
       for (int i = 0; i < lookup->size(); ++i)
-       lookupItem[i].name = lookup->getName(i);
+       lookupItem[i + (extra ? 1 : 0)].name = lookup->getName(i);
       int lookupStart(0);
-      int lookupCurrent(*(reinterpret_cast<int*>(curField->object)));
-      d.addSelection(lookupItem, lookup->size(), lookupStart, lookupCurrent);
+      int lookupCurrent((*(reinterpret_cast<int*>(curField->object))) + (extra ? 1 : 0));
+      d.addSelection(lookupItem, lookup->size() + (extra ? 1 : 0), lookupStart, lookupCurrent);
       if (27 != d.process())
       {
-       *(reinterpret_cast<int*>(curField->object)) = lookupCurrent;
+       *(reinterpret_cast<int*>(curField->object)) = lookupCurrent - (extra ? 1 : 0);
       }
      }
      else

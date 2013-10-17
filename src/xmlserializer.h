@@ -94,10 +94,12 @@ class XMLAttribute
 #define XMLTYPE_VECTORUINT 11
 #define XMLTYPE_VECTORSTRING 12
 
+#define EXTRA_NONE -999
+
 class XMLAction
 {
  public:
-  XMLAction() : attrib(NULL), type(0), next(NULL) {}
+  XMLAction() : attrib(NULL), type(0), next(NULL), extra(EXTRA_NONE) {}
   ~XMLAction();
 
   std::string createTag();
@@ -111,6 +113,8 @@ class XMLAction
   int level;
   void *object;
   void *data;
+  int extra;
+  std::string extraText;
   XMLAction *next;
 };
 
@@ -131,7 +135,7 @@ class ObjectSerializer
   void add(const char *name, const char *objnm, XMLArray *vec, XMLObject::create func, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, XMLObject* p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, bool *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
-  void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL);
+  void add(const char *name, int *p, std::vector<XMLAttribute> *atts = NULL, ValueLookup *lookup = NULL, int extra = EXTRA_NONE, const std::string &extraText = std::string());
   void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, int16_t *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, uint16_t *p, std::vector<XMLAttribute> *atts = NULL);

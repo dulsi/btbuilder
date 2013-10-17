@@ -15,8 +15,7 @@ BTSpell::BTSpell(BinaryReadFile &f)
 
  f.readUByteArray(29, tmp);
  tmp[29] = 0;
- name = new char[strlen((char *)tmp) + 1];
- strcpy(name, (char *)tmp);
+ name = (char *)tmp;
  f.readUByteArray(5, tmp);
  tmp[5] = 0;
  code = new char[strlen((char *)tmp) + 1];
@@ -45,8 +44,6 @@ BTSpell::BTSpell(BinaryReadFile &f)
 
 BTSpell::BTSpell()
 {
- name = new char[1];
- name[0] = 0;
  code = new char[1];
  code[0] = 0;
  effect = new char[1];
@@ -55,15 +52,13 @@ BTSpell::BTSpell()
 
 BTSpell::~BTSpell()
 {
- if (name)
-  delete [] name;
  if (code)
   delete [] code;
  if (effect)
   delete [] effect;
 }
 
-const char *BTSpell::getName() const
+const std::string &BTSpell::getName() const
 {
  return name;
 }
@@ -134,7 +129,7 @@ void BTSpell::write(BinaryWriteFile &f)
  IShort num;
  char tmp[29];
 
- strncpy(tmp, name, 29);
+ strncpy(tmp, name.c_str(), 29);
  f.writeUByteArray(29, (IUByte *)tmp);
  strncpy(tmp, code, 5);
  f.writeUByteArray(5, (IUByte *)tmp);

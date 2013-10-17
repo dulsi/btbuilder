@@ -967,11 +967,11 @@ void BTParty::giveItem(int itemID, BTDisplay &d)
  char tmp[100];
  if (who < size())
  {
-  snprintf(tmp, 100, "%s gets %s.", (*this)[who]->name, game->getItemList()[itemID].getName());
+  snprintf(tmp, 100, "%s gets %s.", (*this)[who]->name, game->getItemList()[itemID].getName().c_str());
  }
  else
  {
-  snprintf(tmp, 100, "No one has room for %s!", game->getItemList()[itemID].getName());
+  snprintf(tmp, 100, "No one has room for %s!", game->getItemList()[itemID].getName().c_str());
  }
  d.drawText(tmp);
 }

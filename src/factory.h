@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "istdlib.h"
+#include "valuelookup.h"
 #include "xmlserializer.h"
 
 class BTArrayBoundsException
@@ -15,16 +16,18 @@ class BTArrayBoundsException
 };
 
 template <class item>
-class BTFactory
+class BTFactory : public ValueLookup
 {
  public:
   BTFactory(const char *e);
   ~BTFactory();
 
   int find(item *obj);
+  std::string getName(int index);
+  int getIndex(std::string name);
   void load(const char *filename);
   void save(const char *filename);
-  IShort size();
+  size_t size();
   item &operator[](IShort num);
 
  private:
@@ -45,7 +48,7 @@ class BTSortedFactory
  public:
   BTSortedFactory(BTFactory<item> *fact, const BTSortCompare<item> *comp);
   void resort();
-  IShort size();
+  size_t size();
   item &operator[](IShort num);
 
  private:
@@ -74,6 +77,23 @@ int BTFactory<item>::find(item *obj)
    return i;
  }
  return items.size();
+}
+
+template <class item>
+std::string BTFactory<item>::getName(int index)
+{
+ return items[index]->getName();
+}
+
+template <class item>
+int BTFactory<item>::getIndex(std::string name)
+{
+ for (size_t i = 0; i < items.size(); i++)
+ {
+  if (items[i]->getName() == name)
+   return i;
+ }
+ return -1;
 }
 
 #include <stdio.h>
@@ -122,7 +142,7 @@ void BTFactory<item>::save(const char *filename)
 }
 
 template <class item>
-IShort BTFactory<item>::size()
+size_t BTFactory<item>::size()
 {
  return items.size();
 }
@@ -176,7 +196,7 @@ void BTSortedFactory<item>::resort()
 }
 
 template <class item>
-IShort BTSortedFactory<item>::size()
+size_t BTSortedFactory<item>::size()
 {
  return sortedItems.size();
 }

@@ -42,7 +42,7 @@ class BTSpell : public XMLObject
   BTSpell();
   ~BTSpell();
 
-  const char *getName() const;
+  const std::string &getName() const;
   int getArea() const;
   int getCaster() const;
   const char *getCode() const;
@@ -67,7 +67,7 @@ class BTSpell : public XMLObject
   static void writeXML(const char *filename, XMLVector<BTSpell*> &spell);
 
  private:
-  char *name;
+  std::string name;
   char *code;
   int caster;
   IShort level;

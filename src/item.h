@@ -41,7 +41,7 @@ class BTItem : public XMLObject
   ~BTItem();
 
   bool canUse(BTPc *pc) const;
-  const char *getName() const;
+  const std::string &getName() const;
   IShort getArmorPlus() const;
   const char *getCause() const;
   IShort getChanceXSpecial() const;
@@ -63,7 +63,7 @@ class BTItem : public XMLObject
   static void writeXML(const char *filename, XMLVector<BTItem*> &item);
 
  private:
-  char *name;
+  std::string name;
   IShort timesUsable;
   BTDice damage;
   IShort armorPlus;
@@ -71,7 +71,7 @@ class BTItem : public XMLObject
   int xSpecial;
   IShort chanceXSpecial;
   int type;
-  IShort spellCast;
+  int spellCast;
   BitField classAllowed;
   IShort price;
   char *cause;

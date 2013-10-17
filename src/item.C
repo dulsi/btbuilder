@@ -19,8 +19,7 @@ BTItem::BTItem(BinaryReadFile &f)
 
  f.readUByteArray(25, (IUByte *)tmp);
  tmp[25] = 0;
- name = new char[strlen(tmp) + 1];
- strcpy(name, tmp);
+ name = tmp;
  f.readUByte(unknown);
  f.readShort(timesUsable);
  damage.read(f);
@@ -32,7 +31,8 @@ BTItem::BTItem(BinaryReadFile &f)
  f.readShort(chanceXSpecial);
  f.readShort(num);
  type = num;
- f.readShort(spellCast);
+ f.readShort(num);
+ spellCast = num;
  IShort jobAllowed;
  f.readShort(jobAllowed);
  for (int i = 0; i < 11; i++)
@@ -57,8 +57,6 @@ BTItem::BTItem(BinaryReadFile &f)
 
 BTItem::BTItem()
 {
- name = new char[1];
- name[0] = 0;
  cause = new char[1];
  cause[0] = 0;
  effect = new char[1];
@@ -68,8 +66,6 @@ BTItem::BTItem()
 
 BTItem::~BTItem()
 {
- if (name)
-  delete [] name;
  if (cause)
   delete [] cause;
  if (effect)
@@ -81,7 +77,7 @@ bool BTItem::canUse(BTPc *pc) const
  return classAllowed.isSet(pc->job);
 }
 
-const char *BTItem::getName() const
+const std::string &BTItem::getName() const
 {
  return name;
 }
@@ -152,7 +148,7 @@ void BTItem::write(BinaryWriteFile &f)
  char tmp[25];
  IShort num;
 
- strncpy(tmp, name, 25);
+ strncpy(tmp, name.c_str(), 25);
  f.writeUByteArray(25, (IUByte *)tmp);
  f.writeUByte(unknown);
  f.writeShort(timesUsable);
@@ -165,7 +161,8 @@ void BTItem::write(BinaryWriteFile &f)
  f.writeShort(chanceXSpecial);
  num = type;
  f.writeShort(num);
- f.writeShort(spellCast);
+ num = spellCast;
+ f.writeShort(num);
  IShort jobAllowed(0);
  for (int i = 0; i < 11; i++)
  {
@@ -191,6 +188,7 @@ void BTItem::serialize(ObjectSerializer* s)
  s->add("chanceXSpecial", &chanceXSpecial);
  s->add("type", &type, NULL, &itemTypesLookup);
  s->add("spellCast", &spellCast);
+ s->add("spell", &spellCast, NULL, &BTCore::getCore()->getSpellList(), -1, "(none)");
  s->add("allowedJob", &classAllowed, &BTCore::getCore()->getJobList());
  s->add("price", &price);
  s->add("cause", &cause);
