@@ -176,7 +176,6 @@
    <wall direction="23">tilesets/dungeon0/dungeon0_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
-<configs>
   <psuedo3d>
   <width>112</width>
   <height>88</height>

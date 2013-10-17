@@ -122,7 +122,7 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
   drawEdge(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_EDGE_LEFT3_1, 1);
   drawFront(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_FRONT2, 1);
  }
- if (light >= 3)
+ if (light >= 1)
  {
   drawEdge(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_EDGE_LEFT2, 0);
   drawFront(map, x, y, direction, WALL_FRONT1, 1);
