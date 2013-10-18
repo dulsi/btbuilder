@@ -109,13 +109,13 @@ class BTMonster : public XMLObject
 
   char *meleeMessage;
   BTDice meleeDamage;
-  IShort meleeExtra;
+  int meleeExtra;
 
   char *rangedMessage;
-  IShort rangedType;
-  IShort rangedSpell;
+  int rangedType;
+  int rangedSpell;
   BTDice rangedDamage;
-  IShort rangedExtra;
+  int rangedExtra;
   IShort range;
 };
 

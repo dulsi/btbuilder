@@ -18,6 +18,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
 {
  IUByte unknown;
  char tmp[15];
+ IShort num;
 
  f.readUByteArray(14, (IUByte *)tmp);
  tmp[15] = 0;
@@ -30,7 +31,8 @@ BTMonster::BTMonster(BinaryReadFile &f)
  f.readShort(illusion);
  f.readShort(picture);
  f.readShortArray(4, combatAction);
- f.readShort(meleeExtra);
+ f.readShort(num);
+ meleeExtra = num;
  IShort calcAc;
  f.readShort(calcAc);
  ac = (calcAc * -1) + 10;
@@ -44,13 +46,15 @@ BTMonster::BTMonster(BinaryReadFile &f)
  f.readShort(magicResistance);
  rangedDamage.read(f);
  f.readUByte(unknown);
- f.readShort(rangedExtra);
+ f.readShort(num);
+ rangedExtra = num;
  f.readShort(range);
  f.readUByteArray(14, (IUByte *)tmp);
  tmp[15] = 0;
  rangedMessage = new char[strlen(tmp) + 1];
  strcpy(rangedMessage, tmp);
- f.readShort(rangedType);
+ f.readShort(num);
+ rangedType = num;
  if (rangedType >= MONSTER_RANGEDTYPEMAGIC)
  {
   rangedSpell = rangedType - MONSTER_RANGEDTYPEMAGIC;
@@ -282,7 +286,8 @@ void BTMonster::write(BinaryWriteFile &f)
  f.writeShort(illusion);
  f.writeShort(picture);
  f.writeShortArray(4, combatAction);
- f.writeShort(meleeExtra);
+ value = meleeExtra;
+ f.writeShort(value);
  IShort calcAc;
  calcAc = (ac - 10) * -1;
  f.writeShort(calcAc);
@@ -294,7 +299,8 @@ void BTMonster::write(BinaryWriteFile &f)
  f.writeShort(magicResistance);
  rangedDamage.write(f);
  f.writeUByte(unknown);
- f.writeShort(rangedExtra);
+ value = rangedExtra;
+ f.writeShort(value);
  f.writeShort(range);
  strncpy(tmp, rangedMessage, 14);
  f.writeUByteArray(14, (IUByte *)tmp);
@@ -336,12 +342,13 @@ void BTMonster::serialize(ObjectSerializer* s)
  s->add("wandering", &wandering);
  s->add("meleeMessage", &meleeMessage);
  s->add("meleeDamage", &meleeDamage);
- s->add("meleeExtra", &meleeExtra);
+ s->add("meleeExtra", &meleeExtra, NULL, &extraDamageLookup);
  s->add("rangedMessage", &rangedMessage);
- s->add("rangedType", &rangedType);
+ s->add("rangedType", &rangedType, NULL, &rangedTypeLookup);
  s->add("rangedSpell", &rangedSpell);
+ s->add("rangedSpellName", &rangedSpell, NULL, &BTCore::getCore()->getSpellList(), -1, "(none)");
  s->add("rangedDamage", &rangedDamage);
- s->add("rangedExtra", &rangedExtra);
+ s->add("rangedExtra", &rangedExtra, NULL, &extraDamageLookup);
  s->add("range", &range);
 }
 

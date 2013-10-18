@@ -103,6 +103,7 @@ char *rangedTypes[] =
  "Physical: Group",
  "Magic"
 };
+ArrayLookup rangedTypeLookup(BT_RANGEDTYPES, rangedTypes);
 
 char *combatActions[] =
 {

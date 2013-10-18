@@ -418,7 +418,7 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
 }
 
 #define FIELDS_ITEM 14
-#define FIELDS_MONSTER 14
+#define FIELDS_MONSTER 23
 #define FIELDS_SPELL 5
 
 void BTEditor::editItem(BTDisplay &d, BTItem &item)
@@ -432,8 +432,8 @@ void BTEditor::editItem(BTDisplay &d, BTItem &item)
 
 void BTEditor::editMonster(BTDisplay &d, BTMonster &monster)
 {
- const char *description[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering" };
- const char *field[FIELDS_MONSTER] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering" };
+ const char *description[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage" };
+ const char *field[FIELDS_MONSTER] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra" };
  ObjectSerializer serial;
  monster.serialize(&serial);
  editSerialized(d, serial, FIELDS_MONSTER, description, field);

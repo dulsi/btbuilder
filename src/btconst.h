@@ -96,6 +96,7 @@ extern ArrayLookup extraDamageLookup;
 #define BTRANGEDTYPE_GROUP 2
 #define BTRANGEDTYPE_MAGIC 3
 extern char *rangedTypes[];
+extern ArrayLookup rangedTypeLookup;
 
 #define BT_COMBATACTIONS 6
 #define BTCOMBATACTION_ATTACK          0
