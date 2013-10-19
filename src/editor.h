@@ -21,7 +21,6 @@ class BTEditor : public BTCore
 
   void edit(BTDisplay &d);
   void editMap(BTDisplay &d, const char *filename);
-  void editMapProperties(BTDisplay &d);
   void editSpecial(BTDisplay &d, BTSpecial *special);
 
   template<typename item>
@@ -48,10 +47,6 @@ class BTEditor : public BTCore
    else
     return current;
   }
-
-  void editItem(BTDisplay &d, BTItem &item);
-  void editMonster(BTDisplay &d, BTMonster &monster);
-  void editSerialized(BTDisplay &d, ObjectSerializer &serial, int entries, const char *description[], const char *field[]);
 
  protected:
   struct operationList

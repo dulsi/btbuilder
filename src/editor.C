@@ -119,7 +119,10 @@ void BTEditor::edit(BTDisplay &d)
    int monster = 0;
    while (-1 != (monster = editFactoryList<BTMonster>(d, monsterList, "<New Monster>")))
    {
-    editMonster(d, monsterList[monster]);
+    ObjectSerializer serial;
+    monsterList[monster].serialize(&serial);
+    BTMonsterEditor monsterEditor;
+    monsterEditor.edit(d, serial);
    }
    monsterList.save(module->monster);
   }
@@ -142,7 +145,10 @@ void BTEditor::edit(BTDisplay &d)
    int item = 0;
    while (-1 != (item = editFactoryList<BTItem>(d, itemList, "<New Item>")))
    {
-    editItem(d, itemList[item]);
+    ObjectSerializer serial;
+    itemList[item].serialize(&serial);
+    BTItemEditor itemEditor;
+    itemEditor.edit(d, serial);
    }
    itemList.save(module->item);
   }
@@ -289,8 +295,13 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
     break;
    case 'p':
-    editMapProperties(d);
+   {
+    ObjectSerializer serial;
+    levelMap->serialize(&serial);
+    BTMapPropertiesEditor mapPropEditor;
+    mapPropEditor.edit(d, serial);
     break;
+   }
    default:
     break;
   }
@@ -330,17 +341,6 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
   }
  }
  d.setConfig(oldConfig);
-}
-
-#define FIELDS_MAP 4
-
-void BTEditor::editMapProperties(BTDisplay &d)
-{
- const char *description[FIELDS_MAP] = { "Name", "Type", "Light", "Monster Level" };
- const char *field[FIELDS_MAP] = { "name", "type", "light", "monsterLevel" };
- ObjectSerializer serial;
- levelMap->serialize(&serial);
- editSerialized(d, serial, FIELDS_MAP, description, field);
 }
 
 void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
@@ -415,225 +415,6 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
   ops.clear();
   list.resize(2);
   buildOperationList(body, list, ops);
-  d.addSelection(list.data(), list.size(), start, current);
- }
- d.clearText();
- d.setConfig(oldConfig);
-}
-
-#define FIELDS_ITEM 14
-#define FIELDS_MONSTER 23
-
-void BTEditor::editItem(BTDisplay &d, BTItem &item)
-{
- const char *description[FIELDS_ITEM] = { "Name", "Type", "User Class", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable", "Consumed", "Spell Cast", "Cause", "Effect" };
- const char *field[FIELDS_ITEM] = { "name", "type", "allowedJob", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable", "consume", "spell", "cause", "effect" };
- ObjectSerializer serial;
- item.serialize(&serial);
- editSerialized(d, serial, FIELDS_ITEM, description, field);
-}
-
-void BTEditor::editMonster(BTDisplay &d, BTMonster &monster)
-{
- const char *description[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage" };
- const char *field[FIELDS_MONSTER] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra" };
- ObjectSerializer serial;
- monster.serialize(&serial);
- editSerialized(d, serial, FIELDS_MONSTER, description, field);
-}
-
-void BTEditor::editSerialized(BTDisplay &d, ObjectSerializer &serial, int entries, const char *description[], const char *field[])
-{
- BTDisplayConfig *oldConfig = d.getConfig();
- BTDisplayConfig config;
- XMLSerializer parser;
- config.serialize(&parser);
- parser.parse("data/specialedit.xml", true);
- d.setConfig(&config);
- int start(0);
- int current(0);
- std::vector<BTDisplay::selectItem> list(entries);
- for (int i = 0; i < entries; ++i)
- {
-  XMLAction *curField = serial.find(field[i], NULL);
-  if (curField->getType() == XMLTYPE_OBJECT)
-  {
-   XMLObject *obj = reinterpret_cast<XMLObject*>(curField->object);
-   BTDice *dice = dynamic_cast<BTDice*>(obj);
-   if (dice)
-    list[i].name = std::string(description[i]) + ": " + dice->createString();
-  }
-  else
-  {
-   list[i].name = std::string(description[i]) + ": " + curField->createString();
-  }
- }
- d.addSelection(list.data(), list.size(), start, current);
- int key;
- while (27 != (key = d.process()))
- {
-  d.clearText();
-  XMLAction *curField = serial.find(field[current], NULL);
-  if (curField)
-  {
-   switch (curField->getType())
-   {
-    case XMLTYPE_STDSTRING:
-    {
-     std::string val = curField->createString();
-     d.addReadString(std::string(description[current]) + ": ", 100, val);
-     key = d.process();
-     if ('\r' == key)
-      *(reinterpret_cast<std::string*>(curField->object)) = val;
-     break;
-    }
-    case XMLTYPE_STRING:
-    {
-     std::string val = curField->createString();
-     d.addReadString(std::string(description[current]) + ": ", 100, val);
-     key = d.process();
-     if ('\r' == key)
-     {
-      char *str = *(reinterpret_cast<char**>(curField->object));
-      if (str)
-      {
-       delete [] str;
-      }
-      int len = val.length();
-      str = new char[len + 1];
-      strncpy(str, val.c_str(), len);
-      str[len] = 0;
-      *(reinterpret_cast<char**>(curField->object)) = str;
-     }
-     break;
-    }
-    case XMLTYPE_BOOL:
-    {
-     BTDisplay::selectItem vals[2];
-     vals[0].name = "false";
-     vals[1].name = "true";
-     int lookupStart(0);
-     int lookupCurrent((*(reinterpret_cast<bool*>(curField->object)) ? 1 : 0));
-     d.addSelection(vals, 2, lookupStart, lookupCurrent);
-     if (27 != d.process())
-     {
-      *(reinterpret_cast<bool*>(curField->object)) = lookupCurrent;
-     }
-     break;
-    }
-    case XMLTYPE_BITFIELD:
-    {
-     ValueLookup *lookup = reinterpret_cast<ValueLookup*>(curField->data);
-     BitField *bits = reinterpret_cast<BitField*>(curField->object);
-     BTDisplay::selectItem lookupItem[lookup->size()];
-     for (int i = 0; i < lookup->size(); ++i)
-     {
-      lookupItem[i].name = lookup->getName(i);
-      if (bits->isSet(i))
-       lookupItem[i].first = '*';
-     }
-     int lookupStart(0);
-     int lookupCurrent(0);
-     d.addSelection(lookupItem, lookup->size(), lookupStart, lookupCurrent);
-     int key;
-     while (27 != (key = d.process()))
-     {
-      if (bits->toggle(lookupCurrent))
-       lookupItem[lookupCurrent].first = '*';
-      else
-       lookupItem[lookupCurrent].first = 0;
-     }
-     break;
-    }
-    case XMLTYPE_INT:
-    {
-     if (curField->data)
-     {
-      ValueLookup *lookup = reinterpret_cast<ValueLookup*>(curField->data);
-      bool extra = ((curField->extra == EXTRA_NONE) ? false : true);
-      BTDisplay::selectItem lookupItem[lookup->size() + (extra ? 1 : 0)];
-      if (extra)
-       lookupItem[0].name = curField->extraText;
-      for (int i = 0; i < lookup->size(); ++i)
-       lookupItem[i + (extra ? 1 : 0)].name = lookup->getName(i);
-      int lookupStart(0);
-      int lookupCurrent((*(reinterpret_cast<int*>(curField->object))) + (extra ? 1 : 0));
-      d.addSelection(lookupItem, lookup->size() + (extra ? 1 : 0), lookupStart, lookupCurrent);
-      if (27 != d.process())
-      {
-       *(reinterpret_cast<int*>(curField->object)) = lookupCurrent - (extra ? 1 : 0);
-      }
-     }
-     else
-     {
-      std::string val = curField->createString();
-      d.addReadString(std::string(description[current]) + ": ", 100, val);
-      key = d.process();
-      if ('\r' == key)
-       *(reinterpret_cast<int*>(curField->object)) = atol(val.c_str());
-     }
-     break;
-    }
-    case XMLTYPE_INT16:
-    {
-     std::string val = curField->createString();
-     d.addReadString(std::string(description[current]) + ": ", 100, val);
-     key = d.process();
-     if ('\r' == key)
-      *(reinterpret_cast<int16_t*>(curField->object)) = atol(val.c_str());
-     break;
-    }
-    case XMLTYPE_OBJECT:
-    {
-     XMLObject *obj = reinterpret_cast<XMLObject*>(curField->object);
-     BTDice *dice = dynamic_cast<BTDice*>(obj);
-     if (dice)
-     {
-      std::ostringstream stream;
-      stream << dice->getNumber();
-      std::string val = stream.str();
-      d.addReadString(std::string(description[current]) + "- Number of Dice: ", 100, val);
-      key = d.process();
-      if ('\r' == key)
-       dice->setNumber(atol(val.c_str()));
-      d.clearText();
-      stream.str("");
-      stream << dice->getType();
-      val = stream.str();
-      d.addReadString(std::string(description[current]) + "- Type of Dice: ", 100, val);
-      key = d.process();
-      if ('\r' == key)
-       dice->setType(atol(val.c_str()));
-      d.clearText();
-      stream.str("");
-      stream << dice->getModifier();
-      val = stream.str();
-      d.addReadString(std::string(description[current]) + "- Modifier to Roll: ", 100, val);
-      key = d.process();
-      if ('\r' == key)
-       dice->setModifier(atol(val.c_str()));
-     }
-     else
-      printf("Unsuppported type: %d\n", curField->getType());
-     break;
-    }
-    default:
-     printf("Unsuppported type: %d\n", curField->getType());
-     break;
-   }
-   d.clearText();
-   if (curField->getType() == XMLTYPE_OBJECT)
-   {
-    XMLObject *obj = reinterpret_cast<XMLObject*>(curField->object);
-    BTDice *dice = dynamic_cast<BTDice*>(obj);
-    if (dice)
-     list[current].name = std::string(description[current]) + ": " + dice->createString();
-   }
-   else
-   {
-    list[current].name = std::string(description[current]) + ": " + curField->createString();
-   }
-  }
   d.addSelection(list.data(), list.size(), start, current);
  }
  d.clearText();
