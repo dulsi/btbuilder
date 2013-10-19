@@ -450,6 +450,7 @@ void BTSpell::serialize(ObjectSerializer* s)
  s->add("dice", &dice);
  s->add("duration", &duration, NULL, &durationLookup);
  s->add("extra", &extra);
+ s->add("extraMonster", &extra, NULL, &BTCore::getCore()->getMonsterList());
  s->add("effect", &effect);
 }
 

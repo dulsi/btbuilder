@@ -7,6 +7,7 @@
 
 #include "btconst.h"
 #include "editor.h"
+#include "serialeditor.h"
 #include <algorithm>
 #include <sstream>
 
@@ -128,7 +129,10 @@ void BTEditor::edit(BTDisplay &d)
    int spell = 0;
    while (-1 != (spell = editFactoryList<BTSpell>(d, spellList, "<New Spell>")))
    {
-    editSpell(d, spellList[spell]);
+    ObjectSerializer serial;
+    spellList[spell].serialize(&serial);
+    BTSpellEditor spellEditor;
+    spellEditor.edit(d, serial);
    }
    spellList.save(module->spell);
   }
@@ -419,7 +423,6 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
 
 #define FIELDS_ITEM 14
 #define FIELDS_MONSTER 23
-#define FIELDS_SPELL 5
 
 void BTEditor::editItem(BTDisplay &d, BTItem &item)
 {
@@ -437,15 +440,6 @@ void BTEditor::editMonster(BTDisplay &d, BTMonster &monster)
  ObjectSerializer serial;
  monster.serialize(&serial);
  editSerialized(d, serial, FIELDS_MONSTER, description, field);
-}
-
-void BTEditor::editSpell(BTDisplay &d, BTSpell &spell)
-{
- const char *description[FIELDS_SPELL] = { "Name", "Code", "Mage Class", "Level", "Points Needed" };
- const char *field[FIELDS_SPELL] = { "name", "code", "caster", "level", "sp" };
- ObjectSerializer serial;
- spell.serialize(&serial);
- editSerialized(d, serial, FIELDS_SPELL, description, field);
 }
 
 void BTEditor::editSerialized(BTDisplay &d, ObjectSerializer &serial, int entries, const char *description[], const char *field[])

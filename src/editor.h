@@ -51,7 +51,6 @@ class BTEditor : public BTCore
 
   void editItem(BTDisplay &d, BTItem &item);
   void editMonster(BTDisplay &d, BTMonster &monster);
-  void editSpell(BTDisplay &d, BTSpell &spell);
   void editSerialized(BTDisplay &d, ObjectSerializer &serial, int entries, const char *description[], const char *field[]);
 
  protected:

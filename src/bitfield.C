@@ -349,3 +349,15 @@ BitField &BitField::operator|=(const BitField &other)
  }
  return *this;
 }
+
+bool BitField::operator==(const BitField &other)
+{
+ int len = getMaxSet();
+ if (other.getMaxSet() != len)
+  return false;
+ for (; len > 0; --len)
+  if (isSet(len - 1) != other.isSet(len - 1))
+   return false;
+ return true;
+}
+
