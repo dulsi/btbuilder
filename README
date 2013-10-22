@@ -21,17 +21,18 @@ Garth's and allows 12 items per character.
 
 Work on an editor has begun. Right now it allows you to edit maps.
 It allows you to place walls and specials. Specials can be edited. You can't
-adjust map features like the level of monsters or random encounter chance.
-To enter the editor arrow up or down to the module you want to edit in the
-module selection screen. Instead of pressing return to run the module press
-'e'. This will bring up a list of map files to edit.
+adjust all map features like random encounter chance. To enter the editor
+arrow up or down to the module you want to edit in the module selection
+screen. Instead of pressing return to run the module press 'e'. This will
+bring up a list of monster, item, spell, and map files to edit.
 
 The map editor works similar to the BTCS. Unlike the BTCS the arrow keys move
 you in the specified direction. To change facing press End or PgDn for left
 right respectively. In addition to 's', 'c', and 'l' from BTCS, it support
 'r' to resize the map. If the map is too large to fit on one screen, the map
 will scroll when you move past the view section. When placing a special with
-'s', you can press 'e' to edit the special.
+'s', you can press 'e' to edit the special. Pressing 'p' will bring up the map
+properties page where you edit the name of the map and monster level.
 
 To directly run a sample game, run:
 
