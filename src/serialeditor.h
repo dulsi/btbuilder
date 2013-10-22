@@ -42,7 +42,7 @@ class BTMapPropertiesEditor : public BTSerializedEditor
 
 #define FIELDS_ITEM 14
 #define FIELDS_MONSTER 23
-#define FIELDS_SPELL 7
+#define FIELDS_SPELL 18
 
 class BTItemEditor : public BTSerializedEditor
 {

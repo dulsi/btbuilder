@@ -271,6 +271,14 @@ BTMonsterEditor::BTMonsterEditor()
 const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage" };
  const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra" };
 
+#define SPELLLOC_TYPE 4
+#define SPELLLOC_MONSTER 5
+#define SPELLLOC_ARMORBONUS 6
+#define SPELLLOC_HITBONUS 7
+#define SPELLLOC_PUSH 8
+#define SPELLLOC_SAVEBONUS 9
+#define SPELLLOC_ATTACKRATEBONUS 10
+
 BTSpellEditor::BTSpellEditor()
  : BTSerializedEditor(FIELDS_SPELL, spellDescription, spellField)
 {
@@ -278,47 +286,144 @@ BTSpellEditor::BTSpellEditor()
 
 void BTSpellEditor::initActive(ObjectSerializer &serial, BitField &active)
 {
+ XMLAction *curField = serial.find("type", NULL);
+ int type = *(reinterpret_cast<int*>(curField->object));
  for (int i = 0; i < entries; ++i)
  {
-  if (i == 5)
+  switch (i)
   {
-   XMLAction *curField = serial.find("type", NULL);
-   if ((*(reinterpret_cast<int*>(curField->object)) == BTSPELLTYPE_SUMMONMONSTER) ||
-    (*(reinterpret_cast<int*>(curField->object)) == BTSPELLTYPE_SUMMONILLUSION))
+   case SPELLLOC_MONSTER:
    {
-    active.set(i);
+    if ((type == BTSPELLTYPE_SUMMONMONSTER) || (type == BTSPELLTYPE_SUMMONILLUSION))
+     active.set(i);
+    else
+     active.clear(i);
+    break;
    }
-   else
-    active.clear(i);
+   case SPELLLOC_ARMORBONUS:
+   {
+    if (type == BTSPELLTYPE_ARMORBONUS)
+     active.set(i);
+    else
+     active.clear(i);
+    break;
+   }
+   case SPELLLOC_HITBONUS:
+   {
+    if (type == BTSPELLTYPE_HITBONUS)
+     active.set(i);
+    else
+     active.clear(i);
+    break;
+   }
+   case SPELLLOC_PUSH:
+   {
+    if (type == BTSPELLTYPE_PUSH)
+     active.set(i);
+    else
+     active.clear(i);
+    break;
+   }
+   case SPELLLOC_SAVEBONUS:
+   {
+    if (type == BTSPELLTYPE_SAVEBONUS)
+     active.set(i);
+    else
+     active.clear(i);
+    break;
+   }
+   case SPELLLOC_ATTACKRATEBONUS:
+   {
+    if (type == BTSPELLTYPE_ATTACKRATEBONUS)
+     active.set(i);
+    else
+     active.clear(i);
+    break;
+   }
+   default:
+    active.set(i);
   }
-  else
-   active.set(i);
  }
 }
 
 bool BTSpellEditor::updateActive(ObjectSerializer &serial, BitField &active, int modField)
 {
- if (modField == 4)
+ if (modField == SPELLLOC_TYPE)
  {
   BitField old = active;
   XMLAction *curField = serial.find("type", NULL);
-  if ((*(reinterpret_cast<int*>(curField->object)) == BTSPELLTYPE_SUMMONMONSTER) ||
-   (*(reinterpret_cast<int*>(curField->object)) == BTSPELLTYPE_SUMMONILLUSION))
+  int type = *(reinterpret_cast<int*>(curField->object));
+  if ((type == BTSPELLTYPE_SUMMONMONSTER) || (type == BTSPELLTYPE_SUMMONILLUSION))
   {
-   if (!active.isSet(5))
+   if (!active.isSet(SPELLLOC_MONSTER))
    {
-    active.set(5);
+    active.set(SPELLLOC_MONSTER);
     XMLAction *extraField = serial.find("extra", NULL);
     *(reinterpret_cast<int*>(extraField->object)) = 0;
    }
   }
   else
-   active.clear(5);
+   active.clear(SPELLLOC_MONSTER);
+  if (type == BTSPELLTYPE_ARMORBONUS)
+  {
+   if (!active.isSet(SPELLLOC_ARMORBONUS))
+   {
+    active.set(SPELLLOC_ARMORBONUS);
+    XMLAction *extraField = serial.find("extra", NULL);
+    *(reinterpret_cast<int*>(extraField->object)) = 0;
+   }
+  }
+  else
+   active.clear(SPELLLOC_ARMORBONUS);
+  if (type == BTSPELLTYPE_HITBONUS)
+  {
+   if (!active.isSet(SPELLLOC_HITBONUS))
+   {
+    active.set(SPELLLOC_HITBONUS);
+    XMLAction *extraField = serial.find("extra", NULL);
+    *(reinterpret_cast<int*>(extraField->object)) = 0;
+   }
+  }
+  else
+   active.clear(SPELLLOC_HITBONUS);
+  if (type == BTSPELLTYPE_PUSH)
+  {
+   if (!active.isSet(SPELLLOC_PUSH))
+   {
+    active.set(SPELLLOC_PUSH);
+    XMLAction *extraField = serial.find("extra", NULL);
+    *(reinterpret_cast<int*>(extraField->object)) = 0;
+   }
+  }
+  else
+   active.clear(SPELLLOC_PUSH);
+  if (type == BTSPELLTYPE_SAVEBONUS)
+  {
+   if (!active.isSet(SPELLLOC_SAVEBONUS))
+   {
+    active.set(SPELLLOC_SAVEBONUS);
+    XMLAction *extraField = serial.find("extra", NULL);
+    *(reinterpret_cast<int*>(extraField->object)) = 0;
+   }
+  }
+  else
+   active.clear(SPELLLOC_SAVEBONUS);
+  if (type == BTSPELLTYPE_ATTACKRATEBONUS)
+  {
+   if (!active.isSet(SPELLLOC_ATTACKRATEBONUS))
+   {
+    active.set(SPELLLOC_ATTACKRATEBONUS);
+    XMLAction *extraField = serial.find("extra", NULL);
+    *(reinterpret_cast<int*>(extraField->object)) = 0;
+   }
+  }
+  else
+   active.clear(SPELLLOC_ATTACKRATEBONUS);
   return !(active == old);
  }
  return false;
 }
 
-const char *BTSpellEditor::spellDescription[FIELDS_SPELL] = { "Name", "Code", "Mage Class", "Level", "Type", "Monster", "Points Needed" };
-const char *BTSpellEditor::spellField[FIELDS_SPELL] = { "name", "code", "caster", "level", "type", "extraMonster", "sp" };
+const char *BTSpellEditor::spellDescription[FIELDS_SPELL] = { "Name", "Code", "Mage Class", "Level", "Type", "Monster", "Armor Bonus", "Hit Bonus", "Distance", "Save Bonus", "Attack Rate Bonus", "Points Needed", "Range", "Effective Range", "Area/Target", "Damage/Healing", "Duration", "Spell Effect" };
+const char *BTSpellEditor::spellField[FIELDS_SPELL] = { "name", "code", "caster", "level", "type", "extraMonster", "extra", "extra", "extra", "extra", "extra", "sp", "range", "effectiveRange", "area", "dice", "duration", "effect" };
 
