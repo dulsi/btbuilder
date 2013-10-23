@@ -1004,6 +1004,13 @@ void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
 
 void BTDisplay::setConfig(BTDisplayConfig *c)
 {
+ picture = -1;
+ if (animation.animation)
+ {
+  IMG_FreeMNG(animation.animation);
+  animation.animation = NULL;
+  removeAnimation(&animation);
+ }
  int newXMult = (xFull - 10) / c->width; // Allow for window decoration
  int newYMult = (yFull - 10) / c->height; // Allow for window decoration
  if (newXMult > newYMult)
@@ -1388,6 +1395,8 @@ void BTUISelect::draw(BTDisplay &d)
  SDL_Rect dst;
  d.sizeFont("", wFirst, h);
  lines = position.h / h;
+ if (select >= start + lines)
+  start = select - lines - 1;
  d.clear(position);
  dst.y = position.y;
  dst.h = h;

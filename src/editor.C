@@ -116,12 +116,12 @@ void BTEditor::edit(BTDisplay &d)
   if (list[select].name == module->monster)
   {
    BTFactory<BTMonster> &monsterList = getMonsterList();
+   BTMonsterEditor monsterEditor;
    int monster = 0;
-   while (-1 != (monster = editFactoryList<BTMonster>(d, monsterList, "<New Monster>")))
+   while (-1 != (monster = monsterEditor.editFactoryList<BTMonster>(d, monsterList, "<New Monster>")))
    {
     ObjectSerializer serial;
     monsterList[monster].serialize(&serial);
-    BTMonsterEditor monsterEditor;
     monsterEditor.edit(d, serial);
    }
    monsterList.save(module->monster);
@@ -130,11 +130,11 @@ void BTEditor::edit(BTDisplay &d)
   {
    BTFactory<BTSpell> &spellList = getSpellList();
    int spell = 0;
-   while (-1 != (spell = editFactoryList<BTSpell>(d, spellList, "<New Spell>")))
+   BTSpellEditor spellEditor;
+   while (-1 != (spell = spellEditor.editFactoryList<BTSpell>(d, spellList, "<New Spell>")))
    {
     ObjectSerializer serial;
     spellList[spell].serialize(&serial);
-    BTSpellEditor spellEditor;
     spellEditor.edit(d, serial);
    }
    spellList.save(module->spell);
@@ -143,11 +143,11 @@ void BTEditor::edit(BTDisplay &d)
   {
    BTFactory<BTItem> &itemList = getItemList();
    int item = 0;
-   while (-1 != (item = editFactoryList<BTItem>(d, itemList, "<New Item>")))
+   BTItemEditor itemEditor;
+   while (-1 != (item = itemEditor.editFactoryList<BTItem>(d, itemList, "<New Item>")))
    {
     ObjectSerializer serial;
     itemList[item].serialize(&serial);
-    BTItemEditor itemEditor;
     itemEditor.edit(d, serial);
    }
    itemList.save(module->item);

@@ -15,6 +15,30 @@ class BTSerializedEditor
   BTSerializedEditor(int num, const char **d, const char **f);
   virtual ~BTSerializedEditor();
 
+
+  template<typename item>
+  int editFactoryList(BTDisplay &d, BTFactory<item> &itemList, const std::string &newItem)
+  {
+   BTDisplayConfig *oldConfig = d.getConfig();
+   BTDisplayConfig config;
+   XMLSerializer parser;
+   config.serialize(&parser);
+   parser.parse("data/specialedit.xml", true);
+   d.setConfig(&config);
+   BTDisplay::selectItem items[itemList.size() + 1];
+   for (int i = 0; i < itemList.size(); ++i)
+    items[i].name = itemList[i].getName();
+   items[itemList.size()].name = newItem;
+   d.addSelection(items, itemList.size() + 1, start, current);
+   int key = d.process();
+   d.clearText();
+   d.setConfig(oldConfig);
+   if (27 == key)
+    return -1;
+   else
+    return current;
+  }
+
   void edit(BTDisplay &d, ObjectSerializer &serial);
 
  protected:
@@ -26,6 +50,8 @@ class BTSerializedEditor
   int entries;
   const char **description;
   const char **field;
+  int start;
+  int current;
 };
 
 #define FIELDS_MAP 4

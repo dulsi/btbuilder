@@ -11,7 +11,7 @@
 #include <sstream>
 
 BTSerializedEditor::BTSerializedEditor(int num, const char **d, const char **f)
- : entries(num), description(d), field(f)
+ : entries(num), description(d), field(f), start(0), current(0)
 {
 }
 

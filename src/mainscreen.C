@@ -63,18 +63,23 @@ void BTMainScreen::run()
  {
   list[i].name = module[i]->name;
  }
+ PHYSFS_deinit();
  int start(0);
  int select(0);
- display->addSelection(list, module.size(), start, select);
- unsigned int key = display->process("eq");
- PHYSFS_deinit();
- if (key == 13)
+ unsigned int key = 0;
+ while ((key != 'q') && (key != 27))
  {
-  runModule(fileModule[select]);
- }
- else if (key == 'e')
- {
-  editModule(fileModule[select]);
+  display->clearText();
+  display->addSelection(list, module.size(), start, select);
+  key = display->process("eq");
+  if (key == 13)
+  {
+   runModule(fileModule[select]);
+  }
+  else if (key == 'e')
+  {
+   editModule(fileModule[select]);
+  }
  }
  delete [] list;
  delete display;

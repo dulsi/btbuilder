@@ -10,11 +10,9 @@
 Psuedo3DMap *Psuedo3DMap::map = 0;
 
 Psuedo3DMap::Psuedo3DMap()
+ : xPos(0), yPos(0), facing(0)
 {
- if (0 == map)
- {
-  map = this;
- }
+ map = this;
 }
 
 int Psuedo3DMap::getFacing()

@@ -23,31 +23,6 @@ class BTEditor : public BTCore
   void editMap(BTDisplay &d, const char *filename);
   void editSpecial(BTDisplay &d, BTSpecial *special);
 
-  template<typename item>
-  int editFactoryList(BTDisplay &d, BTFactory<item> &itemList, const std::string &newItem)
-  {
-   BTDisplayConfig *oldConfig = d.getConfig();
-   BTDisplayConfig config;
-   XMLSerializer parser;
-   config.serialize(&parser);
-   parser.parse("data/specialedit.xml", true);
-   d.setConfig(&config);
-   int start(0);
-   int current(0);
-   BTDisplay::selectItem items[itemList.size() + 1];
-   for (int i = 0; i < itemList.size(); ++i)
-    items[i].name = itemList[i].getName();
-   items[itemList.size()].name = newItem;
-   d.addSelection(items, itemList.size() + 1, start, current);
-   int key = d.process();
-   d.clearText();
-   d.setConfig(oldConfig);
-   if (27 == key)
-    return -1;
-   else
-    return current;
-  }
-
  protected:
   struct operationList
   {
