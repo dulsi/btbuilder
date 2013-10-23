@@ -59,6 +59,10 @@ class BTMonsterEditor : public BTSerializedEditor
  public:
   BTMonsterEditor();
 
+ protected:
+  virtual void initActive(ObjectSerializer &serial, BitField &active);
+  virtual bool updateActive(ObjectSerializer &serial, BitField &active, int modField);
+
  private:
   static const char *monsterDescription[FIELDS_MONSTER];
   static const char *monsterField[FIELDS_MONSTER];

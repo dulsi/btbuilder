@@ -56,6 +56,7 @@ BTItem::BTItem(BinaryReadFile &f)
 }
 
 BTItem::BTItem()
+ : timesUsable(0), armorPlus(0), hitPlus(0), xSpecial(0), chanceXSpecial(0), price(0), spellCast(0), type(0)
 {
  cause = new char[1];
  cause[0] = 0;

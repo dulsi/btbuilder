@@ -263,9 +263,58 @@ BTItemEditor::BTItemEditor()
 const char *BTItemEditor::itemDescription[FIELDS_ITEM] = { "Name", "Type", "User Class", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable", "Consumed", "Spell Cast", "Cause", "Effect" };
 const char *BTItemEditor::itemField[FIELDS_ITEM] = { "name", "type", "allowedJob", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable", "consume", "spell", "cause", "effect" };
 
+#define MONSTERLOC_RANGEDTYPE 17
+#define MONSTERLOC_RANGEDSPELL 18
+
 BTMonsterEditor::BTMonsterEditor()
  : BTSerializedEditor(FIELDS_MONSTER, monsterDescription, monsterField)
 {
+}
+
+
+void BTMonsterEditor::initActive(ObjectSerializer &serial, BitField &active)
+{
+ XMLAction *curField = serial.find("rangedType", NULL);
+ int type = *(reinterpret_cast<int*>(curField->object));
+ for (int i = 0; i < entries; ++i)
+ {
+  switch (i)
+  {
+   case MONSTERLOC_RANGEDSPELL:
+   {
+    if (type == BTRANGEDTYPE_MAGIC)
+     active.set(i);
+    else
+     active.clear(i);
+    break;
+   }
+   default:
+    active.set(i);
+  }
+ }
+}
+
+bool BTMonsterEditor::updateActive(ObjectSerializer &serial, BitField &active, int modField)
+{
+ if (modField == MONSTERLOC_RANGEDTYPE)
+ {
+  BitField old = active;
+  XMLAction *curField = serial.find("rangedType", NULL);
+  int type = *(reinterpret_cast<int*>(curField->object));
+  if (type == BTRANGEDTYPE_MAGIC)
+  {
+   if (!active.isSet(MONSTERLOC_RANGEDSPELL))
+   {
+    active.set(MONSTERLOC_RANGEDSPELL);
+    XMLAction *extraField = serial.find("rangedSpell", NULL);
+    *(reinterpret_cast<int*>(extraField->object)) = 0;
+   }
+  }
+  else
+   active.clear(MONSTERLOC_RANGEDSPELL);
+  return !(active == old);
+ }
+ return false;
 }
 
 const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage" };
