@@ -999,6 +999,9 @@ std::string BTSpecialConditional::print() const
     answer += s;
     break;
    }
+   case 'E':
+    answer += spellTypes[number];
+    break;
    case '$':
    default:
     answer += text;
@@ -1148,6 +1151,10 @@ void BTSpecialConditional::run(BTDisplay &d) const
      truth = true;
    }
    break;
+  }
+  case BTCONDITION_EFFECTACTIVE:
+  {
+   truth = BTGame::getGame()->hasEffectOfType(number);
   }
   default:
    break;

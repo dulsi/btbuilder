@@ -9,7 +9,7 @@
 
 class ArrayLookup;
 
-#define BT_SPELLTYPES 39
+#define BT_SPELLTYPES 40
 #define BTSPELLTYPE_HEAL            0
 #define BTSPELLTYPE_RESURRECT       1
 #define BTSPELLTYPE_CUREPOISON      2
@@ -49,6 +49,7 @@ class ArrayLookup;
 #define BTSPELLTYPE_BLOCKENCOUNTERS 36
 #define BTSPELLTYPE_BLOCKMAGIC      37
 #define BTSPELLTYPE_SPELLBIND       38
+#define BTSPELLTYPE_LEVITATION      39
 extern char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 
@@ -120,7 +121,7 @@ extern ArrayLookup itemTypesLookup;
 
 #define BTTIMESUSABLE_UNLIMITED 255
 
-#define BT_CONDITIONALCOMMANDS 18
+#define BT_CONDITIONALCOMMANDS 19
 #define BTCONDITION_ANYONEITEM      0
 #define BTCONDITION_EVERYONEITEM    1
 #define BTCONDITION_LASTINPUT       2
@@ -139,6 +140,7 @@ extern ArrayLookup itemTypesLookup;
 #define BTCONDITION_RANDOM          15
 #define BTCONDITION_RACEINPARTY     16
 #define BTCONDITION_CANTAKEGOLD     17
+#define BTCONDITION_EFFECTACTIVE    18
 extern char *conditionalCommands[];
 
 #define BT_SPECIALCOMMANDS 61

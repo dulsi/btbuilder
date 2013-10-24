@@ -48,7 +48,8 @@ char *spellTypes[] =
  "Save Bonus",
  "Block Random Encounters",
  "Block Spells",
- "Spell Bind"
+ "Spell Bind",
+ "Levitation"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES, spellTypes);
 
@@ -152,7 +153,8 @@ char *conditionalCommands[] =
  "global flag $F is clear",
  "random percent <= $G",
  "race $R is in party",
- "can take $# gold from party"
+ "can take $# gold from party",
+ "$E is active"
 };
 
 char *specialCommands[] =

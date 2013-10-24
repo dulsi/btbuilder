@@ -43,6 +43,7 @@ BTSpell::BTSpell(BinaryReadFile &f)
 }
 
 BTSpell::BTSpell()
+ : caster(0), level(1), sp(1), range(0), effectiveRange(0), type(BTSPELLTYPE_HEAL), area(BTAREAEFFECT_NONE), duration(BTDURATION_ONE), extra(0)
 {
  code = new char[1];
  code[0] = 0;
@@ -285,6 +286,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTSPELLTYPE_TRAPDESTROY:
   case BTSPELLTYPE_COMPASS:
   case BTSPELLTYPE_BLOCKENCOUNTERS:
+  case BTSPELLTYPE_LEVITATION:
    effect = new BTBaseEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
    break;
   case BTSPELLTYPE_DAMAGE:

@@ -649,6 +649,20 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     number[count++] = atol(val.c_str());
     break;
    }
+   case 'E':
+   {
+    BTDisplay::selectItem effects[BT_SPELLTYPES];
+    for (int i = 0; i < BT_SPELLTYPES; ++i)
+     effects[i].name = spellTypes[i];
+    int effectStart(0);
+    d.addSelection(effects, BT_SPELLTYPES, effectStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
+    break;
+   }
    case '$':
    case 'N':
    default:

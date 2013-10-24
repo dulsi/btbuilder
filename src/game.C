@@ -671,6 +671,7 @@ void BTGame::run(BTDisplay &d)
  {
   clearEffects(d);
   checkExpiration(d, &combat);
+  d.drawIcons();
  }
 }
 
