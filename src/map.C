@@ -907,7 +907,7 @@ void BTSpecialCommand::serialize(ObjectSerializer* s)
 
 void BTSpecialCommand::setText(const std::string &t)
 {
- text = new char[t.length()];
+ text = new char[t.length() + 1];
  strcpy(text, t.c_str());
 }
 
