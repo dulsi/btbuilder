@@ -944,37 +944,38 @@ std::string BTDisplay::readString(const char *prompt, int max, const std::string
  int len = s.length();
  SDL_Rect dst;
  dst.h = h;
- if (0 != *prompt)
- {
-  sizeFont(prompt, w, h);
-  dst.x = text.x;
-  dst.y = text.y + textPos;
-  dst.w = w;
-  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
-  drawFont(prompt, dst, black, left);
- }
+ int startPos = textPos;
+ std::string full = prompt;
+ full += s;
  dst.x = text.x + w;
  dst.y = text.y + textPos;
  dst.w = text.w - w;
- drawFont(s.c_str(), dst, black, left);
- SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ drawText(full.c_str());
+ int endPos = textPos;
  while (((key = readChar()) != 13) && (key !=  27))
  {
   if (key == 8)
   {
    if (len > 0)
+   {
     s.erase(--len);
+    full.erase(full.length() - 1);
+   }
   }
   else if ((len < max) && (key >= ' ') && (key <= '~'))
   {
    s.push_back(key);
+   full.push_back(key);
    ++len;
   }
+  dst.h = endPos - startPos;
   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
-  drawFont(s.c_str(), dst, black, left);
-  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+  textPos = startPos;
+  drawText(full.c_str());
+  if (textPos > endPos)
+   endPos = textPos;
+  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, endPos - startPos);
  }
- textPos += h;
  return s;
 }
 
