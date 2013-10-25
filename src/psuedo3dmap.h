@@ -22,6 +22,7 @@ class Psuedo3DMap
   virtual int getMapType(int x, int y, int direction) = 0;
   virtual int getWallType(int x, int y, int direction) = 0;
   virtual bool hasSpecial(int x, int y) = 0;
+  void rationalize(int &x, int &y);
 
   static Psuedo3DMap *getMap();
 

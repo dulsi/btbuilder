@@ -35,3 +35,13 @@ Psuedo3DMap *Psuedo3DMap::getMap()
  return map;
 }
 
+void Psuedo3DMap::rationalize(int &x, int &y)
+{
+ if (x < 0)
+  x += map->getXSize();
+ x = x % map->getXSize();
+ if (y < 0)
+  y += map->getYSize();
+ y = y % map->getYSize();
+}
+

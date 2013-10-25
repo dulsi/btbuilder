@@ -309,12 +309,7 @@ void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
 
 int BTGame::getWallType(int x, int y, int direction)
 {
- if (x < 0)
-  x += levelMap->getXSize();
- x = x % levelMap->getXSize();
- if (y < 0)
-  y += levelMap->getYSize();
- y = y % levelMap->getYSize();
+ rationalize(x, y);
  IShort w = levelMap->getSquare(y, x).getWall(direction);
  bool bHasDoorDetect = false;
  if (w == 0)
