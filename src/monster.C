@@ -63,15 +63,17 @@ BTMonster::BTMonster(BinaryReadFile &f)
  f.readShort(level);
  gold.read(f);
  f.readUByte(unknown);
+ xp = calcXp();
 }
 
 BTMonster::BTMonster()
- : gender(BTGENDER_MALE), level(0), startDistance(0), move(1), rateAttacks(1), picture(0), ac(0), maxAppearing(1), magicResistance(0), wandering(true), meleeExtra(BTEXTRADAMAGE_NONE), rangedType(0), rangedSpell(0), rangedExtra(BTEXTRADAMAGE_NONE), range(0)
+ : gender(BTGENDER_MALE), level(0), startDistance(0), move(1), rateAttacks(1), picture(0), ac(0), maxAppearing(1), magicResistance(0), wandering(true), meleeExtra(BTEXTRADAMAGE_NONE), rangedType(0), rangedSpell(0), rangedExtra(BTEXTRADAMAGE_NONE), range(0), xp(0)
 {
  meleeMessage = new char[1];
  meleeMessage[0] = 0;
  rangedMessage = new char[1];
  rangedMessage[0] = 0;
+ xp = calcXp();
 }
 
 BTMonster::~BTMonster()
@@ -80,6 +82,11 @@ BTMonster::~BTMonster()
   delete [] meleeMessage;
  if (rangedMessage)
   delete [] rangedMessage;
+}
+
+unsigned int BTMonster::calcXp() const
+{
+ return rateAttacks * meleeDamage.getMax() + ac + hp.getMax();
 }
 
 const std::string &BTMonster::getName() const
@@ -199,7 +206,7 @@ IShort BTMonster::getStartDistance() const
 
 unsigned int BTMonster::getXp() const
 {
- return rateAttacks * meleeDamage.getMax() + ac + hp.getMax();
+ return xp;
 }
 
 IBool BTMonster::isIllusion() const
@@ -340,6 +347,7 @@ void BTMonster::serialize(ObjectSerializer* s)
  s->add("gold", &gold);
  s->add("magicResistance", &magicResistance);
  s->add("wandering", &wandering);
+ s->add("xp", &xp);
  s->add("meleeMessage", &meleeMessage);
  s->add("meleeDamage", &meleeDamage);
  s->add("meleeExtra", &meleeExtra, NULL, &extraDamageLookup);
@@ -357,6 +365,11 @@ void BTMonster::readXML(const char *filename, XMLVector<BTMonster*> &monster)
  XMLSerializer parser;
  parser.add("monster", &monster, &BTMonster::create);
  parser.parse(filename, true);
+ if (monster[0]->getXp() == 4)
+ {
+  for (int i = 0; i < monster.size(); ++i)
+   monster[i]->xp = monster[i]->calcXp();
+ }
 }
 
 void BTMonster::writeXML(const char *filename, XMLVector<BTMonster*> &monster)

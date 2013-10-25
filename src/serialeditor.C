@@ -139,6 +139,15 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
      }
      break;
     }
+    case XMLTYPE_UINT:
+    {
+     std::string val = curField->createString();
+     d.addReadString(std::string(description[list[current].value]) + ": ", 100, val);
+     key = d.process();
+     if ('\r' == key)
+      *(reinterpret_cast<unsigned int*>(curField->object)) = atol(val.c_str());
+     break;
+    }
     case XMLTYPE_INT16:
     {
      std::string val = curField->createString();
@@ -274,6 +283,8 @@ BTMonsterEditor::BTMonsterEditor()
 
 void BTMonsterEditor::initActive(ObjectSerializer &serial, BitField &active)
 {
+ BTFactory<BTMonster> &monsterList = BTCore::getCore()->getMonsterList();
+ prevXp = monsterList[current].calcXp();
  XMLAction *curField = serial.find("rangedType", NULL);
  int type = *(reinterpret_cast<int*>(curField->object));
  for (int i = 0; i < entries; ++i)
@@ -296,6 +307,18 @@ void BTMonsterEditor::initActive(ObjectSerializer &serial, BitField &active)
 
 bool BTMonsterEditor::updateActive(ObjectSerializer &serial, BitField &active, int modField)
 {
+ BTFactory<BTMonster> &monsterList = BTCore::getCore()->getMonsterList();
+ bool refresh = false;
+ unsigned int newXp = monsterList[current].calcXp();
+ if (newXp != prevXp)
+ {
+  XMLAction *xpField = serial.find("xp", NULL);
+  unsigned int *xp = (reinterpret_cast<unsigned int*>(xpField->object));
+  *xp += newXp;
+  *xp -= prevXp;
+  prevXp = newXp;
+  refresh = true;
+ }
  if (modField == MONSTERLOC_RANGEDTYPE)
  {
   BitField old = active;
@@ -312,13 +335,13 @@ bool BTMonsterEditor::updateActive(ObjectSerializer &serial, BitField &active, i
   }
   else
    active.clear(MONSTERLOC_RANGEDSPELL);
-  return !(active == old);
+  return (refresh || (!(active == old)));
  }
- return false;
+ return refresh;
 }
 
-const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage" };
- const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra" };
+const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP" };
+const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp" };
 
 #define SPELLLOC_TYPE 4
 #define SPELLLOC_MONSTER 5

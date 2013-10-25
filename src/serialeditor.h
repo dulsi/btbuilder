@@ -67,7 +67,7 @@ class BTMapPropertiesEditor : public BTSerializedEditor
 };
 
 #define FIELDS_ITEM 14
-#define FIELDS_MONSTER 23
+#define FIELDS_MONSTER 24
 #define FIELDS_SPELL 18
 
 class BTItemEditor : public BTSerializedEditor
@@ -90,6 +90,8 @@ class BTMonsterEditor : public BTSerializedEditor
   virtual bool updateActive(ObjectSerializer &serial, BitField &active, int modField);
 
  private:
+  unsigned int prevXp;
+
   static const char *monsterDescription[FIELDS_MONSTER];
   static const char *monsterField[FIELDS_MONSTER];
 };

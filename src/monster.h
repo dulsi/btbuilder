@@ -48,6 +48,7 @@ class BTMonster : public XMLObject
   BTMonster();
   ~BTMonster();
 
+  unsigned int calcXp() const;
   const std::string &getName() const;
   const std::string &getPluralName() const;
   IShort getAc() const;
@@ -106,6 +107,7 @@ class BTMonster : public XMLObject
   BTDice gold;
   IShort magicResistance;
   bool wandering;
+  unsigned int xp;
 
   char *meleeMessage;
   BTDice meleeDamage;
