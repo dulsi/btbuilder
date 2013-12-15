@@ -147,6 +147,11 @@ void BTMainScreen::loadModule(std::string moduleFile, BTModule &module)
  init();
  XMLSerializer parser;
  module.serialize(&parser);
+ if (!PHYSFS_exists(moduleFile.c_str()))
+ {
+  fprintf(stderr, "Module file '%s' does not exist\n", moduleFile.c_str());
+  exit(0);
+ }
  parser.parse(moduleFile.c_str(), true);
  std::string moduleName(fs::path(moduleFile).stem().string());
  PHYSFS_deinit();
