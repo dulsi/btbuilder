@@ -330,7 +330,7 @@ BitField &BitField::operator|=(const BitField &other)
   if (other.bits)
   {
    if (other.size > size)
-    expand(size);
+    expand(other.size);
    for (int i = 0; i < size; ++i)
     bits[i] |= other.bits[i];
   }
@@ -359,5 +359,21 @@ bool BitField::operator==(const BitField &other)
   if (isSet(len - 1) != other.isSet(len - 1))
    return false;
  return true;
+}
+
+BitField &BitField::operator=(const BitField &other)
+{
+ if (this != &other)
+ {
+  clearAll();
+  size = other.size;
+  if (other.bits)
+  {
+   bits = new unsigned int[size];
+   for (int i = 0; i < size; ++i)
+    bits[i] = other.bits[i];
+  }
+ }
+ return *this;
 }
 
