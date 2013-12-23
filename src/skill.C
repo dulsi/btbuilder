@@ -19,7 +19,7 @@ char *use[] =
  "magic",
  "special"
 };
-ArrayLookup useLookup(5, use);
+ArrayLookup useLookup(7, use);
 ArrayLookup effectLookup(BT_MONSTEREXTRADAMAGE, extraDamage);
 char *specialSkill[] =
 {
