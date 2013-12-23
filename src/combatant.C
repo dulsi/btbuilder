@@ -210,9 +210,9 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
 
 void BTCombatant::deactivate(int &activeNum)
 {
- if (active)
+ if (initiative != BTINITIATIVE_INACTIVE)
  {
-  active = false;
+  initiative = BTINITIATIVE_INACTIVE;
   --activeNum;
  }
 }
@@ -257,6 +257,11 @@ void BTCombatant::restoreLevel()
   if ((jobList[job]->improveAc) && (((level - 1) % jobList[job]->improveAc) == 0))
    ++ac;
  }
+}
+
+void BTCombatant::rollInitiative()
+{
+ initiative = BTDice(1, 20).roll() + level;
 }
 
 bool BTCombatant::takeHP(int amount)

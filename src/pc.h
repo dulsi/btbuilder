@@ -76,6 +76,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool hasSkillUse(int skNum);
   bool isIllusion() const;
   virtual void restoreLevel();
+  virtual void rollInitiative();
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
   virtual void serialize(ObjectSerializer* s);
   void setName(const char *nm);

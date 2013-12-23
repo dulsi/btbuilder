@@ -185,7 +185,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
   }
   else
   {
-   XMLVector<BTSkill*> &skill = game->getSkillList();
+/*   XMLVector<BTSkill*> &skill = game->getSkillList();
    for (int i = 0; i < skill.size(); ++i)
    {
     if ((skill[i]->special == BTSKILLSPECIAL_BAREHANDS) && (hasSkillUse(i)))
@@ -195,7 +195,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
       damageDice = *skillDice;
      break;
     }
-   }
+   }*/
   }
  }
  else
@@ -592,6 +592,15 @@ void BTPc::restoreLevel()
  }
 }
 
+void BTPc::rollInitiative()
+{
+ BTCombatant::rollInitiative();
+ if (stat[BTSTAT_LK] > 14)
+  initiative += stat[BTSTAT_LK] - 14;
+ if (stat[BTSTAT_DX] > 14)
+  initiative += stat[BTSTAT_DX] - 14;
+}
+
 bool BTPc::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  int roll = BTDice(1, 20, save).roll();
@@ -782,7 +791,7 @@ void BTPc::useAutoCombatSkill(bool melee, BitField &special)
  {
   if ((skillList[i]->use == BTSKILLUSE_AUTOCOMBAT) ||
    ((melee) && (skillList[i]->use == BTSKILLUSE_AUTOCOMBATMELEE)) ||
-   ((!melee) && (skillList[i]->use == BTSKILLUSE_AUTOCOMBAT)))
+   ((!melee) && (skillList[i]->use == BTSKILLUSE_AUTOCOMBATRANGED)))
   {
    if (((-1 == skillList[i]->after) || (combat.skillUsed == skillList[i]->after)) && (useSkill(i)))
    {
@@ -811,10 +820,13 @@ bool BTPc::useSkill(int index, int difficulty /*= BTSKILL_DEFAULTDIFFICULTY*/)
       return false;
     }
     BTDice *dice = skillList[index]->getRoll(skill[i]->value);
-    int roll = dice->roll();
-    if ((roll != dice->getMin()) && (roll + skill[i]->value >= difficulty))
+    if (dice)
     {
-     return true;
+     int roll = dice->roll();
+     if ((roll != dice->getMin()) && (roll + skill[i]->value >= difficulty))
+     {
+      return true;
+     }
     }
    }
    return false;
@@ -892,7 +904,7 @@ bool BTParty::checkDead(BTDisplay &d)
  {
   if (operator[](who)->status.isSet(BTSTATUS_DEAD))
   {
-   operator[](who)->active = false;
+   operator[](who)->initiative = BTINITIATIVE_INACTIVE;
    restDead = who;
   }
   else
@@ -907,14 +919,14 @@ bool BTParty::checkDead(BTDisplay &d)
   {
    game->movedPlayer(d, who, size() - 1);
    BTPc *pc = operator[](who);
-   pc->active = false;
+   pc->initiative = BTINITIATIVE_INACTIVE;
    erase(begin() + who);
    push_back(pc);
    --restDead;
   }
   else
   {
-   operator[](who)->active = true;
+   operator[](who)->initiative = BTINITIATIVE_ACTIVE;
    ++who;
   }
  }
@@ -923,7 +935,7 @@ bool BTParty::checkDead(BTDisplay &d)
  {
   if (operator[](who)->status.isSet(BTSTATUS_STONED))
   {
-   operator[](who)->active = false;
+   operator[](who)->initiative = BTINITIATIVE_INACTIVE;
    restStoned = who;
   }
   else
@@ -937,7 +949,7 @@ bool BTParty::checkDead(BTDisplay &d)
   {
    game->movedPlayer(d, who, restStoned - 1);
    BTPc *pc = operator[](who);
-   pc->active = false;
+   pc->initiative = BTINITIATIVE_INACTIVE;
    erase(begin() + who);
    if (size() == restStoned - 1)
     push_back(pc);
@@ -947,7 +959,7 @@ bool BTParty::checkDead(BTDisplay &d)
   }
   else
   {
-   operator[](who)->active = true;
+   operator[](who)->initiative = BTINITIATIVE_ACTIVE;
    ++who;
   }
  }

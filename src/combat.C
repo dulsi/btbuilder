@@ -23,9 +23,9 @@ static const char *blank = "";
 
 void BTMonsterCombatant::deactivate(int &activeNum)
 {
- if (active)
+ if (initiative != BTINITIATIVE_INACTIVE)
  {
-  active = false;
+  initiative = BTINITIATIVE_INACTIVE;
   group->active--;
   --activeNum;
  }
@@ -218,6 +218,39 @@ void BTCombat::addEncounter(int monsterType, int number /*= 0*/)
 void BTCombat::clearEncounters()
 {
  monsters.clear();
+}
+
+bool BTCombat::findNextInitiative(int &group, int &individual)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ int curInitiative = BTINITIATIVE_INACTIVE + 1;
+ group = BTTARGET_NONE;
+ individual = -1;
+
+ int monGroup = BTTARGET_MONSTER;
+ for (std::list<BTMonsterGroup>::iterator itr = monsters.begin(); itr != monsters.end(); ++itr, ++monGroup)
+ {
+  int monNumber = 0;
+  for (std::vector<BTMonsterCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster, ++monNumber)
+  {
+   if (curInitiative <= monster->initiative)
+   {
+    group = monGroup;
+    individual = monNumber;
+    curInitiative = monster->initiative;
+   }
+  }
+ }
+ for (int i = 0; i < party.size(); i++)
+ {
+  if (curInitiative <= party[i]->initiative)
+  {
+   group = BTTARGET_PARTY;
+   individual = i;
+   curInitiative = party[i]->initiative;
+  }
+ }
+ return (group != BTTARGET_NONE);
 }
 
 int BTCombat::findScreen(int num)
@@ -543,86 +576,60 @@ void BTCombat::runCombat(BTDisplay &d)
  std::list<BTMonsterGroup>::iterator itr(monsters.begin());
  for (; itr != monsters.end(); ++itr)
  {
+  for (i = 0; i < itr->individual.size(); ++i)
+   itr->individual[i].rollInitiative();
   active += itr->active;
  }
- if (BTPc::BTPcAction::advance == party[i]->combat.action)
+ if (BTPc::BTPcAction::advance == party[0]->combat.action)
  {
   for (itr = monsters.begin(); itr != monsters.end(); ++itr)
   {
    --itr->distance;
   }
   for (i = 0; i < party.size(); ++i)
-   party[i]->active = false;
+   party[i]->initiative = BTINITIATIVE_INACTIVE;
   d.addText("The party advances...");
   d.addText(blank);
   d.process(BTDisplay::allKeys, game->getDelay());
   d.clearElements();
  }
- else if (BTPc::BTPcAction::runAway == party[i]->combat.action)
+ else if (BTPc::BTPcAction::runAway == party[0]->combat.action)
  {
   for (i = 0; i < party.size(); ++i)
-   party[i]->active = false;
+   party[i]->initiative = BTINITIATIVE_INACTIVE;
   throw BTCombatError("runAway");
  }
  else
  {
   for (i = 0; i < party.size(); ++i)
-   if (party[i]->active)
+   if (party[i]->initiative != BTINITIATIVE_INACTIVE)
+   {
+    party[i]->rollInitiative();
     ++active;
+   }
  }
 
- while (active > 0)
+ int curGroup;
+ int curIndividual;
+ while (findNextInitiative(curGroup, curIndividual))
  {
-  bool ran = false;
-  BTDice whoDie(1, active, -1);
-  int who = whoDie.roll();
-
-  int monGroup = BTTARGET_MONSTER;
-  for (itr = monsters.begin(); itr != monsters.end(); ++itr, ++monGroup)
+  if (curGroup == BTTARGET_PARTY)
   {
-   if (who < itr->active)
-   {
-    --itr->active;
-    int monNumber = 0;
-    for (std::vector<BTMonsterCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster, ++monNumber)
-    {
-     if (monster->active)
-     {
-      --who;
-      if (-1 == who)
-      {
-       ran = true;
-       runMonsterAction(d, active, monGroup, monNumber, *itr, *monster);
-       break;
-      }
-     }
-    }
-    break;
-   }
-   else
-    who -= itr->active;
+   runPcAction(d, active, curIndividual, *party[curIndividual]);
+   if (BTPc::BTPcAction::useSkill != party[curIndividual]->combat.action)
+    party[curIndividual]->combat.clearSkillUsed();
   }
-  if (who > -1)
+  else
   {
-   for (int i = 0; i < party.size(); i++)
+   int monGroup = BTTARGET_MONSTER;
+   for (itr = monsters.begin(); itr != monsters.end(); ++itr, ++monGroup)
    {
-    if (party[i]->active)
+    if (monGroup == curGroup)
     {
-     --who;
-     if (-1 == who)
-     {
-      ran = true;
-      runPcAction(d, active, i, *party[i]);
-      if (BTPc::BTPcAction::useSkill != party[i]->combat.action)
-       party[i]->combat.clearSkillUsed();
-     }
+     runMonsterAction(d, active, monGroup, curIndividual, *itr, itr->individual[curIndividual]);
+     break;
     }
    }
-  }
-  if (!ran)
-  {
-   debugActive();
-   break;
   }
  }
  game->nextTurn(d, this);
@@ -638,7 +645,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
  BTFactory<BTMonster> &monList = game->getMonsterList();
  BTFactory<BTSpell> &spellList = game->getSpellList();
  BTParty &party = game->getParty();
- mon.active = false;
+ mon.initiative = BTINITIATIVE_INACTIVE;
  --active;
  if (mon.status.isSet(BTSTATUS_PARALYZED))
   return;
@@ -692,9 +699,9 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
    d.clearElements();
    for (std::vector<BTMonsterCombatant>::iterator monster(grp.individual.begin()); monster != grp.individual.end(); ++monster)
    {
-    if (monster->active)
+    if (monster->initiative != BTINITIATIVE_INACTIVE)
     {
-     monster->active = false;
+     monster->initiative = BTINITIATIVE_INACTIVE;
      --active;
     }
    }
@@ -784,7 +791,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
  XMLVector<BTSong*> &songList = game->getSongList();
  BTFactory<BTSpell> &spellList = game->getSpellList();
  std::string text;
- pc.active = false;
+ pc.initiative = BTINITIATIVE_INACTIVE;
  --active;
  if (BTPc::BTPcAction::runAway == pc.combat.action)
  {
@@ -1043,7 +1050,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
 
 void BTCombat::debugActive()
 {
- BTParty &party = BTGame::getGame()->getParty();
+/* BTParty &party = BTGame::getGame()->getParty();
  printf("Active Count Error\n");
  for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end(); ++itr)
  {
@@ -1061,7 +1068,7 @@ void BTCombat::debugActive()
  {
   if (party[i]->active)
    printf("%s\n", party[i]->name);
- }
+ }*/
 }
 
 bool BTCombat::endRound(BTDisplay &d)
@@ -1125,7 +1132,7 @@ bool BTCombat::endRound(BTDisplay &d)
    }
    else
    {
-    monster->active = true;
+    monster->initiative = BTINITIATIVE_ACTIVE;
     ++(itr->active);
     ++monster;
    }

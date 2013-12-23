@@ -82,6 +82,7 @@ class BTCombat : public BTScreenSet, public BTEffectGroup
 
   void addEncounter(int monsterType, int number = 0);
   void clearEncounters();
+  bool findNextInitiative(int &group, int &individual);
   int findScreen(int num);
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
   bool findTargetPC(int range, int &target, int ignore = BT_PARTYSIZE);

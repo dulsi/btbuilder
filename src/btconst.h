@@ -332,5 +332,8 @@ extern ArrayLookup mapDisplayModeLookup;
 #define BTKNOWLEDGE_YES  1
 #define BTKNOWLEDGE_FULL 2
 
+#define BTINITIATIVE_INACTIVE -99
+#define BTINITIATIVE_ACTIVE 0
+
 #endif
 
