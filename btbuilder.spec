@@ -1,6 +1,6 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.3.18
+Version: 0.3.19
 Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.identicalsoftware.com/btbuilder

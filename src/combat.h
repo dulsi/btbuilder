@@ -109,7 +109,6 @@ class BTCombat : public BTScreenSet, public BTEffectGroup
   static int useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
-  void debugActive();
   bool endRound(BTDisplay &d);
 
  private:

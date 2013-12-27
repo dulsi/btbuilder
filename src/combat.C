@@ -1048,29 +1048,6 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
  }
 }
 
-void BTCombat::debugActive()
-{
-/* BTParty &party = BTGame::getGame()->getParty();
- printf("Active Count Error\n");
- for (std::list<BTMonsterGroup>::iterator itr(monsters.begin()); itr != monsters.end(); ++itr)
- {
-  int realActive = 0;
-  for (std::vector<BTMonsterCombatant>::iterator monster(itr->individual.begin()); monster != itr->individual.end(); ++monster)
-  {
-   if (monster->active)
-   {
-    ++realActive;
-   }
-  }
-  printf("%s: cache %d, real %d\n", itr->getName().c_str(), itr->active, realActive);
- }
- for (int i = 0; i < party.size(); i++)
- {
-  if (party[i]->active)
-   printf("%s\n", party[i]->name);
- }*/
-}
-
 bool BTCombat::endRound(BTDisplay &d)
 {
  BTGame *game = BTGame::getGame();
