@@ -280,6 +280,58 @@
 323 Dragon Lord
 324 Dragon Rider 01
 325 Dragon Rider 02
+326 Female Ninja
+327 Myconid
+328 Gazer
+329 Giant Centipede
+330 Giant Worm
+331 Vampire Warrior
+332 Druid 1
+333 Druid 2
+334 Druid 3
+335 Female Druid 1
+336 Female Druid 2
+337 Druid 4
+338 Druid 5
+339 Female Druid 3
+340 Druid 6
+341 Druid 7
+342 Female Druid 4
+343 Female Druid 5
+344 Female Druid 6
+345 Necromancer
+346 Druid 8
+347 Druid 9
+348 Wizard
+349 Raksasha
+350 Larva
+351 Cthulhu Temple
+352 Evil Monks
+353 Blacksmith 2
+354 Blacksmith 3
+355 Male Barkeep
+356 Halfling Archer
+357 Evil Horned Warrior
+358 Cave Troll
+359 Wizard
+360 Rock Baboon
+361 Caecilia
+362 Giant Toad
+363 Crocodile
+364 Giant Leech
+365 Rhino Beetle
+366 Gargoyle
+367 Bear
+368 Giant Sandworm
+369 White Ape
+370 Manta Ray
+371 Giant Weasel
+372 Locust
+
+
+
+
+
 
 
 
