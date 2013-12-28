@@ -294,7 +294,17 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     ObjectSerializer serial;
     levelMap->serialize(&serial);
     BTMapPropertiesEditor mapPropEditor;
+    int type = levelMap->getType();
     mapPropEditor.edit(d, serial);
+    if (levelMap->getType() != type)
+    {
+     p3dConfig = d.setWallGraphics(levelMap->getType());
+     currentWall = 0;
+     if (currentWall < p3dConfig->mapType.size())
+      d.drawText(p3dConfig->mapType[currentWall]->name.c_str());
+     else
+      d.drawText("Clear");
+    }
     break;
    }
    default:
