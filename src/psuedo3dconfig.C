@@ -87,6 +87,7 @@ int Psuedo3DConfig::findMapType(int type, bool complete)
 
 void Psuedo3DConfig::serialize(ObjectSerializer* s)
 {
+ s->add("name", &name);
  s->add("height", &height);
  s->add("width", &width);
  s->add("background", &background);
@@ -113,3 +114,26 @@ void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &c
  parser.add("psuedo3d", &cfg, &Psuedo3DConfig::create);
  parser.parse(filename, true);
 }
+
+
+std::string Psuedo3DConfigList::getName(int index)
+{
+ if (size() > index)
+  return operator[](index)->name;
+ else
+  return "";
+}
+
+int Psuedo3DConfigList::getIndex(std::string name)
+{
+ for (int i = 0; i < size(); ++i)
+  if (name.c_str() == operator[](i)->name)
+   return i;
+ return -1;
+}
+
+size_t Psuedo3DConfigList::size()
+{
+ return XMLVector<Psuedo3DConfig*>::size();
+}
+

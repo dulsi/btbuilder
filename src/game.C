@@ -28,6 +28,7 @@ BTCore::BTCore(BTModule *m)
  itemList.load(m->item);
  monsterList.load(m->monster);
  BTSong::readXML(m->song, songList);
+ Psuedo3DConfig::readXML(m->wall, p3dConfigList);
 }
 
 BTCore::~BTCore()
@@ -60,6 +61,11 @@ BTModule *BTCore::getModule()
 BTFactory<BTMonster> &BTCore::getMonsterList()
 {
  return monsterList;
+}
+
+Psuedo3DConfigList &BTCore::getPsuedo3DConfigList()
+{
+ return p3dConfigList;
 }
 
 BTRaceList &BTCore::getRaceList()
@@ -461,7 +467,7 @@ void BTGame::run(BTDisplay &d)
  {
   d.drawFullScreen(module->title, 5000);
   d.refresh();
-  d.setPsuedo3DConfig(module->wall);
+  d.setPsuedo3DConfig(&p3dConfigList);
   p3dConfig = d.setWallGraphics(levelMap->getType());
   setKnowledge(xPos, yPos, true);
   unsigned char key = ' ';
@@ -668,6 +674,7 @@ void BTGame::run(BTDisplay &d)
   checkExpiration(d, &combat);
   d.drawIcons();
  }
+ d.setPsuedo3DConfig(NULL);
 }
 
 bool BTGame::runSpecial(BTDisplay &d, IShort special)

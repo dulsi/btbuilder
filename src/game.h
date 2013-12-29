@@ -44,6 +44,7 @@ class BTCore : public Psuedo3DMap
   BTJobList &getJobList();
   BTModule *getModule();
   BTFactory<BTMonster> &getMonsterList();
+  Psuedo3DConfigList &getPsuedo3DConfigList();
   BTRaceList &getRaceList();
   BTShop *getShop(int id);
   BTSkillList &getSkillList();
@@ -72,6 +73,7 @@ class BTCore : public Psuedo3DMap
   BTFactory<BTSpell> spellList;
   BTXpChartList xpChartList;
   BTMap *levelMap;
+  Psuedo3DConfigList p3dConfigList;
   Psuedo3DConfig *p3dConfig;
 
   static BTCore *core;

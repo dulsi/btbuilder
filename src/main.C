@@ -367,7 +367,7 @@ int main(int argc, char *argv[])
   else
   {
    printf("Name: %s\n", gameMap.getName());
-   printf("Type: %s   Level: %d\n", mapTypes[gameMap.getType()], gameMap.getLevel());
+   printf("Type: %s   Level: %d\n", game.getPsuedo3DConfigList().getName(gameMap.getType()).c_str(), gameMap.getLevel());
    printf("Monster difficulty: %d   Chance of encounter: %d%%\n", gameMap.getMonsterLevel(), gameMap.getMonsterChance());
    printf("File: %s\n\n", gameMap.getFilename());
    for (y = 0; y < gameMap.getYSize(); y++)

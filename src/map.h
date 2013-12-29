@@ -303,7 +303,7 @@ class BTMap : public XMLObject
 
  private:
   char *name;
-  IShort type;
+  int type;
   IShort level;
   IShort xSize;
   IShort ySize;

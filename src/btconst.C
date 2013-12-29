@@ -239,14 +239,6 @@ char *directions[] =
 };
 ArrayLookup directionsLookup(BT_DIRECTIONS, directions);
 
-char *mapTypes[] =
-{
- "Dungeon 1",
- "Dungeon 2",
- "City",
- "Wilderness"
-};
-
 char *statAbbrev[] =
 {
  "St",

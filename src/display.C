@@ -1055,18 +1055,19 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  setBackground(c->background);
 }
 
-void BTDisplay::setPsuedo3DConfig(const char *file)
+void BTDisplay::setPsuedo3DConfig(Psuedo3DConfigList *p3dl)
 {
- Psuedo3DConfig::readXML(file, p3dConfig);
+ p3dConfig = p3dl;
+ p3d.setConfig(NULL);
 }
 
 Psuedo3DConfig *BTDisplay::setWallGraphics(int type)
 {
- if (p3dConfig.size() > type)
-  p3d.setConfig(p3dConfig[type]);
+ if (p3dConfig->size() > type)
+  p3d.setConfig((*p3dConfig)[type]);
  else
-  p3d.setConfig(p3dConfig[0]);
- p3d.getConfig();
+  p3d.setConfig((*p3dConfig)[0]);
+ return p3d.getConfig();
 }
 
 bool BTDisplay::sizeFont(const char *text, int &w, int &h)

@@ -1441,6 +1441,7 @@ BTMap::BTMap(BinaryReadFile &f)
  : filename(0)
 {
  IUByte unknown;
+ IShort t;
  char tmp[26];
 
  f.readUByteArray(25, (IUByte *)tmp);
@@ -1448,7 +1449,8 @@ BTMap::BTMap(BinaryReadFile &f)
  name = new char[strlen(tmp) + 1];
  strcpy(name, tmp);
  f.readUByte(unknown);
- f.readShort(type);
+ f.readShort(t);
+ type = t;
  f.readShort(level);
  f.readShort(monsterLevel);
  IShort chance;
@@ -1682,7 +1684,7 @@ void BTMap::setFilename(const char *f)
 void BTMap::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
- s->add("type", &type);
+ s->add("type", &type, NULL, &BTCore::getCore()->getPsuedo3DConfigList());
  s->add("level", &level);
  s->add("xSize", &xSize);
  s->add("ySize", &ySize);
@@ -1696,6 +1698,7 @@ void BTMap::serialize(ObjectSerializer* s)
 void BTMap::write(BinaryWriteFile &f)
 {
  IUByte unknown;
+ IShort t;
  char tmp[26];
 
  if (strlen(name) > 25)
@@ -1714,7 +1717,8 @@ void BTMap::write(BinaryWriteFile &f)
  memset(tmp, 0, 26);
  strcpy(tmp, name);
  f.writeUByteArray(26, (IUByte *)tmp);
- f.writeShort(type);
+ t = type;
+ f.writeShort(t);
  f.writeShort(level);
  f.writeShort(monsterLevel);
  IShort chance = getMonsterChance();

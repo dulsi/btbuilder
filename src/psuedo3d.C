@@ -148,70 +148,73 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
  if (config)
  {
   clear();
-  if ((configNew->height != config->height) || (configNew->width != config->width))
+  if ((configNew == NULL) || (configNew->height != config->height) || (configNew->width != config->width))
   {
    SDL_FreeSurface(display);
    display = NULL;
   }
  }
  config = configNew;
- background = loadImage(config->background);
- walls = new SDL_Surface_ary[config->wallType.size()];
- for (int i = 0; i < config->wallType.size(); ++i)
+ if (configNew)
  {
-  walls[i] = new SDL_Surface_ptr[WALL_DIRECTIONS];
-  for (int j = 0; j < WALL_DIRECTIONS; ++j)
+  background = loadImage(config->background);
+  walls = new SDL_Surface_ary[config->wallType.size()];
+  for (int i = 0; i < config->wallType.size(); ++i)
   {
-   if (config->wallType[i]->walls[j])
+   walls[i] = new SDL_Surface_ptr[WALL_DIRECTIONS];
+   for (int j = 0; j < WALL_DIRECTIONS; ++j)
    {
-    walls[i][j] = loadImage(config->wallType[i]->walls[j]);
+    if (config->wallType[i]->walls[j])
+    {
+     walls[i][j] = loadImage(config->wallType[i]->walls[j]);
+    }
+    else
+     walls[i][j] = NULL;
+   }
+  }
+  mapWalls = new SDL_Surface_ary[config->mapType.size()];
+  for (int i = 0; i < config->mapType.size(); ++i)
+  {
+   mapWalls[i] = new SDL_Surface_ptr[CARDINAL_DIRECTIONS];
+   for (int j = 0; j < CARDINAL_DIRECTIONS; ++j)
+    if (config->mapType[i]->mapWalls[j])
+    {
+     mapWalls[i][j] = loadImage(config->mapType[i]->mapWalls[j]);
+    }
+    else
+     mapWalls[i][j] = NULL;
+  }
+  if (config->mapSpecial)
+   mapSpecial = loadImage(config->mapSpecial);
+  if (config->mapUnknown)
+   mapUnknown = loadImage(config->mapUnknown);
+  for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
+  {
+   if (config->mapArrows[i])
+   {
+    mapArrows[i] = loadImage(config->mapArrows[i]);
    }
    else
-    walls[i][j] = NULL;
+    mapArrows[i] = NULL;
   }
- }
- mapWalls = new SDL_Surface_ary[config->mapType.size()];
- for (int i = 0; i < config->mapType.size(); ++i)
- {
-  mapWalls[i] = new SDL_Surface_ptr[CARDINAL_DIRECTIONS];
-  for (int j = 0; j < CARDINAL_DIRECTIONS; ++j)
-   if (config->mapType[i]->mapWalls[j])
-   {
-    mapWalls[i][j] = loadImage(config->mapType[i]->mapWalls[j]);
-   }
-   else
-    mapWalls[i][j] = NULL;
- }
- if (config->mapSpecial)
-  mapSpecial = loadImage(config->mapSpecial);
- if (config->mapUnknown)
-  mapUnknown = loadImage(config->mapUnknown);
- for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
- {
-  if (config->mapArrows[i])
+  if (!display)
   {
-   mapArrows[i] = loadImage(config->mapArrows[i]);
-  }
-  else
-   mapArrows[i] = NULL;
- }
- if (!display)
- {
-  Uint32 rmask, gmask, bmask, amask;
+   Uint32 rmask, gmask, bmask, amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-  rmask = 0xff000000;
-  gmask = 0x00ff0000;
-  bmask = 0x0000ff00;
-  amask = 0x000000ff;
+   rmask = 0xff000000;
+   gmask = 0x00ff0000;
+   bmask = 0x0000ff00;
+   amask = 0x000000ff;
 #else
-  rmask = 0x000000ff;
-  gmask = 0x0000ff00;
-  bmask = 0x00ff0000;
-  amask = 0xff000000;
+   rmask = 0x000000ff;
+   gmask = 0x0000ff00;
+   bmask = 0x00ff0000;
+   amask = 0xff000000;
 #endif
 
-  display = SDL_CreateRGBSurface(SDL_SWSURFACE, config->width * xMult, config->height * yMult, 32, rmask, gmask, bmask, amask);
-  SDL_SetAlpha(display, 0, 0);
+   display = SDL_CreateRGBSurface(SDL_SWSURFACE, config->width * xMult, config->height * yMult, 32, rmask, gmask, bmask, amask);
+   SDL_SetAlpha(display, 0, 0);
+  }
  }
 }
 

@@ -224,10 +224,8 @@ extern ArrayLookup specialFlagLookup;
 extern char *directions[];
 extern ArrayLookup directionsLookup;
 
-#define BT_MAPTYPES 4
 #define BTMAPTYPE_CITY       2
 #define BTMAPTYPE_WILDERNESS 3
-extern char *mapTypes[];
 
 #define BT_STATS 5
 #define BTSTAT_MAX 18

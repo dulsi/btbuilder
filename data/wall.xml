@@ -1,5 +1,6 @@
 <configs>
-  <psuedo3d>
+ <psuedo3d>
+  <name>Dungeon 1</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/dungeon0/dungeon0_horizon.png</background>
@@ -176,7 +177,8 @@
    <wall direction="23">tilesets/dungeon0/dungeon0_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
-  <psuedo3d>
+ <psuedo3d>
+  <name>Dungeon 2</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/dungeon1/dungeon1_horizon.png</background>
@@ -354,6 +356,7 @@
   </walltype>
  </psuedo3d>
  <psuedo3d>
+  <name>City</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/city1/city1_horizon.png</background>
@@ -601,7 +604,7 @@
    <wall direction="22">tilesets/city1/2/city1_2_1_right5_2.png</wall>
    <wall direction="23">tilesets/city1/2/city1_2_1_right5_3.png</wall>
   </walltype>
-   <walltype>
+  <walltype>
    <type>1</type>
    <modulus>7</modulus>
    <wall direction="0">tilesets/city1/3/city1_3_1_front1.png</wall>
@@ -774,6 +777,7 @@
   </walltype>
  </psuedo3d>
  <psuedo3d>
+  <name>Wilderness</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/wilderness/wilderness_horizon.png</background>
@@ -969,7 +973,8 @@
    <wall direction="23">tilesets/wilderness/wilderness_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
-  <psuedo3d>
+ <psuedo3d>
+  <name>Sewers</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/sewers/sewers_horizon.png</background>
@@ -1146,7 +1151,8 @@
    <wall direction="23">tilesets/sewers/sewers_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
-  <psuedo3d>
+ <psuedo3d>
+  <name>Wine Cellar</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/wine_cellars/wine_cellars_horizon.png</background>
@@ -1385,7 +1391,8 @@
    <wall direction="23">tilesets/wine_cellars/wine_cellars_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
-  <psuedo3d>
+ <psuedo3d>
+  <name>Crypts</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/crypts/crypts_horizon.png</background>
@@ -1562,7 +1569,8 @@
    <wall direction="23">tilesets/crypts/crypts_0_d0_right5_3.png</wall>
   </walltype>
  </psuedo3d>
-  <psuedo3d>
+ <psuedo3d>
+  <name>Catacombs</name>
   <width>112</width>
   <height>88</height>
   <background>tilesets/catacombs/catacombs_horizon.png</background>

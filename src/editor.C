@@ -48,10 +48,12 @@ void BTEditor::edit(BTDisplay &d)
 {
  char **files = PHYSFS_enumerateFiles("");
  char **i;
- int count(0);
+ int count(3);
 
  for (i = files; *i != NULL; i++)
  {
+  if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+   continue;
   if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
    continue;
   int len = strlen(*i);
@@ -160,7 +162,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
  config.serialize(&parser);
  parser.parse("data/mapedit.xml", true);
  d.setConfig(&config);
- d.setPsuedo3DConfig(module->wall);
+ d.setPsuedo3DConfig(&getPsuedo3DConfigList());
  loadMap(filename);
  xPos = 0; yPos = 0; facing = 0;
  p3dConfig = d.setWallGraphics(levelMap->getType());
@@ -345,6 +347,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    parser.write(levelMap->getFilename(), true);
   }
  }
+ d.setPsuedo3DConfig(NULL);
  d.setConfig(oldConfig);
 }
 

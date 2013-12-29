@@ -136,7 +136,7 @@ class BTDisplay : public ImageLoader
   void removeAnimation(MNG_AnimationState *animState);
   void setBackground(const char *file, bool physfs = true);
   void setConfig(BTDisplayConfig *c);
-  void setPsuedo3DConfig(const char *file);
+  void setPsuedo3DConfig(Psuedo3DConfigList *p3dl);
   Psuedo3DConfig *setWallGraphics(int type);
   void stopMusic(int id);
   void toggleFullScreen();
@@ -168,7 +168,7 @@ class BTDisplay : public ImageLoader
   BTStatusBar status;
   int textPos;
   Psuedo3D p3d;
-  XMLVector<Psuedo3DConfig*> p3dConfig;
+  Psuedo3DConfigList *p3dConfig;
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
   std::list<BTMusic*> music;

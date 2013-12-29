@@ -117,6 +117,7 @@ class Psuedo3DConfig : public XMLObject
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DConfig; }
   static void readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg);
 
+  std::string name;
   int height, width;
   int divide;
   char *background;
@@ -126,6 +127,14 @@ class Psuedo3DConfig : public XMLObject
   char *mapSpecial;
   char *mapUnknown;
   char *mapArrows[CARDINAL_DIRECTIONS];
+};
+
+class Psuedo3DConfigList : public ValueLookup, public XMLVector<Psuedo3DConfig*>
+{
+ public:
+  virtual std::string getName(int index);
+  virtual int getIndex(std::string name);
+  virtual size_t size();
 };
 
 #endif
