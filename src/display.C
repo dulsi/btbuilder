@@ -30,8 +30,8 @@ BTSound::~BTSound()
  }
 }
 
-BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
- : fullScreen(false), config(c), xMult(0), yMult(0), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
+BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier /*= 0*/)
+ : fullScreen(false), config(c), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
  animation.animation = 0;
  animation.frame = 0;
@@ -52,16 +52,16 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/)
    xMult = yMult;
   else
    yMult = xMult;
-  expanded = config->findExpanded(xMult, yMult);
-  if (expanded)
-  {
-   xMult = ((xFull - 10) / (config->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
-   yMult = ((yFull - 10) / (config->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
-   if (xMult > yMult)
-    xMult = yMult;
-   else
-    yMult = xMult;
-  }
+ }
+ expanded = config->findExpanded(xMult, yMult);
+ if (expanded)
+ {
+  xMult = ((xFull - 10) / (config->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
+  yMult = ((yFull - 10) / (config->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
+  if (xMult > yMult)
+   xMult = yMult;
+  else
+   yMult = xMult;
  }
  p3d.setMultiplier(xMult, yMult);
  label.x = config->label.x * xMult;
@@ -1012,12 +1012,17 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   animation.animation = NULL;
   removeAnimation(&animation);
  }
- int newXMult = (xFull - 10) / c->width; // Allow for window decoration
- int newYMult = (yFull - 10) / c->height; // Allow for window decoration
- if (newXMult > newYMult)
-  newXMult = newYMult;
- else
-  newYMult = newXMult;
+ int newXMult = lockMult;
+ int newYMult = lockMult;
+ if ((newXMult == 0) || (newYMult == 0))
+ {
+  newXMult = (xFull - 10) / c->width; // Allow for window decoration
+  newYMult = (yFull - 10) / c->height; // Allow for window decoration
+  if (newXMult > newYMult)
+   newXMult = newYMult;
+  else
+   newYMult = newXMult;
+ }
  expanded = c->findExpanded(newXMult, newYMult);
  if (expanded)
  {

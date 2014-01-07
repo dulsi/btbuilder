@@ -17,7 +17,7 @@ class physfsException : public std::exception
 class BTMainScreen
 {
  public:
-  BTMainScreen(const char *a0, std::string lDir);
+  BTMainScreen(const char *a0, std::string lDir, int mult = 0);
   ~BTMainScreen();
 
   void run();
@@ -35,6 +35,7 @@ class BTMainScreen
   std::string libDir;
   BTDisplayConfig *mainConfig;
   BTDisplay *display;
+  int multiplier;
 };
 
 #endif

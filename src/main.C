@@ -94,6 +94,7 @@ int main(int argc, char *argv[])
   {"editmap", 1, 0, 'e'},
   {"ascii", 0, 0, 'a'},
   {"xml", 1, 0, 'x'},
+  {"multiplier", 1, 0, 'u'},
   {0, 0, 0, 0}
  };
 
@@ -101,8 +102,9 @@ int main(int argc, char *argv[])
  int mode = MODE_STANDARD;
  char *mapFile = NULL;
  char *xmlFile = NULL;
+ int multiplier = 0;
  std::string libDir(TOSTRING(BTBUILDERDIR));
- while ((opt = getopt_long(argc,argv,"imsap:x:e:l:", long_options, NULL)) != EOF)
+ while ((opt = getopt_long(argc,argv,"imsap:x:e:l:u:", long_options, NULL)) != EOF)
  {
   switch (opt)
   {
@@ -144,12 +146,18 @@ int main(int argc, char *argv[])
      xmlFile = strdup(optarg);
     }
     break;
+   case 'u':
+    if (optarg)
+    {
+     multiplier = atol(optarg);
+    }
+    break;
    default:
     break;
   }
  }
 
- BTMainScreen mainScreen(argv[0], libDir);
+ BTMainScreen mainScreen(argv[0], libDir, multiplier);
  if (optind >= argc)
  {
   if (mode != MODE_STANDARD)

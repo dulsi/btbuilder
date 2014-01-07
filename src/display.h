@@ -84,7 +84,7 @@ class BTAnimation
 class BTDisplay : public ImageLoader
 {
  public:
-  BTDisplay(BTDisplayConfig *c, bool physfs = true);
+  BTDisplay(BTDisplayConfig *c, bool physfs = true, int multiplier = 0);
   ~BTDisplay();
 
   enum alignment { left, center, right };
@@ -161,7 +161,7 @@ class BTDisplay : public ImageLoader
   bool fullScreen;
   BTDisplayConfig *config;
   BTDisplayExpanded *expanded;
-  int xMult, yMult;
+  int xMult, yMult, lockMult;
   SDL_Rect label;
   std::string labelText;
   SDL_Rect text;
