@@ -580,34 +580,12 @@ void BTCombat::runCombat(BTDisplay &d)
    itr->individual[i].rollInitiative();
   active += itr->active;
  }
- if (BTPc::BTPcAction::advance == party[0]->combat.action)
- {
-  for (itr = monsters.begin(); itr != monsters.end(); ++itr)
+ for (i = 0; i < party.size(); ++i)
+  if (party[i]->initiative != BTINITIATIVE_INACTIVE)
   {
-   --itr->distance;
+   party[i]->rollInitiative();
+   ++active;
   }
-  for (i = 0; i < party.size(); ++i)
-   party[i]->initiative = BTINITIATIVE_INACTIVE;
-  d.addText("The party advances...");
-  d.addText(blank);
-  d.process(BTDisplay::allKeys, game->getDelay());
-  d.clearElements();
- }
- else if (BTPc::BTPcAction::runAway == party[0]->combat.action)
- {
-  for (i = 0; i < party.size(); ++i)
-   party[i]->initiative = BTINITIATIVE_INACTIVE;
-  throw BTCombatError("runAway");
- }
- else
- {
-  for (i = 0; i < party.size(); ++i)
-   if (party[i]->initiative != BTINITIATIVE_INACTIVE)
-   {
-    party[i]->rollInitiative();
-    ++active;
-   }
- }
 
  int curGroup;
  int curIndividual;
@@ -795,9 +773,32 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
  --active;
  if (BTPc::BTPcAction::runAway == pc.combat.action)
  {
+  for (int i = 0; i < party.size(); ++i)
+   party[i]->initiative = BTINITIATIVE_INACTIVE;
+  throw BTCombatError("runAway");
  }
  else if (BTPc::BTPcAction::advance == pc.combat.action)
  {
+  bool advance = true;
+  std::list<BTMonsterGroup>::iterator itr(monsters.begin());
+  for (; itr != monsters.end(); ++itr)
+  {
+   if (itr->distance == 1)
+    advance = false;
+  }
+  if (advance)
+  {
+   for (itr = monsters.begin(); itr != monsters.end(); ++itr)
+   {
+    --itr->distance;
+   }
+   for (int i = 0; i < party.size(); ++i)
+    party[i]->initiative = BTINITIATIVE_INACTIVE;
+   d.addText("The party advances...");
+   d.addText(blank);
+   d.process(BTDisplay::allKeys, game->getDelay());
+   d.clearElements();
+  }
  }
  else
  {
