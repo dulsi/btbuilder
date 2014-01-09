@@ -261,7 +261,7 @@ void BTCombatant::restoreLevel()
 
 void BTCombatant::rollInitiative()
 {
- initiative = BTDice(1, 20).roll() + level;
+ initiative = BTDice(1, 20).roll() + (level / 2);
 }
 
 bool BTCombatant::takeHP(int amount)
