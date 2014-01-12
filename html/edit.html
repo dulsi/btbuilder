@@ -25,11 +25,21 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
 </center></p>
 
-<p>The editor for Bt Builder is very primative. To start the editor you simply press 'e' instead of pressing enter to play a module. From here you see the map selection screen. There is no editor for the items, monsters, or spells at this time.<p>
+<p>The editor for Bt Builder is very primative. To start the editor you simply press 'e' instead of pressing enter to play a module. From here you see the editor selection screen.<p>
 
-<p><center><img src="mapselect.png" />&nbsp;<img src="mapedit.png" /></center></p>
+<p><center><img src="editselect.png" /></center></p>
 
-<p>The map editor works similar to the BTCS. Unlike the BTCS the arrow keys move you in the specified direction. To change facing press End or PgDn for left right respectively. In addition to 's', 'c', and 'l' from BTCS, it support 'r' to resize the map. If the map is too large to fit on one screen, the map will scroll when you move past the view section.</p>
+<p>Depending on the file you select it loads the appropriate editor.</p>
+
+<p><h2>Map Editor</h2></p>
+
+<p><center><img src="mapedit.png" /></center></p>
+
+<p>The map editor works similar to the BTCS. Unlike the BTCS the arrow keys move you in the specified direction. To change facing press End or PgDn for left or right respectively. In addition to 's', 'c', and 'l' from BTCS, it support 'r' to resize the map and 'p' for the preferences screen. If the map is too large to fit on one screen, the map will scroll when you move past the view section.</p>
+
+<p><center><img src="preferences.png" /></center></p>
+
+<p>The preference screen allows you to set the name, type, light, and monster level of the map. Type specifies the tiles used for the map. Light is the amount of natural light for the map. Usually you would set this to 5 for the city or wilderness and 0 for other dungeons type. Values lower than 5 can be set but no testing has been done on the graphics. Levels higher than 5 don't do anything more than 5. Monster level determines the power of the wandering monsters. Right now the percentage chance of a monster encounter is not available through the UI.</p>
 
 <p>If you press 's', it brings up a list of specials. You can then place a special by finding the one you want and pressing enter. If instead you press 'e', you will open the special editor.<p>
 
@@ -38,3 +48,16 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 <p>The special editor is fairly different from the BTCS version. It starts with name like BTCS. The next item is Flags. Right now you can't edit the Flags. Next comes the list of commands but in a different format. You will see "&lt;New Operation&gt;". Under if statements you also have the option to add new operations. Pressing insert will insert a new statement above the current statement. The delete key will remove the current line.</p>
 
 <p>Editing a command does not prepopulate with the previous information. If you edit a print statement, you will need to select the print command again and reenter the entire text. There are no suggestions or error checking on values. To some degree this is due to Bt Builder having less restrictions but it does allow you to enter bad data.</p>
+
+<p><h2>Item Editor</h2></p>
+
+<p><center><img src="itemedit.png" /></center></p>
+
+<p><h2>Spell Editor</h2></p>
+
+<p><center><img src="spelledit.png" /></center></p>
+
+<p><h2>Monster Editor</h2></p>
+
+<p><center><img src="monsteredit.png" /></center></p>
+
