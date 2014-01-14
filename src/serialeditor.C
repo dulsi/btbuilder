@@ -272,8 +272,8 @@ BTItemEditor::BTItemEditor()
 const char *BTItemEditor::itemDescription[FIELDS_ITEM] = { "Name", "Type", "User Class", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable", "Consumed", "Spell Cast", "Cause", "Effect" };
 const char *BTItemEditor::itemField[FIELDS_ITEM] = { "name", "type", "allowedJob", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable", "consume", "spell", "cause", "effect" };
 
-#define MONSTERLOC_RANGEDTYPE 17
-#define MONSTERLOC_RANGEDSPELL 18
+#define MONSTERLOC_RANGEDTYPE 18
+#define MONSTERLOC_RANGEDSPELL 19
 
 BTMonsterEditor::BTMonsterEditor()
  : BTSerializedEditor(FIELDS_MONSTER, monsterDescription, monsterField)
@@ -340,8 +340,8 @@ bool BTMonsterEditor::updateActive(ObjectSerializer &serial, BitField &active, i
  return refresh;
 }
 
-const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP" };
-const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp" };
+const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Illusion", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP" };
+const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "illusion", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp" };
 
 #define SPELLLOC_TYPE 4
 #define SPELLLOC_MONSTER 5
