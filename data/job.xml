@@ -9,6 +9,12 @@
 		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
 		<improveRateAttacks>2</improveRateAttacks>
 		<maxRateAttacks>7</maxRateAttacks>
 		<xpChart>Warrior</xpChart>
@@ -32,6 +38,12 @@
 		<save>7</save>
 		<improveSave>2</improveSave>
 		<hp>16</hp>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
@@ -65,6 +77,12 @@
 			<modifier>Dx</modifier>
 			<improve>3</improve>
 		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
@@ -89,6 +107,12 @@
 			<value>1</value>
 			<improve>1</improve>
 		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
 		<allowedRace>Elf</allowedRace>
@@ -111,6 +135,12 @@
 			<value>5</value>
 			<modifier>Dx</modifier>
 			<improve>3</improve>
+		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
 		</skill>
 		<xpChart>Warrior</xpChart>
 		<allowedRace>Human</allowedRace>
@@ -136,6 +166,12 @@
 			<name>Martial arts</name>
 			<value>1</value>
 			<improve>1</improve>
+		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
 		</skill>
 		<xpChart>Caster</xpChart>
 		<allowedRace>Human</allowedRace>
@@ -188,6 +224,12 @@
 				<value>7</value>
 				<cost>40000</cost>
 			</purchase>
+		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
 		</skill>
 		<changeRuleSkill>
 			<skill>Conjurer spell</skill>
@@ -260,6 +302,12 @@
 				<cost>40000</cost>
 			</purchase>
 		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
 		<changeRuleSkill>
 			<skill>Conjurer spell</skill>
 			<greater>2</greater>
@@ -330,6 +378,12 @@
 				<value>7</value>
 				<cost>40000</cost>
 			</purchase>
+		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
 		</skill>
 		<changeRuleAtLeast minimum="1">
 			<changeRuleSkill>
@@ -413,6 +467,12 @@
 				<value>7</value>
 				<cost>40000</cost>
 			</purchase>
+		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
 		</skill>
 		<changeRuleAtLeast minimum="2">
 			<changeRuleSkill>
@@ -501,6 +561,12 @@
 				<cost>40000</cost>
 			</purchase>
 		</skill>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
 		<changeRuleSkill>
 			<skill>Conjurer spell</skill>
 			<greater>2</greater>
@@ -535,6 +601,12 @@
 		<save>3</save>
 		<improveSave>2</improveSave>
 		<hp>10</hp>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
 		<xpChart>Warrior</xpChart>
                 <advanced>true</advanced>
 	</job>
@@ -546,6 +618,12 @@
 		<save>3</save>
 		<improveSave>3</improveSave>
 		<hp>11</hp>
+		<skill>
+			<name>Run</name>
+			<value>1</value>
+			<improve>1</improve>
+			<improveLevel>2</improveLevel>
+		</skill>
                 <advanced>true</advanced>
 	</job>
 </data>

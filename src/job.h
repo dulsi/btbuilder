@@ -62,7 +62,7 @@ class BTJobSkillPurchase : public XMLObject
 class BTJobSkill : public XMLObject
 {
  public:
-  BTJobSkill() : skill(-1), value(0), modifier(-1), improve(0) {}
+  BTJobSkill() : skill(-1), value(0), modifier(-1), improve(0), improveLevel(1) {}
 
   BTJobSkillPurchase *findNextPurchase(int current);
   virtual void serialize(ObjectSerializer* s);
@@ -73,6 +73,7 @@ class BTJobSkill : public XMLObject
   int value;
   int modifier;
   int improve;
+  int improveLevel;
   XMLVector<BTJobSkillPurchase*> purchase;
 };
 

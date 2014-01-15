@@ -86,6 +86,7 @@ void BTJobSkill::serialize(ObjectSerializer* s)
  s->add("value", &value);
  s->add("modifier", &modifier, NULL, &statLookup);
  s->add("improve", &improve);
+ s->add("improveLevel", &improveLevel);
  s->add("purchase", &purchase, &BTJobSkillPurchase::create);
 }
 

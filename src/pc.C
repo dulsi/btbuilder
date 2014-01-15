@@ -78,6 +78,7 @@ BTPc::BTPc(int monsterType, int j, BTCombatant *c /*= NULL*/)
  for (i = 0; i < BT_STATS; ++i)
   stat[i] = 10;
  item = new BTEquipment[BTGame::getGame()->getModule()->maxItems];
+ updateSkills();
 }
 
 bool BTPc::advanceLevel()
@@ -106,7 +107,7 @@ bool BTPc::advanceLevel()
     maxHp += moreHp;
     for (int i = 0; i < jobList[job]->skill.size(); ++i)
     {
-     if (jobList[job]->skill[i]->improve > 0)
+     if ((jobList[job]->skill[i]->improve > 0) && ((level % jobList[job]->skill[i]->improveLevel) == 0))
      {
       for (int k = 0; k < skill.size(); ++k)
       {
@@ -835,6 +836,42 @@ bool BTPc::useSkill(int index, int difficulty /*= BTSKILL_DEFAULTDIFFICULTY*/)
  return false;
 }
 
+void BTPc::updateSkills()
+{
+ BTJobList &jobList = BTGame::getGame()->getJobList();
+ for (int i = 0; i < jobList[job]->skill.size(); ++i)
+ {
+  int value = jobList[job]->skill[i]->value;
+  if ((jobList[job]->skill[i]->modifier >= 0) && (stat[jobList[job]->skill[i]->modifier] > 14))
+   value += stat[jobList[job]->skill[i]->modifier] - 14;
+  if (getSkill(jobList[job]->skill[i]->skill) == 0)
+  {
+   setSkill(jobList[job]->skill[i]->skill, value, value);
+   if (jobList[job]->skill[i]->improve > 0)
+   {
+    for (int sk = 0; sk < skill.size(); ++sk)
+    {
+     if (skill[sk]->skill == jobList[job]->skill[i]->skill)
+     {
+      for (int k = 2; k <= level; ++k)
+      {
+       if ((k % jobList[job]->skill[i]->improveLevel) == 0)
+       {
+        unsigned int increase = BTDice(1, jobList[job]->skill[i]->improve).roll();
+        if ((jobList[job]->skill[i]->modifier >= 0) && (stat[jobList[job]->skill[i]->modifier] > 14))
+         increase += stat[jobList[job]->skill[i]->modifier] - 14;
+        skill[sk]->value += increase;
+        skill[sk]->history.push_back(increase);
+       }
+      }
+      break;
+     }
+    }
+   }
+  }
+ }
+}
+
 void BTPc::youth()
 {
  for (int i = 0; i < BT_STATS; ++i)
@@ -861,6 +898,8 @@ void BTPc::readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<B
  parser.add("party", &group, &BTGroup::create);
  parser.add("pc", &pc, &BTPc::create);
  parser.parse(filename, true);
+ for (int i = 0; i < pc.size(); ++i)
+  pc[i]->updateSkills();
 }
 
 void BTPc::writeXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc)

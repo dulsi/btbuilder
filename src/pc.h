@@ -89,6 +89,7 @@ class BTPc : public XMLObject, public BTCombatant
   void unequip(int index);
   void useAutoCombatSkill(bool melee, BitField &special);
   bool useSkill(int index, int difficulty = BTSKILL_DEFAULTDIFFICULTY);
+  void updateSkills();
   void youth();
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }

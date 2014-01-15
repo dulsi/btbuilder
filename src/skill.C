@@ -26,9 +26,10 @@ char *specialSkill[] =
  "disarm",
  "hide",
  "song",
- "barehands"
+ "barehands",
+ "run"
 };
-ArrayLookup specialLookup(4, specialSkill);
+ArrayLookup specialLookup(5, specialSkill);
 
 BTDice *BTSkill::getRoll(int value)
 {

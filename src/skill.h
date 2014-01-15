@@ -20,6 +20,7 @@
 #define BTSKILLSPECIAL_HIDE      1
 #define BTSKILLSPECIAL_SONG      2
 #define BTSKILLSPECIAL_BAREHANDS 3
+#define BTSKILLSPECIAL_RUN       4
 
 class BTSkill : public XMLObject
 {

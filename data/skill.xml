@@ -94,5 +94,15 @@
 		<roll><n>1</n><d>100</d><m>0</m></roll>
 		<defaultDifficulty>101</defaultDifficulty>
 	</skill>
+	<skill>
+		<name>Run</name>
+		<use>combat</use>
+		<special>run</special>
+		<roll><n>1</n><d>20</d><m>0</m></roll>
+		<defaultDifficulty>16</defaultDifficulty>
+		<common>You are attempting to run away.</common>
+		<success>You manage to get away!</success>
+		<failure>You fail to elude your foes.</failure>
+	</skill>
 </data>
 

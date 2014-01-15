@@ -773,9 +773,26 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
  --active;
  if (BTPc::BTPcAction::runAway == pc.combat.action)
  {
+  int encounterLvl = monList[monsters.begin()->monsterType].getLevel();
   for (int i = 0; i < party.size(); ++i)
    party[i]->initiative = BTINITIATIVE_INACTIVE;
-  throw BTCombatError("runAway");
+  for (int s = 0; s < skillList.size(); ++s)
+  {
+   if (skillList[s]->special == BTSKILLSPECIAL_RUN)
+   {
+    if (pc.useSkill(s, skillList[s]->defaultDifficulty + (encounterLvl / 2) + (monList[monsters.begin()->monsterType].getMove() / 2)))
+    {
+     throw BTCombatError("runAway");
+    }
+    else
+    {
+     text += skillList[s]->common;
+     text += " ";
+     text += skillList[s]->failure;
+     d.drawMessage(text.c_str(), game->getDelay());
+    }
+   }
+  }
  }
  else if (BTPc::BTPcAction::advance == pc.combat.action)
  {
