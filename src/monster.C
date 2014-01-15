@@ -19,6 +19,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
  IUByte unknown;
  char tmp[15];
  IShort num;
+ IShort actions[4];
 
  f.readUByteArray(14, (IUByte *)tmp);
  tmp[15] = 0;
@@ -30,7 +31,17 @@ BTMonster::BTMonster(BinaryReadFile &f)
  f.readShort(rateAttacks);
  f.readShort(illusion);
  f.readShort(picture);
- f.readShortArray(4, combatAction);
+ f.readShortArray(4, actions);
+ combatAction.push_back(actions[0]);
+ if ((actions[0] != actions[1]) || (actions[0] != actions[2]) || (actions[0] != actions[3]))
+ {
+  combatAction.push_back(actions[1]);
+  if ((actions[0] != actions[2]) || (actions[1] != actions[3]))
+  {
+   combatAction.push_back(actions[2]);
+   combatAction.push_back(actions[3]);
+  }
+ }
  f.readShort(num);
  meleeExtra = num;
  IShort calcAc;
@@ -106,7 +117,7 @@ IShort BTMonster::getAc() const
 
 IShort BTMonster::getCombatAction(IShort round) const
 {
- return combatAction[round % 4];
+ return combatAction[round % combatAction.size()];
 }
 
 int BTMonster::getGender() const
@@ -283,6 +294,7 @@ void BTMonster::write(BinaryWriteFile &f)
  IUByte unknown;
  IShort value;
  char tmp[14];
+ IShort actions[4];
 
  strncpy(tmp, name.c_str(), 14);
  f.writeUByteArray(14, (IUByte *)tmp);
@@ -292,7 +304,9 @@ void BTMonster::write(BinaryWriteFile &f)
  f.writeShort(rateAttacks);
  f.writeShort(illusion);
  f.writeShort(picture);
- f.writeShortArray(4, combatAction);
+ for (int i = 0; i < 4; ++i)
+  actions[i] = getCombatAction(i);
+ f.writeShortArray(4, actions);
  value = meleeExtra;
  f.writeShort(value);
  IShort calcAc;
@@ -333,14 +347,7 @@ void BTMonster::serialize(ObjectSerializer* s)
  s->add("rateAttacks", &rateAttacks);
  s->add("illusion", &illusion);
  s->add("picture", &picture);
- for (int i = 0; i < 4; ++i)
- {
-  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
-  char tmp[10];
-  snprintf(tmp, 10, "%d", i + 1);
-  attrib->push_back(XMLAttribute("number", tmp));
-  s->add("combatAction", &combatAction[i], attrib);
- }
+ s->add("combatAction", &combatAction, &combatActionLookup);
  s->add("ac", &ac);
  s->add("maxAppearing", &maxAppearing);
  s->add("hp", &hp);

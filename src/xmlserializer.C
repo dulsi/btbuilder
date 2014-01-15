@@ -263,7 +263,7 @@ void ObjectSerializer::add(const char *name, BitField *p, ValueLookup *lookup, s
  action.push_back(act);
 }
 
-void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, ValueLookup *lookup /*= NULL*/, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
  act->name = name;
@@ -271,6 +271,7 @@ void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, std::
  act->type = XMLTYPE_VECTORUINT;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
+ act->data = reinterpret_cast<void*>(lookup);
  action.push_back(act);
 }
 
@@ -461,6 +462,15 @@ void XMLSerializer::endElement(const XML_Char *name)
     case XMLTYPE_VECTORUINT:
     {
      unsigned int u;
+     if (state->data)
+     {
+      int val = reinterpret_cast<ValueLookup*>(state->data)->getIndex(content);
+      if (-1 != val)
+      {
+       reinterpret_cast<std::vector<unsigned int> *>(state->object)->push_back(val);
+       break;
+      }
+     }
      sscanf(content.c_str(), "%u", &u);
      reinterpret_cast<std::vector<unsigned int> *>(state->object)->push_back(u);
      break;

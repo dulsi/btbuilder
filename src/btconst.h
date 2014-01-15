@@ -107,6 +107,7 @@ extern ArrayLookup rangedTypeLookup;
 #define BTCOMBATACTION_RANDOM          4
 #define BTCOMBATACTION_NOTHING         5
 extern char *combatActions[];
+extern ArrayLookup combatActionLookup;
 
 #define BT_ITEMTYPES 13
 #define BTITEM_HANDWEAPON   1

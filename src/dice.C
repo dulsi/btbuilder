@@ -119,7 +119,7 @@ void BTDice::write(BinaryWriteFile &f)
    break;
   }
  }
- b = (b << 5) + number;
+ b = (b << 5) + (number - 1);
  f.writeUByte(b);
 }
 

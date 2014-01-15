@@ -142,7 +142,7 @@ class ObjectSerializer
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::string *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
-  void add(const char *name, std::vector<unsigned int> *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, std::vector<unsigned int> *p, ValueLookup *lookup = NULL, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts = NULL);
 
   void addLevel(XMLLevel *newLevel);

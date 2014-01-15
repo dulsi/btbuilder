@@ -115,6 +115,7 @@ char *combatActions[] =
  "Random",
  "Nothing"
 };
+ArrayLookup combatActionLookup(BT_COMBATACTIONS, combatActions);
 
 char *itemTypes[] =
 {
