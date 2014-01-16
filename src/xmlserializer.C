@@ -114,6 +114,23 @@ std::string XMLAction::createString()
    content = *reinterpret_cast<std::string*>(object);
    break;
   }
+  case XMLTYPE_VECTORUINT:
+  {
+   std::vector<unsigned int> *val = reinterpret_cast<std::vector<unsigned int> *>(object);
+   if (val->size() > 1)
+    content = "Multiple";
+   if (data)
+   {
+    if (val->size() == 1)
+     content = reinterpret_cast<ValueLookup*>(data)->getName((*val)[0]);
+   }
+   else
+   {
+    sprintf(convert, "%u", (*val)[0]);
+    content = convert;
+   }
+   break;
+  }
   default:
    break;
  }

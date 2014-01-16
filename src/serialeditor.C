@@ -157,6 +157,43 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
       *(reinterpret_cast<int16_t*>(curField->object)) = atol(val.c_str());
      break;
     }
+    case XMLTYPE_VECTORUINT:
+    {
+     std::vector<unsigned int> *vec = reinterpret_cast<std::vector<unsigned int> *>(curField->object);
+     std::string val;
+     for (int i = 0; i < vec->size(); ++i)
+     {
+      if (i != 0)
+       val += ",";
+      char convert[30];
+      sprintf(convert, "%u", (*vec)[i]);
+      val += convert;
+     }
+     d.addReadString(std::string(description[list[current].value]) + ": ", 100, val);
+     key = d.process();
+     if ('\r' == key)
+     {
+      int i = 0;
+      const char *start = val.c_str();
+      for (const char *comma = strchr(val.c_str(), ','); (start) && (*start); ++i)
+      {
+       if (i < vec->size())
+        (*vec)[i] = atol(start);
+       else
+        vec->push_back(atol(start));
+       start = comma;
+       if (start)
+       {
+        if ((*start) == ',')
+         ++start;
+        comma = strchr(start, ',');
+       }
+      }
+      if (i < vec->size())
+       vec->resize(i);
+     }
+     break;
+    }
     case XMLTYPE_OBJECT:
     {
      XMLObject *obj = reinterpret_cast<XMLObject*>(curField->object);
@@ -272,8 +309,8 @@ BTItemEditor::BTItemEditor()
 const char *BTItemEditor::itemDescription[FIELDS_ITEM] = { "Name", "Type", "User Class", "Price", "Armor Plus", "Hit Plus", "Damage Dice", "X-Special", "Likelihood of X-Special", "Times Usable", "Consumed", "Spell Cast", "Cause", "Effect" };
 const char *BTItemEditor::itemField[FIELDS_ITEM] = { "name", "type", "allowedJob", "price", "armorPlus", "hitPlus", "damage", "xSpecial", "chanceXSpecial", "timesUsable", "consume", "spell", "cause", "effect" };
 
-#define MONSTERLOC_RANGEDTYPE 18
-#define MONSTERLOC_RANGEDSPELL 19
+#define MONSTERLOC_RANGEDTYPE 19
+#define MONSTERLOC_RANGEDSPELL 20
 
 BTMonsterEditor::BTMonsterEditor()
  : BTSerializedEditor(FIELDS_MONSTER, monsterDescription, monsterField)
@@ -340,8 +377,8 @@ bool BTMonsterEditor::updateActive(ObjectSerializer &serial, BitField &active, i
  return refresh;
 }
 
-const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Illusion", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP" };
-const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "illusion", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp" };
+const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Illusion", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Combat Actions", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP" };
+const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "illusion", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "combatAction", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp" };
 
 #define SPELLLOC_TYPE 4
 #define SPELLLOC_MONSTER 5

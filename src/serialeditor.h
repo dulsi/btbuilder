@@ -67,7 +67,7 @@ class BTMapPropertiesEditor : public BTSerializedEditor
 };
 
 #define FIELDS_ITEM 14
-#define FIELDS_MONSTER 25
+#define FIELDS_MONSTER 26
 #define FIELDS_SPELL 18
 
 class BTItemEditor : public BTSerializedEditor
