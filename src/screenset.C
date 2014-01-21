@@ -192,6 +192,16 @@ std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) c
        final += defaultValue;
       break;
      }
+     case XMLTYPE_OBJECT:
+     {
+      // Quick hack to support dice. More complete support needed.
+      XMLObject *state_obj = reinterpret_cast<XMLObject*>(state->object);
+      BTDice *dice = dynamic_cast<BTDice*>(state_obj);
+      if (dice)
+      {
+       final += dice->createString();
+      }
+     }
      case XMLTYPE_BITFIELD:
      default:
       break;
@@ -821,7 +831,7 @@ BTCan::~BTCan()
 
 std::string BTCan::getKeys()
 {
- if (drawn)
+ if ((drawn) && (items.size() > 0))
   return items[0]->getKeys();
  else
   return "";
@@ -1101,6 +1111,7 @@ BTScreenSet::BTScreenSet()
  actionList["exitAndSave"] = &exitAndSave;
  actionList["findTraps"] = &findTraps;
  actionList["give"] = &give;
+ actionList["identify"] = &identify;
  actionList["moveTo"] = &moveTo;
  actionList["openChest"] = &openChest;
  actionList["poolGold"] = &poolGold;
@@ -1280,6 +1291,9 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
         itemName = itemList[pc->getItem(pc->combat.object)].getName();
         add("itemName", &itemName);
        }
+       setNamespace("item");
+       itemList[pc->getItem(pc->combat.object)].serialize(this);
+       setNamespace("");
        break;
       }
       case BTPc::BTPcAction::spell:
@@ -1728,6 +1742,20 @@ int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
    return screen;
   }
  }
+ return 0;
+}
+
+int BTScreenSet::identify(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
+ if (b.pc->getGold() < (itemList[b.pc->getItem(select->select)].getPrice() / 2))
+ {
+  throw BTSpecialError("notenoughgold");
+ }
+ b.pc->takeGold(itemList[b.pc->getItem(select->select)].getPrice() / 2);
+ b.pc->combat.object = select->select;
+ b.pc->combat.type = BTPc::BTPcAction::item;
  return 0;
 }
 

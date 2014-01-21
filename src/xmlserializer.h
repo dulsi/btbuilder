@@ -149,10 +149,12 @@ class ObjectSerializer
   XMLAction *find(const char *name, const char **atts);
   int getLevel();
   XMLLevel *removeLevel();
+  void setNamespace(std::string newNS);
 
  protected:
   std::vector<XMLAction*> action;
   std::list<XMLLevel*> level;
+  std::string ns;
 };
 
 class XMLSerializer : public ObjectSerializer, public ExpatXMLParser

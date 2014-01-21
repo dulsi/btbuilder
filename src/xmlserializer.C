@@ -151,7 +151,7 @@ ObjectSerializer::~ObjectSerializer()
 void ObjectSerializer::add(const char *name, const char *objnm, XMLArray* vec, XMLObject::create func, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  if (objnm)
   act->objnm = objnm;
  act->attrib = atts;
@@ -174,7 +174,7 @@ void ObjectSerializer::add(const char *name, const char *objnm, XMLArray* vec, X
 void ObjectSerializer::add(const char *name, XMLObject *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_OBJECT;
  act->level = getLevel();
@@ -185,7 +185,7 @@ void ObjectSerializer::add(const char *name, XMLObject *p, std::vector<XMLAttrib
 void ObjectSerializer::add(const char *name, bool *p, std::vector<XMLAttribute> *atts /*= NULL*/, bool delFlg /*= false*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_BOOL;
  if (delFlg)
@@ -198,7 +198,7 @@ void ObjectSerializer::add(const char *name, bool *p, std::vector<XMLAttribute> 
 void ObjectSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *atts /*= NULL*/, ValueLookup *lookup /*= NULL*/, int extra /*= EXTRA_NONE*/, const std::string &extraText /*= std::string()*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_INT;
  act->level = getLevel();
@@ -212,7 +212,7 @@ void ObjectSerializer::add(const char *name, int *p, std::vector<XMLAttribute> *
 void ObjectSerializer::add(const char *name, uint16_t *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_UINT16;
  act->level = getLevel();
@@ -223,7 +223,7 @@ void ObjectSerializer::add(const char *name, uint16_t *p, std::vector<XMLAttribu
 void ObjectSerializer::add(const char *name, int16_t *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_INT16;
  act->level = getLevel();
@@ -234,7 +234,7 @@ void ObjectSerializer::add(const char *name, int16_t *p, std::vector<XMLAttribut
 void ObjectSerializer::add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts /*= NULL*/, bool delFlg /*= false*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_UINT;
  if (delFlg)
@@ -247,7 +247,7 @@ void ObjectSerializer::add(const char *name, unsigned int *p, std::vector<XMLAtt
 void ObjectSerializer::add(const char *name, char **p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_STRING;
  act->level = getLevel();
@@ -258,7 +258,7 @@ void ObjectSerializer::add(const char *name, char **p, std::vector<XMLAttribute>
 void ObjectSerializer::add(const char *name, std::string *p, std::vector<XMLAttribute> *atts /*= NULL*/, bool delFlg /*= false*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_STDSTRING;
  if (delFlg)
@@ -271,7 +271,7 @@ void ObjectSerializer::add(const char *name, std::string *p, std::vector<XMLAttr
 void ObjectSerializer::add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_BITFIELD;
  act->level = getLevel();
@@ -283,7 +283,7 @@ void ObjectSerializer::add(const char *name, BitField *p, ValueLookup *lookup, s
 void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, ValueLookup *lookup /*= NULL*/, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_VECTORUINT;
  act->level = getLevel();
@@ -292,21 +292,21 @@ void ObjectSerializer::add(const char *name, std::vector<unsigned int> *p, Value
  action.push_back(act);
 }
 
-void ObjectSerializer::addLevel(XMLLevel *newLevel)
-{
-  level.push_back(newLevel);
-  newLevel->object->serialize(this);
-}
-
 void ObjectSerializer::add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts /*= NULL*/)
 {
  XMLAction *act = new XMLAction;
- act->name = name;
+ act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_VECTORSTRING;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
+}
+
+void ObjectSerializer::addLevel(XMLLevel *newLevel)
+{
+  level.push_back(newLevel);
+  newLevel->object->serialize(this);
 }
 
 XMLAction* ObjectSerializer::find(const char *name, const char **atts)
@@ -370,6 +370,13 @@ XMLLevel *ObjectSerializer::removeLevel()
   level.pop_back();
  }
  return old;
+}
+
+void ObjectSerializer::setNamespace(std::string newNS)
+{
+ ns = newNS;
+ if (ns != "")
+  ns += ":";
 }
 
 XMLSerializer::XMLSerializer()
