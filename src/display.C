@@ -368,7 +368,7 @@ void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= le
  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
 }
 
-void BTDisplay::drawMessage(const char *words, int delay)
+void BTDisplay::drawMessage(const char *words, int *delay)
 {
  addText(words);
  addText("");
@@ -693,7 +693,7 @@ void BTDisplay::playSound(const char *file, bool physfs /*= true*/)
  return ;
 }
 
-unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*= 0*/)
+unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /*= 0*/, int delayOveride /*= -1*/)
 {
  unsigned int key;
  std::vector<BTUIElement*>::iterator top = element.begin();
@@ -783,6 +783,8 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    select->draw(*this);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  }
+ int start = SDL_GetTicks();
+ int delayCurrent = ((delayOveride != -1) ? delayOveride : (delay ? *delay : 0));
  while (true)
  {
   if ((select) && (!select->numbered))
@@ -790,7 +792,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
    select->draw(*this);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
   }
-  key = readChar(delay);
+  key = readChar(delayCurrent);
   if ((key == 0) || (key == 27))
    break;
   if (select)
@@ -852,7 +854,28 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int delay /*
      return key;
    }
   }
-  if (specialKeys == allKeys)
+  if ((key == '+') || (key == '-'))
+  {
+   if (key == '+')
+   {
+    if ((delay) && ((*delay) > 100))
+     *delay = (*delay) - 300;
+   }
+   if (key == '-')
+   {
+    if ((delay) && ((*delay) < 4000))
+     *delay = (*delay) + 300;
+   }
+   int end = SDL_GetTicks();
+   if (delayCurrent)
+   {
+    if (end - start > delayCurrent)
+     return 0;
+    else
+     delayCurrent -= end - start;
+   }
+  }
+  else if (specialKeys == allKeys)
    return key;
   else if (specialKeys)
   {

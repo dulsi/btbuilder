@@ -908,9 +908,9 @@ void BTGame::resetTime()
  gameTime = 0;
 }
 
-int BTGame::getDelay() const
+int *BTGame::getDelay()
 {
- return delay;
+ return &delay;
 }
 
 void BTGame::save()

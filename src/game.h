@@ -141,7 +141,7 @@ class BTGame : public BTCore, public BTEffectGroup
   void nextTurn(BTDisplay &d, BTCombat *combat = NULL);
   void resetTime();
 
-  int getDelay() const;
+  int *getDelay();
 
   void save();
 

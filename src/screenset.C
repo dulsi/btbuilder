@@ -1324,7 +1324,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
    }
    specialKeys[party.size()] = 27;
    specialKeys[party.size() + 1] = 0;
-   int key = d.process(specialKeys, screen[where]->getTimeout());
+   int key = d.process(specialKeys, game->getDelay(), screen[where]->getTimeout());
    if (0 == key)
     key = 27;
    endScreen(d);

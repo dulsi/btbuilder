@@ -115,7 +115,7 @@ class BTDisplay : public ImageLoader
   void drawImage(int pic);
   void drawLabel(const char *name);
   void drawLast(const char *keys, const char *words, alignment a = left);
-  void drawMessage(const char *words, int delay);
+  void drawMessage(const char *words, int *delay);
   void drawText(const char *words, alignment a = left);
   void drawView();
   void drawIcons();
@@ -129,7 +129,7 @@ class BTDisplay : public ImageLoader
   SDL_Color &getWhite();
   int playMusic(const char *file, bool physfs = true);
   void playSound(const char *file, bool physfs = true);
-  unsigned int process(const char *specialKeys = NULL, int delay = 0);
+  unsigned int process(const char *specialKeys = NULL, int *delay = 0, int delayOveride = -1);
   unsigned int readChar(int delay = 0);
   std::string readString(const char *prompt, int max, const std::string &initial);
   void refresh();
