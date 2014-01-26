@@ -1180,6 +1180,7 @@ bool BTCombat::endRound(BTDisplay &d)
   gold = gold / alive;
   for (i = 0; i < party.size(); ++i)
   {
+   party[i]->combat.clearSkillUsed();
    if (party[i]->isAlive())
    {
     party[i]->giveXP(xp);
