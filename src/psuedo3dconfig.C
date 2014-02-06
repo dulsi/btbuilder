@@ -108,13 +108,58 @@ void Psuedo3DConfig::serialize(ObjectSerializer* s)
  }
 }
 
+bool Psuedo3DConfig::validate()
+{
+ bool valid = true;
+ BitField types;
+ for (int i = 0; i < wallType.size(); ++i)
+ {
+  types.set(wallType[i]->type);
+ }
+ for (int type = 0; type < types.getMaxSet(); ++type)
+ {
+  if (types.isSet(type))
+  {
+   BitField modulus;
+   for (int i = 0; i < wallType.size(); ++i)
+   {
+    if (wallType[i]->type == type)
+    {
+     for (int k = 0; k < wallType[i]->modulus.size(); ++k)
+     {
+      modulus.set(wallType[i]->modulus[k]);
+     }
+    }
+   }
+   for (int i = 0; i < divide; ++i)
+   {
+    if (!modulus.isSet(i))
+    {
+     printf("Missing modulus %d for wall type %d in %s\n", i, type, name.c_str());
+     valid = false;
+    }
+   }
+  }
+ }
+ return valid;
+}
+
 void Psuedo3DConfig::readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg)
 {
  XMLSerializer parser;
  parser.add("psuedo3d", &cfg, &Psuedo3DConfig::create);
  parser.parse(filename, true);
+ bool valid = true;
+ for (int i = 0; i < cfg.size(); ++i)
+ {
+  if (!cfg[i]->validate())
+  {
+   valid = false;
+  }
+ }
+ if (!valid)
+  exit(0);
 }
-
 
 std::string Psuedo3DConfigList::getName(int index)
 {

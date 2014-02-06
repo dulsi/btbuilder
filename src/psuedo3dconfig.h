@@ -113,6 +113,7 @@ class Psuedo3DConfig : public XMLObject
   int findWallType(int type, int position);
   int findMapType(int type, bool complete);
   virtual void serialize(ObjectSerializer* s);
+  bool validate();
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DConfig; }
   static void readXML(const char *filename, XMLVector<Psuedo3DConfig*> &cfg);
