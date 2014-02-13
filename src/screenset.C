@@ -184,7 +184,7 @@ bool BTOperator::check(ObjectSerializer *obj) const
   for (XMLVector<BTSimpleElement*>::const_iterator itr = element.begin() + 1; itr != element.end(); ++itr)
   {
    long value2 = atol((*itr)->eval(obj).c_str());
-   if (value > value2)
+   if (!(value > value2))
     return false;
    value = value2;
   }
