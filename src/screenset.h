@@ -19,24 +19,106 @@
 
 typedef char *char_ptr;
 
-class BTElement
+class BTSimpleElement : public XMLObject
+{
+ public:
+  BTSimpleElement() {}
+
+  virtual std::string eval(ObjectSerializer *obj) const = 0;
+};
+
+class BTElement : public BTSimpleElement
 {
  public:
   BTElement(const std::string &t) : isText(true), text(t), atts(0) {}
   BTElement(const char *name, const char **a);
   ~BTElement();
 
+  std::string eval(ObjectSerializer *obj) const;
+
+  virtual void serialize(ObjectSerializer* s) {}
+
   bool isText;
   std::string text;
   char_ptr *atts;
 };
 
+class BTCheckTrueFalse : public XMLObject
+{
+ public:
+  virtual bool check(ObjectSerializer *obj) const = 0;
+};
+
+class BTOperator : public BTCheckTrueFalse
+{
+ public:
+  BTOperator(const char *t) : type(t) {}
+
+  bool check(ObjectSerializer *obj) const;
+
+  virtual void serialize(ObjectSerializer* s);
+  virtual void elementData(const XML_Char *name, const XML_Char **atts);
+  virtual void characterData(const XML_Char *s, int len);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTOperator(name); }
+
+  std::string type;
+  XMLVector<BTSimpleElement*> element;
+};
+
+class BTCond : public BTCheckTrueFalse
+{
+ public:
+  BTCond(const char *t) : type(t) {}
+
+  bool check(ObjectSerializer *obj) const;
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTCond(name); }
+
+ protected:
+  std::string type;
+  XMLVector<BTCheckTrueFalse*> op;
+};
+
+class BTColumn : public BTSimpleElement
+{
+ public:
+  BTColumn() {}
+
+  std::string eval(ObjectSerializer *obj) const;
+
+  virtual void serialize(ObjectSerializer* s);
+  virtual void elementData(const XML_Char *name, const XML_Char **atts);
+  virtual void characterData(const XML_Char *s, int len);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTColumn; }
+
+ protected:
+  XMLVector<BTSimpleElement*> element;
+};
+
+class BTIf : public BTSimpleElement
+{
+ public:
+  BTIf() : cond("and") {}
+
+  std::string eval(ObjectSerializer *obj) const;
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTIf; }
+
+ protected:
+  BTCond cond;
+  BTColumn thenClause;
+  BTColumn elseClause;
+};
+
 class BTScreenItem : public XMLObject
 {
  public:
-  virtual void addCol() {}
-  virtual void addText(std::string text) {}
-  virtual void addStat(const char *name, const char **atts) {}
   virtual std::string getKeys() { return ""; }
   virtual std::string getAction() { return ""; }
   virtual int getScreen(BTPc *pc) { return 0; }
@@ -60,23 +142,18 @@ class BTLine : public BTScreenItem
   BTLine() : align(BTDisplay::left) {}
   ~BTLine();
 
-  virtual void addCol();
-  virtual void addText(std::string text);
-  virtual void addStat(const char *name, const char **atts);
   void setAlignment(std::string a);
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj);
 
+  virtual void serialize(ObjectSerializer* s);
   virtual void elementData(const XML_Char *name, const XML_Char **atts);
   virtual void characterData(const XML_Char *s, int len);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts);
 
  protected:
-  std::string eval(std::vector<BTElement*> &line, ObjectSerializer *obj) const;
-
- protected:
-  std::list<std::vector<BTElement*> > element;
+  XMLVector<BTSimpleElement*> element;
   BTDisplay::alignment align;
 };
 
@@ -85,7 +162,6 @@ class BTChoice : public BTLine
  public:
   BTChoice() : screen(0) {}
 
-  virtual void addCol();
   virtual std::string getKeys();
   virtual std::string getAction();
   virtual int getScreen(BTPc *pc);
@@ -108,7 +184,6 @@ class BTReadString : public BTLine
  public:
   BTReadString() : screen(0) {}
 
-  virtual void addCol();
   virtual std::string getKeys();
   virtual std::string getAction();
   std::string getResponse() { return response; }

@@ -50,111 +50,42 @@ BTElement::~BTElement()
  }
 }
 
-void BTBarrier::draw(BTDisplay &d, ObjectSerializer *obj)
+std::string BTElement::eval(ObjectSerializer *obj) const
 {
- d.addBarrier("");
-}
-
-BTLine::~BTLine()
-{
- for (std::list<std::vector<BTElement*> >::iterator itr(element.begin()); itr != element.end(); ++itr)
- {
-  for (int i = 0; i < itr->size(); i++)
-   delete (*itr)[i];
- }
-}
-
-void BTLine::addCol()
-{
- element.push_back(std::vector<BTElement*>());
-}
-
-void BTLine::addText(std::string text)
-{
- if (element.empty())
- {
-  element.push_back(std::vector<BTElement*>());
- }
- element.back().push_back(new BTElement(text));
-}
-
-void BTLine::addStat(const char *name, const char **atts)
-{
- if (element.empty())
- {
-  element.push_back(std::vector<BTElement*>());
- }
- element.back().push_back(new BTElement(name, atts));
-}
-
-void BTLine::setAlignment(std::string a)
-{
- align = (BTDisplay::alignment)BTAlignmentLookup::lookup.getIndex(a);
-}
-
-void BTLine::draw(BTDisplay &d, ObjectSerializer *obj)
-{
- std::list<std::string> line;
- for (std::list<std::vector<BTElement*> >::iterator itr = element.begin(); itr != element.end(); ++itr)
-  line.push_back(eval(*itr, obj));
- if (line.size() == 1)
-  d.addText(line.front().c_str(), align);
- else if (line.size() == 0)
-  d.addText("");
+ std::string ans;
+ if (isText)
+  return text;
  else
-  d.addColumns(line);
-}
-
-void BTLine::elementData(const XML_Char *name, const XML_Char **atts)
-{
- if (0 == strcmp("col", name))
-  addCol();
- else
-  addStat(name, atts);
-}
-
-void BTLine::characterData(const XML_Char *s, int len)
-{
- std::string str(s, len);
- addText(str);
-}
-
-std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) const
-{
- std::string final;
- for (std::vector<BTElement*>::iterator itr = line.begin(); itr != line.end(); ++itr)
  {
-  if ((*itr)->isText)
-   final += (*itr)->text;
-  else
+  XMLAction *state = obj->find(text.c_str(), const_cast<const char**>(atts));
+  if (!state)
+   state = obj->find(text.c_str(), NULL);
+  if (state)
   {
-   XMLAction *state = obj->find((*itr)->text.c_str(), const_cast<const char**>((*itr)->atts));
-   if (!state)
-    state = obj->find((*itr)->text.c_str(), NULL);
-   if (state)
+   switch(state->getType())
    {
-    switch(state->getType())
+    case XMLTYPE_BOOL:
+    case XMLTYPE_INT:
+    case XMLTYPE_UINT:
+    case XMLTYPE_INT16:
+    case XMLTYPE_UINT16:
+    case XMLTYPE_STRING:
+    case XMLTYPE_STDSTRING:
+     return state->createString();
+     break;
+    case XMLTYPE_CREATE:
     {
-     case XMLTYPE_BOOL:
-     case XMLTYPE_INT:
-     case XMLTYPE_UINT:
-     case XMLTYPE_INT16:
-     case XMLTYPE_UINT16:
-     case XMLTYPE_STRING:
-     case XMLTYPE_STDSTRING:
-      final += state->createString();
-      break;
-     case XMLTYPE_CREATE:
+     const char *field = NULL;
+     const char *defaultValue = NULL;
+     const char **attx = const_cast<const char**>(atts);
+     if (attx)
      {
-      const char *field = NULL;
-      const char *defaultValue = NULL;
-      const char **atts = const_cast<const char**>((*itr)->atts);
-      for (int i = 0; atts[i]; i += 2)
+      for (int i = 0; attx[i]; i += 2)
       {
-       if (0 == strcmp(atts[i], "field"))
-        field = atts[i + 1];
-       else if (0 == strcmp(atts[i], "default"))
-        defaultValue = atts[i + 1];
+       if (0 == strcmp(attx[i], "field"))
+        field = attx[i + 1];
+       else if (0 == strcmp(attx[i], "default"))
+        defaultValue = attx[i + 1];
       }
       XMLArray *ary = reinterpret_cast<XMLArray*>(state->object);
       bool found(false);
@@ -165,12 +96,12 @@ std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) c
        lvl->object = ary->get(i);
        obj->addLevel(lvl);
        found = true;
-       for (int i = 0; atts[i]; i += 2)
+       for (int i = 0; attx[i]; i += 2)
        {
-        if ((0 != strcmp(atts[i], "field")) && (0 != strcmp(atts[i], "default")))
+        if ((0 != strcmp(attx[i], "field")) && (0 != strcmp(attx[i], "default")))
         {
-         XMLAction *item = obj->find(atts[i], NULL);
-         if ((!item) || (item->createString() != atts[i + 1]))
+         XMLAction *item = obj->find(attx[i], NULL);
+         if ((!item) || (item->createString() != attx[i + 1]))
          {
           found = false;
          }
@@ -180,36 +111,208 @@ std::string BTLine::eval(std::vector<BTElement*> &line, ObjectSerializer *obj) c
        {
         XMLAction *item = obj->find(field, NULL);
         if (item)
-         final += item->createString();
+         ans = item->createString();
         else if (defaultValue)
-         final += defaultValue;
+         ans = defaultValue;
        }
        lvl = obj->removeLevel();
        if (found)
         break;
       }
       if ((!found) && (defaultValue))
-       final += defaultValue;
-      break;
+       ans = defaultValue;
      }
-     case XMLTYPE_OBJECT:
-     {
-      // Quick hack to support dice. More complete support needed.
-      XMLObject *state_obj = reinterpret_cast<XMLObject*>(state->object);
-      BTDice *dice = dynamic_cast<BTDice*>(state_obj);
-      if (dice)
-      {
-       final += dice->createString();
-      }
-     }
-     case XMLTYPE_BITFIELD:
-     default:
-      break;
+     break;
     }
+    case XMLTYPE_OBJECT:
+    {
+     // Quick hack to support dice. More complete support needed.
+     XMLObject *state_obj = reinterpret_cast<XMLObject*>(state->object);
+     BTDice *dice = dynamic_cast<BTDice*>(state_obj);
+     if (dice)
+     {
+      ans = dice->createString();
+     }
+    }
+    case XMLTYPE_BITFIELD:
+    default:
+     break;
    }
   }
  }
- return final;
+ return ans;
+}
+
+std::string BTIf::eval(ObjectSerializer *obj) const
+{
+ return (cond.check(obj) ? thenClause.eval(obj) : elseClause.eval(obj));
+}
+
+void BTIf::serialize(ObjectSerializer* s)
+{
+ s->add("cond", &cond);
+ s->add("then", &thenClause);
+ s->add("else", &elseClause);
+}
+
+bool BTOperator::check(ObjectSerializer *obj) const
+{
+ if (type == "eq")
+ {
+  std::string value = element[0]->eval(obj);
+  for (XMLVector<BTSimpleElement*>::const_iterator itr = element.begin() + 1; itr != element.end(); ++itr)
+  {
+   if (value != (*itr)->eval(obj))
+    return false;
+  }
+  return true;
+ }
+ else if (type == "ne")
+ {
+  std::string value = element[0]->eval(obj);
+  for (XMLVector<BTSimpleElement*>::const_iterator itr = element.begin() + 1; itr != element.end(); ++itr)
+  {
+   if (value == (*itr)->eval(obj))
+    return false;
+  }
+  return true;
+ }
+ else if (type == "gt")
+ {
+  // Not the most efficient solution since the number is converted to a string and then back to a number.
+  long value = atol(element[0]->eval(obj).c_str());
+  for (XMLVector<BTSimpleElement*>::const_iterator itr = element.begin() + 1; itr != element.end(); ++itr)
+  {
+   long value2 = atol((*itr)->eval(obj).c_str());
+   if (value > value2)
+    return false;
+   value = value2;
+  }
+  return true;
+ }
+}
+
+void BTOperator::serialize(ObjectSerializer* s)
+{
+}
+
+void BTOperator::elementData(const XML_Char *name, const XML_Char **atts)
+{
+ element.push_back(new BTElement(name, atts));
+}
+
+void BTOperator::characterData(const XML_Char *s, int len)
+{
+ std::string text(s, len);
+ element.push_back(new BTElement(text));
+}
+
+bool BTCond::check(ObjectSerializer *obj) const
+{
+ if (type == "or")
+ {
+  for (XMLVector<BTCheckTrueFalse*>::const_iterator itr = op.begin(); itr != op.end(); ++itr)
+  {
+   if ((*itr)->check(obj))
+    return true;
+  }
+  return false;
+ }
+ else
+ {
+  bool ans(true);
+  for (XMLVector<BTCheckTrueFalse*>::const_iterator itr = op.begin(); itr != op.end(); ++itr)
+  {
+   ans = ans & (*itr)->check(obj);
+  }
+  return ans;
+ }
+}
+
+void BTCond::serialize(ObjectSerializer* s)
+{
+ s->add("eq", &op, &BTOperator::create);
+ s->add("gt", &op, &BTOperator::create);
+ s->add("ne", &op, &BTOperator::create);
+ s->add("or", &op, &BTCond::create);
+}
+
+std::string BTColumn::eval(ObjectSerializer *obj) const
+{
+ std::string ans;
+ for (XMLVector<BTSimpleElement*>::const_iterator itr = element.begin(); itr != element.end(); ++itr)
+ {
+  ans += (*itr)->eval(obj);
+ }
+ return ans;
+}
+
+void BTColumn::serialize(ObjectSerializer* s)
+{
+ s->add("if", typeid(BTIf).name(), &element, &BTIf::create);
+}
+
+void BTColumn::elementData(const XML_Char *name, const XML_Char **atts)
+{
+ element.push_back(new BTElement(name, atts));
+}
+
+void BTColumn::characterData(const XML_Char *s, int len)
+{
+ std::string text(s, len);
+ element.push_back(new BTElement(text));
+}
+
+void BTBarrier::draw(BTDisplay &d, ObjectSerializer *obj)
+{
+ d.addBarrier("");
+}
+
+BTLine::~BTLine()
+{
+}
+
+void BTLine::setAlignment(std::string a)
+{
+ align = (BTDisplay::alignment)BTAlignmentLookup::lookup.getIndex(a);
+}
+
+void BTLine::draw(BTDisplay &d, ObjectSerializer *obj)
+{
+ std::list<std::string> line;
+ std::string current;
+ for (XMLVector<BTSimpleElement*>::const_iterator itr = element.begin(); itr != element.end(); ++itr)
+ {
+  if (NULL == dynamic_cast<BTColumn*>(*itr))
+   current += (*itr)->eval(obj);
+  else
+   line.push_back((*itr)->eval(obj));
+ }
+ if (current != "")
+  line.push_back(current);
+ if (line.size() == 1)
+  d.addText(line.front().c_str(), align);
+ else if (line.size() == 0)
+  d.addText("");
+ else
+  d.addColumns(line);
+}
+
+void BTLine::serialize(ObjectSerializer* s)
+{
+ s->add("col", typeid(BTColumn).name(), &element, &BTColumn::create);
+ s->add("if", typeid(BTIf).name(), &element, &BTIf::create);
+}
+
+void BTLine::elementData(const XML_Char *name, const XML_Char **atts)
+{
+ element.push_back(new BTElement(name, atts));
+}
+
+void BTLine::characterData(const XML_Char *s, int len)
+{
+ std::string text(s, len);
+ element.push_back(new BTElement(text));
 }
 
 XMLObject *BTLine::create(const XML_Char *name, const XML_Char **atts)
@@ -221,10 +324,6 @@ XMLObject *BTLine::create(const XML_Char *name, const XML_Char **atts)
    obj->setAlignment(att[1]);
  }
  return obj;
-}
-
-void BTChoice::addCol()
-{
 }
 
 std::string BTChoice::getKeys()
@@ -260,9 +359,9 @@ void BTChoice::setScreen(int s)
 void BTChoice::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  std::string line;
- if (!element.empty())
+ for (XMLVector<BTSimpleElement*>::iterator itr = element.begin(); itr != element.end(); ++itr)
  {
-  line = eval(element.front(), obj);
+   line += (*itr)->eval(obj);
  }
  d.addChoice(getKeys().c_str(), line.c_str(), align);
 }
@@ -287,10 +386,6 @@ XMLObject *BTChoice::create(const XML_Char *name, const XML_Char **atts)
   }
  }
  return obj;
-}
-
-void BTReadString::addCol()
-{
 }
 
 std::string BTReadString::getKeys()
@@ -321,9 +416,9 @@ void BTReadString::setScreen(int s)
 void BTReadString::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  std::string line;
- if (!element.empty())
+ for (XMLVector<BTSimpleElement*>::iterator itr = element.begin(); itr != element.end(); ++itr)
  {
-  line = eval(element.front(), obj);
+   line += (*itr)->eval(obj);
  }
  response = "";
  d.addReadString(line.c_str(), 13, response);

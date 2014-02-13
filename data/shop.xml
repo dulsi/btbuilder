@@ -30,8 +30,7 @@
 		<choice keys="cC" align="center" screen="2">(CANCEL)</choice>
 	</screen>
 	<screen number="6" escapeScreen="2">
-		<line><itemName /> is a type of <item:type /></line>
-		<can option="item:type" value="1"><line>It does <item:damage /> damage.</line></can>
+		<line><itemName /> is a type of <item:type />.<if><cond><or><ne><item:hitPlus />0</ne><ne><item:armorPlus />0</ne></or></cond><then>It has a <if><cond><ne><item:hitPlus />0</ne></cond><then><item:hitPlus /> bonus to hit<if><cond><ne><item:armorPlus />0</ne></cond><then> and a </then></if></then></if><if><cond><ne><item:armorPlus />0</ne></cond><then><item:armorPlus /> bonus to armor</then></if>.</then></if><if><cond><eq><item:type />hand weapon</eq></cond><then>It does <item:damage /> damage<if><cond><gt><item:chanceXSpecial />0</gt><ne><item:xSpecial op="ne" />Nothing special</ne></cond><then> and does <item:xSpecial /></then></if>.</then></if></line>
 		<barrier />
 		<choice keys="dD" align="center" screen="2">(Done)</choice>
 	</screen>
