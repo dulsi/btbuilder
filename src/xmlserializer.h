@@ -25,6 +25,8 @@ class XMLObject
 
   virtual ~XMLObject() {}
 
+  virtual std::string createString() { return ""; }
+
   virtual void serialize(ObjectSerializer* s) = 0;
 
   virtual void elementData(const XML_Char *name, const XML_Char **atts) {}

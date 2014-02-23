@@ -228,6 +228,31 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
       printf("Unsuppported type: %d\n", curField->getType());
      break;
     }
+    case XMLTYPE_CREATE:
+    {
+     XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
+     int where = 0;
+     for (int i = current - 1; (i >= 0) && (list[i].value == list[current].value); --i)
+     {
+      ++where;
+     }
+     if (where >= obj->size())
+     {
+      obj->push_back((*reinterpret_cast<XMLObject::create>(curField->data))(field[list[current].value], NULL));
+      list.push_back(BTDisplay::selectItem());
+      for (int i = list.size() - 1; i > current; --i)
+      {
+       list[i].name = list[i - 1].name;
+       list[i].value = list[i - 1].value;
+      }
+      len++;
+     }
+     handleObject(d, obj->get(where), list[current].value);
+     list[current].name = std::string(description[list[current].value]) + ": " + obj->get(where)->createString();
+     d.clearText();
+     d.addSelection(list.data(), len, start, current);
+     break;
+    }
     default:
      printf("Unsuppported type: %d\n", curField->getType());
      break;
@@ -240,7 +265,7 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
     if (dice)
      list[current].name = std::string(description[list[current].value]) + ": " + dice->createString();
    }
-   else
+   else if (curField->getType() != XMLTYPE_CREATE)
    {
     list[current].name = std::string(description[list[current].value]) + ": " + curField->createString();
    }
@@ -259,6 +284,10 @@ void BTSerializedEditor::initActive(ObjectSerializer &serial, BitField &active)
   active.set(i);
 }
 
+void BTSerializedEditor::handleObject(BTDisplay &d, XMLObject *obj, int modField)
+{
+}
+
 int BTSerializedEditor::setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items)
 {
  int current = 0;
@@ -267,16 +296,31 @@ int BTSerializedEditor::setup(ObjectSerializer &serial, BitField &active, std::v
   if (!active.isSet(i))
    continue;
   XMLAction *curField = serial.find(field[i], NULL);
+  if (current >= entries)
+   items.push_back(BTDisplay::selectItem());
   if (curField->getType() == XMLTYPE_OBJECT)
   {
    XMLObject *obj = reinterpret_cast<XMLObject*>(curField->object);
-   BTDice *dice = dynamic_cast<BTDice*>(obj);
-   if (dice)
+   items[current].name = std::string(description[i]) + ": " + obj->createString();
+   items[current].value = i;
+   ++current;
+  }
+  else if (curField->getType() == XMLTYPE_CREATE)
+  {
+   XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
+   for (int k = 0; k < obj->size(); k++)
    {
-    items[current].name = std::string(description[i]) + ": " + dice->createString();
+    if (current >= items.size())
+     items.push_back(BTDisplay::selectItem());
+    items[current].name = std::string(description[i]) + ": " + obj->get(k)->createString();
     items[current].value = i;
     ++current;
    }
+   if (current >= items.size())
+    items.push_back(BTDisplay::selectItem());
+   items[current].name = std::string(description[i]) + ": <New>";
+   items[current].value = i;
+   ++current;
   }
   else
   {
@@ -293,13 +337,34 @@ bool BTSerializedEditor::updateActive(ObjectSerializer &serial, BitField &active
  return false;
 }
 
+#define MAPLOC_MONSTERCHANCE 4
+
 BTMapPropertiesEditor::BTMapPropertiesEditor()
  : BTSerializedEditor(FIELDS_MAP, mapDescription, mapField)
 {
 }
 
-const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Monster Level" };
-const char *BTMapPropertiesEditor::mapField[FIELDS_MAP] = { "name", "type", "light", "monsterLevel" };
+void BTMapPropertiesEditor::handleObject(BTDisplay &d, XMLObject *obj, int modField)
+{
+ if (modField == MAPLOC_MONSTERCHANCE)
+ {
+  BTMonsterChanceEditor chanceEditor;
+  ObjectSerializer serial;
+  obj->serialize(&serial);
+  chanceEditor.edit(d, serial);
+ }
+}
+
+const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Monster Level", "Encounter Chance" };
+const char *BTMapPropertiesEditor::mapField[FIELDS_MAP] = { "name", "type", "light", "monsterLevel", "monsterChance" };
+
+BTMonsterChanceEditor::BTMonsterChanceEditor()
+ : BTSerializedEditor(FIELDS_MONSTERCHANCE, monsterChanceDescription, monsterChanceField)
+{
+}
+
+const char *BTMonsterChanceEditor::monsterChanceDescription[FIELDS_MONSTERCHANCE] = { "Chance", "Groups"};
+const char *BTMonsterChanceEditor::monsterChanceField[FIELDS_MONSTERCHANCE] = { "chance", "groups"};
 
 BTItemEditor::BTItemEditor()
  : BTSerializedEditor(FIELDS_ITEM, itemDescription, itemField)

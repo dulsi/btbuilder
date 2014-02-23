@@ -43,6 +43,7 @@ class BTSerializedEditor
 
  protected:
   virtual void initActive(ObjectSerializer &serial, BitField &active);
+  virtual void handleObject(BTDisplay &d, XMLObject *obj, int modField);
   int setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items);
   virtual bool updateActive(ObjectSerializer &serial, BitField &active, int modField);
 
@@ -54,17 +55,33 @@ class BTSerializedEditor
   int current;
 };
 
-#define FIELDS_MAP 4
+#define FIELDS_MAP 5
 
 class BTMapPropertiesEditor : public BTSerializedEditor
 {
  public:
   BTMapPropertiesEditor();
 
+ protected:
+  virtual void handleObject(BTDisplay &d, XMLObject *obj, int modField);
+
  private:
   static const char *mapDescription[FIELDS_MAP];
   static const char *mapField[FIELDS_MAP];
 };
+
+#define FIELDS_MONSTERCHANCE 2
+
+class BTMonsterChanceEditor : public BTSerializedEditor
+{
+ public:
+  BTMonsterChanceEditor();
+
+ private:
+  static const char *monsterChanceDescription[FIELDS_MONSTERCHANCE];
+  static const char *monsterChanceField[FIELDS_MONSTERCHANCE];
+};
+
 
 #define FIELDS_ITEM 14
 #define FIELDS_MONSTER 26

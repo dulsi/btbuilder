@@ -262,6 +262,7 @@ class BTMonsterChance : public XMLObject
  public:
   BTMonsterChance(int c = 0, int g = 1);
 
+  std::string createString();
   int getChance() const;
   int getGroups() const;
   void serialize(ObjectSerializer* s);
