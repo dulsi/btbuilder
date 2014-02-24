@@ -265,13 +265,21 @@ void BTPc::changeJob(int newJob)
   {
    if (skill[i]->skill == jobList[newJob]->skill[k]->skill)
    {
-    skill[i]->value = jobList[newJob]->skill[k]->value;
-    if ((jobList[newJob]->skill[k]->modifier >= 0) && (stat[jobList[newJob]->skill[k]->modifier] > 14))
-     skill[i]->value += stat[jobList[newJob]->skill[k]->modifier] - 14;
+    if ((jobList[newJob]->skill[k]->value == 0) && (jobList[newJob]->skill[k]->improve == 0))
+    {
+     skill.erase(skill.begin() + i);
+    }
+    else
+    {
+     skill[i]->value = jobList[newJob]->skill[k]->value;
+     if ((jobList[newJob]->skill[k]->modifier >= 0) && (stat[jobList[newJob]->skill[k]->modifier] > 14))
+      skill[i]->value += stat[jobList[newJob]->skill[k]->modifier] - 14;
+    }
     found = true;
+    break;
    }
   }
-  if (!found)
+  if ((!found) && ((jobList[newJob]->skill[k]->value != 0) || (jobList[newJob]->skill[k]->improve != 0)))
   {
    BTSkillValue *value = new BTSkillValue;
    value->skill = jobList[newJob]->skill[k]->skill;
