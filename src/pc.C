@@ -57,7 +57,7 @@ BTPc::BTPc(int monsterType, int j, BTCombatant *c /*= NULL*/)
  }
  if (level == 0)
   level = maxLevel = 1;
- else if (level > 1)
+ else if ((level > 1) && (jobList[job]->xpChart != -1))
   xp = xpChartList[jobList[job]->xpChart]->getXpNeeded(level - 1);
  gender = monsterList[monster].getGender();
  picture = monsterList[monster].getPicture();
