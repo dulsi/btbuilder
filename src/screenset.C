@@ -1545,9 +1545,10 @@ void BTScreenSet::setPicture(BTDisplay &d, int pic, const char *l)
 
 int BTScreenSet::advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ bool wasDrained = (b.pc->level < b.pc->maxLevel);
  if (b.pc->advanceLevel())
  {
-  int stat = b.pc->incrementStat();
+  int stat = (wasDrained ? -1 : b.pc->incrementStat());
   d.drawStats();
   if (stat != -1)
    b.add("increaseStat", &statAbbrev[stat]);

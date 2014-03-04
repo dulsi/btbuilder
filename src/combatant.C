@@ -323,6 +323,8 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
   {
    for (int i = 0; i <= maxSpecial; ++i)
    {
+    if (!special.isSet(i))
+     continue;
     switch(i)
     {
      case BTEXTRADAMAGE_POSION:
@@ -404,10 +406,13 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
     {
      if (!special.isSet(i))
       continue;
-     if ((specialText == "") || (maxSpecial == i))
-      specialText += " and";
-     else
-      specialText += ",";
+     if ((totalDamage > 0) || (specialText != ""))
+     {
+      if ((specialText == "") || (maxSpecial == i))
+       specialText += " and";
+      else
+       specialText += ",";
+     }
      switch(i)
      {
       case BTEXTRADAMAGE_POSION:
