@@ -14,6 +14,7 @@ BuildRequires: SDL-devel
 BuildRequires: SDL_image-devel
 BuildRequires: SDL_mixer-devel
 BuildRequires: SDL_ttf-devel
+BuildRequires: desktop-file-utils
 
 %description
 Bt Builder is an open source implementation of the Bard's Tale Construction Set. The eventual goal is to make a game builder that can implement the three main Bard's Tale games in addition to Construction Set games.
@@ -49,6 +50,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README CONTRIBUTIONS.TXT
 %{_bindir}/*
 %{_datadir}/btbuilder
-%{_datadir}/applications/btbuilder.desktop
 %{_datadir}/icons/hicolor/*/apps/btbuilder.png
+/%{_desktopdir}/btbuilder.desktop
 

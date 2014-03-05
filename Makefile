@@ -45,6 +45,7 @@ install: all
 	cp -R data image module music $(DATADIR)/btbuilder/
 	cp -R icons/* $(DATADIR)/icons/hicolor/
 	cp btbuilder $(BINDIR)
+	desktop-file-install --dir=${RPM_BUILD_ROOT}%{_datadir}/applications btbuilder.desktop
 
 clean:
 	rm -f $(BTBUILDER_OBJ) $(BTBUILDER_EXE)
