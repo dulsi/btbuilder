@@ -27,7 +27,6 @@ make %{?_smp_mflags}
 
 %install
 make prefix=%{buildroot} install
-desktop-file-install --dir=%{buildroot}/%{_desktopdir} btbuilder.desktop
 
 %post
 update-desktop-database &> /dev/null ||:
@@ -51,5 +50,5 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/*
 %{_datadir}/btbuilder
 %{_datadir}/icons/hicolor/*/apps/btbuilder.png
-/%{_desktopdir}/btbuilder.desktop
+%{_datadir}/applications/btbuilder.desktop
 
