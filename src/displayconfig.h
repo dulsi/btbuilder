@@ -26,6 +26,8 @@ class BTDisplayExpanded : public XMLObject
  public:
   int xMult, yMult;
   std::string directory;
+  char *font;
+  int fontsize;
 };
 
 class BTDisplayConfig : public XMLObject
@@ -47,6 +49,7 @@ class BTDisplayConfig : public XMLObject
   SerialRect status[BT_PARTYSIZE];
   char *background;
   char *font;
+  int fontsize;
   XMLVector<BTStatusInfo*> statusInfo;
   XMLVector<BTIcon*> icon;
   int xMap, yMap;

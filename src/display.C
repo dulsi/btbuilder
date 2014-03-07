@@ -53,6 +53,8 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   else
    yMult = xMult;
  }
+ char *font = config->font;
+ int fontsize = config->fontsize;
  expanded = config->findExpanded(xMult, yMult);
  if (expanded)
  {
@@ -62,6 +64,8 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
    xMult = yMult;
   else
    yMult = xMult;
+  font = expanded->font;
+  fontsize = expanded->fontsize;
  }
  p3d.setMultiplier(xMult, yMult);
  label.x = config->label.x * xMult;
@@ -86,8 +90,13 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   printf("Failed - SDL_SetVideoMode\n");
   exit(0);
  }
-/* if (config->font)
-  ttffont = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));*/
+#ifndef BTBUILDER_NOTTF
+ if (font)
+ {
+  SDL_RWops *f = PHYSFSRWOPS_openRead(font);
+  ttffont = TTF_OpenFontRW(f, 1, fontsize);
+ }
+#endif
  white.r = 255;
  white.g = 255;
  white.b = 255;
@@ -1046,6 +1055,8 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   else
    newYMult = newXMult;
  }
+ char *font = c->font;
+ int fontsize = c->fontsize;
  expanded = c->findExpanded(newXMult, newYMult);
  if (expanded)
  {
@@ -1055,6 +1066,8 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
    newXMult = newYMult;
   else
    newYMult = newXMult;
+  font = expanded->font;
+  fontsize = expanded->fontsize;
  }
  p3d.setMultiplier(newXMult, newYMult);
  label.x = c->label.x * newXMult;
@@ -1078,8 +1091,18 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  config = c;
  xMult = newXMult;
  yMult = newYMult;
-/* if (config->font)
-  ttffont = TTF_OpenFont("/usr/share/fonts/bitstream-vera/VeraMono.ttf", 6 * ((xMult == yMult) ? yMult : 1));*/
+#ifndef BTBUILDER_NOTTF
+ if (font)
+ {
+  SDL_RWops *f = PHYSFSRWOPS_openRead(font);
+  ttffont = TTF_OpenFontRW(f, 1, fontsize);
+ }
+ else if (ttffont)
+ {
+  TTF_CloseFont(ttffont);
+  ttffont = 0;
+ }
+#endif
  setBackground(c->background);
 }
 

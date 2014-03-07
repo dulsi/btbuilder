@@ -9,7 +9,7 @@
 #include "xmlserializer.h"
 
 BTDisplayExpanded::BTDisplayExpanded()
- : xMult(1), yMult(1)
+ : xMult(1), yMult(1), font(0), fontsize(6)
 {
 }
 
@@ -22,10 +22,12 @@ void BTDisplayExpanded::serialize(ObjectSerializer* s)
  s->add("xMult", &xMult);
  s->add("yMult", &yMult);
  s->add("directory", &directory);
+ s->add("font", &font);
+ s->add("fontsize", &fontsize);
 }
 
 BTDisplayConfig::BTDisplayConfig()
- : x3d(0), y3d(0), background(0), font(0), xMap(0), yMap(0), widthMap(0), heightMap(0), mapDisplayMode(BTMAPDISPLAYMODE_REQUEST), centerMap(true)
+ : x3d(0), y3d(0), background(0), font(0), fontsize(6), xMap(0), yMap(0), widthMap(0), heightMap(0), mapDisplayMode(BTMAPDISPLAYMODE_REQUEST), centerMap(true)
 {
 }
 
@@ -44,6 +46,7 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("expanded", &expanded, &BTDisplayExpanded::create);
  s->add("background", &background);
  s->add("font", &font);
+ s->add("fontsize", &fontsize);
  s->add("x3d", &x3d);
  s->add("y3d", &y3d);
  s->add("label", &label);
