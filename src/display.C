@@ -93,8 +93,9 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
 #ifndef BTBUILDER_NOTTF
  if (font)
  {
-  SDL_RWops *f = PHYSFSRWOPS_openRead(font);
-  ttffont = TTF_OpenFontRW(f, 1, fontsize);
+  SDL_RWops *f = PHYSFSRWOPS_openRead((std::string("fonts/") + font).c_str());
+  if (f)
+   ttffont = TTF_OpenFontRW(f, 1, fontsize);
  }
 #endif
  white.r = 255;
@@ -1094,8 +1095,9 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
 #ifndef BTBUILDER_NOTTF
  if (font)
  {
-  SDL_RWops *f = PHYSFSRWOPS_openRead(font);
-  ttffont = TTF_OpenFontRW(f, 1, fontsize);
+  SDL_RWops *f = PHYSFSRWOPS_openRead((std::string("fonts/") + font).c_str());
+  if (f)
+   ttffont = TTF_OpenFontRW(f, 1, fontsize);
  }
  else if (ttffont)
  {
@@ -1133,6 +1135,7 @@ bool BTDisplay::sizeFont(const char *text, int &w, int &h)
   }
   else if (TTF_SizeUTF8(ttffont, text, &w, &h) == -1)
     return false;
+  h = h-1;
  }
  else
 #endif
