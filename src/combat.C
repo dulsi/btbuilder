@@ -660,6 +660,14 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
     action = BTCOMBATACTION_ATTACK;
   }
  }
+ if ((mon.status.isSet(BTSTATUS_INSANE)) && (BTCOMBATACTION_MOVEANDATTACK == action) && (grp.distance > 1))
+ {
+  // Let the monster move.
+ }
+ else if ((mon.status.isSet(BTSTATUS_INSANE)) || (mon.status.isSet(BTSTATUS_POSSESSED)))
+ {
+  action = BTCOMBATACTION_ATTACK;
+ }
  if (BTCOMBATACTION_MOVEANDATTACK == action)
  {
   if (grp.distance > 1)
@@ -698,13 +706,47 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
  {
   BTCombatant *defender = NULL;
   int target;
-  if (grp.distance <= 1)
+  for (int attacks = monList[grp.monsterType].getRateAttacks(); attacks > 0; )
   {
-   for (int attacks = monList[grp.monsterType].getRateAttacks(); attacks > 0; )
+   int opponents = 0;
+   bool attackParty = false;
+   if ((mon.status.isSet(BTSTATUS_INSANE)) || (mon.status.isSet(BTSTATUS_POSSESSED)))
+   {
+    std::list<BTMonsterGroup>::iterator itr(monsters.begin());
+    for (; itr != monsters.end(); ++itr)
+     if (itr->distance == grp.distance)
+      ++opponents;
+   }
+   if ((!mon.status.isSet(BTSTATUS_POSSESSED)) && (grp.distance <= 1))
+    attackParty = true;
+   if ((0 == opponents) && (!attackParty))
+    break;
+   opponents = BTDice(1, opponents + (attackParty ? 1 : 0), (attackParty ? 0 : 1)).roll();
+   if (opponents == BTTARGET_PARTY)
    {
     if (findTargetPC(BT_BACK, target))
     {
      defender = party[target];
+     std::string text = mon.attack(defender, true, monList[grp.monsterType].getMeleeMessage(), "and hits", monList[grp.monsterType].getMeleeDamage(), 100, monList[grp.monsterType].getMeleeExtra(), attacks, active);
+     d.drawStats();
+     d.drawMessage(text.c_str(), game->getDelay());
+    }
+    else
+     break;
+   }
+   else
+   {
+    --opponents;
+    std::list<BTMonsterGroup>::iterator itr(monsters.begin());
+    for (; itr != monsters.end(); ++itr)
+    {
+     if ((itr->distance == grp.distance) && (--opponents == 0))
+      break;
+    }
+    target = itr->findTarget(BTTARGET_INDIVIDUAL);
+    if (target != BTTARGET_INDIVIDUAL)
+    {
+     defender = itr->at(target);
      std::string text = mon.attack(defender, true, monList[grp.monsterType].getMeleeMessage(), "and hits", monList[grp.monsterType].getMeleeDamage(), 100, monList[grp.monsterType].getMeleeExtra(), attacks, active);
      d.drawStats();
      d.drawMessage(text.c_str(), game->getDelay());
