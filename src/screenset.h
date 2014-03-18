@@ -433,6 +433,7 @@ class BTScreenSet : public ObjectSerializer
   static int changeJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int dropFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

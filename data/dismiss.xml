@@ -1,0 +1,8 @@
+<screenset>
+	<screen number="1" escapeScreen="exit">
+		<line>Who will you drop?</line>
+		<selectParty action="dropFromParty" screen="exit" />
+		<choice keys="cC" action="exit">(CANCEL)</choice>
+	</screen>
+	<error type="nodrop" screen="exit">You can't drop a party member.</error>
+</screenset>

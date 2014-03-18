@@ -581,6 +581,13 @@ void BTGame::run(BTDisplay &d)
        cast.run(d);
        break;
       }
+      case 'd':
+      {
+       BTScreenSet drop;
+       drop.open("data/dismiss.xml");
+       drop.run(d);
+       break;
+      }
       case 'u':
       {
        BTScreenSet useItem;

@@ -1201,6 +1201,7 @@ BTScreenSet::BTScreenSet()
  actionList["changeJob"] = &changeJob;
  actionList["create"] = &create;
  actionList["drop"] = &drop;
+ actionList["dropFromParty"] = &dropFromParty;
  actionList["equip"] = &equip;
  actionList["exit"] = &exit;
  actionList["exitAndSave"] = &exitAndSave;
@@ -1749,6 +1750,20 @@ int BTScreenSet::drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  b.pc->combat.object = -1;
  b.pc->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
+ return 0;
+}
+
+int BTScreenSet::dropFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTParty &party = BTGame::getGame()->getParty();
+ if ((key >= '1') && (key <= '9') && (key - '1' < party.size()))
+ {
+  if ((party[key - '1']->job != BTJOB_MONSTER) && (party[key - '1']->job != BTJOB_ILLUSION))
+   throw BTSpecialError("nodrop");
+  BTGame::getGame()->movedPlayer(d, key - '1', BTPARTY_REMOVE);
+  party.remove(key - '1', d);
+  d.drawStats();
+ }
  return 0;
 }
 
