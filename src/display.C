@@ -226,6 +226,11 @@ void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select
  element.push_back(new BTUISelect(list, size, start, select, num));
 }
 
+void BTDisplay::addSelectImage(int &select)
+{
+ element.push_back(new BTUISelectImage(select));
+}
+
 void BTDisplay::clear(SDL_Rect &r, bool update /*= false*/)
 {
  SDL_BlitSurface(mainBackground, &r, mainScreen, &r);
@@ -239,6 +244,24 @@ void BTDisplay::clearElements()
   delete (*elementItr);
  }
  element.clear();
+}
+
+void BTDisplay::clearImage()
+{
+ picture = -1;
+ if (animation.animation)
+ {
+  IMG_FreeMNG(animation.animation);
+  animation.animation = NULL;
+  removeAnimation(&animation);
+ }
+ SDL_Rect dst;
+ dst.x = config->x3d * xMult;
+ dst.y = config->y3d * yMult;
+ dst.w = p3d.config->width * xMult;
+ dst.h = p3d.config->height * yMult;
+ SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
+ SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 
 void BTDisplay::clearText()
@@ -709,7 +732,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
  std::vector<BTUIElement*>::iterator top = element.begin();
  for (; top != element.end(); ++top)
  {
-  if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()))
+  if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()))
   {
    break;
   }
@@ -775,6 +798,13 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
    BTUIReadString *item = static_cast<BTUIReadString*>(*top);
    SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
    item->response = readString(item->prompt.c_str(), item->maxLen, item->response);
+   return 13;
+  }
+  else if (BTUI_SELECTIMAGE == (*top)->getType())
+  {
+   BTUISelectImage *item = static_cast<BTUISelectImage*>(*top);
+   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+   item->select = selectImage(item->select);
    return 13;
   }
   else if (BTUI_SELECT == (*top)->getType())
@@ -980,9 +1010,9 @@ std::string BTDisplay::readString(const char *prompt, int max, const std::string
  int startPos = textPos;
  std::string full = prompt;
  full += s;
- dst.x = text.x + w;
+ dst.x = text.x;
  dst.y = text.y + textPos;
- dst.w = text.w - w;
+ dst.w = text.w;
  drawText(full.c_str());
  int endPos = textPos;
  while (((key = readChar()) != 13) && (key !=  27))
@@ -1022,6 +1052,73 @@ void BTDisplay::refresh()
 void BTDisplay::removeAnimation(MNG_AnimationState *animState)
 {
  activeAnimation.remove(BTAnimation(animState, false));
+}
+
+int BTDisplay::selectImage(int initial)
+{
+ char sz[50];
+ snprintf(sz, 50, "%d", initial);
+ std::string s = sz;
+ int w, h;
+ sizeFont(s.c_str(), w, h);
+ if (h + textPos > text.h)
+  scrollUp(h);
+ unsigned char key;
+ int len = s.length();
+ SDL_Rect dst;
+ dst.h = h;
+ int startPos = textPos;
+ std::string full;
+ full += s;
+ dst.x = text.x;
+ dst.y = text.y + textPos;
+ dst.w = text.w;
+ drawText(full.c_str());
+ int endPos = textPos;
+ int current = initial;
+ drawImage(current);
+ while (((key = readChar()) != 13) && (key !=  27))
+ {
+  if (key == 8)
+  {
+   if (len > 0)
+   {
+    s.erase(--len);
+    full.erase(full.length() - 1);
+   }
+   current = atol(s.c_str());
+  }
+  else if ((len < 50) && (key >= '0') && (key <= '9'))
+  {
+   s.push_back(key);
+   full.push_back(key);
+   ++len;
+   current = atol(s.c_str());
+  }
+  else if ((key == '+') || (key == BTKEY_UP))
+  {
+   ++current;
+   snprintf(sz, 50, "%d", current);
+   full = s = sz;
+  }
+  else if ((key == '-') || (key == BTKEY_DOWN))
+  {
+   --current;
+   snprintf(sz, 50, "%d", current);
+   full = s = sz;
+  }
+  else
+   continue;
+  dst.h = endPos - startPos;
+  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+  textPos = startPos;
+  drawText(full.c_str());
+  if (textPos > endPos)
+   endPos = textPos;
+  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, endPos - startPos);
+  drawImage(current);
+ }
+ return ((key == 27) ? initial : current);
 }
 
 void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)

@@ -23,6 +23,7 @@
 #define BTUI_MULTICOLUMN 4
 #define BTUI_READSTRING 5
 #define BTUI_BARRIER 6
+#define BTUI_SELECTIMAGE 7
 
 #define BTKEY_UP 1
 #define BTKEY_DOWN 2
@@ -108,8 +109,10 @@ class BTDisplay : public ImageLoader
   void addColumns(const std::list<std::string>& c);
   void addReadString(const std::string &prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
+  void addSelectImage(int &select);
   void clear(SDL_Rect &r, bool update = false);
   void clearElements();
+  void clearImage();
   void clearText();
   void drawFullScreen(const char *file, int delay);
   void drawImage(int pic);
@@ -134,6 +137,7 @@ class BTDisplay : public ImageLoader
   std::string readString(const char *prompt, int max, const std::string &initial);
   void refresh();
   void removeAnimation(MNG_AnimationState *animState);
+  int selectImage(int initial);
   void setBackground(const char *file, bool physfs = true);
   void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(Psuedo3DConfigList *p3dl);
@@ -250,6 +254,16 @@ class BTUISelect : public BTUIElement
   int &start;
   int &select;
   int numbered;
+};
+
+class BTUISelectImage : public BTUIElement
+{
+ public:
+  BTUISelectImage(int &sel) : select(sel) {}
+
+  virtual int getType() const { return BTUI_SELECTIMAGE; }
+
+  int &select;
 };
 
 class BTUIMultiColumn : public BTUIElement

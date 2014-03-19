@@ -642,7 +642,6 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     break;
    }
    case '#':
-   case 'P':
    case 'G':
    case 'F':
    case '!':
@@ -655,6 +654,19 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     if (27 == key)
      return NULL;
     number[count++] = atol(val.c_str());
+    break;
+   }
+   case 'P':
+   {
+    d.addText("Select Image");
+    int val(number[count]);
+    d.addSelectImage(val);
+    key = d.process();
+    d.clearText();
+    d.clearImage();
+    if (27 == key)
+     return NULL;
+    number[count++] = val;
     break;
    }
    case 'E':
