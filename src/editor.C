@@ -50,6 +50,8 @@ void BTEditor::edit(BTDisplay &d)
  char **i;
  int count(3);
 
+ d.setPsuedo3DConfig(&getPsuedo3DConfigList());
+ d.setWallGraphics(0);
  for (i = files; *i != NULL; i++)
  {
   if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
@@ -152,6 +154,7 @@ void BTEditor::edit(BTDisplay &d)
   else
    editMap(d, list[select].name.c_str());
  }
+ d.setPsuedo3DConfig(NULL);
 }
 
 void BTEditor::editMap(BTDisplay &d, const char *filename)
@@ -162,7 +165,6 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
  config.serialize(&parser);
  parser.parse("data/mapedit.xml", true);
  d.setConfig(&config);
- d.setPsuedo3DConfig(&getPsuedo3DConfigList());
  loadMap(filename);
  xPos = 0; yPos = 0; facing = 0;
  p3dConfig = d.setWallGraphics(levelMap->getType());
@@ -347,7 +349,6 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    parser.write(levelMap->getFilename(), true);
   }
  }
- d.setPsuedo3DConfig(NULL);
  d.setConfig(oldConfig);
 }
 

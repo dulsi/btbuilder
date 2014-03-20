@@ -30,7 +30,8 @@ BTMonster::BTMonster(BinaryReadFile &f)
  f.readShort(move);
  f.readShort(rateAttacks);
  f.readShort(illusion);
- f.readShort(picture);
+ f.readShort(num);
+ picture.value = num;
  f.readShortArray(4, actions);
  combatAction.push_back(actions[0]);
  if ((actions[0] != actions[1]) || (actions[0] != actions[2]) || (actions[0] != actions[3]))
@@ -78,7 +79,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
 }
 
 BTMonster::BTMonster()
- : gender(BTGENDER_MALE), level(0), startDistance(0), move(1), rateAttacks(1), illusion(0), picture(0), ac(0), maxAppearing(1), magicResistance(0), wandering(true), meleeExtra(BTEXTRADAMAGE_NONE), rangedType(0), rangedSpell(0), rangedExtra(BTEXTRADAMAGE_NONE), range(0), xp(0)
+ : gender(BTGENDER_MALE), level(0), startDistance(0), move(1), rateAttacks(1), illusion(0), ac(0), maxAppearing(1), magicResistance(0), wandering(true), meleeExtra(BTEXTRADAMAGE_NONE), rangedType(0), rangedSpell(0), rangedExtra(BTEXTRADAMAGE_NONE), range(0), xp(0)
 {
  meleeMessage = new char[1];
  meleeMessage[0] = 0;
@@ -172,7 +173,7 @@ IShort BTMonster::getMove() const
 
 IShort BTMonster::getPicture() const
 {
- return picture;
+ return picture.value;
 }
 
 IShort BTMonster::getRange() const
@@ -261,7 +262,7 @@ void BTMonster::setLevel(IShort l)
 
 void BTMonster::setPicture(IShort pic)
 {
- picture = pic;
+ picture.value = pic;
 }
 
 void BTMonster::setStartDistance(IShort d)
@@ -303,7 +304,8 @@ void BTMonster::write(BinaryWriteFile &f)
  f.writeShort(move);
  f.writeShort(rateAttacks);
  f.writeShort(illusion);
- f.writeShort(picture);
+ value = picture.value;
+ f.writeShort(value);
  for (int i = 0; i < 4; ++i)
   actions[i] = getCombatAction(i);
  f.writeShortArray(4, actions);

@@ -99,7 +99,7 @@ class BTMonster : public XMLObject
   IShort move;
   IShort rateAttacks;
   IShort illusion;
-  IShort picture;
+  PictureIndex picture;
   std::vector<unsigned int> combatAction;
   IShort ac;
   IShort maxAppearing;

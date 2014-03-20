@@ -81,6 +81,14 @@ class XMLAttribute
   std::string value;
 };
 
+class PictureIndex
+{
+ public:
+  PictureIndex() : value(0) {}
+
+  int value;
+};
+
 #define XMLTYPE_TYPE   0x0FFF
 #define XMLTYPE_DELETE 0x1000
 #define XMLTYPE_CREATE     1
@@ -95,6 +103,7 @@ class XMLAttribute
 #define XMLTYPE_STDSTRING  10
 #define XMLTYPE_VECTORUINT 11
 #define XMLTYPE_VECTORSTRING 12
+#define XMLTYPE_PICTURE    13
 
 #define EXTRA_NONE -999
 
@@ -146,6 +155,7 @@ class ObjectSerializer
   void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::vector<unsigned int> *p, ValueLookup *lookup = NULL, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, PictureIndex *p, std::vector<XMLAttribute> *atts = NULL);
 
   void addLevel(XMLLevel *newLevel);
   XMLAction *find(const char *name, const char **atts);

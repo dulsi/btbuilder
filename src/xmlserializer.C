@@ -131,6 +131,10 @@ std::string XMLAction::createString()
    }
    break;
   }
+  case XMLTYPE_PICTURE:
+   sprintf(convert, "%d", reinterpret_cast<PictureIndex*>(object)->value);
+   content = convert;
+   break;
   default:
    break;
  }
@@ -298,6 +302,17 @@ void ObjectSerializer::add(const char *name, std::vector<std::string> *p, std::v
  act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_VECTORSTRING;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
+void ObjectSerializer::add(const char *name, PictureIndex *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = ns + name;
+ act->attrib = atts;
+ act->type = XMLTYPE_PICTURE;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
@@ -504,6 +519,9 @@ void XMLSerializer::endElement(const XML_Char *name)
      reinterpret_cast<std::vector<std::string> *>(state->object)->push_back(content);
      break;
     }
+    case XMLTYPE_PICTURE:
+     reinterpret_cast<PictureIndex*>(state->object)->value = atoi(content.c_str());
+     break;
     default:
      break;
    };
@@ -646,6 +664,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
    case XMLTYPE_UINT16:
    case XMLTYPE_STRING:
    case XMLTYPE_STDSTRING:
+   case XMLTYPE_PICTURE:
     content = (*itr)->createString();
     break;
    case XMLTYPE_BITFIELD:

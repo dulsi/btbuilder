@@ -253,6 +253,16 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
      d.addSelection(list.data(), len, start, current);
      break;
     }
+    case XMLTYPE_PICTURE:
+    {
+     d.addText(description[list[current].value]);
+     int val(reinterpret_cast<PictureIndex*>(curField->object)->value);
+     d.addSelectImage(val);
+     key = d.process();
+     if ('\r' == key)
+      reinterpret_cast<PictureIndex*>(curField->object)->value = val;
+     break;
+    }
     default:
      printf("Unsuppported type: %d\n", curField->getType());
      break;
