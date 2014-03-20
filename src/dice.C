@@ -78,11 +78,14 @@ void BTDice::read(BinaryReadFile &f)
 
 int BTDice::roll() const
 {
- boost::uniform_int<> ran_dist(1, type);
- boost::variate_generator<base_generator_type&, boost::uniform_int<> > ran(generator, ran_dist);
  int r = modifier;
- for (int i = 0; i < number; ++i)
-  r += ran();
+ if (type > 0)
+ {
+  boost::uniform_int<> ran_dist(1, type);
+  boost::variate_generator<base_generator_type&, boost::uniform_int<> > ran(generator, ran_dist);
+  for (int i = 0; i < number; ++i)
+   r += ran();
+ }
  return r;
 }
 
