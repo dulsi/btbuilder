@@ -54,9 +54,7 @@ To print a map in the game, run:
 
 btbuilder -pCITYBUIL.MAP sample
 
-The program is made available under the GPL. The artwork is made available
-by various artists for this project. The artwork is not necessarily under the
-GPL.
+The program is made available under the GPLv3.
 
 Questions or comments can be sent to dulsi@identicalsoftware.com
 

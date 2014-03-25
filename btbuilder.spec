@@ -17,7 +17,11 @@ BuildRequires: SDL_ttf-devel
 BuildRequires: desktop-file-utils
 
 %description
-Bt Builder is an open source implementation of the Bard's Tale Construction Set. The eventual goal is to make a game builder that can implement the three main Bard's Tale games in addition to Construction Set games.
+Bt Builder is a turn based role-playing game builder and engine in the style
+of the old Bard's Tale series. It completely supports the functionality of the
+Bard's Tale Construction Set. The eventual goal is to make a game builder that
+can implement the three main Bard's Tale games in addition to Construction Set
+games.
 
 %prep
 %setup -q
@@ -29,11 +33,9 @@ make %{?_smp_mflags}
 make prefix=%{buildroot} install
 
 %post
-update-desktop-database &> /dev/null ||:
 /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 
 %postun
-update-desktop-database &> /dev/null ||:
 if [ $1 -eq 0 ] ; then
     /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
     /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
@@ -42,11 +44,8 @@ fi
 %posttrans
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files
-%doc README CONTRIBUTIONS.TXT
+%doc README COPYING
 %{_bindir}/*
 %{_datadir}/btbuilder
 %{_datadir}/icons/hicolor/*/apps/btbuilder.png
