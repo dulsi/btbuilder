@@ -1,8 +1,8 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.4.2
+Version: 0.4.3
 Release: 1%{?dist}
-License: GPLv2+
+License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
 Group: Amusements/Games
 Source: http://www.identicalsoftware.com/btbuilder/%{name}-%{version}.tgz
@@ -51,3 +51,7 @@ fi
 %{_datadir}/icons/hicolor/*/apps/btbuilder.png
 %{_datadir}/applications/btbuilder.desktop
 
+%changelog
+* Mon Mar 24 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.4.3-1
+- Modifications based on review of spec file for Fedora.
+- New version of btbuilder released.
