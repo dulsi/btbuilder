@@ -1,15 +1,17 @@
-000 Orc
-001 Wizard
-002 Lizard/Dragon
-003 Dragon
+Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn't look good it is probably due to my cropping and scalling of the image. Artist and link to original content is provided below.
+
+000 Orc (Orc 002 Concept by Misha - http://opengameart.org/content/orc-002-concept)
+001 Wizard (Aldriel's Defiance by Santiago Iborra - http://opengameart.org/content/aldriels-defiance)
+002 Lizard/Dragon (Modified Iguana Photo by Dennis Payne)
+003 Dragon (Dregbin by surt - http://opengameart.org/content/dregbin)
 004 Dragon
 005 Wolf
 006 Horned Warrior
-007 Ogre
+007 Ogre (Cyclops by Santiago Iborra - http://opengameart.org/content/cyclops)
 008 Ghost
-009 Slime
+009 Slime (Swamp Dryad by 5hiroi - http://opengameart.org/content/swamp-dryad)
 010 Kobold
-011 Female Rogue
+011 Female Rogue (Scouting Dispatch by Santiago Iborra - http://opengameart.org/content/scouting-dispatch)
 012 Barbarian
 013 Gryphon
 014 Lizardman
@@ -18,22 +20,22 @@
 017 Minotaur
 018 Gnome
 019 City Guard
-020 Goblin
-021 Golem
+020 Goblin (Orc by Felipe Moreira - http://opengameart.org/content/orc-0)
+021 Golem (Metal Elemental Guardian by Justin Nichol - http://opengameart.org/content/metal-elemental-guardian)
 022 Thief
 023 Sorceress
 024 Skeleton
-025 Spider
+025 Spider (Spider Flare Sprite Sheet by Wciow and John.d.h - http://opengameart.org/content/spider-flare-sprite-sheets)
 026 Vampire
 027 Dwarf/Nomad
 028 Treasure
 029 Female Wizard
-030 Male Warrior
+030 Male Warrior (Imperial Guard by Santiago Iborra - http://opengameart.org/content/imperial-guard)
 031 Male Paladin
-032 Male Rogue
-033 Bard
+032 Male Rogue (Vulture Assassin by Santiago Iborra - http://opengameart.org/content/vulture-assassin)
+033 Bard (Call to Arms by Santiago Iborra - http://opengameart.org/content/call-to-arms)
 034 Hunter
-035 Monk
+035 Monk (Oracle Portrait by Justin Nichol - http://opengameart.org/content/oracle-portrait)
 036 Wizard
 037 Conjurer
 038 City Gates
@@ -41,7 +43,7 @@
 040 Adventurer's Guild
 041 Tavern 
 042 Empty House
-043 Temple
+043 Temple (Queen Giving Orders to Princess by -AP- http://opengameart.org/content/queen-giving-orders-to-princess)
 044 Review Board
 075 Female Warrior
 076 Female Paladin
