@@ -5,7 +5,7 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 002 Lizard/Dragon (Modified Iguana Photo by Dennis Payne)
 003 Dragon (Dregbin by surt - http://opengameart.org/content/dregbin)
 004 Dragon
-005 Wolf
+005 Wolf (Werewolf Magic by gdane - http://opengameart.org/content/werewolf-magic)
 006 Horned Warrior
 007 Ogre (Cyclops by Santiago Iborra - http://opengameart.org/content/cyclops)
 008 Ghost
@@ -75,7 +75,7 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 104 Queen
 105 Maiden
 106 Master Wizard Assassin
-107 Older Lord
+107 Older Lord (Wrong Move by Santiago Iborra - http://opengameart.org/content/wrong-move)
 108 Good Lord
 109 Dwarf Lord
 110 Veteran Dwarf
