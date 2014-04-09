@@ -684,8 +684,83 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     count++;
     break;
    }
-   case '$':
    case 'N':
+   {
+    char **files = PHYSFS_enumerateFiles("");
+    char **i;
+    int count(1);
+
+    for (i = files; *i != NULL; i++)
+    {
+     if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+      continue;
+     if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
+      continue;
+     int len = strlen(*i);
+     if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
+     {
+      char tmp[len + 1];
+      strcpy(tmp, (*i));
+      strcpy(tmp + len - 3, "xml");
+      if (0 == PHYSFS_exists(tmp))
+      {
+       count++;
+      }
+     }
+     else if ((len > 4) && (strcmp(".xml", (*i) + (len - 4)) == 0))
+     {
+      count++;
+     }
+    }
+    BTDisplay::selectItem *list = new BTDisplay::selectItem[count];
+    int current = 0;
+    for (i = files; *i != NULL; i++)
+    {
+     if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
+      continue;
+     if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
+      continue;
+     int len = strlen(*i);
+     if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
+     {
+      char tmp[len + 1];
+      strcpy(tmp, (*i));
+      strcpy(tmp + len - 3, "xml");
+      if (0 == PHYSFS_exists(tmp))
+      {
+       list[current].name = *i;
+       current++;
+      }
+     }
+     else if ((len > 4) && (strcmp(".xml", (*i) + (len - 4)) == 0))
+     {
+      list[current].name = *i;
+      current++;
+     }
+    }
+    list[current].name = "<New Map>";
+    PHYSFS_freeList(files);
+    int start(0);
+    int select(0);
+    d.clearElements();
+    d.addSelection(list, count, start, select);
+    unsigned int key = d.process();
+    d.clearText();
+    if (27 == key)
+     return NULL;
+    else if (count - 1 != select)
+     text = list[select].name;
+    else
+    {
+     d.addReadString(">", 100, text);
+     key = d.process();
+     d.clearText();
+     if (27 == key)
+      return NULL;
+    }
+    break;
+   }
+   case '$':
    default:
     d.addReadString(">", 100, text);
     key = d.process();
