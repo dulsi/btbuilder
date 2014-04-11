@@ -51,6 +51,20 @@ void BitField::clear(int index)
  }
 }
 
+int BitField::count(int start /*= 0*/, int end /*= -1*/) const
+{
+ if (end == -1)
+  end = getMaxSet();
+ int count = 0;
+ while (start <= end)
+ {
+  if (isSet(start))
+   ++count;
+  ++start;
+ }
+ return count;
+}
+
 int BitField::getMaxSet() const
 {
  if (bits)

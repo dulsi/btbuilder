@@ -90,6 +90,17 @@ void BTSpecialBody::eraseOperation(BTSpecialOperation *op)
  }
 }
 
+int BTSpecialBody::findLabel(const std::string &l) const
+{
+ for (int i = 0; i < ops.size(); ++i)
+ {
+  BTSpecialCommand *cmd = dynamic_cast<BTSpecialCommand*>(ops[i]);
+  if ((cmd) && (cmd->getType() == BTSPECIALCOMMAND_LABEL) && (l == cmd->getText()))
+   return i;
+ }
+ return ops.size();
+}
+
 BTSpecialOperation *BTSpecialBody::getOperation(int line)
 {
  if (line < ops.size())
@@ -179,23 +190,12 @@ std::string BTSpecialBody::print() const
  return "body";
 }
 
-void BTSpecialBody::print(FILE *f) const
-{
- print(f, false);
-}
-
-void BTSpecialBody::print(FILE *f, bool lineNumbers) const
+void BTSpecialBody::print(FILE *f, int indent) const
 {
  int i = 0;
  while (i < ops.size())
  {
-  if (lineNumbers)
-  {
-   fprintf(f, "%2d. ",i + 1);
-   if (dynamic_cast<BTSpecialCommand*>(ops[i]) != NULL)
-    fprintf(f, "DO   ");
-  }
-  ops[i]->print(f);
+  ops[i]->print(f, indent + 1);
   ++i;
  }
 }
@@ -237,6 +237,16 @@ BTSpecialCommand::~BTSpecialCommand()
 IShort BTSpecialCommand::getType() const
 {
  return type;
+}
+
+std::string BTSpecialCommand::getText() const
+{
+ return (text ? text : "");
+}
+
+IUShort BTSpecialCommand::getNumber(int indx) const
+{
+ return number[indx];
 }
 
 IBool BTSpecialCommand::isNothing() const
@@ -317,8 +327,10 @@ std::string BTSpecialCommand::print() const
  return answer;
 }
 
-void BTSpecialCommand::print(FILE *f) const
+void BTSpecialCommand::print(FILE *f, int indent) const
 {
+ for (int k = 0; k < indent; ++k)
+  fprintf(f, "    ");
  fprintf(f, "%s\n", print().c_str());
 }
 
@@ -875,7 +887,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    game->clearTimedSpecial();
    break;
   case BTSPECIALCOMMAND_GOTO:
-   throw BTSpecialGoto(number[0] - 1);
+   throw BTSpecialGoto(text);
    break;
   case BTSPECIALCOMMAND_SUBTRACTCOUNTER:
    game->setCounter(game->getCounter() - number[0]);
@@ -1017,13 +1029,19 @@ std::string BTSpecialConditional::print() const
  return answer;
 }
 
-void BTSpecialConditional::print(FILE *f) const
+void BTSpecialConditional::print(FILE *f, int indent) const
 {
+ for (int k = 0; k < indent; ++k)
+  fprintf(f, "    ");
  fprintf(f, "%s\n", print().c_str());
- fprintf(f, "    THEN ");
- thenClause.print(f);
- fprintf(f, "    ELSE ");
- elseClause.print(f);
+ for (int k = 0; k < indent; ++k)
+  fprintf(f, "    ");
+ fprintf(f, "THEN\n");
+ thenClause.print(f, indent);
+ for (int k = 0; k < indent; ++k)
+  fprintf(f, "    ");
+ fprintf(f, "ELSE\n");
+ elseClause.print(f, indent);
 }
 
 void BTSpecialConditional::read(BinaryReadFile &f)
@@ -1223,6 +1241,7 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
 {
  char tmp[26];
  IUByte unknown;
+ BitField labelNeeded;
 
  f.readUByteArray(25, (IUByte *)tmp);
  tmp[25] = 0;
@@ -1262,6 +1281,12 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
       --nothing;
      }
      body.addOperation(opThen);
+     if (opThen->getType() == BTSPECIALCOMMAND_GOTO)
+     {
+      labelNeeded.set(opThen->getNumber(0));
+      snprintf(tmp, 26, "line number %d", opThen->getNumber(0));
+      opThen->setText(tmp);
+     }
     }
     delete opElse;
     break;
@@ -1273,7 +1298,19 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
      --nothing;
     }
     BTSpecialConditional *op = new BTSpecialConditional(type, tmp, number);
+    if (opThen->getType() == BTSPECIALCOMMAND_GOTO)
+    {
+     labelNeeded.set(opThen->getNumber(0));
+     snprintf(tmp, 26, "line number %d", opThen->getNumber(0));
+     opThen->setText(tmp);
+    }
     op->addThenOperation(opThen);
+    if (opElse->getType() == BTSPECIALCOMMAND_GOTO)
+    {
+     labelNeeded.set(opElse->getNumber(0));
+     snprintf(tmp, 26, "line number %d", opElse->getNumber(0));
+     opElse->setText(tmp);
+    }
     op->addElseOperation(opElse);
     body.addOperation(op);
     break;
@@ -1282,6 +1319,19 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
   if (-99 == type)
   {
    break;
+  }
+ }
+ for (int i = labelNeeded.getMaxSet(); i > 0; --i)
+ {
+  if (labelNeeded.isSet(i))
+  {
+   BTSpecialCommand *op = new BTSpecialCommand(BTSPECIALCOMMAND_LABEL);
+   snprintf(tmp, 26, "line number %d", i);
+   op->setText(tmp);
+   if (body.ops.size() <= i - 1)
+    body.addOperation(op);
+   else
+    body.insertOperation(i - 1, op);
   }
  }
 }
@@ -1322,7 +1372,7 @@ void BTSpecial::print(FILE *f) const
  int i, last;
 
  fprintf(f, "%s\n", name);
- body.print(f, true);
+ body.print(f, 0);
 }
 
 void BTSpecial::run(BTDisplay &d) const
@@ -1341,7 +1391,7 @@ void BTSpecial::run(BTDisplay &d) const
    }
    catch (const BTSpecialGoto &g)
    {
-    line = g.line;
+    line = body.findLabel(g.label);
    }
   }
  }
@@ -1368,6 +1418,7 @@ void BTSpecial::write(BinaryWriteFile &f)
 {
  char tmp[26];
  IUByte unknown;
+ BitField labelCmd;
 
  if (strlen(name) > 25)
   throw FileException(std::string("Special name '") + name + std::string("' is too large."));
@@ -1375,10 +1426,46 @@ void BTSpecial::write(BinaryWriteFile &f)
  memset(tmp, 0, 26);
  strcpy(tmp, name);
  f.writeUByteArray(26, (IUByte *)tmp);
- if (body.ops.size() > 20)
+ for (i = 0; i < body.ops.size(); ++i)
+ {
+  BTSpecialCommand *cmd = dynamic_cast<BTSpecialCommand*>(body.ops[i]);
+  if ((cmd) && (cmd->getType() == BTSPECIALCOMMAND_LABEL))
+   labelCmd.set(i);
+ }
+ if (body.ops.size() - labelCmd.count() > 20)
   throw FileException(std::string("Too many commands in the special '") + name + std::string("'."));
  for (i = 0; i < body.ops.size(); ++i)
  {
+  BTSpecialConditional *conditional = dynamic_cast<BTSpecialConditional*>(body.ops[i]);
+  if (conditional)
+  {
+   BTSpecialCommand *cmd = dynamic_cast<BTSpecialCommand*>(conditional->getThenClause()->getOperation(0));
+   if ((cmd) && (cmd->getType() == BTSPECIALCOMMAND_GOTO))
+   {
+    int line = body.findLabel(cmd->getText());
+    cmd->setNumber(0, line + 1 - (line ? labelCmd.count(0, line - 1) : 0));
+   }
+   cmd = dynamic_cast<BTSpecialCommand*>(conditional->getElseClause()->getOperation(0));
+   if ((cmd) && (cmd->getType() == BTSPECIALCOMMAND_GOTO))
+   {
+    int line = body.findLabel(cmd->getText());
+    cmd->setNumber(0, line + 1 - (line ? labelCmd.count(0, line - 1) : 0));
+   }
+  }
+  else
+  {
+   BTSpecialCommand *cmd = dynamic_cast<BTSpecialCommand*>(body.ops[i]);
+   if ((cmd) && (cmd->getType() == BTSPECIALCOMMAND_GOTO))
+   {
+    int line = body.findLabel(cmd->getText());
+    cmd->setNumber(0, line + 1 - (line ? labelCmd.count(0, line - 1) : 0));
+   }
+  }
+ }
+ for (i = 0; i < body.ops.size(); ++i)
+ {
+  if (labelCmd.isSet(i))
+   continue;
   BTSpecialConditional *conditional = dynamic_cast<BTSpecialConditional*>(body.ops[i]);
   if (conditional)
   {
@@ -1402,7 +1489,7 @@ void BTSpecial::write(BinaryWriteFile &f)
     throw FileException("Unhandled special operation");
   }
  }
- if (body.ops.size() < 20)
+ if (body.ops.size() - labelCmd.count() < 20)
  {
   IShort type(-99);
   f.writeShort(type);

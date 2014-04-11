@@ -119,9 +119,9 @@ class BTSpecialTeleport
 class BTSpecialGoto
 {
  public:
-  BTSpecialGoto(int l) : line(l) {}
+  BTSpecialGoto(const std::string &l) : label(l) {}
 
-  int line;
+  std::string label;
 };
 
 class BTSpecialQuit
@@ -141,7 +141,7 @@ class BTSpecialOperation : public XMLObject
  public:
   virtual IBool isNothing() const = 0;
   virtual std::string print() const = 0;
-  virtual void print(FILE *f) const = 0;
+  virtual void print(FILE *f, int indent) const = 0;
   virtual void run(BTDisplay &d) const = 0;
 };
 
@@ -154,6 +154,7 @@ class BTSpecialBody : public BTSpecialOperation
  public:
   void addOperation(BTSpecialOperation *op) { ops.push_back(op); }
   void eraseOperation(BTSpecialOperation *op);
+  int findLabel(const std::string &l) const;
   BTSpecialOperation *getOperation(int line);
   void insertOperation(int line, BTSpecialOperation *op) { ops.insert(ops.begin() + line, op); }
   void insertOperation(BTSpecialOperation *before, BTSpecialOperation *op);
@@ -162,8 +163,7 @@ class BTSpecialBody : public BTSpecialOperation
   void moveFrom(BTSpecialBody *body);
   int numOfOperations(bool recursive) const;
   std::string print() const;
-  void print(FILE *f) const;
-  void print(FILE *f, bool lineNumbers) const;
+  void print(FILE *f, int indent) const;
   void run(BTDisplay &d) const;
   void runFromLine(BTDisplay &d, int line) const;
   void serialize(ObjectSerializer* s);
@@ -182,9 +182,11 @@ class BTSpecialCommand : public BTSpecialOperation
   ~BTSpecialCommand();
 
   IShort getType() const;
+  std::string getText() const;
+  IUShort getNumber(int indx) const;
   IBool isNothing() const;
   std::string print() const;
-  void print(FILE *f) const;
+  void print(FILE *f, int indent) const;
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
   void serialize(ObjectSerializer* s);
@@ -216,7 +218,7 @@ class BTSpecialConditional : public BTSpecialOperation
   BTSpecialBody *getElseClause() { return &elseClause; }
   IBool isNothing() const;
   std::string print() const;
-  void print(FILE *f) const;
+  void print(FILE *f, int indent) const;
   void read(BinaryReadFile &f);
   void run(BTDisplay &d) const;
   void setType(IShort val);

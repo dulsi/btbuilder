@@ -217,10 +217,11 @@ char *specialCommands[] =
  "display $$ as full screen picture",
  "do special $S in $# minutes",
  "cancel timed special",
- "goto line number $J",
+ "goto $$",
  "subtract $# from counter",
  "relative teleport by $L dir: $D in $N",
- "tele-activate to $L dir: $D in $N"
+ "tele-activate to $L dir: $D in $N",
+ "label $$"
 };
 
 char *specialFlag[] =
