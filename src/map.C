@@ -221,6 +221,30 @@ void BTSpecialBody::serialize(ObjectSerializer* s)
  s->add("body", typeid(BTSpecialBody).name(), &ops, &BTSpecialBody::create);
 }
 
+void BTSpecialBody::upgradeToLabel(BitField &labelNeeded)
+{
+ char tmp[27];
+ for (int i = 0; i < ops.size(); ++i)
+ {
+  BTSpecialConditional *conditional = dynamic_cast<BTSpecialConditional*>(ops[i]);
+  if (conditional)
+  {
+   conditional->getThenClause()->upgradeToLabel(labelNeeded);
+   conditional->getElseClause()->upgradeToLabel(labelNeeded);
+  }
+  else
+  {
+   BTSpecialCommand *command = dynamic_cast<BTSpecialCommand*>(ops[i]);
+   if ((command) && (command->getType() == BTSPECIALCOMMAND_GOTO))
+   {
+    labelNeeded.set(command->getNumber(0));
+    snprintf(tmp, 26, "line number %d", command->getNumber(0));
+    command->setText(tmp);
+   }
+  }
+ }
+}
+
 BTSpecialCommand::BTSpecialCommand()
 {
  type = 0;
@@ -1503,6 +1527,26 @@ void BTSpecial::write(BinaryWriteFile &f)
  }
 }
 
+void BTSpecial::upgrade()
+{
+ BitField labelNeeded;
+ body.upgradeToLabel(labelNeeded);
+ char tmp[27];
+ for (int i = labelNeeded.getMaxSet(); i > 0; --i)
+ {
+  if (labelNeeded.isSet(i))
+  {
+   BTSpecialCommand *op = new BTSpecialCommand(BTSPECIALCOMMAND_LABEL);
+   snprintf(tmp, 26, "line number %d", i);
+   op->setText(tmp);
+   if (body.ops.size() <= i - 1)
+    body.addOperation(op);
+   else
+    body.insertOperation(i - 1, op);
+  }
+ }
+}
+
 BTMonsterChance::BTMonsterChance(int c /*= 0*/, int g /*= 1*/)
  : chance(c), groups(g)
 {
@@ -1580,8 +1624,8 @@ BTMap::BTMap(BinaryReadFile &f)
  }
 }
 
-BTMap::BTMap()
- : name(NULL), light(0), filename(NULL)
+BTMap::BTMap(int v /*= 2*/)
+ : name(NULL), version(v), light(0), filename(NULL)
 {
 }
 
@@ -1778,6 +1822,7 @@ void BTMap::setFilename(const char *f)
 void BTMap::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
+ s->add("version", &version);
  s->add("type", &type, NULL, &BTCore::getCore()->getPsuedo3DConfigList());
  s->add("level", &level);
  s->add("xSize", &xSize);
@@ -1839,5 +1884,17 @@ void BTMap::write(BinaryWriteFile &f)
  {
   specials[i]->write(f);
  }
+}
+
+void BTMap::upgrade()
+{
+ if (version == 1)
+ {
+  for (int i = 0; i < specials.size(); i++)
+  {
+   specials[i]->upgrade();
+  }
+ }
+ version = 2;
 }
 

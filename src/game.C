@@ -143,10 +143,11 @@ BTMap *BTCore::loadMap(const char *filename)
  }
  else
  {
-  levelMap = new BTMap;
+  levelMap = new BTMap(1); // Assume version 1 file unless version is in the file.
   XMLSerializer parser;
   levelMap->serialize(&parser);
   parser.parse(finalname.c_str(), true);
+  levelMap->upgrade();
  }
  levelMap->setFilename(finalname.c_str());
  return levelMap;

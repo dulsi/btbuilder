@@ -167,6 +167,7 @@ class BTSpecialBody : public BTSpecialOperation
   void run(BTDisplay &d) const;
   void runFromLine(BTDisplay &d, int line) const;
   void serialize(ObjectSerializer* s);
+  void upgradeToLabel(BitField &labelNeeded);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecialBody; }
 
@@ -250,6 +251,7 @@ class BTSpecial : public XMLObject
   void serialize(ObjectSerializer* s);
   void setName(const std::string &nm);
   void write(BinaryWriteFile &f);
+  void upgrade();
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpecial; }
 
@@ -280,7 +282,7 @@ class BTMap : public XMLObject
 {
  public:
   BTMap(BinaryReadFile &f);
-  BTMap();
+  BTMap(int v = 2);
   ~BTMap();
 
   void addSpecial(BTSpecial *s);
@@ -303,9 +305,11 @@ class BTMap : public XMLObject
   void setSpecial(IShort x, IShort y, IShort special);
   void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
+  void upgrade();
 
  private:
   char *name;
+  int version;
   int type;
   IShort level;
   IShort xSize;
