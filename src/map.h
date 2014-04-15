@@ -139,6 +139,7 @@ class BTSpecialStop
 class BTSpecialOperation : public XMLObject
 {
  public:
+  virtual BTSpecialOperation *clone() const = 0;
   virtual IBool isNothing() const = 0;
   virtual std::string print() const = 0;
   virtual void print(FILE *f, int indent) const = 0;
@@ -152,6 +153,9 @@ class BTSpecialBody : public BTSpecialOperation
   friend class BTSpecial;
 
  public:
+  BTSpecialBody() { }
+  BTSpecialBody(const BTSpecialBody &copy);
+
   void addOperation(BTSpecialOperation *op) { ops.push_back(op); }
   void eraseOperation(BTSpecialOperation *op);
   int findLabel(const std::string &l) const;
@@ -159,6 +163,7 @@ class BTSpecialBody : public BTSpecialOperation
   void insertOperation(int line, BTSpecialOperation *op) { ops.insert(ops.begin() + line, op); }
   void insertOperation(BTSpecialOperation *before, BTSpecialOperation *op);
   void replaceOperation(BTSpecialOperation *opOld, BTSpecialOperation *opNew);
+  BTSpecialOperation *clone() const;
   IBool isNothing() const;
   void moveFrom(BTSpecialBody *body);
   int numOfOperations(bool recursive) const;
@@ -182,6 +187,7 @@ class BTSpecialCommand : public BTSpecialOperation
   BTSpecialCommand(IShort t) : type(t) { text = new char[1]; text[0] = 0; }
   ~BTSpecialCommand();
 
+  BTSpecialOperation *clone() const;
   IShort getType() const;
   std::string getText() const;
   IUShort getNumber(int indx) const;
@@ -209,11 +215,13 @@ class BTSpecialConditional : public BTSpecialOperation
 {
  public:
   BTSpecialConditional();
+  BTSpecialConditional(const BTSpecialConditional &copy);
   BTSpecialConditional(IShort t, const char *txt, IShort num);
   ~BTSpecialConditional();
 
   void addThenOperation(BTSpecialOperation *op) { thenClause.addOperation(op); }
   void addElseOperation(BTSpecialOperation *op) { elseClause.addOperation(op); }
+  BTSpecialOperation *clone() const;
   IShort getType() const;
   BTSpecialBody *getThenClause() { return &thenClause; }
   BTSpecialBody *getElseClause() { return &elseClause; }
@@ -240,6 +248,7 @@ class BTSpecial : public XMLObject
 {
  public:
   BTSpecial();
+  BTSpecial(const BTSpecial &copy);
   BTSpecial(BinaryReadFile &f);
   ~BTSpecial();
 

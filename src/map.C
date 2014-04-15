@@ -78,6 +78,14 @@ void BTMapSquare::write(BinaryWriteFile &f)
  f.writeShort(special);
 }
 
+BTSpecialBody::BTSpecialBody(const BTSpecialBody &copy)
+{
+ for (int i = 0; i < copy.ops.size(); ++i)
+ {
+  ops.push_back(copy.ops[i]->clone());
+ }
+}
+
 void BTSpecialBody::eraseOperation(BTSpecialOperation *op)
 {
  for (int i = 0; i < ops.size(); ++i)
@@ -131,6 +139,11 @@ void BTSpecialBody::replaceOperation(BTSpecialOperation *opOld, BTSpecialOperati
    return;
   }
  }
+}
+
+BTSpecialOperation *BTSpecialBody::clone() const
+{
+ return new BTSpecialBody(*this);
 }
 
 IBool BTSpecialBody::isNothing() const
@@ -256,6 +269,15 @@ BTSpecialCommand::~BTSpecialCommand()
 {
  if (text)
   delete [] text;
+}
+
+BTSpecialOperation *BTSpecialCommand::clone() const
+{
+ BTSpecialCommand *copy = new BTSpecialCommand(type);
+ copy->setText(text);
+ for (int i = 0; i < 3; ++i)
+  copy->setNumber(i, number[i]);
+ return copy;
 }
 
 IShort BTSpecialCommand::getType() const
@@ -974,6 +996,13 @@ BTSpecialConditional::BTSpecialConditional()
  text[0] = 0;
 }
 
+BTSpecialConditional::BTSpecialConditional(const BTSpecialConditional &copy)
+ : type(copy.type), number(copy.number), thenClause(copy.thenClause), elseClause(copy.elseClause)
+{
+ text = new char[strlen(copy.text) + 1];
+ strcpy(text, copy.text);
+}
+
 BTSpecialConditional::BTSpecialConditional(IShort t, const char *txt, IShort num)
 : type(t), number(num)
 {
@@ -985,6 +1014,11 @@ BTSpecialConditional::~BTSpecialConditional()
 {
  if (text)
   delete [] text;
+}
+
+BTSpecialOperation *BTSpecialConditional::clone() const
+{
+ return new BTSpecialConditional(*this);
 }
 
 IShort BTSpecialConditional::getType() const
@@ -1259,6 +1293,13 @@ BTSpecial::BTSpecial()
 {
  name = new char[1];
  name[0] = 0;
+}
+
+BTSpecial::BTSpecial(const BTSpecial &copy)
+ : flags(copy.flags), body(copy.body)
+{
+ name = new char[strlen(copy.name) + 1];
+ strcpy(name, copy.name);
 }
 
 BTSpecial::BTSpecial(BinaryReadFile &f)

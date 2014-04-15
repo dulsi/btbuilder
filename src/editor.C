@@ -273,11 +273,19 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     }
     list[len].name = "<New Special>";
     d.addSelection(list, len + 1, startSpecial, currentSpecial);
-    int key = d.process("e");
+    int key = d.process("ce");
     d.clearText();
-    if ((key == 'e') || ((currentSpecial == len) && (key == '\r')))
+    if ((key == 'e') || ((currentSpecial == len) && ((key == '\r') || (key == 'c'))))
     {
      editSpecial(d, levelMap->getSpecial(currentSpecial));
+     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
+    }
+    else if (key == 'c')
+    {
+     BTSpecial *s = new BTSpecial(*levelMap->getSpecial(currentSpecial));
+     levelMap->addSpecial(s);
+     currentSpecial = len;
+     editSpecial(d, s);
      levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
     }
     else if (key == '\r')
