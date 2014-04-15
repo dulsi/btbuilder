@@ -38,6 +38,7 @@ class BTItem : public XMLObject
  public:
   BTItem(BinaryReadFile &f);
   BTItem();
+  BTItem(const BTItem &copy);
   ~BTItem();
 
   bool canUse(BTPc *pc) const;

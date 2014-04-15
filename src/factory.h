@@ -22,6 +22,7 @@ class BTFactory : public ValueLookup
   BTFactory(const char *e);
   ~BTFactory();
 
+  int copy(int index);
   int find(item *obj);
   std::string getName(int index);
   int getIndex(std::string name);
@@ -66,6 +67,13 @@ BTFactory<item>::BTFactory(const char *e)
 template <class item>
 BTFactory<item>::~BTFactory()
 {
+}
+
+template <class item>
+int BTFactory<item>::copy(int index)
+{
+ items.push_back(new item((*this)[index]));
+ return items.size() - 1;
 }
 
 template <class item>

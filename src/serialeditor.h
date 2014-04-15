@@ -30,11 +30,16 @@ class BTSerializedEditor
     items[i].name = itemList[i].getName();
    items[itemList.size()].name = newItem;
    d.addSelection(items, itemList.size() + 1, start, current);
-   int key = d.process();
+   int key = d.process("c");
    d.clearText();
    d.setConfig(oldConfig);
    if (27 == key)
     return -1;
+   else if (('c' == key) && (current != itemList.size()))
+   {
+    current = itemList.copy(current);
+    return current;
+   }
    else
     return current;
   }

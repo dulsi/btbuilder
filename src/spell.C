@@ -51,6 +51,16 @@ BTSpell::BTSpell()
  effect[0] = 0;
 }
 
+BTSpell::BTSpell(const BTSpell &copy)
+ : name(copy.name), caster(copy.caster), level(copy.level), sp(copy.sp), range(copy.range), effectiveRange(copy.effectiveRange),
+ type(copy.type), area(copy.area), dice(copy.dice), duration(copy.duration), extra(copy.extra)
+{
+ code = new char[strlen(copy.code) + 1];
+ strcpy(code, copy.code);
+ effect = new char[strlen(copy.effect) + 1];
+ strcpy(effect, copy.effect);
+}
+
 BTSpell::~BTSpell()
 {
  if (code)

@@ -40,6 +40,7 @@ class BTSpell : public XMLObject
  public:
   BTSpell(BinaryReadFile &f);
   BTSpell();
+  BTSpell(const BTSpell &copy);
   ~BTSpell();
 
   const std::string &getName() const;

@@ -88,6 +88,20 @@ BTMonster::BTMonster()
  xp = calcXp();
 }
 
+BTMonster::BTMonster(const BTMonster &copy)
+ : name(copy.name), pluralName(copy.pluralName), gender(copy.gender), level(copy.level), startDistance(copy.startDistance),
+ move(copy.move), rateAttacks(copy.rateAttacks), illusion(copy.illusion), picture(copy.picture),
+ combatAction(copy.combatAction), ac(copy.ac), maxAppearing(copy.maxAppearing), hp(copy.hp), gold(copy.gold),
+ magicResistance(copy.magicResistance), wandering(copy.wandering), xp(copy.xp), meleeDamage(copy.meleeDamage),
+ meleeExtra(copy.meleeExtra), rangedType(copy.rangedType), rangedSpell(copy.rangedSpell), rangedDamage(copy.rangedDamage),
+ rangedExtra(copy.rangedExtra), range(copy.range)
+{
+ meleeMessage = new char[strlen(copy.meleeMessage) + 1];
+ strcpy(meleeMessage, copy.meleeMessage);
+ rangedMessage = new char[strlen(copy.rangedMessage) + 1];
+ strcpy(rangedMessage, copy.rangedMessage);
+}
+
 BTMonster::~BTMonster()
 {
  if (meleeMessage)

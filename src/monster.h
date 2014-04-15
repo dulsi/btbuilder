@@ -46,6 +46,7 @@ class BTMonster : public XMLObject
  public:
   BTMonster(BinaryReadFile &f);
   BTMonster();
+  BTMonster(const BTMonster &copy);
   ~BTMonster();
 
   unsigned int calcXp() const;

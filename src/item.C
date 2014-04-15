@@ -65,6 +65,17 @@ BTItem::BTItem()
  consume = false;
 }
 
+BTItem::BTItem(const BTItem &copy)
+ : name(copy.name), timesUsable(copy.timesUsable), damage(copy.damage), armorPlus(copy.armorPlus), hitPlus(copy.hitPlus),
+ xSpecial(copy.xSpecial), chanceXSpecial(copy.chanceXSpecial), type(copy.type), spellCast(copy.spellCast),
+ classAllowed(copy.classAllowed), price(copy.price), consume(copy.consume)
+{
+ cause = new char[strlen(copy.cause) + 1];
+ strcpy(cause, copy.cause);
+ effect = new char[strlen(copy.effect) + 1];
+ strcpy(effect, copy.effect);
+}
+
 BTItem::~BTItem()
 {
  if (cause)
