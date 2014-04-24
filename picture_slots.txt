@@ -22,23 +22,23 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 019 City Guard
 020 Goblin (Orc by Felipe Moreira - http://opengameart.org/content/orc-0)
 021 Golem (Metal Elemental Guardian by Justin Nichol - http://opengameart.org/content/metal-elemental-guardian)
-022 Thief
+022 Thief (by Madin Tolifen)
 023 Sorceress
 024 Skeleton
 025 Spider (Spider Flare Sprite Sheet by Wciow and John.d.h - http://opengameart.org/content/spider-flare-sprite-sheets)
 026 Vampire
 027 Dwarf/Nomad
-028 Treasure
+028 Treasure (by Madin Tolifen)
 029 Female Wizard
 030 Male Warrior (Imperial Guard by Santiago Iborra - http://opengameart.org/content/imperial-guard)
 031 Male Paladin
-032 Male Rogue (Vulture Assassin by Santiago Iborra - http://opengameart.org/content/vulture-assassin)
+032 Male Rogue (by Madin Tolifen)
 033 Bard (Call to Arms by Santiago Iborra - http://opengameart.org/content/call-to-arms)
-034 Hunter
+034 Hunter (by Madin Tolifen)
 035 Monk (Oracle Portrait by Justin Nichol - http://opengameart.org/content/oracle-portrait)
 036 Wizard
 037 Conjurer
-038 City Gates
+038 City Gates (by Madin Tolifen)
 039 Garth's 
 040 Adventurer's Guild
 041 Tavern 
@@ -52,27 +52,27 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 079 Female Bard
 080 Female Barbarian
 081 Female Magician/Sorcerer
-082 Female Conjurer/Wizard/Archmage
+082 Female Conjurer/Wizard/Archmage (by Madin Tolifen)
 083 Male Geomancer
 084 Female Geomancer
 085 Mad God Priest
 086 Blacksmith
 087 Dwarven Blacksmith
 088 Shopkeep
-089 Bar
+089 Bar (by Madin Tolifen)
 090 Sage
 091 Innkeeper
 092 Roscoe
 093 Bedders
 094 Stables
-095 Stairs Up
-096 Stairs Down
+095 Stairs Up (by Madin Tolifen)
+096 Stairs Down (by Madin Tolifen)
 097 Chest
 100 Cursed Lord
 101 Sergeant at Arms
 102 Young Lord
 103 Spy
-104 Queen
+104 Queen (by Madin Tolifen)
 105 Maiden
 106 Master Wizard Assassin
 107 Older Lord (Wrong Move by Santiago Iborra - http://opengameart.org/content/wrong-move)
@@ -121,7 +121,7 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 151 Forsaken Archer
 152 Huntress
 153 Wizard Assassin
-154 Ninja
+154 Ninja (by Madin Tolifen)
 155 Nomad
 156 Sailor
 157 Pirate
@@ -239,17 +239,17 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 270 Rhino
 271 Bats
 272 Elephant
-273 Beetle
+273 Beetle (by Madin Tolifen)
 274 Chimera
-275 Simildon
+275 Simildon (by Madin Tolifen)
 276 Scorpion
 287 Shark 01
 288 Shark 02
 289 Killer Whale
 290 Dolphin
-291 Octopus
-292 Piranha 
-293 Merman
+291 Octopus (by Madin Tolifen)
+292 Piranha (by Madin Tolifen)
+293 Merman (by Madin Tolifen)
 294 Siren
 295 Triton
 296 Giant Crab
@@ -282,9 +282,9 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 323 Dragon Lord
 324 Dragon Rider 01
 325 Dragon Rider 02
-326 Female Ninja
-327 Myconid
-328 Gazer
+326 Female Ninja (by Madin Tolifen)
+327 Myconid (by Madin Tolifen)
+328 Gazer (by Madin Tolifen)
 329 Giant Centipede
 330 Giant Worm
 331 Vampire Warrior
@@ -308,32 +308,25 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 349 Raksasha
 350 Larva
 351 Cthulhu Temple
-352 Evil Monks
-353 Blacksmith 2
-354 Blacksmith 3
+352 Evil Monks (by Madin Tolifen)
+353 Blacksmith 2 (by Madin Tolifen)
+354 Blacksmith 3 (by Madin Tolifen)
 355 Male Barkeep
 356 Halfling Archer
-357 Evil Horned Warrior
-358 Cave Troll
+357 Evil Horned Warrior (by Madin Tolifen)
+358 Cave Troll (by Madin Tolifen)
 359 Wizard
-360 Rock Baboon
-361 Caecilia
-362 Giant Toad
-363 Crocodile
+360 Rock Baboon (by Madin Tolifen)
+361 Caecilia (by Madin Tolifen)
+362 Giant Toad (by Madin Tolifen)
+363 Crocodile (by Madin Tolifen)
 364 Giant Leech
-365 Rhino Beetle
+365 Rhino Beetle (by Madin Tolifen)
 366 Gargoyle
-367 Bear
+367 Bear (by Madin Tolifen)
 368 Giant Sandworm
-369 White Ape
-370 Manta Ray
-371 Giant Weasel
-372 Locust
-
-
-
-
-
-
-
+369 White Ape (by Madin Tolifen)
+370 Manta Ray (by Madin Tolifen)
+371 Giant Weasel (by Madin Tolifen)
+372 Locust (by Madin Tolifen)
 
