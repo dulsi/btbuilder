@@ -224,7 +224,7 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 255 Snake 02
 256 Giant Wasp
 257 Spider
-258 Bats
+258 Bats (by Madin Tolifen)
 259 Manticore
 260 Purple Worm
 261 Phromina
@@ -243,9 +243,9 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 274 Chimera
 275 Simildon (by Madin Tolifen)
 276 Scorpion
-287 Shark 01
-288 Shark 02
-289 Killer Whale
+287 Shark 01 (by Madin Tolifen)
+288 Shark 02 (by Madin Tolifen)
+289 Killer Whale (by Madin Tolifen)
 290 Dolphin
 291 Octopus (by Madin Tolifen)
 292 Piranha (by Madin Tolifen)
