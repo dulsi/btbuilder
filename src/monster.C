@@ -402,3 +402,11 @@ void BTMonster::writeXML(const char *filename, XMLVector<BTMonster*> &monster)
  parser.write(filename, true);
 }
 
+int BTMonsterListCompare::Compare(const BTMonster &a, const BTMonster &b) const
+{
+ int ans = a.getLevel() - b.getLevel();
+ if (0 == ans)
+  ans = strcmp(a.getName().c_str(), b.getName().c_str());
+ return ans;
+}
+

@@ -11,6 +11,7 @@
 #include <file.h>
 #include "dice.h"
 #include "bitfield.h"
+#include "factory.h"
 
 class BTPc;
 
@@ -80,6 +81,12 @@ class BTItem : public XMLObject
   bool consume;
 
   static int compatJobAllowed[11];
+};
+
+class BTItemListCompare : public BTSortCompare<BTItem>
+{
+ public:
+  int Compare(const BTItem &a, const BTItem &b) const;
 };
 
 #endif

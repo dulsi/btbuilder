@@ -48,6 +48,8 @@ class BTSortedFactory
 {
  public:
   BTSortedFactory(BTFactory<item> *fact, const BTSortCompare<item> *comp);
+  int getSortedIndex(int index);
+  int getUnsortedIndex(int index);
   void resort();
   size_t size();
   item &operator[](IShort num);
@@ -176,18 +178,44 @@ BTSortedFactory<item>::BTSortedFactory(BTFactory<item> *fact, const BTSortCompar
 }
 
 template <class item>
+int BTSortedFactory<item>::getSortedIndex(int index)
+{
+ for (int i = 0; i < sortedItems.size(); ++i)
+ {
+  if (index == sortedItems[i])
+  {
+   return i;
+  }
+ }
+ throw BTArrayBoundsException();
+}
+
+template <class item>
+int BTSortedFactory<item>::getUnsortedIndex(int index)
+{
+ if (index < sortedItems.size())
+ {
+  return sortedItems[index];
+ }
+ return sortedItems.size();
+}
+
+template <class item>
 void BTSortedFactory<item>::resort()
 {
  IUShort where;
  sortedItems.clear();
  for (IUShort i = 0; i < factory->size(); i++)
  {
-  for (where = 0;
-    (where < sortedItems.size()) && (compare->Compare((*factory)[i], (*factory)[sortedItems[where]]) >= 0);
-    where++)
+  if (compare)
   {
+   for (where = 0;
+     (where < sortedItems.size()) && (compare->Compare((*factory)[i], (*factory)[sortedItems[where]]) >= 0);
+     where++)
+   {
+   }
   }
-  if (where == sortedItems.size())
+  if ((NULL == compare) || (where == sortedItems.size()))
   {
    sortedItems.push_back(i);
   }

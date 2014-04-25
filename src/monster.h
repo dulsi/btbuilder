@@ -13,6 +13,7 @@
 #include "btconst.h"
 #include "combatant.h"
 #include "display.h"
+#include "factory.h"
 
 /*
  [monster]
@@ -120,6 +121,12 @@ class BTMonster : public XMLObject
   BTDice rangedDamage;
   int rangedExtra;
   IShort range;
+};
+
+class BTMonsterListCompare : public BTSortCompare<BTMonster>
+{
+ public:
+  int Compare(const BTMonster &a, const BTMonster &b) const;
 };
 
 #endif

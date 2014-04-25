@@ -222,3 +222,8 @@ void BTItem::writeXML(const char *filename, XMLVector<BTItem*> &item)
  parser.write(filename, true);
 }
 
+int BTItemListCompare::Compare(const BTItem &a, const BTItem &b) const
+{
+ return strcmp(a.getName().c_str(), b.getName().c_str());
+}
+

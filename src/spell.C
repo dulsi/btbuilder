@@ -486,6 +486,8 @@ int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const
  if (0 == ans)
  {
   ans = a.getLevel() - b.getLevel();
+  if (0 == ans)
+   ans = strcmp(a.getName().c_str(), b.getName().c_str());
  }
  return ans;
 }

@@ -12,12 +12,12 @@
 class BTSerializedEditor
 {
  public:
-  BTSerializedEditor(int num, const char **d, const char **f);
+  BTSerializedEditor(int num, const char **d, const char **f, bool s = false);
   virtual ~BTSerializedEditor();
 
 
   template<typename item>
-  int editFactoryList(BTDisplay &d, BTFactory<item> &itemList, const std::string &newItem)
+  int editFactoryList(BTDisplay &d, BTFactory<item> &itemList, const BTSortCompare<item> &compare, const std::string &newItem)
   {
    BTDisplayConfig *oldConfig = d.getConfig();
    BTDisplayConfig config;
@@ -25,13 +25,23 @@ class BTSerializedEditor
    config.serialize(&parser);
    parser.parse("data/specialedit.xml", true);
    d.setConfig(&config);
+   BTSortedFactory<item> sortList(&itemList, (sorted ? &compare : NULL));
    BTDisplay::selectItem items[itemList.size() + 1];
    for (int i = 0; i < itemList.size(); ++i)
-    items[i].name = itemList[i].getName();
+    items[i].name = sortList[i].getName();
    items[itemList.size()].name = newItem;
-   d.addSelection(items, itemList.size() + 1, start, current);
+   int sortedCurrent = 0;
+   if (current == -1)
+    current = sortList.getUnsortedIndex(0);
+   else if (current < itemList.size())
+    sortedCurrent = sortList.getSortedIndex(current);
+   d.addSelection(items, itemList.size() + 1, start, sortedCurrent);
    int key = d.process("c");
    d.clearText();
+   if (sortedCurrent != itemList.size())
+    current = sortList.getUnsortedIndex(sortedCurrent);
+   else
+    current = itemList.size();
    d.setConfig(oldConfig);
    if (27 == key)
     return -1;
@@ -58,6 +68,7 @@ class BTSerializedEditor
   const char **field;
   int start;
   int current;
+  bool sorted;
 };
 
 #define FIELDS_MAP 5

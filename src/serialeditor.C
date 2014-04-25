@@ -10,8 +10,8 @@
 #include <algorithm>
 #include <sstream>
 
-BTSerializedEditor::BTSerializedEditor(int num, const char **d, const char **f)
- : entries(num), description(d), field(f), start(0), current(0)
+BTSerializedEditor::BTSerializedEditor(int num, const char **d, const char **f, bool s /*= false*/)
+ : entries(num), description(d), field(f), start(0), current(-1), sorted(s)
 {
 }
 
@@ -389,7 +389,7 @@ const char *BTItemEditor::itemField[FIELDS_ITEM] = { "name", "type", "allowedJob
 #define MONSTERLOC_RANGEDSPELL 20
 
 BTMonsterEditor::BTMonsterEditor()
- : BTSerializedEditor(FIELDS_MONSTER, monsterDescription, monsterField)
+ : BTSerializedEditor(FIELDS_MONSTER, monsterDescription, monsterField, true)
 {
 }
 
@@ -465,7 +465,7 @@ const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralNam
 #define SPELLLOC_ATTACKRATEBONUS 10
 
 BTSpellEditor::BTSpellEditor()
- : BTSerializedEditor(FIELDS_SPELL, spellDescription, spellField)
+ : BTSerializedEditor(FIELDS_SPELL, spellDescription, spellField, true)
 {
 }
 
