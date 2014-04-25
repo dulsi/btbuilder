@@ -259,6 +259,7 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
      int val(reinterpret_cast<PictureIndex*>(curField->object)->value);
      d.addSelectImage(val);
      key = d.process();
+     d.clearImage();
      if ('\r' == key)
       reinterpret_cast<PictureIndex*>(curField->object)->value = val;
      break;
