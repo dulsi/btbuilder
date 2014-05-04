@@ -10,7 +10,7 @@
 		<line>Expr: <xp /></line>
 		<line>Gold: <gold /></line>
 		<choice keys="pP" action="poolGold" align="center">(POOL GOLD)</choice>
-		<choice keys="tT" action="tradeGold" align="center">(TRADE GOLD)</choice>
+		<choice keys="tT" screen="5" align="center">(TRADE GOLD)</choice>
 		<choice keys="cCdD" screen="2" align="center">(CONTINUE)</choice>
 	</screen>
 	<screen number="2" escapeScreen="exit">
@@ -36,5 +36,17 @@
 		<selectParty action="give" screen="2" />
 		<choice keys="cC" screen="2" align="center">(CANCEL)</choice>
 	</screen>
+	<screen number="5" escapeScreen="1">
+		<line></line>
+		<line>Trade gold to whom?</line>
+		<selectParty screen="6" action="selectParty" who="1" />
+		<choice keys="cC" screen="1" align="center">(CANCEL)</choice>
+	</screen>
+	<screen number="6" escapeScreen="1">
+		<line></line>
+		<line>How much gold will you trade?</line>
+		<readString action="tradeGold" screen="1">&gt;</readString>
+	</screen>
 	<error type="fullinventory"><name /> has no room for that item!</error>
+	<error type="notenoughgold">Not enough gold.</error>
 </screenset>

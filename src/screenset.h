@@ -293,12 +293,13 @@ class BTSelectInventory : public BTSelectCommon
 class BTSelectParty : public BTScreenItem
 {
  public:
-  BTSelectParty(const char *a, int s, BitField d) : action(a), screen(s), disallow(d) {}
+  BTSelectParty(const char *a, int s, int w, BitField d) : action(a), screen(s), who(w), disallow(d) {}
 
   virtual std::string getKeys();
   virtual std::string getAction();
   virtual int getScreen(BTPc *pc);
   void checkDisallow(BTPc *pc);
+  int getWho();
 
   virtual void draw(BTDisplay &d, ObjectSerializer *obj);
 
@@ -307,6 +308,7 @@ class BTSelectParty : public BTScreenItem
  private:
   std::string action;
   int screen;
+  int who;
   BitField disallow;
 };
 
@@ -421,7 +423,7 @@ class BTScreenSet : public ObjectSerializer
   void run(BTDisplay &d, int start = 0, bool status = true);
   void setEffect(int type);
   void setGroup(BTGroup *g);
-  void setPc(BTPc *c);
+  void setPc(BTPc *c, int who = 0);
   void setPicture(BTDisplay &d, int pic, const char *l);
 
   // Actions
@@ -461,12 +463,13 @@ class BTScreenSet : public ObjectSerializer
   static int setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int tradeGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
 
  private:
-  BTPc *pc;
+  BTPc *pc[2];
   BTGroup *grp;
 
  protected:

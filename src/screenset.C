@@ -810,6 +810,11 @@ void BTSelectParty::checkDisallow(BTPc *pc)
  }
 }
 
+int BTSelectParty::getWho()
+{
+ return who;
+}
+
 void BTSelectParty::draw(BTDisplay &d, ObjectSerializer *obj)
 {
  BTParty &party = BTGame::getGame()->getParty();
@@ -826,6 +831,7 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
 {
  const char *act = "";
  int s = 0;
+ int w = 0;
  BitField d;
  for (const char **att = atts; *att; att += 2)
  {
@@ -837,6 +843,10 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
     s = BTSCREEN_EXIT;
    else
     s = atoi(att[1]);
+  }
+  else if (0 == strcmp(*att, "who"))
+  {
+   w = atoi(att[1]);
   }
   else if (0 == strcmp(*att, "disallow"))
   {
@@ -859,7 +869,7 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
    }
   }
  }
- return new BTSelectParty(act, s, d);
+ return new BTSelectParty(act, s, w, d);
 }
 
 BTSelectSong::BTSelectSong()
@@ -1191,8 +1201,9 @@ XMLObject *BTEffect::create(const XML_Char *name, const XML_Char **atts)
 }
 
 BTScreenSet::BTScreenSet()
- : picture(-1), label(0), building(false), clearMagic(false), pc(0), grp(0)
+ : picture(-1), label(0), building(false), clearMagic(false), grp(0)
 {
+ pc[0] = pc[1] = 0;
  actionList["advanceLevel"] = &advanceLevel;
  actionList["addToParty"] = &addToParty;
  actionList["buy"] = &buy;
@@ -1229,6 +1240,7 @@ BTScreenSet::BTScreenSet()
  actionList["setGender"] = &setGender;
  actionList["setRace"] = &setRace;
  actionList["singNow"] = &singNow;
+ actionList["tradeGold"] = &tradeGold;
  actionList["unequip"] = &unequip;
  actionList["useNow"] = &useNow;
  actionList["useOn"] = &useOn;
@@ -1236,15 +1248,15 @@ BTScreenSet::BTScreenSet()
 
 BTScreenSet::~BTScreenSet()
 {
- if ((pc) && (0 == pc->name[0]))
-  delete pc;
+ if ((pc[0]) && (0 == pc[0]->name[0]))
+  delete pc[0];
  if (label)
   delete [] label;
 }
 
 BTPc* BTScreenSet::getPc()
 {
- return pc;
+ return pc[0];
 }
 
 void BTScreenSet::checkEffects(BTDisplay &d)
@@ -1277,8 +1289,8 @@ int BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
  d.clearText();
  if (pc)
  {
-  add("pc", pc);
-  pc->serialize(this);
+  add("pc", pc[0]);
+  pc[0]->serialize(this);
  }
  BTError *err = NULL;
  for (int i = 0; i < errors.size(); ++i)
@@ -1371,24 +1383,24 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
      add("party", grp);
      grp->serialize(this);
     }
-    if (pc)
+    if (pc[0])
     {
-     add("pc", pc);
+     add("pc", pc[0]);
      add("partySize", &partySize);
-     pc->serialize(this);
-     switch (pc->combat.type)
+     pc[0]->serialize(this);
+     switch (pc[0]->combat.type)
      {
       case BTPc::BTPcAction::item:
       {
        BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-       pc->item[pc->combat.object].serialize(this);
-       if (pc->getItem(pc->combat.object) != BTITEM_NONE)
+       pc[0]->item[pc[0]->combat.object].serialize(this);
+       if (pc[0]->getItem(pc[0]->combat.object) != BTITEM_NONE)
        {
-        itemName = itemList[pc->getItem(pc->combat.object)].getName();
+        itemName = itemList[pc[0]->getItem(pc[0]->combat.object)].getName();
         add("itemName", &itemName);
        }
        setNamespace("item");
-       itemList[pc->getItem(pc->combat.object)].serialize(this);
+       itemList[pc[0]->getItem(pc[0]->combat.object)].serialize(this);
        setNamespace("");
        break;
       }
@@ -1443,7 +1455,7 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
     if (BTSCREEN_ESCAPE == next)
      next = screen[where]->getEscapeScreen();
     if (0 == next)
-     next = item->getScreen(pc);
+     next = item->getScreen(pc[0]);
     where = findScreen(next);
    }
    else if (key == 27)
@@ -1508,21 +1520,21 @@ void BTScreenSet::setEffect(int type)
 
 void BTScreenSet::setGroup(BTGroup *g)
 {
- if ((pc) && (0 == pc->name[0]))
-  delete pc;
- pc = 0;
+ if ((pc[0]) && (0 == pc[0]->name[0]))
+  delete pc[0];
+ pc[0] = 0;
  grp = g;
 }
 
-void BTScreenSet::setPc(BTPc *c)
+void BTScreenSet::setPc(BTPc *c, int who /*= 0*/)
 {
- if ((pc) && (0 == pc->name[0]))
-  delete pc;
- pc = c;
- if (pc)
+ if ((pc[who]) && (0 == pc[who]->name[0]))
+  delete pc[who];
+ pc[who] = c;
+ if (pc[who])
  {
-  pc->combat.object = -1;
-  pc->combat.type = BTPc::BTPcAction::none;
+  pc[who]->combat.object = -1;
+  pc[who]->combat.type = BTPc::BTPcAction::none;
  }
  grp = 0;
 }
@@ -1546,10 +1558,10 @@ void BTScreenSet::setPicture(BTDisplay &d, int pic, const char *l)
 
 int BTScreenSet::advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- bool wasDrained = (b.pc->level < b.pc->maxLevel);
- if (b.pc->advanceLevel())
+ bool wasDrained = (b.pc[0]->level < b.pc[0]->maxLevel);
+ if (b.pc[0]->advanceLevel())
  {
-  int stat = (wasDrained ? -1 : b.pc->incrementStat());
+  int stat = (wasDrained ? -1 : b.pc[0]->incrementStat());
   d.drawStats();
   if (stat != -1)
    b.add("increaseStat", &statAbbrev[stat]);
@@ -1557,7 +1569,7 @@ int BTScreenSet::advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  }
  else
  {
-  b.add("xpneeded", new unsigned int(b.pc->getXPNeeded()), NULL, true);
+  b.add("xpneeded", new unsigned int(b.pc[0]->getXPNeeded()), NULL, true);
   return BTSCREEN_XPNEEDED;
  }
 }
@@ -1618,7 +1630,7 @@ int BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTSelectGoods *select = static_cast<BTSelectGoods*>(item);
  BTShop *shop = BTGame::getGame()->getShop(select->shop);
- if (b.pc->getGold() < itemList[shop->goods[select->select]->id].getPrice())
+ if (b.pc[0]->getGold() < itemList[shop->goods[select->select]->id].getPrice())
  {
   throw BTSpecialError("notenoughgold");
  }
@@ -1626,8 +1638,8 @@ int BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  {
   d.drawLast(0, "Done!");
   d.readChar();
-  b.pc->takeGold(itemList[shop->goods[select->select]->id].getPrice());
-  b.pc->giveItem(shop->goods[select->select]->id, true, itemList[shop->goods[select->select]->id].getTimesUsable());
+  b.pc[0]->takeGold(itemList[shop->goods[select->select]->id].getPrice());
+  b.pc[0]->giveItem(shop->goods[select->select]->id, true, itemList[shop->goods[select->select]->id].getTimesUsable());
   shop->removeItem(shop->goods[select->select]->id);
  }
  return 0;
@@ -1638,19 +1650,19 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
  BTSkillList &skill = BTGame::getGame()->getSkillList();
  bool bFound(false);
- for (int sk = 0; sk < job[b.pc->job]->skill.size(); ++sk)
+ for (int sk = 0; sk < job[b.pc[0]->job]->skill.size(); ++sk)
  {
-  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->getSkill(job[b.pc->job]->skill[sk]->skill));
-  if ((NULL != purchase) && (b.pc->level >= purchase->minimumLevel))
+  BTJobSkillPurchase *purchase = job[b.pc[0]->job]->skill[sk]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[sk]->skill));
+  if ((NULL != purchase) && (b.pc[0]->level >= purchase->minimumLevel))
   {
-   if (b.pc->getGold() < purchase->cost)
+   if (b.pc[0]->getGold() < purchase->cost)
    {
     throw BTSpecialError("notenoughgold");
    }
    else
    {
-    b.pc->takeGold(purchase->cost);
-    b.pc->setSkill(job[b.pc->job]->skill[sk]->skill, purchase->value, purchase->value);
+    b.pc[0]->takeGold(purchase->cost);
+    b.pc[0]->setSkill(job[b.pc[0]->job]->skill[sk]->skill, purchase->value, purchase->value);
    }
    return 0;
   }
@@ -1695,15 +1707,15 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
       return 0;
      case BTAREAEFFECT_GROUP:
       d.clearText();
-      b.pc->sp -= spellList[i].getSp();
+      b.pc[0]->sp -= spellList[i].getSp();
       d.drawStats();
-      spellList[i].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
+      spellList[i].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
       return BTSCREEN_ESCAPE;
      case BTAREAEFFECT_NONE:
       d.clearText();
-      b.pc->sp -= spellList[i].getSp();
+      b.pc[0]->sp -= spellList[i].getSp();
       d.drawStats();
-      spellList[i].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
+      spellList[i].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, 0, BTTARGET_INDIVIDUAL);
       return BTSCREEN_ESCAPE;
      case BTAREAEFFECT_ALL:
       throw BTSpecialError("nocombat");
@@ -1723,11 +1735,11 @@ int BTScreenSet::changeJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int
  int count = select->select;
  for (int i = 0; i < job.size(); i++)
  {
-  if (job[i]->isAllowed(b.pc, select->starting))
+  if (job[i]->isAllowed(b.pc[0], select->starting))
   {
    if (count == 0)
    {
-    b.pc->changeJob(i);
+    b.pc[0]->changeJob(i);
     d.drawStats();
     break;
    }
@@ -1746,9 +1758,9 @@ int BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
 
 int BTScreenSet::drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc->takeItemFromIndex(b.pc->combat.object);
- b.pc->combat.object = -1;
- b.pc->combat.type = BTPc::BTPcAction::none;
+ b.pc[0]->takeItemFromIndex(b.pc[0]->combat.object);
+ b.pc[0]->combat.object = -1;
+ b.pc[0]->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
  return 0;
 }
@@ -1769,9 +1781,9 @@ int BTScreenSet::dropFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item,
 
 int BTScreenSet::equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc->equip(b.pc->combat.object);
- b.pc->combat.object = -1;
- b.pc->combat.type = BTPc::BTPcAction::none;
+ b.pc[0]->equip(b.pc[0]->combat.object);
+ b.pc[0]->combat.object = -1;
+ b.pc[0]->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
  return 0;
 }
@@ -1832,19 +1844,19 @@ int BTScreenSet::findTraps(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int
 int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
- if ((key >= '1') && (key <= '9') && (key - '1' < party.size()) && (party[key - '1'] != b.pc))
+ if ((key >= '1') && (key <= '9') && (key - '1' < party.size()) && (party[key - '1'] != b.pc[0]))
  {
-  BTEquipment &item = b.pc->item[b.pc->combat.object];
+  BTEquipment &item = b.pc[0]->item[b.pc[0]->combat.object];
   if (party[key - '1']->giveItem(item.id, item.known, item.charges))
   {
-   b.pc->takeItemFromIndex(b.pc->combat.object);
-   b.pc->combat.object = -1;
-   b.pc->combat.type = BTPc::BTPcAction::none;
+   b.pc[0]->takeItemFromIndex(b.pc[0]->combat.object);
+   b.pc[0]->combat.object = -1;
+   b.pc[0]->combat.type = BTPc::BTPcAction::none;
    d.drawStats();
   }
   else
   {
-   BTPc *current = b.pc;
+   BTPc *current = b.pc[0];
    b.setPc(party[key - '1']);
    BTSpecialError e("fullinventory");
    int screen = b.displayError(d, e);
@@ -1860,24 +1872,24 @@ int BTScreenSet::identify(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
- if (b.pc->getGold() < (itemList[b.pc->getItem(select->select)].getPrice() / 2))
+ if (b.pc[0]->getGold() < (itemList[b.pc[0]->getItem(select->select)].getPrice() / 2))
  {
   throw BTSpecialError("notenoughgold");
  }
- b.pc->takeGold(itemList[b.pc->getItem(select->select)].getPrice() / 2);
- b.pc->combat.object = select->select;
- b.pc->combat.type = BTPc::BTPcAction::item;
+ b.pc[0]->takeGold(itemList[b.pc[0]->getItem(select->select)].getPrice() / 2);
+ b.pc[0]->combat.object = select->select;
+ b.pc[0]->combat.type = BTPc::BTPcAction::item;
  return 0;
 }
 
 int BTScreenSet::moveTo(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
- if ((key >= '1') && (key <= '9') && (key - '1' < party.size()) && (party[key - '1'] != b.pc))
+ if ((key >= '1') && (key <= '9') && (key - '1' < party.size()) && (party[key - '1'] != b.pc[0]))
  {
   for (int i = 0; i < party.size(); ++i)
   {
-   if (party[i] == b.pc)
+   if (party[i] == b.pc[0])
    {
     if (i != key - '1')
     {
@@ -1903,10 +1915,10 @@ int BTScreenSet::poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
  BTParty &party = BTGame::getGame()->getParty();
  for (int i = 0; i < party.size(); ++i)
  {
-  if (party[i] != b.pc)
+  if (party[i] != b.pc[0])
   {
    unsigned int gp = party[i]->getGold();
-   party[i]->takeGold(gp - b.pc->giveGold(gp));
+   party[i]->takeGold(gp - b.pc[0]->giveGold(gp));
   }
  }
  return 0;
@@ -1923,10 +1935,10 @@ int BTScreenSet::requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
  BTSkillList &skill = BTGame::getGame()->getSkillList();
  bool bFound(false);
- for (int sk = 0; sk < job[b.pc->job]->skill.size(); ++sk)
+ for (int sk = 0; sk < job[b.pc[0]->job]->skill.size(); ++sk)
  {
-  BTJobSkillPurchase *purchase = job[b.pc->job]->skill[sk]->findNextPurchase(b.pc->getSkill(job[b.pc->job]->skill[sk]->skill));
-  if ((purchase) && (b.pc->level >= purchase->minimumLevel))
+  BTJobSkillPurchase *purchase = job[b.pc[0]->job]->skill[sk]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[sk]->skill));
+  if ((purchase) && (b.pc[0]->level >= purchase->minimumLevel))
   {
    b.add("num", &purchase->value);
    b.add("cost", &purchase->cost);
@@ -1947,7 +1959,7 @@ int BTScreenSet::requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  bool bFound(false);
  for (int i = 0; i < job.size(); i++)
  {
-  if ((i != b.pc->job)  && (job[i]->isAllowed(b.pc, false)))
+  if ((i != b.pc[0]->job)  && (job[i]->isAllowed(b.pc[0], false)))
   {
    bFound = true;
    break;
@@ -1987,16 +1999,16 @@ int BTScreenSet::removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  }
  for (XMLVector<BTPc*>::iterator itr = roster.begin(); itr != roster.end(); ++itr)
  {
-  if ((*itr) == b.pc)
+  if ((*itr) == b.pc[0])
   {
    roster.erase(itr, false);
    bool found = false;
    for (int i = 0; i < party.size(); ++i)
-    if (party[i] == b.pc)
+    if (party[i] == b.pc[0])
      found = true;
    if (!found)
    {
-    b.pc->setName("");
+    b.pc[0]->setName("");
     b.setPc(NULL);
    }
    break;
@@ -2026,9 +2038,9 @@ int BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
    throw BTSpecialError("exists");
   }
  }
- b.pc->setName(readString->getResponse().c_str());
- roster.push_back(b.pc);
- b.pc = NULL;
+ b.pc[0]->setName(readString->getResponse().c_str());
+ roster.push_back(b.pc[0]);
+ b.pc[0] = NULL;
  return 0;
 }
 
@@ -2062,10 +2074,10 @@ int BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  if (select->shop > 0)
  {
   BTShop *shop = BTGame::getGame()->getShop(select->shop);
-  shop->addItem(b.pc->getItem(select->select));
+  shop->addItem(b.pc[0]->getItem(select->select));
  }
- b.pc->giveGold(itemList[b.pc->getItem(select->select)].getPrice() / 2);
- b.pc->takeItemFromIndex(select->select);
+ b.pc[0]->giveGold(itemList[b.pc[0]->getItem(select->select)].getPrice() / 2);
+ b.pc[0]->takeItemFromIndex(select->select);
  d.drawStats();
  return 0;
 }
@@ -2080,9 +2092,9 @@ int BTScreenSet::selectBard(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
   {
    if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (party[key - '1']->getSkill(i) > 0))
    {
-    b.setPc(party[key - '1']);
     BTSelectParty *select = static_cast<BTSelectParty*>(item);
-    select->checkDisallow(b.pc);
+    b.setPc(party[key - '1'], select->getWho());
+    select->checkDisallow(b.pc[select->getWho()]);
     return 0;
    }
   }
@@ -2098,9 +2110,9 @@ int BTScreenSet::selectMage(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  {
   if (party[key - '1']->maxSp > 0)
   {
-   b.setPc(party[key - '1']);
    BTSelectParty *select = static_cast<BTSelectParty*>(item);
-   select->checkDisallow(b.pc);
+   b.setPc(party[key - '1'], select->getWho());
+   select->checkDisallow(b.pc[select->getWho()]);
   }
   else
    throw BTSpecialError("nocaster");
@@ -2113,9 +2125,9 @@ int BTScreenSet::selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, i
  BTParty &party = BTGame::getGame()->getParty();
  if ((key >= '1') && (key <= '9'))
  {
-  b.setPc(party[key - '1']);
   BTSelectParty *select = static_cast<BTSelectParty*>(item);
-  select->checkDisallow(b.pc);
+  b.setPc(party[key - '1'], select->getWho());
+  select->checkDisallow(b.pc[select->getWho()]);
  }
  return 0;
 }
@@ -2123,8 +2135,8 @@ int BTScreenSet::selectParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, i
 int BTScreenSet::selectItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
- b.pc->combat.object = select->select;
- b.pc->combat.type = BTPc::BTPcAction::item;
+ b.pc[0]->combat.object = select->select;
+ b.pc[0]->combat.type = BTPc::BTPcAction::item;
  return 0;
 }
 
@@ -2143,9 +2155,9 @@ int BTScreenSet::selectRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
 int BTScreenSet::setGender(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  if ((key == 'f') || (key == 'F'))
-  b.pc->gender = BTGENDER_FEMALE;
+  b.pc[0]->gender = BTGENDER_FEMALE;
  else if ((key == 'm') || (key == 'M'))
-  b.pc->gender = BTGENDER_MALE;
+  b.pc[0]->gender = BTGENDER_MALE;
  return 0;
 }
 
@@ -2156,30 +2168,30 @@ int BTScreenSet::setJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  int count = select->select;
  for (int i = 0; i < job.size(); i++)
  {
-  if (job[i]->isAllowed(b.pc, true))
+  if (job[i]->isAllowed(b.pc[0], true))
   {
    if (count == 0)
    {
-    b.pc->job = i;
-    if (b.pc->gender == BTGENDER_FEMALE)
-     b.pc->picture = job[i]->femalePicture;
+    b.pc[0]->job = i;
+    if (b.pc[0]->gender == BTGENDER_FEMALE)
+     b.pc[0]->picture = job[i]->femalePicture;
     else
-     b.pc->picture = job[i]->malePicture;
-    b.pc->hp = b.pc->maxHp = BTDice(1, 14, 14).roll() + ((b.pc->stat[BTSTAT_CN] > 14) ? b.pc->stat[BTSTAT_CN] - 14 : 0);
-    b.pc->toHit = job[i]->toHit;
-    b.pc->save = job[i]->save + ((b.pc->stat[BTSTAT_LK] > 14) ? b.pc->stat[BTSTAT_LK] - 14 : 0);
-    b.pc->ac = job[i]->ac + ((b.pc->stat[BTSTAT_DX] > 14) ? b.pc->stat[BTSTAT_DX] - 14 : 0);
+     b.pc[0]->picture = job[i]->malePicture;
+    b.pc[0]->hp = b.pc[0]->maxHp = BTDice(1, 14, 14).roll() + ((b.pc[0]->stat[BTSTAT_CN] > 14) ? b.pc[0]->stat[BTSTAT_CN] - 14 : 0);
+    b.pc[0]->toHit = job[i]->toHit;
+    b.pc[0]->save = job[i]->save + ((b.pc[0]->stat[BTSTAT_LK] > 14) ? b.pc[0]->stat[BTSTAT_LK] - 14 : 0);
+    b.pc[0]->ac = job[i]->ac + ((b.pc[0]->stat[BTSTAT_DX] > 14) ? b.pc[0]->stat[BTSTAT_DX] - 14 : 0);
     for (int k = 0; k < job[i]->skill.size(); ++k)
     {
      int value = job[i]->skill[k]->value;
-     if ((job[i]->skill[k]->modifier >= 0) && (b.pc->stat[job[i]->skill[k]->modifier] > 14))
-      value += b.pc->stat[job[i]->skill[k]->modifier] - 14;
-     b.pc->setSkill(job[i]->skill[k]->skill, value, value);
+     if ((job[i]->skill[k]->modifier >= 0) && (b.pc[0]->stat[job[i]->skill[k]->modifier] > 14))
+      value += b.pc[0]->stat[job[i]->skill[k]->modifier] - 14;
+     b.pc[0]->setSkill(job[i]->skill[k]->skill, value, value);
     }
-    b.pc->gold = BTDice(1, 61, 110).roll();
+    b.pc[0]->gold = BTDice(1, 61, 110).roll();
     if (job[i]->spells)
     {
-     b.pc->sp = b.pc->maxSp = BTDice(1, 8, 9).roll() + ((b.pc->stat[BTSTAT_IQ] > 14) ? b.pc->stat[BTSTAT_IQ] - 14 : 0);
+     b.pc[0]->sp = b.pc[0]->maxSp = BTDice(1, 8, 9).roll() + ((b.pc[0]->stat[BTSTAT_IQ] > 14) ? b.pc[0]->stat[BTSTAT_IQ] - 14 : 0);
     }
     break;
    }
@@ -2194,9 +2206,9 @@ int BTScreenSet::setRace(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
 {
  XMLVector<BTRace*> &race = BTGame::getGame()->getRaceList();
  BTSelectRace *select = static_cast<BTSelectRace*>(item);
- b.pc->race = select->select;
+ b.pc[0]->race = select->select;
  for (int i = 0; i < BT_STATS; ++i)
-  b.pc->stat[i] = b.pc->statMax[i] = race[b.pc->race]->stat[i].roll();
+  b.pc[0]->stat[i] = b.pc[0]->statMax[i] = race[b.pc[0]->race]->stat[i].roll();
  select->clear();
  return 0;
 }
@@ -2210,12 +2222,12 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skill.size(); ++i)
  {
-  if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (b.pc->hasSkillUse(i)))
+  if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (b.pc[0]->hasSkillUse(i)))
   {
    bool instrument(false);
    for (int k = 0; k < BT_ITEMS; ++k)
    {
-    if ((b.pc->item[k].equipped == BTITEM_EQUIPPED) && (itemList[b.pc->item[k].id].getType() == BTITEM_INSTRUMENT))
+    if ((b.pc[0]->item[k].equipped == BTITEM_EQUIPPED) && (itemList[b.pc[0]->item[k].id].getType() == BTITEM_INSTRUMENT))
     {
      instrument = true;
      break;
@@ -2226,11 +2238,11 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
    if (game->getFlags().isSet(BTSPECIALFLAG_SILENCE))
     throw BTSpecialError("silence");
    d.clearText();
-   b.pc->giveSkillUse(i, -1);
+   b.pc[0]->giveSkillUse(i, -1);
    game->clearEffectsBySource(d, true);
    game->checkExpiration(d, NULL);
    d.drawIcons();
-   songList[select->select]->play(d, b.pc, NULL);
+   songList[select->select]->play(d, b.pc[0], NULL);
    d.drawIcons();
    d.drawStats();
    return BTSCREEN_ESCAPE;
@@ -2239,11 +2251,24 @@ int BTScreenSet::singNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
  throw BTSpecialError("novoice");
 }
 
+int BTScreenSet::tradeGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTReadString *readString = static_cast<BTReadString*>(item);
+ if (readString->getResponse().empty())
+  return 0;
+ int gold = atoi(readString->getResponse().c_str());
+ if (b.pc[0]->getGold() < gold)
+  throw BTSpecialError("notenoughgold");
+ b.pc[0]->takeGold(gold);
+ b.pc[1]->giveGold(gold);
+ return 0;
+}
+
 int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc->unequip(b.pc->combat.object);
- b.pc->combat.object = -1;
- b.pc->combat.type = BTPc::BTPcAction::none;
+ b.pc[0]->unequip(b.pc[0]->combat.object);
+ b.pc[0]->combat.object = -1;
+ b.pc[0]->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
  return 0;
 }
@@ -2254,24 +2279,24 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
- if ((select->select == -1) || (b.pc->item[select->select].id == BTITEM_NONE))
+ if ((select->select == -1) || (b.pc[0]->item[select->select].id == BTITEM_NONE))
  {
   d.clearText();
   return BTSCREEN_ESCAPE;
  }
- if (b.pc->item[select->select].charges == 0)
+ if (b.pc[0]->item[select->select].charges == 0)
   throw BTSpecialError("notusable");
- else if (BTITEM_ARROW == itemList[b.pc->item[select->select].id].getType())
+ else if (BTITEM_ARROW == itemList[b.pc[0]->item[select->select].id].getType())
  {
-  if (BTITEM_CANNOTEQUIP == b.pc->item[select->select].equipped)
+  if (BTITEM_CANNOTEQUIP == b.pc[0]->item[select->select].equipped)
    throw BTSpecialError("notbyyou");
   // Determine if you have a bow equipped.
   bool found = false;
   for (int i = 0; i < BT_ITEMS; ++i)
   {
-   if (BTITEM_NONE == b.pc->item[i].id)
+   if (BTITEM_NONE == b.pc[0]->item[i].id)
     break;
-   if ((BTITEM_EQUIPPED == b.pc->item[i].equipped) && (BTITEM_BOW == itemList[b.pc->item[i].id].getType()))
+   if ((BTITEM_EQUIPPED == b.pc[0]->item[i].equipped) && (BTITEM_BOW == itemList[b.pc[0]->item[i].id].getType()))
    {
     found = true;
     break;
@@ -2280,19 +2305,19 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
   if (!found)
    throw BTSpecialError("nobow");
  }
- else if (BTITEM_THROWNWEAPON == itemList[b.pc->item[select->select].id].getType())
+ else if (BTITEM_THROWNWEAPON == itemList[b.pc[0]->item[select->select].id].getType())
  {
   // Allow even if not equipped
-  if (BTITEM_CANNOTEQUIP == b.pc->item[select->select].equipped)
+  if (BTITEM_CANNOTEQUIP == b.pc[0]->item[select->select].equipped)
    throw BTSpecialError("notbyyou");
  }
- else if (BTITEM_EQUIPPED != b.pc->item[select->select].equipped)
+ else if (BTITEM_EQUIPPED != b.pc[0]->item[select->select].equipped)
   throw BTSpecialError("notequipped");
- else if (BTITEM_BOW == itemList[b.pc->item[select->select].id].getType())
+ else if (BTITEM_BOW == itemList[b.pc[0]->item[select->select].id].getType())
   throw BTSpecialError("notarrow");
  else
  {
-  int spellCast = itemList[b.pc->item[select->select].id].getSpellCast();
+  int spellCast = itemList[b.pc[0]->item[select->select].id].getSpellCast();
   if (spellCast == BTITEMCAST_NONE)
    throw BTSpecialError("notusable");
   int pcNumber = 0;
@@ -2311,15 +2336,15 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
     break;
    case BTAREAEFFECT_GROUP:
     d.clearText();
-    b.pc->takeItemCharge(select->select);
+    b.pc[0]->takeItemCharge(select->select);
     d.drawStats();
-    spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
+    spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
     return BTSCREEN_ESCAPE;
    case BTAREAEFFECT_NONE:
     d.clearText();
-    b.pc->takeItemCharge(select->select);
+    b.pc[0]->takeItemCharge(select->select);
     d.drawStats();
-    spellList[spellCast].cast(d, b.pc->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc->level, 0, 0, BTTARGET_INDIVIDUAL);
+    spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, 0, BTTARGET_INDIVIDUAL);
     return BTSCREEN_ESCAPE;
    case BTAREAEFFECT_ALL:
     throw BTSpecialError("nocombat");
@@ -2328,45 +2353,45 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
   }
  }
  b.getPc()->combat.action = BTPc::BTPcAction::useItem;
- b.pc->combat.object = select->select;
- b.pc->combat.type = BTPc::BTPcAction::item;
+ b.pc[0]->combat.object = select->select;
+ b.pc[0]->combat.type = BTPc::BTPcAction::item;
  return 0;
 }
 
 int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- if (b.pc->combat.action == BTPc::BTPcAction::cast)
+ if (b.pc[0]->combat.action == BTPc::BTPcAction::cast)
  {
   d.clearText();
   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
-  b.pc->sp -= spellList[b.pc->combat.object].getSp();
+  b.pc[0]->sp -= spellList[b.pc[0]->combat.object].getSp();
   d.drawStats();
-  spellList[b.pc->combat.object].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
+  spellList[b.pc[0]->combat.object].cast(d, b.pc[0]->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, key - '1');
   return -1;
  }
- else if (b.pc->combat.action == BTPc::BTPcAction::useItem)
+ else if (b.pc[0]->combat.action == BTPc::BTPcAction::useItem)
  {
   d.clearText();
   BTParty &party = BTGame::getGame()->getParty();
   BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
-  if ((BTITEM_ARROW == itemList[b.pc->item[b.pc->combat.object].id].getType()) || (BTITEM_THROWNWEAPON == itemList[b.pc->item[b.pc->combat.object].id].getType()))
+  if ((BTITEM_ARROW == itemList[b.pc[0]->item[b.pc[0]->combat.object].id].getType()) || (BTITEM_THROWNWEAPON == itemList[b.pc[0]->item[b.pc[0]->combat.object].id].getType()))
   {
    if ((key >= '1') && (key <= '9') && (key - '1' < party.size()))
    {
     int numAttacks = 1;
     int activeNum = 1;
-    std::string text = b.pc->attack(party[key - '1'], b.pc->item[b.pc->combat.object].id, numAttacks, activeNum);
+    std::string text = b.pc[0]->attack(party[key - '1'], b.pc[0]->item[b.pc[0]->combat.object].id, numAttacks, activeNum);
     d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
    }
   }
   else
   {
    BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
-   int spellCast = itemList[b.pc->item[b.pc->combat.object].id].getSpellCast();
+   int spellCast = itemList[b.pc[0]->item[b.pc[0]->combat.object].id].getSpellCast();
    d.drawStats();
-   spellList[spellCast].cast(d, b.pc->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc->level, 0, BTTARGET_PARTY, key - '1');
+   spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, key - '1');
   }
-  b.pc->takeItemCharge(b.pc->combat.object);
+  b.pc[0]->takeItemCharge(b.pc[0]->combat.object);
   return -1;
  }
  return 0;
