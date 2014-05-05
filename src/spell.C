@@ -208,12 +208,29 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
   case BTAREAEFFECT_GROUP:
    if (BTTARGET_PARTY == group)
     text += " the whole party!";
+   else
+   {
+    BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
+    BTFactory<BTMonster> &monList = game->getMonsterList();
+    text += " a group of ";
+    if (grp->size() > 1)
+     text += monList[grp->monsterType].getName();
+    else
+     text += monList[grp->monsterType].getPluralName();
+    text += ".";
+   }
    break;
   case BTAREAEFFECT_FOE:
    text += " ";
    if (BTTARGET_PARTY == group)
    {
     text += party[target]->name;
+   }
+   else
+   {
+    BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
+    BTFactory<BTMonster> &monList = game->getMonsterList();
+    text += monList[grp->monsterType].getName();
    }
    text += ".";
   case BTAREAEFFECT_NONE:
