@@ -145,6 +145,9 @@ class BTGame : public BTCore, public BTEffectGroup
 
   void save();
 
+  void readSaveXML(const char *filename);
+  void writeSaveXML(const char *filename);
+
   static BTGame *getGame();
 
  private:

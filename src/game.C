@@ -469,17 +469,35 @@ void BTGame::run(BTDisplay &d)
   d.drawFullScreen(module->title, 5000);
   d.refresh();
   d.setPsuedo3DConfig(&p3dConfigList);
-  p3dConfig = d.setWallGraphics(levelMap->getType());
-  setKnowledge(xPos, yPos, true);
-  unsigned char key = ' ';
-  try
+  bool skipGuild = false;
+  if (PHYSFS_exists("savegame.xml"))
   {
-   BTSpecialCommand::Guild.run(d);
+   d.clearText();
+   d.addText("Do you wish to restore your last saved game?");
+   d.addChoice("yY", "Yes");
+   d.addChoice("nN", "No");
+   unsigned int key = d.process();
+   if (('y' == key) || ('Y' == key))
+   {
+    readSaveXML("savegame.xml");
+    skipGuild = true;
+   }
+   d.clearText();
   }
-  catch (const BTSpecialFlipGoForward &)
+  p3dConfig = d.setWallGraphics(levelMap->getType());
+  unsigned char key = ' ';
+  if (!skipGuild)
   {
-   turnAround(d);
-   special = move(d, facing);
+   setKnowledge(xPos, yPos, true);
+   try
+   {
+    BTSpecialCommand::Guild.run(d);
+   }
+   catch (const BTSpecialFlipGoForward &)
+   {
+    turnAround(d);
+    special = move(d, facing);
+   }
   }
   while (true)
   {
@@ -608,6 +626,13 @@ void BTGame::run(BTDisplay &d)
        BTScreenSet moveTo;
        moveTo.open("data/moveTo.xml");
        moveTo.run(d);
+       break;
+      }
+      case 's':
+      {
+       BTScreenSet saveGame;
+       saveGame.open("data/savegame.xml");
+       saveGame.run(d);
        break;
       }
       case '?':
@@ -925,6 +950,55 @@ void BTGame::save()
 {
  BTPc::writeXML("roster.xml", getGroup(), getRoster());
  BTShop::writeXML("shops.xml", shops);
+}
+
+void BTGame::readSaveXML(const char *filename)
+{
+ std::string startMap;
+ BTGroup curParty;
+ XMLSerializer parser;
+ party.erase(party.begin(), party.end());
+ group.erase(group.begin(), group.end());
+ roster.erase(roster.begin(), roster.end());
+ parser.add("party", &getGroup(), &BTGroup::create);
+ parser.add("pc", &getRoster(), &BTPc::create);
+ parser.add("startMap", &startMap);
+ parser.add("xPos", &xPos);
+ parser.add("yPos", &yPos);
+ parser.add("facing", &facing);
+ parser.add("curParty", &curParty);
+ parser.parse(filename, true);
+ for (int i = 0; i < getRoster().size(); ++i)
+  getRoster()[i]->updateSkills();
+ loadMap(startMap.c_str());
+ for (int i = 0; i < curParty.member.size(); ++i)
+ {
+  for (int k = 0; k < roster.size(); ++k)
+  {
+   if (0 == strcmp(roster[k]->name, curParty.member[i].c_str()))
+   {
+    party.push_back(roster[k]);
+   }
+  }
+ }
+}
+
+void BTGame::writeSaveXML(const char *filename)
+{
+ std::string startMap = levelMap->getFilename();
+ BTGroup curParty;
+ curParty.name = "Current Party";
+ for (int i = 0; i < party.size(); ++i)
+  curParty.member.push_back(party[i]->name);
+ XMLSerializer parser;
+ parser.add("party", &getGroup(), &BTGroup::create);
+ parser.add("pc", &getRoster(), &BTPc::create);
+ parser.add("startMap", &startMap);
+ parser.add("xPos", &xPos);
+ parser.add("yPos", &yPos);
+ parser.add("facing", &facing);
+ parser.add("curParty", &curParty);
+ parser.write(filename, true);
 }
 
 BTGame *BTGame::getGame()

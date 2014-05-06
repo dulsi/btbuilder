@@ -452,6 +452,7 @@ class BTScreenSet : public ObjectSerializer
   static int removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeTraps(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int saveGame(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int saveParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int selectBard(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

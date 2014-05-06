@@ -1229,6 +1229,7 @@ BTScreenSet::BTScreenSet()
  actionList["removeRoster"] = &removeRoster;
  actionList["removeTraps"] = &removeTraps;
  actionList["save"] = &save;
+ actionList["saveGame"] = &saveGame;
  actionList["saveParty"] = &saveParty;
  actionList["sell"] = &sell;
  actionList["selectBard"] = &selectBard;
@@ -2041,6 +2042,12 @@ int BTScreenSet::save(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  b.pc[0]->setName(readString->getResponse().c_str());
  roster.push_back(b.pc[0]);
  b.pc[0] = NULL;
+ return 0;
+}
+
+int BTScreenSet::saveGame(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTGame::getGame()->writeSaveXML("savegame.xml");
  return 0;
 }
 

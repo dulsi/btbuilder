@@ -1,0 +1,8 @@
+<screenset>
+	<screen number="1" escapeScreen="exit">
+		<line>Do you wish to save your game?</line>
+		<line>WARNING: Not fully implemented.</line>
+		<choice keys="yY" action="saveGame" screen="exit" >Yes</choice>
+		<choice keys="nN" screen="exit" >No</choice>
+	</screen>
+</screenset>
