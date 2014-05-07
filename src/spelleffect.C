@@ -40,6 +40,9 @@ void BTBaseEffect::serialize(ObjectSerializer *s)
 {
  s->add("type", &type);
  s->add("expiration", &expiration);
+ s->add("expire", &expire);
+ s->add("first", &first);
+ s->add("singer", &singer);
 }
 
 bool BTBaseEffect::targets(int g, int who, bool exact /*= true*/)

@@ -714,7 +714,9 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
 {
  try
  {
-  levelMap->getSpecial(special)->run(d);
+  BTSpecial* sp = levelMap->getSpecial(special);
+  if (sp)
+   sp->run(d);
  }
  catch (const BTSpecialTeleport &t)
  {
@@ -967,6 +969,16 @@ void BTGame::readSaveXML(const char *filename)
  parser.add("yPos", &yPos);
  parser.add("facing", &facing);
  parser.add("curParty", &curParty);
+ parser.add("counter", &counter);
+ parser.add("gameTime", &gameTime);
+ parser.add("global", &global, NULL);
+ BitField localTemp, knowledgeTemp;
+ unsigned int timedExpirationTemp;
+ IShort timedSpecialTemp;
+ parser.add("local", &localTemp, NULL);
+ parser.add("knowledge", &knowledgeTemp, NULL);
+ parser.add("timedExpiration", &timedExpirationTemp);
+ parser.add("timedSpecial", &timedSpecialTemp);
  parser.parse(filename, true);
  for (int i = 0; i < getRoster().size(); ++i)
   getRoster()[i]->updateSkills();
@@ -981,6 +993,10 @@ void BTGame::readSaveXML(const char *filename)
    }
   }
  }
+ local = localTemp;
+ knowledge = knowledgeTemp;
+ timedExpiration = timedExpirationTemp;
+ timedSpecial = timedSpecialTemp;
 }
 
 void BTGame::writeSaveXML(const char *filename)
@@ -998,6 +1014,13 @@ void BTGame::writeSaveXML(const char *filename)
  parser.add("yPos", &yPos);
  parser.add("facing", &facing);
  parser.add("curParty", &curParty);
+ parser.add("counter", &counter);
+ parser.add("gameTime", &gameTime);
+ parser.add("global", &global, NULL);
+ parser.add("local", &local, NULL);
+ parser.add("knowledge", &knowledge, NULL);
+ parser.add("timedExpiration", &timedExpiration);
+ parser.add("timedSpecial", &timedSpecial);
  parser.write(filename, true);
 }
 

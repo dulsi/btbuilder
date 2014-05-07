@@ -56,17 +56,20 @@ std::string XMLAction::createString()
   case XMLTYPE_BITFIELD:
   {
    BitField *field = reinterpret_cast<BitField*>(object);
-   ValueLookup *lookup = reinterpret_cast<ValueLookup*>(data);
-   for (int i = 0; i < lookup->size(); ++i)
+   if (data)
    {
-    if (field->isSet(i))
+    ValueLookup *lookup = reinterpret_cast<ValueLookup*>(data);
+    for (int i = 0; i < lookup->size(); ++i)
     {
-     if (content.empty())
-      content = lookup->getName(i);
-     else
+     if (field->isSet(i))
      {
-      content = "Multiple";
-      break;
+      if (content.empty())
+       content = lookup->getName(i);
+      else
+      {
+       content = "Multiple";
+       break;
+      }
      }
     }
    }
@@ -493,9 +496,19 @@ void XMLSerializer::endElement(const XML_Char *name)
     }
     case XMLTYPE_BITFIELD:
     {
-     int index = reinterpret_cast<ValueLookup*>(state->data)->getIndex(content);
-     if (-1 != index)
-      reinterpret_cast<BitField*>(state->object)->set(index);
+     if (state->data)
+     {
+      int index = reinterpret_cast<ValueLookup*>(state->data)->getIndex(content);
+      if (-1 != index)
+       reinterpret_cast<BitField*>(state->object)->set(index);
+     }
+     else
+     {
+      int b = -1;
+      sscanf(content.c_str(), "%d", &b);
+      if (b != -1)
+       reinterpret_cast<BitField*>(state->object)->set(b);
+     }
      break;
     }
     case XMLTYPE_VECTORUINT:
@@ -670,12 +683,26 @@ void XMLSerializer::write(const char *filename, bool physfs)
    case XMLTYPE_BITFIELD:
    {
     BitField *b = reinterpret_cast<BitField*>((*itr)->object);
-    ValueLookup *lookup = reinterpret_cast<ValueLookup*>((*itr)->data);
-    for (int i = b->getMaxSet(); i >= 0; --i)
+    if ((*itr)->data)
     {
-     if (b->isSet(i))
+     ValueLookup *lookup = reinterpret_cast<ValueLookup*>((*itr)->data);
+     for (int i = b->getMaxSet(); i >= 0; --i)
      {
-      content += "<" + (*itr)->createTag() + ">" + lookup->getName(i) + "</" + (*itr)->name + ">";
+      if (b->isSet(i))
+      {
+       content += "<" + (*itr)->createTag() + ">" + lookup->getName(i) + "</" + (*itr)->name + ">";
+      }
+     }
+    }
+    else
+    {
+     for (int i = b->getMaxSet(); i >= 0; --i)
+     {
+      if (b->isSet(i))
+      {
+       sprintf(convert, "%d", i);
+       content += "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
+      }
      }
     }
     break;
