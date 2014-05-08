@@ -979,6 +979,27 @@ void BTGame::readSaveXML(const char *filename)
  parser.add("knowledge", &knowledgeTemp, NULL);
  parser.add("timedExpiration", &timedExpirationTemp);
  parser.add("timedSpecial", &timedSpecialTemp);
+ parser.add("baseeffect", typeid(BTBaseEffect).name(), &effect, &BTBaseEffect::create);
+ parser.add("targetedeffect", typeid(BTTargetedEffect).name(), &effect, &BTTargetedEffect::create);
+ parser.add("resistedeffect", typeid(BTResistedEffect).name(), &effect, &BTResistedEffect::create);
+ parser.add("attackeffect", typeid(BTAttackEffect).name(), &effect, &BTAttackEffect::create);
+ parser.add("curestatuseffect", typeid(BTCureStatusEffect).name(), &effect, &BTCureStatusEffect::create);
+ parser.add("healeffect", typeid(BTHealEffect).name(), &effect, &BTHealEffect::create);
+ parser.add("summonmonstereffect", typeid(BTSummonMonsterEffect).name(), &effect, &BTSummonMonsterEffect::create);
+ parser.add("summonillusioneffect", typeid(BTSummonIllusionEffect).name(), &effect, &BTSummonIllusionEffect::create);
+ parser.add("dispellillusioneffect", typeid(BTDispellIllusionEffect).name(), &effect, &BTDispellIllusionEffect::create);
+ parser.add("armorbonuseffect", typeid(BTArmorBonusEffect).name(), &effect, &BTArmorBonusEffect::create);
+ parser.add("hitbonuseffect", typeid(BTHitBonusEffect).name(), &effect, &BTHitBonusEffect::create);
+ parser.add("resurrecteffect", typeid(BTResurrectEffect).name(), &effect, &BTResurrectEffect::create);
+ parser.add("dispellmagiceffect", typeid(BTDispellMagicEffect).name(), &effect, &BTDispellMagicEffect::create);
+ parser.add("phasedooreffect", typeid(BTPhaseDoorEffect).name(), &effect, &BTPhaseDoorEffect::create);
+ parser.add("regenskilleffect", typeid(BTRegenSkillEffect).name(), &effect, &BTRegenSkillEffect::create);
+ parser.add("pusheffect", typeid(BTPushEffect).name(), &effect, &BTPushEffect::create);
+ parser.add("attackratebonuseffect", typeid(BTAttackRateBonusEffect).name(), &effect, &BTAttackRateBonusEffect::create);
+ parser.add("regenmanaeffect", typeid(BTRegenManaEffect).name(), &effect, &BTRegenManaEffect::create);
+ parser.add("savebonuseffect", typeid(BTSaveBonusEffect).name(), &effect, &BTSaveBonusEffect::create);
+ parser.add("scrysighteffect", typeid(BTScrySightEffect).name(), &effect, &BTScrySightEffect::create);
+ parser.add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
  parser.parse(filename, true);
  for (int i = 0; i < getRoster().size(); ++i)
   getRoster()[i]->updateSkills();
@@ -1021,6 +1042,27 @@ void BTGame::writeSaveXML(const char *filename)
  parser.add("knowledge", &knowledge, NULL);
  parser.add("timedExpiration", &timedExpiration);
  parser.add("timedSpecial", &timedSpecial);
+ parser.add("baseeffect", typeid(BTBaseEffect).name(), &effect, &BTBaseEffect::create);
+ parser.add("targetedeffect", typeid(BTTargetedEffect).name(), &effect, &BTTargetedEffect::create);
+ parser.add("resistedeffect", typeid(BTResistedEffect).name(), &effect, &BTResistedEffect::create);
+ parser.add("attackeffect", typeid(BTAttackEffect).name(), &effect, &BTAttackEffect::create);
+ parser.add("curestatuseffect", typeid(BTCureStatusEffect).name(), &effect, &BTCureStatusEffect::create);
+ parser.add("healeffect", typeid(BTHealEffect).name(), &effect, &BTHealEffect::create);
+ parser.add("summonmonstereffect", typeid(BTSummonMonsterEffect).name(), &effect, &BTSummonMonsterEffect::create);
+ parser.add("summonillusioneffect", typeid(BTSummonIllusionEffect).name(), &effect, &BTSummonIllusionEffect::create);
+ parser.add("dispellillusioneffect", typeid(BTDispellIllusionEffect).name(), &effect, &BTDispellIllusionEffect::create);
+ parser.add("armorbonuseffect", typeid(BTArmorBonusEffect).name(), &effect, &BTArmorBonusEffect::create);
+ parser.add("hitbonuseffect", typeid(BTHitBonusEffect).name(), &effect, &BTHitBonusEffect::create);
+ parser.add("resurrecteffect", typeid(BTResurrectEffect).name(), &effect, &BTResurrectEffect::create);
+ parser.add("dispellmagiceffect", typeid(BTDispellMagicEffect).name(), &effect, &BTDispellMagicEffect::create);
+ parser.add("phasedooreffect", typeid(BTPhaseDoorEffect).name(), &effect, &BTPhaseDoorEffect::create);
+ parser.add("regenskilleffect", typeid(BTRegenSkillEffect).name(), &effect, &BTRegenSkillEffect::create);
+ parser.add("pusheffect", typeid(BTPushEffect).name(), &effect, &BTPushEffect::create);
+ parser.add("attackratebonuseffect", typeid(BTAttackRateBonusEffect).name(), &effect, &BTAttackRateBonusEffect::create);
+ parser.add("regenmanaeffect", typeid(BTRegenManaEffect).name(), &effect, &BTRegenManaEffect::create);
+ parser.add("savebonuseffect", typeid(BTSaveBonusEffect).name(), &effect, &BTSaveBonusEffect::create);
+ parser.add("scrysighteffect", typeid(BTScrySightEffect).name(), &effect, &BTScrySightEffect::create);
+ parser.add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
  parser.write(filename, true);
 }
 

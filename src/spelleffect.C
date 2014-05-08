@@ -100,6 +100,12 @@ BTTargetedEffect::BTTargetedEffect(int t, int x, int s, int m, int g, int trgt)
 {
 }
 
+void BTTargetedEffect::serialize(ObjectSerializer *s)
+{
+ s->add("group", &group);
+ s->add("target", &target);
+}
+
 bool BTTargetedEffect::targets(int g, int who, bool exact /*= true*/)
 {
  if ((g == group) && (who == target))
@@ -153,6 +159,11 @@ void BTTargetedEffect::remove(BTCombat *combat, int g, int who)
 BTResistedEffect::BTResistedEffect(int t, int x, int s, int m, int g, int trgt)
  : BTTargetedEffect(t, x, s, m, g, trgt)
 {
+}
+
+void BTResistedEffect::serialize(ObjectSerializer *s)
+{
+ s->add("resists", &resists, NULL);
 }
 
 bool BTResistedEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -259,6 +270,15 @@ bool BTResistedEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/,
 BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts)
  : BTResistedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts)
 {
+}
+
+void BTAttackEffect::serialize(ObjectSerializer *s)
+{
+ s->add("range", &range);
+ s->add("effectiveRange", &effectiveRange);
+ s->add("distance", &distance);
+ s->add("damage", &damage);
+ s->add("status", &status);
 }
 
 int BTAttackEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -493,6 +513,11 @@ BTCureStatusEffect::BTCureStatusEffect(int t, int x, int s, int m, int g, int tr
 {
 }
 
+void BTCureStatusEffect::serialize(ObjectSerializer *s)
+{
+ s->add("status", &status);
+}
+
 int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
  if (BTTARGET_PARTY == group)
@@ -603,6 +628,11 @@ BTHealEffect::BTHealEffect(int t, int x, int s, int m, int g, int trgt, const BT
 {
 }
 
+void BTHealEffect::serialize(ObjectSerializer *s)
+{
+ s->add("heal", &heal);
+}
+
 int BTHealEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
  BTGame *game = BTGame::getGame();
@@ -673,6 +703,13 @@ void BTSummonIllusionEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BT
 BTDispellIllusionEffect::BTDispellIllusionEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt)
  : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d)
 {
+}
+
+void BTDispellIllusionEffect::serialize(ObjectSerializer *s)
+{
+ s->add("range", &range);
+ s->add("effectiveRange", &effectiveRange);
+ s->add("distance", &distance);
 }
 
 int BTDispellIllusionEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -758,6 +795,11 @@ int BTDispellIllusionEffect::apply(BTDisplay &d, BTCombatant *target)
 BTArmorBonusEffect::BTArmorBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
  : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
 {
+}
+
+void BTArmorBonusEffect::serialize(ObjectSerializer *s)
+{
+ s->add("bonus", &bonus);
 }
 
 int BTArmorBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -872,6 +914,11 @@ void BTArmorBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARG
 BTHitBonusEffect::BTHitBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
  : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
 {
+}
+
+void BTHitBonusEffect::serialize(ObjectSerializer *s)
+{
+ s->add("bonus", &bonus);
 }
 
 int BTHitBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -1021,6 +1068,13 @@ BTDispellMagicEffect::BTDispellMagicEffect(int t, int x, int s, int m, int rng, 
 {
 }
 
+void BTDispellMagicEffect::serialize(ObjectSerializer *s)
+{
+ s->add("range", &range);
+ s->add("effectiveRange", &effectiveRange);
+ s->add("distance", &distance);
+}
+
 int BTDispellMagicEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
  bool oldExpire = expire;
@@ -1059,9 +1113,22 @@ BTPhaseDoorEffect::BTPhaseDoorEffect(int t, int x, int s, int m, int mX, int mY,
 {
 }
 
+void BTPhaseDoorEffect::serialize(ObjectSerializer *s)
+{
+ s->add("mapX", &mapX);
+ s->add("mapY", &mapY);
+ s->add("facing", &facing);
+}
+
 BTRegenSkillEffect::BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u)
  : BTTargetedEffect(t, x, s, m, g, trgt), skill(sk), use(u)
 {
+}
+
+void BTRegenSkillEffect::serialize(ObjectSerializer *s)
+{
+ s->add("skill", &skill);
+ s->add("use", &use);
 }
 
 int BTRegenSkillEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -1093,6 +1160,11 @@ int BTRegenSkillEffect::maintain(BTDisplay &d, BTCombat *combat)
 BTPushEffect::BTPushEffect(int t, int x, int s, int m, int g, int trgt, int dis)
  : BTTargetedEffect(t, x, s, m, g, trgt), distance(dis)
 {
+}
+
+void BTPushEffect::serialize(ObjectSerializer *s)
+{
+ s->add("distance", &distance);
 }
 
 int BTPushEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -1130,6 +1202,11 @@ int BTPushEffect::maintain(BTDisplay &d, BTCombat *combat)
 BTAttackRateBonusEffect::BTAttackRateBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
  : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
 {
+}
+
+void BTAttackRateBonusEffect::serialize(ObjectSerializer *s)
+{
+ s->add("bonus", &bonus);
 }
 
 int BTAttackRateBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -1198,6 +1275,11 @@ BTRegenManaEffect::BTRegenManaEffect(int t, int x, int s, int m, int g, int trgt
 {
 }
 
+void BTRegenManaEffect::serialize(ObjectSerializer *s)
+{
+ s->add("mana", &mana);
+}
+
 int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
  BTGame *game = BTGame::getGame();
@@ -1227,6 +1309,11 @@ int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
 BTSaveBonusEffect::BTSaveBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
  : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
 {
+}
+
+void BTSaveBonusEffect::serialize(ObjectSerializer *s)
+{
+ s->add("bonus", &bonus);
 }
 
 int BTSaveBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
