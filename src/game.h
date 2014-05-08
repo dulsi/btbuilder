@@ -52,7 +52,7 @@ class BTCore : public Psuedo3DMap
   BTFactory<BTSpell> &getSpellList();
   BTXpChartList &getXpChartList();
   BTMap *getMap();
-  virtual BTMap *loadMap(const char *filename);
+  BTMap *loadMap(const char *filename);
 
   int getMapType(int x, int y, int direction);
   int getXSize() const;
@@ -88,7 +88,7 @@ class BTGame : public BTCore, public BTEffectGroup
   XMLVector<BTGroup*> &getGroup();
   BTJobAbbrevList &getJobAbbrevList();
   XMLVector<BTPc*> &getRoster();
-  BTMap *loadMap(const char *filename);
+  BTMap *loadMap(const char *filename, bool clearState = true);
   void loadStart();
   BTParty &getParty();
 
@@ -145,6 +145,7 @@ class BTGame : public BTCore, public BTEffectGroup
 
   void save();
 
+  void serialize(ObjectSerializer *s, BTGroup &curParty, std::string &startMap);
   void readSaveXML(const char *filename);
   void writeSaveXML(const char *filename);
 

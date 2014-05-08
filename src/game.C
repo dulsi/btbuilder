@@ -215,7 +215,7 @@ XMLVector<BTPc*> &BTGame::getRoster()
  return roster;
 }
 
-BTMap *BTGame::loadMap(const char *filename)
+BTMap *BTGame::loadMap(const char *filename, bool clearState /*= true*/)
 {
  if (levelMap)
  {
@@ -234,10 +234,13 @@ BTMap *BTGame::loadMap(const char *filename)
    }
   }
  }
- local.clearAll();
- knowledge.clearAll();
- clearTimedSpecial();
- clearMapEffects();
+ if (clearState == false)
+ {
+  local.clearAll();
+  knowledge.clearAll();
+  clearTimedSpecial();
+  clearMapEffects();
+ }
  BTCore::loadMap(filename);
 }
 
@@ -954,6 +957,45 @@ void BTGame::save()
  BTShop::writeXML("shops.xml", shops);
 }
 
+void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, std::string &startMap)
+{
+ s->add("party", &getGroup(), &BTGroup::create);
+ s->add("pc", &getRoster(), &BTPc::create);
+ s->add("startMap", &startMap);
+ s->add("xPos", &xPos);
+ s->add("yPos", &yPos);
+ s->add("facing", &facing);
+ s->add("curParty", &curParty);
+ s->add("counter", &counter);
+ s->add("gameTime", &gameTime);
+ s->add("global", &global, NULL);
+ s->add("local", &local, NULL);
+ s->add("knowledge", &knowledge, NULL);
+ s->add("timedExpiration", &timedExpiration);
+ s->add("timedSpecial", &timedSpecial);
+ s->add("baseeffect", typeid(BTBaseEffect).name(), &effect, &BTBaseEffect::create);
+ s->add("targetedeffect", typeid(BTTargetedEffect).name(), &effect, &BTTargetedEffect::create);
+ s->add("resistedeffect", typeid(BTResistedEffect).name(), &effect, &BTResistedEffect::create);
+ s->add("attackeffect", typeid(BTAttackEffect).name(), &effect, &BTAttackEffect::create);
+ s->add("curestatuseffect", typeid(BTCureStatusEffect).name(), &effect, &BTCureStatusEffect::create);
+ s->add("healeffect", typeid(BTHealEffect).name(), &effect, &BTHealEffect::create);
+ s->add("summonmonstereffect", typeid(BTSummonMonsterEffect).name(), &effect, &BTSummonMonsterEffect::create);
+ s->add("summonillusioneffect", typeid(BTSummonIllusionEffect).name(), &effect, &BTSummonIllusionEffect::create);
+ s->add("dispellillusioneffect", typeid(BTDispellIllusionEffect).name(), &effect, &BTDispellIllusionEffect::create);
+ s->add("armorbonuseffect", typeid(BTArmorBonusEffect).name(), &effect, &BTArmorBonusEffect::create);
+ s->add("hitbonuseffect", typeid(BTHitBonusEffect).name(), &effect, &BTHitBonusEffect::create);
+ s->add("resurrecteffect", typeid(BTResurrectEffect).name(), &effect, &BTResurrectEffect::create);
+ s->add("dispellmagiceffect", typeid(BTDispellMagicEffect).name(), &effect, &BTDispellMagicEffect::create);
+ s->add("phasedooreffect", typeid(BTPhaseDoorEffect).name(), &effect, &BTPhaseDoorEffect::create);
+ s->add("regenskilleffect", typeid(BTRegenSkillEffect).name(), &effect, &BTRegenSkillEffect::create);
+ s->add("pusheffect", typeid(BTPushEffect).name(), &effect, &BTPushEffect::create);
+ s->add("attackratebonuseffect", typeid(BTAttackRateBonusEffect).name(), &effect, &BTAttackRateBonusEffect::create);
+ s->add("regenmanaeffect", typeid(BTRegenManaEffect).name(), &effect, &BTRegenManaEffect::create);
+ s->add("savebonuseffect", typeid(BTSaveBonusEffect).name(), &effect, &BTSaveBonusEffect::create);
+ s->add("scrysighteffect", typeid(BTScrySightEffect).name(), &effect, &BTScrySightEffect::create);
+ s->add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
+}
+
 void BTGame::readSaveXML(const char *filename)
 {
  std::string startMap;
@@ -962,48 +1004,11 @@ void BTGame::readSaveXML(const char *filename)
  party.erase(party.begin(), party.end());
  group.erase(group.begin(), group.end());
  roster.erase(roster.begin(), roster.end());
- parser.add("party", &getGroup(), &BTGroup::create);
- parser.add("pc", &getRoster(), &BTPc::create);
- parser.add("startMap", &startMap);
- parser.add("xPos", &xPos);
- parser.add("yPos", &yPos);
- parser.add("facing", &facing);
- parser.add("curParty", &curParty);
- parser.add("counter", &counter);
- parser.add("gameTime", &gameTime);
- parser.add("global", &global, NULL);
- BitField localTemp, knowledgeTemp;
- unsigned int timedExpirationTemp;
- IShort timedSpecialTemp;
- parser.add("local", &localTemp, NULL);
- parser.add("knowledge", &knowledgeTemp, NULL);
- parser.add("timedExpiration", &timedExpirationTemp);
- parser.add("timedSpecial", &timedSpecialTemp);
- parser.add("baseeffect", typeid(BTBaseEffect).name(), &effect, &BTBaseEffect::create);
- parser.add("targetedeffect", typeid(BTTargetedEffect).name(), &effect, &BTTargetedEffect::create);
- parser.add("resistedeffect", typeid(BTResistedEffect).name(), &effect, &BTResistedEffect::create);
- parser.add("attackeffect", typeid(BTAttackEffect).name(), &effect, &BTAttackEffect::create);
- parser.add("curestatuseffect", typeid(BTCureStatusEffect).name(), &effect, &BTCureStatusEffect::create);
- parser.add("healeffect", typeid(BTHealEffect).name(), &effect, &BTHealEffect::create);
- parser.add("summonmonstereffect", typeid(BTSummonMonsterEffect).name(), &effect, &BTSummonMonsterEffect::create);
- parser.add("summonillusioneffect", typeid(BTSummonIllusionEffect).name(), &effect, &BTSummonIllusionEffect::create);
- parser.add("dispellillusioneffect", typeid(BTDispellIllusionEffect).name(), &effect, &BTDispellIllusionEffect::create);
- parser.add("armorbonuseffect", typeid(BTArmorBonusEffect).name(), &effect, &BTArmorBonusEffect::create);
- parser.add("hitbonuseffect", typeid(BTHitBonusEffect).name(), &effect, &BTHitBonusEffect::create);
- parser.add("resurrecteffect", typeid(BTResurrectEffect).name(), &effect, &BTResurrectEffect::create);
- parser.add("dispellmagiceffect", typeid(BTDispellMagicEffect).name(), &effect, &BTDispellMagicEffect::create);
- parser.add("phasedooreffect", typeid(BTPhaseDoorEffect).name(), &effect, &BTPhaseDoorEffect::create);
- parser.add("regenskilleffect", typeid(BTRegenSkillEffect).name(), &effect, &BTRegenSkillEffect::create);
- parser.add("pusheffect", typeid(BTPushEffect).name(), &effect, &BTPushEffect::create);
- parser.add("attackratebonuseffect", typeid(BTAttackRateBonusEffect).name(), &effect, &BTAttackRateBonusEffect::create);
- parser.add("regenmanaeffect", typeid(BTRegenManaEffect).name(), &effect, &BTRegenManaEffect::create);
- parser.add("savebonuseffect", typeid(BTSaveBonusEffect).name(), &effect, &BTSaveBonusEffect::create);
- parser.add("scrysighteffect", typeid(BTScrySightEffect).name(), &effect, &BTScrySightEffect::create);
- parser.add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
+ serialize(&parser, curParty, startMap);
  parser.parse(filename, true);
  for (int i = 0; i < getRoster().size(); ++i)
   getRoster()[i]->updateSkills();
- loadMap(startMap.c_str());
+ loadMap(startMap.c_str(), false);
  for (int i = 0; i < curParty.member.size(); ++i)
  {
   for (int k = 0; k < roster.size(); ++k)
@@ -1014,10 +1019,6 @@ void BTGame::readSaveXML(const char *filename)
    }
   }
  }
- local = localTemp;
- knowledge = knowledgeTemp;
- timedExpiration = timedExpirationTemp;
- timedSpecial = timedSpecialTemp;
 }
 
 void BTGame::writeSaveXML(const char *filename)
@@ -1028,41 +1029,7 @@ void BTGame::writeSaveXML(const char *filename)
  for (int i = 0; i < party.size(); ++i)
   curParty.member.push_back(party[i]->name);
  XMLSerializer parser;
- parser.add("party", &getGroup(), &BTGroup::create);
- parser.add("pc", &getRoster(), &BTPc::create);
- parser.add("startMap", &startMap);
- parser.add("xPos", &xPos);
- parser.add("yPos", &yPos);
- parser.add("facing", &facing);
- parser.add("curParty", &curParty);
- parser.add("counter", &counter);
- parser.add("gameTime", &gameTime);
- parser.add("global", &global, NULL);
- parser.add("local", &local, NULL);
- parser.add("knowledge", &knowledge, NULL);
- parser.add("timedExpiration", &timedExpiration);
- parser.add("timedSpecial", &timedSpecial);
- parser.add("baseeffect", typeid(BTBaseEffect).name(), &effect, &BTBaseEffect::create);
- parser.add("targetedeffect", typeid(BTTargetedEffect).name(), &effect, &BTTargetedEffect::create);
- parser.add("resistedeffect", typeid(BTResistedEffect).name(), &effect, &BTResistedEffect::create);
- parser.add("attackeffect", typeid(BTAttackEffect).name(), &effect, &BTAttackEffect::create);
- parser.add("curestatuseffect", typeid(BTCureStatusEffect).name(), &effect, &BTCureStatusEffect::create);
- parser.add("healeffect", typeid(BTHealEffect).name(), &effect, &BTHealEffect::create);
- parser.add("summonmonstereffect", typeid(BTSummonMonsterEffect).name(), &effect, &BTSummonMonsterEffect::create);
- parser.add("summonillusioneffect", typeid(BTSummonIllusionEffect).name(), &effect, &BTSummonIllusionEffect::create);
- parser.add("dispellillusioneffect", typeid(BTDispellIllusionEffect).name(), &effect, &BTDispellIllusionEffect::create);
- parser.add("armorbonuseffect", typeid(BTArmorBonusEffect).name(), &effect, &BTArmorBonusEffect::create);
- parser.add("hitbonuseffect", typeid(BTHitBonusEffect).name(), &effect, &BTHitBonusEffect::create);
- parser.add("resurrecteffect", typeid(BTResurrectEffect).name(), &effect, &BTResurrectEffect::create);
- parser.add("dispellmagiceffect", typeid(BTDispellMagicEffect).name(), &effect, &BTDispellMagicEffect::create);
- parser.add("phasedooreffect", typeid(BTPhaseDoorEffect).name(), &effect, &BTPhaseDoorEffect::create);
- parser.add("regenskilleffect", typeid(BTRegenSkillEffect).name(), &effect, &BTRegenSkillEffect::create);
- parser.add("pusheffect", typeid(BTPushEffect).name(), &effect, &BTPushEffect::create);
- parser.add("attackratebonuseffect", typeid(BTAttackRateBonusEffect).name(), &effect, &BTAttackRateBonusEffect::create);
- parser.add("regenmanaeffect", typeid(BTRegenManaEffect).name(), &effect, &BTRegenManaEffect::create);
- parser.add("savebonuseffect", typeid(BTSaveBonusEffect).name(), &effect, &BTSaveBonusEffect::create);
- parser.add("scrysighteffect", typeid(BTScrySightEffect).name(), &effect, &BTScrySightEffect::create);
- parser.add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
+ serialize(&parser, curParty, startMap);
  parser.write(filename, true);
 }
 
