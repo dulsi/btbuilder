@@ -1288,7 +1288,7 @@ void BTScreenSet::checkEffects(BTDisplay &d)
 int BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
 {
  d.clearText();
- if (pc)
+ if (pc[0])
  {
   add("pc", pc[0]);
   pc[0]->serialize(this);

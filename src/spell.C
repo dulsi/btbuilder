@@ -212,6 +212,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    {
     BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
     BTFactory<BTMonster> &monList = game->getMonsterList();
+    text += " ";
     if (grp->size() > 1)
      text += monList[grp->monsterType].getName();
     else
