@@ -138,6 +138,7 @@
 		<image>ui/icons/shield.png</image>
 		<position><x>136</x><y>34</y><w>20</w><h>20</h></position>
 		<effect>23</effect>
+		<party>true</party>
 	</icon>
 	<icon>
 		<image>ui/icons/carpet.mng</image>

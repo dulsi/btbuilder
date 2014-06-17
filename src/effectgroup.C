@@ -79,7 +79,7 @@ void BTEffectGroup::clearMapEffects()
  }
 }
 
-bool BTEffectGroup::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
+bool BTEffectGroup::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/, bool exact /*= false*/)
 {
  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
  {

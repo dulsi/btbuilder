@@ -61,7 +61,10 @@ void BTIcon::draw(BTDisplay &d, unsigned long ticks)
 
 bool BTIcon::isActive()
 {
- return BTGame::getGame()->hasEffectOfType(effect);
+ if (party)
+  return BTGame::getGame()->hasEffectOfType(effect, BTTARGET_PARTY, true);
+ else
+  return BTGame::getGame()->hasEffectOfType(effect);
 }
 
 void BTIcon::serialize(ObjectSerializer* s)
@@ -69,6 +72,7 @@ void BTIcon::serialize(ObjectSerializer* s)
  s->add("image", &image);
  s->add("position", &position);
  s->add("effect", &effect);
+ s->add("party", &party);
 }
 
 BTFacingIcon::BTFacingIcon()
