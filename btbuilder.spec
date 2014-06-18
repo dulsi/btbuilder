@@ -55,7 +55,7 @@ fi
 * Tue Jun 17 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.4.6-1
 - New version of btbuilder released.
 
-* Mon May 9 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.4.5-1
+* Fri May 9 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.4.5-1
 - New version of btbuilder released.
 
 * Mon Apr 14 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.4.4-1
