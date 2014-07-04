@@ -49,7 +49,7 @@ class BTCore : public Psuedo3DMap
   BTShop *getShop(int id);
   BTSkillList &getSkillList();
   XMLVector<BTSong*> &getSongList();
-  BTFactory<BTSpell> &getSpellList();
+  BTFactory<BTSpell, BTSpell1> &getSpellList();
   BTXpChartList &getXpChartList();
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
@@ -70,7 +70,7 @@ class BTCore : public Psuedo3DMap
   XMLVector<BTShop*> shops;
   BTSkillList skillList;
   XMLVector<BTSong*> songList;
-  BTFactory<BTSpell> spellList;
+  BTFactory<BTSpell, BTSpell1> spellList;
   BTXpChartList xpChartList;
   BTMap *levelMap;
   Psuedo3DConfigList p3dConfigList;

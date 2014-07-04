@@ -56,7 +56,7 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
       }
       switch(i)
       {
-       case BTEXTRADAMAGE_POSION:
+       case BTEXTRADAMAGE_POISON:
         defender->status.set(BTSTATUS_POISONED);
         break;
        case BTEXTRADAMAGE_LEVELDRAIN:
@@ -154,7 +154,7 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
       specialText += ",";
      switch(i)
      {
-      case BTEXTRADAMAGE_POSION:
+      case BTEXTRADAMAGE_POISON:
        specialText += " poisons";
        break;
       case BTEXTRADAMAGE_LEVELDRAIN:
@@ -327,7 +327,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
      continue;
     switch(i)
     {
-     case BTEXTRADAMAGE_POSION:
+     case BTEXTRADAMAGE_POISON:
       defender->status.set(BTSTATUS_POISONED);
       break;
      case BTEXTRADAMAGE_LEVELDRAIN:
@@ -415,7 +415,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
      }
      switch(i)
      {
-      case BTEXTRADAMAGE_POSION:
+      case BTEXTRADAMAGE_POISON:
        specialText += " is poisoned";
        break;
       case BTEXTRADAMAGE_LEVELDRAIN:

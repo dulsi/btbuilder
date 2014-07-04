@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
  BTGame game(&module);
  BTFactory<BTMonster> &monList(game.getMonsterList());
  BTFactory<BTItem> &itmList(game.getItemList());
- BTFactory<BTSpell> &splList(game.getSpellList());
+ BTFactory<BTSpell, BTSpell1> &splList(game.getSpellList());
  int i;
  if (mode == MODE_MONSTER)
  {
@@ -257,7 +257,7 @@ int main(int argc, char *argv[])
   else
   {
    BTSpellListCompare compare;
-   BTSortedFactory<BTSpell> sortedSplList(&splList, &compare);
+   BTSortedFactory<BTSpell, BTSpell1> sortedSplList(&splList, &compare);
    IShort caster = -1;
    IShort level = -1;
    for (i = 0; i < sortedSplList.size(); i++)
@@ -284,7 +284,9 @@ int main(int argc, char *argv[])
     printf("Code: %s\n", mon.getCode());
     printf("Points: %d   Range: %d   Extra range: %s\n", mon.getSp(),
       mon.getRange() * 10, effectiveRanges[mon.getEffectiveRange()]);
-    printf("Type: %s", spellTypes[mon.getType()]);
+    printf("Target: %s\n", areaEffect[mon.getArea()]);
+    printf("%s", mon.describeManifest().data());
+/*    printf("Type: %s", spellTypes[mon.getType()]);
     switch (mon.getType())
     {
      case BTSPELLTYPE_SUMMONILLUSION:
@@ -304,8 +306,7 @@ int main(int argc, char *argv[])
      default:
       break;
     }
-    printf("\nTarget: %s\n", areaEffect[mon.getArea()]);
-    printf("Dice: %dd%d   Duration: %s\n", mon.getDice().getNumber(),
+    printf("\nDice: %dd%d   Duration: %s\n", mon.getDice().getNumber(),
       mon.getDice().getType(), durations[mon.getDuration()]);
     switch (mon.getType())
     {
@@ -322,7 +323,7 @@ int main(int argc, char *argv[])
       printf("Effect: %s <target>\n", mon.getEffect());
       break;
     }
-    printf("\n");
+*/    printf("\n");
    }
   }
  }

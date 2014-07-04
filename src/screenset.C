@@ -1679,7 +1679,7 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
 int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
- BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
  BTReadString *readString = static_cast<BTReadString*>(item);
  std::string spellCode = readString->getResponse();
  for (int i = 0; i < spellList.size(); ++i)
@@ -2284,7 +2284,7 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
 {
  BTParty &party = BTGame::getGame()->getParty();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
- BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
  if ((select->select == -1) || (b.pc[0]->item[select->select].id == BTITEM_NONE))
  {
@@ -2370,7 +2370,7 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
  if (b.pc[0]->combat.action == BTPc::BTPcAction::cast)
  {
   d.clearText();
-  BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+  BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
   b.pc[0]->sp -= spellList[b.pc[0]->combat.object].getSp();
   d.drawStats();
   spellList[b.pc[0]->combat.object].cast(d, b.pc[0]->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, key - '1');
@@ -2393,7 +2393,7 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
   }
   else
   {
-   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+   BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
    int spellCast = itemList[b.pc[0]->item[b.pc[0]->combat.object].id].getSpellCast();
    d.drawStats();
    spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, key - '1');

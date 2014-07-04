@@ -16,8 +16,8 @@ class BTSerializedEditor
   virtual ~BTSerializedEditor();
 
 
-  template<typename item>
-  int editFactoryList(BTDisplay &d, BTFactory<item> &itemList, const BTSortCompare<item> &compare, const std::string &newItem)
+  template<typename item, typename item1 = item>
+  int editFactoryList(BTDisplay &d, BTFactory<item, item1> &itemList, const BTSortCompare<item> &compare, const std::string &newItem)
   {
    BTDisplayConfig *oldConfig = d.getConfig();
    BTDisplayConfig config;
@@ -25,7 +25,7 @@ class BTSerializedEditor
    config.serialize(&parser);
    parser.parse("data/specialedit.xml", true);
    d.setConfig(&config);
-   BTSortedFactory<item> sortList(&itemList, (sorted ? &compare : NULL));
+   BTSortedFactory<item, item1> sortList(&itemList, (sorted ? &compare : NULL));
    BTDisplay::selectItem items[itemList.size() + 1];
    for (int i = 0; i < itemList.size(); ++i)
     items[i].name = sortList[i].getName();

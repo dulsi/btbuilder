@@ -8,42 +8,10 @@
 #include "spell.h"
 #include "game.h"
 
-BTSpell::BTSpell(BinaryReadFile &f)
-{
- IShort num;
- IUByte tmp[30];
-
- f.readUByteArray(29, tmp);
- tmp[29] = 0;
- name = (char *)tmp;
- f.readUByteArray(5, tmp);
- tmp[5] = 0;
- code = new char[strlen((char *)tmp) + 1];
- strcpy(code, (char *)tmp);
- f.readShort(num);
- caster = num;
- f.readShort(level);
- f.readShort(sp);
- f.readShort(range);
- f.readShort(effectiveRange);
- f.readShort(num);
- type = num;
- f.readShort(num);
- area = num;
- dice.read(f);
- f.readUByte(tmp[0]);
- f.readShort(num);
- duration = num;
- f.readShort(num);
- extra = num;
- f.readUByteArray(22, tmp);
- tmp[22] = 0;
- effect = new char[strlen((char *)tmp) + 1];
- strcpy(effect, (char *)tmp);
-}
+int BTSpell::version(1);
 
 BTSpell::BTSpell()
- : caster(0), level(1), sp(1), range(0), effectiveRange(0), type(BTSPELLTYPE_HEAL), area(BTAREAEFFECT_NONE), duration(BTDURATION_ONE), extra(0)
+ : caster(0), level(1), sp(1), range(0), effectiveRange(0), area(BTAREAEFFECT_NONE), duration(BTDURATION_ONE)
 {
  code = new char[1];
  code[0] = 0;
@@ -53,7 +21,7 @@ BTSpell::BTSpell()
 
 BTSpell::BTSpell(const BTSpell &copy)
  : name(copy.name), caster(copy.caster), level(copy.level), sp(copy.sp), range(copy.range), effectiveRange(copy.effectiveRange),
- type(copy.type), area(copy.area), dice(copy.dice), duration(copy.duration), extra(copy.extra)
+ area(copy.area), duration(copy.duration)
 {
  code = new char[strlen(copy.code) + 1];
  strcpy(code, copy.code);
@@ -67,6 +35,17 @@ BTSpell::~BTSpell()
   delete [] code;
  if (effect)
   delete [] effect;
+}
+
+std::string BTSpell::describeManifest() const
+{
+ std::string s;
+ for (auto itr = manifest.begin(); itr != manifest.end(); itr++)
+ {
+  s += (*itr)->createString();
+  s += "\n";
+ }
+ return s;
 }
 
 const std::string &BTSpell::getName() const
@@ -89,11 +68,6 @@ const char *BTSpell::getCode() const
  return code;
 }
 
-const BTDice &BTSpell::getDice() const
-{
- return dice;
-}
-
 int BTSpell::getDuration() const
 {
  return duration;
@@ -107,11 +81,6 @@ const char *BTSpell::getEffect() const
 IShort BTSpell::getEffectiveRange() const
 {
  return effectiveRange;
-}
-
-int BTSpell::getExtra() const
-{
- return extra;
 }
 
 IShort BTSpell::getLevel() const
@@ -129,16 +98,13 @@ IShort BTSpell::getSp() const
  return sp;
 }
 
-int BTSpell::getType() const
-{
- return type;
-}
-
 void BTSpell::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
  IShort num;
+ IShort extra(0);
  char tmp[29];
+ BTDice dice(0, 2);
 
  strncpy(tmp, name.c_str(), 29);
  f.writeUByteArray(29, (IUByte *)tmp);
@@ -150,16 +116,18 @@ void BTSpell::write(BinaryWriteFile &f)
  f.writeShort(sp);
  f.writeShort(range);
  f.writeShort(effectiveRange);
- num = type;
+ if (manifest.size() != 1)
+  throw FileException("Multi effect spells not supported in older file format.");
+ num = manifest[0]->type;
  f.writeShort(num);
  num = area;
  f.writeShort(num);
+ manifest[0]->supportOldFormat(dice, extra);
  dice.write(f);
  f.writeUByte(unknown);
  num = duration;
  f.writeShort(num);
- num = extra;
- f.writeShort(num);
+ f.writeShort(extra);
  strncpy(tmp, effect, 22);
  f.writeUByteArray(22, (IUByte *)tmp);
 }
@@ -238,200 +206,20 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    break;
  }
  d.drawMessage(text.c_str(), game->getDelay());
- BTBaseEffect *effect = NULL;
- switch(type)
+ for (int i = 0; i < manifest.size(); ++i)
  {
-  case BTSPELLTYPE_RESURRECT:
-   if (BTTARGET_PARTY == group)
+  std::list<BTBaseEffect*> effect = manifest[i]->manifest(d, partySpell, combat, expire, casterLevel, distance, group, target, BTTARGET_NOSINGER, BTMUSICID_NONE);
+  for (auto itr = effect.begin(); itr != effect.end(); itr++)
+  {
+   try
    {
-    if (BTTARGET_INDIVIDUAL == target)
-    {
-     effect = new BTResurrectEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target);
-    }
-    else
-    {
-     if (!party[target]->isAlive())
-     {
-      text = party[target]->name;
-      text += " rises from the dead!";
-      party[target]->status.clear(BTSTATUS_DEAD);
-      party[target]->hp = 1;
-      d.drawMessage(text.c_str(), game->getDelay());
-      d.drawStats();
-     }
-    }
+    killed = (*itr)->apply(d, combat);
+    game->addEffect((*itr));
    }
-   break;
-  case BTSPELLTYPE_SUMMONMONSTER:
-  case BTSPELLTYPE_SUMMONILLUSION:
-  {
-   if (party.size() >= BT_PARTYSIZE)
+   catch (const BTAllResistException &e)
    {
-    BTFactory<BTMonster> &monsterList = BTGame::getGame()->getMonsterList();
-    text = "No room in your party. ";
-    text += monsterList[extra].getName();
-    text += " cannot join!";
-    d.drawMessage(text.c_str(), game->getDelay());
+    delete (*itr);
    }
-   else
-   {
-    BTPc *pc = new BTPc(extra, ((type == BTSPELLTYPE_SUMMONMONSTER) ? BTJOB_MONSTER : BTJOB_ILLUSION));
-    party.add(d, pc);
-    d.drawStats();
-    if ((BTTIME_PERMANENT != expire) && (BTTIME_CONTINUOUS != expire))
-    {
-     if (type == BTSPELLTYPE_SUMMONMONSTER)
-      effect = new BTSummonMonsterEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_PARTY, party.size() - 1);
-     else
-      effect = new BTSummonIllusionEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_PARTY, party.size() - 1);
-    }
-   }
-   break;
-  }
-  case BTSPELLTYPE_PHASEDOOR:
-  {
-   int x = game->getX();
-   int y = game->getY();
-   int f = game->getFacing();
-   for (int i = 0; i < 4; ++i)
-   {
-    int testX = (x + (Psuedo3D::changeXY[f][0] * i) + game->getMap()->getXSize()) % game->getMap()->getXSize();
-    int testY = (y + (Psuedo3D::changeXY[f][1] * i) + game->getMap()->getYSize()) % game->getMap()->getYSize();
-    int str = game->testWallStrength(testX, testY, f);
-    if (1 == str)
-    {
-     effect = new BTPhaseDoorEffect(type, BTTIME_MAP, BTTARGET_NOSINGER, BTMUSICID_NONE, testX, testY, f);
-     break;
-    }
-    else if (2 == str)
-     break;
-   }
-   break;
-  }
-  case BTSPELLTYPE_LIGHT:
-  case BTSPELLTYPE_DOORDETECT:
-  case BTSPELLTYPE_TRAPDESTROY:
-  case BTSPELLTYPE_COMPASS:
-  case BTSPELLTYPE_BLOCKENCOUNTERS:
-  case BTSPELLTYPE_LEVITATION:
-   effect = new BTBaseEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
-   break;
-  case BTSPELLTYPE_DAMAGE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, dice, BTEXTRADAMAGE_NONE);
-   break;
-  case BTSPELLTYPE_KILL:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_CRITICALHIT);
-   break;
-  case BTSPELLTYPE_POISON:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_POSION);
-   break;
-  case BTSPELLTYPE_CAUSEINSANITY:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_INSANITY);
-   break;
-  case BTSPELLTYPE_POSSESS:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_POSSESSION);
-   break;
-  case BTSPELLTYPE_FLESHTOSTONE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_STONED);
-   break;
-  case BTSPELLTYPE_PARALYZE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_PARALYSIS);
-   break;
-  case BTSPELLTYPE_DRAINLEVEL:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_LEVELDRAIN);
-   break;
-  case BTSPELLTYPE_AGE:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(0, 2), BTEXTRADAMAGE_AGED);
-   break;
-  case BTSPELLTYPE_DAMAGEBYLEVEL:
-   effect = new BTAttackEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target, BTDice(dice.getNumber() * casterLevel, dice.getType(), dice.getModifier()), BTEXTRADAMAGE_NONE);
-   break;
-  case BTSPELLTYPE_CUREPOISON:
-   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_POISONED);
-   break;
-  case BTSPELLTYPE_CUREINSANITY:
-   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_INSANE);
-   break;
-  case BTSPELLTYPE_YOUTH:
-   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_AGED);
-   break;
-  case BTSPELLTYPE_DISPOSSESS:
-   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_POSSESSED);
-   break;
-  case BTSPELLTYPE_STONETOFLESH:
-   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_STONED);
-   break;
-  case BTSPELLTYPE_CUREPARALYZE:
-   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_PARALYZED);
-   break;
-  case BTSPELLTYPE_RESTORELEVELS:
-   effect = new BTCureStatusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, BTSTATUS_LEVELDRAIN);
-   break;
-  case BTSPELLTYPE_HEAL:
-   effect = new BTHealEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
-   break;
-  case BTSPELLTYPE_DISPELLILLUSION:
-   effect = new BTDispellIllusionEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target);
-   break;
-  case BTSPELLTYPE_ARMORBONUS:
-   effect = new BTArmorBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
-   break;
-  case BTSPELLTYPE_HITBONUS:
-   effect = new BTHitBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
-   break;
-  case BTSPELLTYPE_DISPELLMAGIC:
-   effect = new BTDispellMagicEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, getEffectiveRange(), distance, group, target);
-   break;
-  case BTSPELLTYPE_REGENBARD:
-  {
-   BTDice amount(0, 4, getExtra());
-   XMLVector<BTSkill*> &skillList = BTGame::getGame()->getSkillList();
-   for (int which = 0; which < skillList.size(); ++which)
-   {
-    if ((skillList[which]->special == BTSKILLSPECIAL_SONG) && (skillList[which]->limited))
-    {
-     effect = new BTRegenSkillEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, which, amount);
-     break;
-    }
-   }
-   break;
-  }
-  case BTSPELLTYPE_PUSH:
-   effect = new BTPushEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
-   break;
-  case BTSPELLTYPE_ATTACKRATEBONUS:
-   effect = new BTAttackRateBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
-   break;
-  case BTSPELLTYPE_REGENMANA:
-   effect = new BTRegenManaEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, dice);
-   break;
-  case BTSPELLTYPE_SAVEBONUS:
-   effect = new BTSaveBonusEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, getExtra());
-   break;
-  case BTSPELLTYPE_BLOCKMAGIC:
-   effect = new BTTargetedEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target);
-   break;
-  case BTSPELLTYPE_SCRYSIGHT:
-   effect = new BTScrySightEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE);
-   break;
-  case BTSPELLTYPE_SPELLBIND:
-  {
-   effect = new BTSpellBindEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target);
-   break;
-  }
-  default:
-   break;
- }
- if (effect)
- {
-  try
-  {
-   killed = effect->apply(d, combat);
-   game->addEffect(effect);
-  }
-  catch (const BTAllResistException &e)
-  {
-   delete effect;
   }
  }
  return killed;
@@ -447,6 +235,7 @@ int BTSpell::cast(BTDisplay &d, const char *caster, int casterGroup, int casterT
   text += name;
   text += ".";
   d.drawMessage(text.c_str(), game->getDelay());
+  return 0;
  }
  else if (game->hasEffectOfType(BTSPELLTYPE_BLOCKMAGIC, casterGroup, casterTarget))
  {
@@ -474,27 +263,247 @@ void BTSpell::serialize(ObjectSerializer* s)
  s->add("sp", &sp);
  s->add("range", &range);
  s->add("effectiveRange", &effectiveRange);
- s->add("type", &type, NULL, &spellTypeLookup);
  s->add("area", &area, NULL, &areaLookup);
- s->add("dice", &dice);
  s->add("duration", &duration, NULL, &durationLookup);
- s->add("extra", &extra);
- s->add("extraMonster", &extra, NULL, &BTCore::getCore()->getMonsterList());
  s->add("effect", &effect);
+ BTManifest::serializeSetup(s, manifest);
+}
+
+void BTSpell::upgrade()
+{
+}
+
+XMLObject *BTSpell::create(const XML_Char *name, const XML_Char **atts)
+{
+ return ((version == 2) ? new BTSpell : new BTSpell1);
 }
 
 void BTSpell::readXML(const char *filename, XMLVector<BTSpell*> &spell)
 {
  XMLSerializer parser;
+ version = 1;
+ parser.add("version", &version);
  parser.add("spell", &spell, &BTSpell::create);
  parser.parse(filename, true);
+ if (version == 1)
+ {
+  for (int i = 0; i < spell.size(); ++i)
+   spell[i]->upgrade();
+ }
 }
 
 void BTSpell::writeXML(const char *filename, XMLVector<BTSpell*> &spell)
 {
  XMLSerializer parser;
+ version = 2;
+ parser.add("version", &version);
  parser.add("spell", &spell, &BTSpell::create);
  parser.write(filename, true);
+}
+
+BTSpell1::BTSpell1(BinaryReadFile &f)
+{
+ IShort num;
+ IUByte tmp[30];
+
+ f.readUByteArray(29, tmp);
+ tmp[29] = 0;
+ name = (char *)tmp;
+ f.readUByteArray(5, tmp);
+ tmp[5] = 0;
+ code = new char[strlen((char *)tmp) + 1];
+ strcpy(code, (char *)tmp);
+ f.readShort(num);
+ caster = num;
+ f.readShort(level);
+ f.readShort(sp);
+ f.readShort(range);
+ f.readShort(effectiveRange);
+ f.readShort(num);
+ type = num;
+ f.readShort(num);
+ area = num;
+ dice.read(f);
+ f.readUByte(tmp[0]);
+ f.readShort(num);
+ duration = num;
+ f.readShort(num);
+ extra = num;
+ f.readUByteArray(22, tmp);
+ tmp[22] = 0;
+ effect = new char[strlen((char *)tmp) + 1];
+ strcpy(effect, (char *)tmp);
+}
+
+BTSpell1::BTSpell1()
+ : type(BTSPELLTYPE_HEAL), extra(0)
+{
+}
+
+BTSpell1::BTSpell1(const BTSpell1 &copy)
+ : BTSpell(copy), type(copy.type), dice(copy.dice), extra(copy.extra)
+{
+}
+
+void BTSpell1::serialize(ObjectSerializer* s)
+{
+ BTSpell::serialize(s);
+ s->add("type", &type, NULL, &spellTypeLookup);
+ s->add("dice", &dice);
+ s->add("extra", &extra);
+ s->add("extraMonster", &extra, NULL, &BTCore::getCore()->getMonsterList());
+}
+
+BTSpell1::~BTSpell1()
+{
+}
+
+const BTDice &BTSpell1::getDice() const
+{
+ return dice;
+}
+
+int BTSpell1::getExtra() const
+{
+ return extra;
+}
+
+int BTSpell1::getType() const
+{
+ return type;
+}
+
+void BTSpell1::upgrade()
+{
+ if (manifest.size() == 0)
+ {
+  switch (type)
+  {
+   case BTSPELLTYPE_LIGHT:
+   case BTSPELLTYPE_DOORDETECT:
+   case BTSPELLTYPE_TRAPDESTROY:
+   case BTSPELLTYPE_COMPASS:
+   case BTSPELLTYPE_BLOCKENCOUNTERS:
+   case BTSPELLTYPE_LEVITATION:
+    manifest.push_back(new BTManifest(type));
+    break;
+   case BTSPELLTYPE_ARMORBONUS:
+    manifest.push_back(new BTArmorBonusManifest(getExtra()));
+    break;
+   case BTSPELLTYPE_DAMAGE:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), dice, BTEXTRADAMAGE_NONE, 0));
+    break;
+   case BTSPELLTYPE_KILL:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_CRITICALHIT, 0));
+    break;
+   case BTSPELLTYPE_POISON:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_POISON, 0));
+    break;
+   case BTSPELLTYPE_CAUSEINSANITY:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_INSANITY, 0));
+    break;
+   case BTSPELLTYPE_POSSESS:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_POSSESSION, 0));
+    break;
+   case BTSPELLTYPE_FLESHTOSTONE:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_STONED, 0));
+    break;
+   case BTSPELLTYPE_PARALYZE:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_PARALYSIS, 0));
+    break;
+   case BTSPELLTYPE_DRAINLEVEL:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_LEVELDRAIN, 0));
+    break;
+   case BTSPELLTYPE_AGE:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_AGED, 0));
+    break;
+   case BTSPELLTYPE_DAMAGEBYLEVEL:
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), dice, BTEXTRADAMAGE_NONE, 1));
+    break;
+   case BTSPELLTYPE_ATTACKRATEBONUS:
+    manifest.push_back(new BTAttackRateBonusManifest(getExtra()));
+    break;
+   case BTSPELLTYPE_CUREPOISON:
+    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_POISONED));
+    break;
+   case BTSPELLTYPE_CUREINSANITY:
+    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_INSANE));
+    break;
+   case BTSPELLTYPE_YOUTH:
+    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_AGED));
+    break;
+   case BTSPELLTYPE_DISPOSSESS:
+    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_POSSESSED));
+    break;
+   case BTSPELLTYPE_STONETOFLESH:
+    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_STONED));
+    break;
+   case BTSPELLTYPE_CUREPARALYZE:
+    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_PARALYZED));
+    break;
+   case BTSPELLTYPE_RESTORELEVELS:
+    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_LEVELDRAIN));
+    break;
+   case BTSPELLTYPE_HEAL:
+    manifest.push_back(new BTHealManifest(dice));
+    break;
+   case BTSPELLTYPE_PUSH:
+    manifest.push_back(new BTPushManifest(getExtra()));
+    break;
+   case BTSPELLTYPE_REGENMANA:
+    manifest.push_back(new BTRegenManaManifest(dice));
+    break;
+   case BTSPELLTYPE_SAVEBONUS:
+    manifest.push_back(new BTSaveBonusManifest(getExtra()));
+    break;
+   case BTSPELLTYPE_BLOCKMAGIC:
+    manifest.push_back(new BTTargetedManifest(type));
+    break;
+   case BTSPELLTYPE_HITBONUS:
+    manifest.push_back(new BTHitBonusManifest(getExtra()));
+    break;
+   case BTSPELLTYPE_SCRYSIGHT:
+    manifest.push_back(new BTScrySightManifest());
+    break;
+   case BTSPELLTYPE_SUMMONMONSTER:
+   case BTSPELLTYPE_SUMMONILLUSION:
+   {
+    manifest.push_back(new BTSummonManifest(type, getExtra()));
+    break;
+   }
+   case BTSPELLTYPE_RESURRECT:
+    manifest.push_back(new BTResurrectManifest());
+    break;
+   case BTSPELLTYPE_PHASEDOOR:
+    manifest.push_back(new BTPhaseDoorManifest());
+    break;
+   case BTSPELLTYPE_DISPELLILLUSION:
+    manifest.push_back(new BTDispellIllusionManifest(range, getEffectiveRange()));
+    break;
+   case BTSPELLTYPE_DISPELLMAGIC:
+    manifest.push_back(new BTDispellMagicManifest(range, getEffectiveRange()));
+    break;
+   case BTSPELLTYPE_SPELLBIND:
+    manifest.push_back(new BTSpellBindManifest());
+    break;
+   case BTSPELLTYPE_REGENBARD:
+   {
+    BTDice amount(0, 4, getExtra());
+    XMLVector<BTSkill*> &skillList = BTCore::getCore()->getSkillList();
+    for (int which = 0; which < skillList.size(); ++which)
+    {
+     if ((skillList[which]->special == BTSKILLSPECIAL_SONG) && (skillList[which]->limited))
+     {
+      manifest.push_back(new BTRegenSkillManifest(which, amount));
+      break;
+     }
+    }
+    break;
+   }
+   default:
+    break;
+  }
+ }
 }
 
 int BTSpellListCompare::Compare(const BTSpell &a, const BTSpell &b) const

@@ -59,17 +59,7 @@ void BTSong::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("music", &music);
  s->add("combatMusic", &combatMusic);
- s->add("manifest", typeid(BTManifest).name(), &manifest, &BTManifest::create);
- s->add("targetedManifest", typeid(BTTargetedManifest).name(), &manifest, &BTTargetedManifest::create);
- s->add("armorBonusManifest", typeid(BTArmorBonusManifest).name(), &manifest, &BTArmorBonusManifest::create);
- s->add("attackManifest", typeid(BTAttackManifest).name(), &manifest, &BTAttackManifest::create);
- s->add("attackRateBonusManifest", typeid(BTAttackRateBonusManifest).name(), &manifest, &BTAttackRateBonusManifest::create);
- s->add("cureStatusManifest", typeid(BTCureStatusManifest).name(), &manifest, &BTCureStatusManifest::create);
- s->add("healManifest", typeid(BTHealManifest).name(), &manifest, &BTHealManifest::create);
- s->add("multiManifest", typeid(BTMultiManifest).name(), &manifest, &BTMultiManifest::create);
- s->add("pushManifest", typeid(BTPushManifest).name(), &manifest, &BTPushManifest::create);
- s->add("regenManaManifest", typeid(BTRegenManaManifest).name(), &manifest, &BTRegenManaManifest::create);
- s->add("saveBonusManifest", typeid(BTSaveBonusManifest).name(), &manifest, &BTSaveBonusManifest::create);
+ BTManifest::serializeSetup(s, manifest);
 }
 
 void BTSong::readXML(const char *filename, XMLVector<BTSong*> &song)

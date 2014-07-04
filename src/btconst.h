@@ -78,7 +78,7 @@ extern ArrayLookup durationLookup;
 
 #define BT_MONSTEREXTRADAMAGE 11
 #define BTEXTRADAMAGE_NONE        0
-#define BTEXTRADAMAGE_POSION      1
+#define BTEXTRADAMAGE_POISON      1
 #define BTEXTRADAMAGE_LEVELDRAIN  2
 #define BTEXTRADAMAGE_INSANITY    3
 #define BTEXTRADAMAGE_AGED        4

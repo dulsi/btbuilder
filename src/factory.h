@@ -15,7 +15,7 @@ class BTArrayBoundsException
 {
 };
 
-template <class item>
+template <typename item, typename item1 = item>
 class BTFactory : public ValueLookup
 {
  public:
@@ -36,18 +36,18 @@ class BTFactory : public ValueLookup
   XMLVector<item*> items;
 };
 
-template<class item>
+template<typename item>
 class BTSortCompare
 {
  public:
   virtual int Compare(const item &a, const item &b) const = 0;
 };
 
-template<class item>
+template<typename item, typename item1 = item>
 class BTSortedFactory
 {
  public:
-  BTSortedFactory(BTFactory<item> *fact, const BTSortCompare<item> *comp);
+  BTSortedFactory(BTFactory<item, item1> *fact, const BTSortCompare<item> *comp);
   int getSortedIndex(int index);
   int getUnsortedIndex(int index);
   void resort();
@@ -55,31 +55,31 @@ class BTSortedFactory
   item &operator[](IShort num);
 
  private:
-  BTFactory<item> *factory;
+  BTFactory<item, item1> *factory;
   const BTSortCompare<item> *compare;
   std::vector<IUShort> sortedItems;
 };
 
-template <class item>
-BTFactory<item>::BTFactory(const char *e)
+template <typename item, typename item1>
+BTFactory<item, item1>::BTFactory(const char *e)
  : extension(e)
 {
 }
 
-template <class item>
-BTFactory<item>::~BTFactory()
+template <typename item, typename item1>
+BTFactory<item, item1>::~BTFactory()
 {
 }
 
-template <class item>
-int BTFactory<item>::copy(int index)
+template <typename item, typename item1>
+int BTFactory<item, item1>::copy(int index)
 {
  items.push_back(new item((*this)[index]));
  return items.size() - 1;
 }
 
-template <class item>
-int BTFactory<item>::find(item *obj)
+template <typename item, typename item1>
+int BTFactory<item, item1>::find(item *obj)
 {
  for (size_t i = 0; i < items.size(); i++)
  {
@@ -89,14 +89,14 @@ int BTFactory<item>::find(item *obj)
  return items.size();
 }
 
-template <class item>
-std::string BTFactory<item>::getName(int index)
+template <typename item, typename item1>
+std::string BTFactory<item, item1>::getName(int index)
 {
  return items[index]->getName();
 }
 
-template <class item>
-int BTFactory<item>::getIndex(std::string name)
+template <typename item, typename item1>
+int BTFactory<item, item1>::getIndex(std::string name)
 {
  for (size_t i = 0; i < items.size(); i++)
  {
@@ -107,8 +107,8 @@ int BTFactory<item>::getIndex(std::string name)
 }
 
 #include <stdio.h>
-template <class item>
-void BTFactory<item>::load(const char *filename)
+template <typename item, typename item1>
+void BTFactory<item, item1>::load(const char *filename)
 {
  int len = strlen(filename);
  if ((len > extension.length()) && (strcmp(extension.c_str(), filename + (len - extension.length())) == 0))
@@ -117,7 +117,9 @@ void BTFactory<item>::load(const char *filename)
   try {
    while (true)
    {
-    items.push_back(new item(f));
+    item1 *r = new item1(f);
+    items.push_back(r);
+    r->upgrade();
    }
   }
   catch (FileException e)
@@ -130,19 +132,31 @@ void BTFactory<item>::load(const char *filename)
  }
 }
 
-template <class item>
-void BTFactory<item>::save(const char *filename)
+template <typename item, typename item1>
+void BTFactory<item, item1>::save(const char *filename)
 {
  int len = strlen(filename);
  if ((len > extension.length()) && (strcmp(extension.c_str(), filename + (len - extension.length())) == 0))
  {
-  BinaryWriteFile f(filename);
+  try
+  {
+   BinaryWriteFile f(filename);
 //  Not sure why gcc doesn't accept this
 //  for (std::vector<item_ptr>::iterator itr(items.begin()); itr != items.end(); itr++)
 //   itr->write(f);
-  for (size_t i = 0; i < items.size(); i++)
+   for (size_t i = 0; i < items.size(); i++)
+   {
+    items[i]->write(f);
+   }
+  }
+  catch (const FileException &e)
   {
-   items[i]->write(f);
+   PHYSFS_delete(filename);
+   printf("Failed to write old map file: %s\n", e.what());
+   char tmp[len + 1];
+   strcpy(tmp, filename);
+   strcpy(tmp + len - 3, "xml");
+   item::writeXML(tmp, items);
   }
  }
  else
@@ -151,14 +165,14 @@ void BTFactory<item>::save(const char *filename)
  }
 }
 
-template <class item>
-size_t BTFactory<item>::size()
+template <typename item, typename item1>
+size_t BTFactory<item, item1>::size()
 {
  return items.size();
 }
 
-template <class item>
-item &BTFactory<item>::operator[](IShort num)
+template <typename item, typename item1>
+item &BTFactory<item, item1>::operator[](IShort num)
 {
  if (num >= items.size())
  {
@@ -170,15 +184,15 @@ item &BTFactory<item>::operator[](IShort num)
  return *items[num];
 }
 
-template <class item>
-BTSortedFactory<item>::BTSortedFactory(BTFactory<item> *fact, const BTSortCompare<item> *comp)
+template <typename item, typename item1>
+BTSortedFactory<item, item1>::BTSortedFactory(BTFactory<item, item1> *fact, const BTSortCompare<item> *comp)
  : factory(fact), compare(comp)
 {
  resort();
 }
 
-template <class item>
-int BTSortedFactory<item>::getSortedIndex(int index)
+template <typename item, typename item1>
+int BTSortedFactory<item, item1>::getSortedIndex(int index)
 {
  for (int i = 0; i < sortedItems.size(); ++i)
  {
@@ -190,8 +204,8 @@ int BTSortedFactory<item>::getSortedIndex(int index)
  throw BTArrayBoundsException();
 }
 
-template <class item>
-int BTSortedFactory<item>::getUnsortedIndex(int index)
+template <typename item, typename item1>
+int BTSortedFactory<item, item1>::getUnsortedIndex(int index)
 {
  if (index < sortedItems.size())
  {
@@ -200,8 +214,8 @@ int BTSortedFactory<item>::getUnsortedIndex(int index)
  return sortedItems.size();
 }
 
-template <class item>
-void BTSortedFactory<item>::resort()
+template <typename item, typename item1>
+void BTSortedFactory<item, item1>::resort()
 {
  IUShort where;
  sortedItems.clear();
@@ -231,14 +245,14 @@ void BTSortedFactory<item>::resort()
  }
 }
 
-template <class item>
-size_t BTSortedFactory<item>::size()
+template <typename item, typename item1>
+size_t BTSortedFactory<item, item1>::size()
 {
  return sortedItems.size();
 }
 
-template <class item>
-item &BTSortedFactory<item>::operator[](IShort num)
+template <typename item, typename item1>
+item &BTSortedFactory<item, item1>::operator[](IShort num)
 {
  if (num >= sortedItems.size())
  {

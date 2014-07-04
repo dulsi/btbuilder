@@ -128,11 +128,11 @@ void BTEditor::edit(BTDisplay &d)
   }
   else if (list[select].name == module->spell)
   {
-   BTFactory<BTSpell> &spellList = getSpellList();
+   BTFactory<BTSpell, BTSpell1> &spellList = getSpellList();
    BTSpellListCompare compare;
    int spell = 0;
    BTSpellEditor spellEditor;
-   while (-1 != (spell = spellEditor.editFactoryList<BTSpell>(d, spellList, compare, "<New Spell>")))
+   while (-1 != (spell = spellEditor.editFactoryList<BTSpell, BTSpell1>(d, spellList, compare, "<New Spell>")))
    {
     ObjectSerializer serial;
     spellList[spell].serialize(&serial);
@@ -564,7 +564,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    }
    case 'X':
    {
-    BTFactory<BTSpell> &spellList = getSpellList();
+    BTFactory<BTSpell, BTSpell1> &spellList = getSpellList();
     BTDisplay::selectItem spells[spellList.size()];
     for (int i = 0; i < spellList.size(); ++i)
      spells[i].name = spellList[i].getName();

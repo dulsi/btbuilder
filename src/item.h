@@ -59,6 +59,7 @@ class BTItem : public XMLObject
   void write(BinaryWriteFile &f);
 
   virtual void serialize(ObjectSerializer* s);
+  void upgrade() {}
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTItem; }
   static void readXML(const char *filename, XMLVector<BTItem*> &item);

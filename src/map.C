@@ -512,7 +512,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   case BTSPECIALCOMMAND_CASTSPELL:
   {
-   BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+   BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
    if (0 == number[1])
    {
     spellList[number[0]].activate(d, "", true, NULL, game->getMap()->getLevel(), 0, BTTARGET_PARTY, ((BTAREAEFFECT_FOE == spellList[number[0]].getArea()) ? 0 : BTTARGET_INDIVIDUAL));

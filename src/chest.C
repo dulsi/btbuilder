@@ -65,7 +65,7 @@ void BTChest::open(BTDisplay &d)
     {
      switch(trapExtra)
      {
-      case BTEXTRADAMAGE_POSION:
+      case BTEXTRADAMAGE_POISON:
        party[i]->status.set(BTSTATUS_POISONED);
        break;
       case BTEXTRADAMAGE_INSANITY:

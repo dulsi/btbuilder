@@ -621,7 +621,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
 {
  BTGame *game = BTGame::getGame();
  BTFactory<BTMonster> &monList = game->getMonsterList();
- BTFactory<BTSpell> &spellList = game->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = game->getSpellList();
  BTParty &party = game->getParty();
  mon.initiative = BTINITIATIVE_INACTIVE;
  --active;
@@ -809,7 +809,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
  BTFactory<BTMonster> &monList = game->getMonsterList();
  BTParty &party = game->getParty();
  XMLVector<BTSong*> &songList = game->getSongList();
- BTFactory<BTSpell> &spellList = game->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = game->getSpellList();
  std::string text;
  pc.initiative = BTINITIATIVE_INACTIVE;
  --active;
@@ -1113,7 +1113,7 @@ bool BTCombat::endRound(BTDisplay &d)
  BTGame *game = BTGame::getGame();
  ++round;
  BTFactory<BTMonster> &monList = game->getMonsterList();
- BTFactory<BTSpell> &spellList = game->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = game->getSpellList();
  int group;
  checkExpiration(d, this);
  maintain(d, this);
@@ -1275,7 +1275,7 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTCombat &c = static_cast<BTCombat&>(b);
  BTReadString *readString = static_cast<BTReadString*>(item);
- BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
  std::string spellCode = readString->getResponse();
  for (int i = 0; i < spellList.size(); ++i)
  {
@@ -1370,7 +1370,7 @@ int BTCombat::sing(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  BTGame *game = BTGame::getGame();
  BTFactory<BTItem> &itemList = game->getItemList();
  BTSkillList &skillList = game->getSkillList();
- BTFactory<BTSpell> &spellList = game->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = game->getSpellList();
  BTCombat &c = static_cast<BTCombat&>(b);
  BTSelectSong *select = static_cast<BTSelectSong*>(item);
  for (int i = 0; i < skillList.size(); ++i)
@@ -1420,7 +1420,7 @@ int BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTCombat &c = static_cast<BTCombat&>(b);
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
- BTFactory<BTSpell> &spellList = BTGame::getGame()->getSpellList();
+ BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
  if ((select->select == -1) || (b.getPc()->item[select->select].id == BTITEM_NONE))
  {

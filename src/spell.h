@@ -13,6 +13,7 @@
 #include "dice.h"
 #include "combat.h"
 #include "display.h"
+#include "manifest.h"
 
 /*
 [spell]
@@ -35,39 +36,39 @@ extra info: short (monster for summon monster and summon illusion,
 spell effect: char[22];
 */
 
+class BTSpell1;
+
 class BTSpell : public XMLObject
 {
  public:
-  BTSpell(BinaryReadFile &f);
   BTSpell();
   BTSpell(const BTSpell &copy);
   ~BTSpell();
 
+  std::string describeManifest() const;
   const std::string &getName() const;
   int getArea() const;
   int getCaster() const;
   const char *getCode() const;
-  const BTDice &getDice() const;
   int getDuration() const;
   const char *getEffect() const;
   IShort getEffectiveRange() const;
-  int getExtra() const;
   IShort getLevel() const;
   IShort getRange() const;
   IShort getSp() const;
-  int getType() const;
   void write(BinaryWriteFile &f);
 
   int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
   int cast(BTDisplay &d, const char *caster, int casterGroup, int casterTarget, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
 
   virtual void serialize(ObjectSerializer* s);
+  virtual void upgrade();
 
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpell; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
   static void readXML(const char *filename, XMLVector<BTSpell*> &spell);
   static void writeXML(const char *filename, XMLVector<BTSpell*> &spell);
 
- private:
+ protected:
   std::string name;
   char *code;
   int caster;
@@ -75,12 +76,33 @@ class BTSpell : public XMLObject
   IShort sp;
   IShort range;
   IShort effectiveRange;
-  int type;
   int area;
-  BTDice dice;
   int duration;
-  int extra;
   char *effect;
+  XMLVector<BTManifest*> manifest;
+
+  static int version;
+};
+
+class BTSpell1 : public BTSpell
+{
+ public:
+  BTSpell1(BinaryReadFile &f);
+  BTSpell1();
+  BTSpell1(const BTSpell1 &copy);
+  ~BTSpell1();
+
+  const BTDice &getDice() const;
+  int getExtra() const;
+  int getType() const;
+  void upgrade();
+
+  virtual void serialize(ObjectSerializer* s);
+
+ private:
+  int type;
+  BTDice dice;
+  int extra;
 };
 
 class BTSpellListCompare : public BTSortCompare<BTSpell>

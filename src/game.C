@@ -99,7 +99,7 @@ XMLVector<BTSong*> &BTCore::getSongList()
  return songList;
 }
 
-BTFactory<BTSpell> &BTCore::getSpellList()
+BTFactory<BTSpell, BTSpell1> &BTCore::getSpellList()
 {
  return spellList;
 }
