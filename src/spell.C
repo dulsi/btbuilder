@@ -388,7 +388,10 @@ void BTSpell1::upgrade()
     manifest.push_back(new BTManifest(type));
     break;
    case BTSPELLTYPE_ARMORBONUS:
-    manifest.push_back(new BTArmorBonusManifest(getExtra()));
+   case BTSPELLTYPE_ATTACKRATEBONUS:
+   case BTSPELLTYPE_SAVEBONUS:
+   case BTSPELLTYPE_HITBONUS:
+    manifest.push_back(new BTBonusManifest(type, getExtra()));
     break;
    case BTSPELLTYPE_DAMAGE:
     manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), dice, BTEXTRADAMAGE_NONE, 0));
@@ -420,9 +423,6 @@ void BTSpell1::upgrade()
    case BTSPELLTYPE_DAMAGEBYLEVEL:
     manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), dice, BTEXTRADAMAGE_NONE, 1));
     break;
-   case BTSPELLTYPE_ATTACKRATEBONUS:
-    manifest.push_back(new BTAttackRateBonusManifest(getExtra()));
-    break;
    case BTSPELLTYPE_CUREPOISON:
     manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_POISONED));
     break;
@@ -453,14 +453,8 @@ void BTSpell1::upgrade()
    case BTSPELLTYPE_REGENMANA:
     manifest.push_back(new BTRegenManaManifest(dice));
     break;
-   case BTSPELLTYPE_SAVEBONUS:
-    manifest.push_back(new BTSaveBonusManifest(getExtra()));
-    break;
    case BTSPELLTYPE_BLOCKMAGIC:
     manifest.push_back(new BTTargetedManifest(type));
-    break;
-   case BTSPELLTYPE_HITBONUS:
-    manifest.push_back(new BTHitBonusManifest(getExtra()));
     break;
    case BTSPELLTYPE_SCRYSIGHT:
     manifest.push_back(new BTScrySightManifest());

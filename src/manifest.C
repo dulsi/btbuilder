@@ -38,16 +38,13 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
 {
  s->add("manifest", typeid(BTManifest).name(), &manifest, &BTManifest::create);
  s->add("targetedManifest", typeid(BTTargetedManifest).name(), &manifest, &BTTargetedManifest::create);
- s->add("armorBonusManifest", typeid(BTArmorBonusManifest).name(), &manifest, &BTArmorBonusManifest::create);
+ s->add("bonusManifest", typeid(BTBonusManifest).name(), &manifest, &BTBonusManifest::create);
  s->add("attackManifest", typeid(BTAttackManifest).name(), &manifest, &BTAttackManifest::create);
- s->add("attackRateBonusManifest", typeid(BTAttackRateBonusManifest).name(), &manifest, &BTAttackRateBonusManifest::create);
  s->add("cureStatusManifest", typeid(BTCureStatusManifest).name(), &manifest, &BTCureStatusManifest::create);
  s->add("healManifest", typeid(BTHealManifest).name(), &manifest, &BTHealManifest::create);
  s->add("multiManifest", typeid(BTMultiManifest).name(), &manifest, &BTMultiManifest::create);
  s->add("pushManifest", typeid(BTPushManifest).name(), &manifest, &BTPushManifest::create);
  s->add("regenManaManifest", typeid(BTRegenManaManifest).name(), &manifest, &BTRegenManaManifest::create);
- s->add("saveBonusManifest", typeid(BTSaveBonusManifest).name(), &manifest, &BTSaveBonusManifest::create);
- s->add("hitBonusManifest", typeid(BTHitBonusManifest).name(), &manifest, &BTHitBonusManifest::create);
  s->add("scrySightManifest", typeid(BTScrySightManifest).name(), &manifest, &BTScrySightManifest::create);
  s->add("summonManifest", typeid(BTSummonManifest).name(), &manifest, &BTSummonManifest::create);
  s->add("resurrectManifest", typeid(BTResurrectManifest).name(), &manifest, &BTResurrectManifest::create);
@@ -56,6 +53,11 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("dispellMagicManifest", typeid(BTDispellMagicManifest).name(), &manifest, &BTDispellMagicManifest::create);
  s->add("spellBindManifest", typeid(BTSpellBindManifest).name(), &manifest, &BTSpellBindManifest::create);
  s->add("regenSkillManifest", typeid(BTRegenSkillManifest).name(), &manifest, &BTRegenSkillManifest::create);
+ // Backward compatability
+ s->add("armorBonusManifest", "-", &manifest, &BTBonusManifest::create);
+ s->add("attackRateBonusManifest", "-", &manifest, &BTBonusManifest::create);
+ s->add("saveBonusManifest", "-", &manifest, &BTBonusManifest::create);
+ s->add("hitBonusManifest", "-", &manifest, &BTBonusManifest::create);
 }
 
 BTManifest *BTTargetedManifest::clone()
@@ -70,12 +72,27 @@ std::list<BTBaseEffect*> BTTargetedManifest::manifest(BTDisplay &d, bool partySp
  return effect;
 }
 
-BTManifest *BTArmorBonusManifest::clone()
+BTManifest *BTBonusManifest::clone()
 {
- return new BTArmorBonusManifest(*this);
+ return new BTBonusManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTArmorBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::string BTBonusManifest::createString()
+{
+ char s[50];
+ if (level > 0)
+ {
+  if (maximum > 0)
+   sprintf(s, "%d * (level / %d) [max: %d]", bonus, level, maximum);
+  else
+   sprintf(s, "%d * (level / %d)", bonus, level);
+ }
+ else
+  sprintf(s, "%d", bonus);
+ return BTManifest::createString() + std::string("   Bonus: ") + std::string(s);
+}
+
+std::list<BTBaseEffect*> BTBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
  int value = bonus;
@@ -83,11 +100,27 @@ std::list<BTBaseEffect*> BTArmorBonusManifest::manifest(BTDisplay &d, bool party
   value *= (casterLevel / level);
  if ((0 != maximum) && (value > maximum))
   value = maximum;
- effect.push_back(new BTArmorBonusEffect(type, expire, singer, musicId, group, target, value));
+ switch (type)
+ {
+  case BTSPELLTYPE_ARMORBONUS:
+   effect.push_back(new BTArmorBonusEffect(type, expire, singer, musicId, group, target, value));
+   break;
+  case BTSPELLTYPE_ATTACKRATEBONUS:
+   effect.push_back(new BTAttackRateBonusEffect(type, expire, singer, musicId, group, target, value));
+   break;
+  case BTSPELLTYPE_SAVEBONUS:
+   effect.push_back(new BTSaveBonusEffect(type, expire, singer, musicId, group, target, value));
+   break;
+  case BTSPELLTYPE_HITBONUS:
+   effect.push_back(new BTHitBonusEffect(type, expire, singer, musicId, group, target, value));
+   break;
+  default:
+   break;
+ }
  return effect;
 }
 
-void BTArmorBonusManifest::serialize(ObjectSerializer* s)
+void BTBonusManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
  s->add("bonus", &bonus);
@@ -95,7 +128,7 @@ void BTArmorBonusManifest::serialize(ObjectSerializer* s)
  s->add("maximum", &maximum);
 }
 
-void BTArmorBonusManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTBonusManifest::supportOldFormat(BTDice &d, IShort &ex)
 {
  ex = bonus;
  if (level > 0)
@@ -135,40 +168,6 @@ void BTAttackManifest::serialize(ObjectSerializer* s)
 void BTAttackManifest::supportOldFormat(BTDice &d, IShort &ex)
 {
  d = damage;
-}
-
-BTManifest *BTAttackRateBonusManifest::clone()
-{
- return new BTAttackRateBonusManifest(*this);
-}
-
-std::list<BTBaseEffect*> BTAttackRateBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
-{
- std::list<BTBaseEffect*> effect;
- int value = bonus;
- if (level > 0)
-  value *= (casterLevel / level);
- if ((0 != maximum) && (value > maximum))
-  value = maximum;
- effect.push_back(new BTAttackRateBonusEffect(type, expire, singer, musicId, group, target, value));
- return effect;
-}
-
-void BTAttackRateBonusManifest::serialize(ObjectSerializer* s)
-{
- BTManifest::serialize(s);
- s->add("bonus", &bonus);
- s->add("level", &level);
- s->add("maximum", &maximum);
-}
-
-void BTAttackRateBonusManifest::supportOldFormat(BTDice &d, IShort &ex)
-{
- ex = bonus;
- if (level > 0)
-  throw FileException("Attack rate bonus based on caster level not supported in older file format.");
- if (maximum > 0)
-  throw FileException("Attack rate bonus maximum not supported in older file format.");
 }
 
 BTManifest *BTCureStatusManifest::clone()
@@ -303,74 +302,6 @@ void BTRegenManaManifest::serialize(ObjectSerializer* s)
 void BTRegenManaManifest::supportOldFormat(BTDice &d, IShort &ex)
 {
  d = mana;
-}
-
-BTManifest *BTSaveBonusManifest::clone()
-{
- return new BTSaveBonusManifest(*this);
-}
-
-std::list<BTBaseEffect*> BTSaveBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
-{
- std::list<BTBaseEffect*> effect;
- int value = bonus;
- if (level > 0)
-  value *= (casterLevel / level);
- if ((0 != maximum) && (value > maximum))
-  value = maximum;
- effect.push_back(new BTSaveBonusEffect(type, expire, singer, musicId, group, target, value));
- return effect;
-}
-
-void BTSaveBonusManifest::serialize(ObjectSerializer* s)
-{
- BTManifest::serialize(s);
- s->add("bonus", &bonus);
- s->add("level", &level);
- s->add("maximum", &maximum);
-}
-
-void BTSaveBonusManifest::supportOldFormat(BTDice &d, IShort &ex)
-{
- ex = bonus;
- if (level > 0)
-  throw FileException("Save bonus based on caster level not supported in older file format.");
- if (maximum > 0)
-  throw FileException("Save bonus maximum not supported in older file format.");
-}
-
-BTManifest *BTHitBonusManifest::clone()
-{
- return new BTHitBonusManifest(*this);
-}
-
-std::list<BTBaseEffect*> BTHitBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
-{
- std::list<BTBaseEffect*> effect;
- int value = bonus;
- if (level > 0)
-  value *= (casterLevel / level);
- if ((0 != maximum) && (value > maximum))
-  value = maximum;
- effect.push_back(new BTHitBonusEffect(type, expire, singer, musicId, group, target, value));
- return effect;
-}
-
-void BTHitBonusManifest::serialize(ObjectSerializer* s)
-{
- BTManifest::serialize(s);
- s->add("bonus", &bonus);
- s->add("level", &level);
- s->add("maximum", &maximum);
-}
-
-void BTHitBonusManifest::supportOldFormat(BTDice &d, IShort &ex)
-{
- ex = bonus;
- if (level > 0)
-  throw FileException("Hit bonus based on caster level not supported in older file format.");
- if (maximum > 0)
-  throw FileException("Hit bonus maximum not supported in older file format.");
 }
 
 BTManifest *BTScrySightManifest::clone()

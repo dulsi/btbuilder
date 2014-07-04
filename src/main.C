@@ -285,6 +285,7 @@ int main(int argc, char *argv[])
     printf("Points: %d   Range: %d   Extra range: %s\n", mon.getSp(),
       mon.getRange() * 10, effectiveRanges[mon.getEffectiveRange()]);
     printf("Target: %s\n", areaEffect[mon.getArea()]);
+    printf("Effect: %s <target>\n", mon.getEffect());
     printf("%s", mon.describeManifest().data());
 /*    printf("Type: %s", spellTypes[mon.getType()]);
     switch (mon.getType())
@@ -308,21 +309,6 @@ int main(int argc, char *argv[])
     }
     printf("\nDice: %dd%d   Duration: %s\n", mon.getDice().getNumber(),
       mon.getDice().getType(), durations[mon.getDuration()]);
-    switch (mon.getType())
-    {
-     case BTSPELLTYPE_SCRYSIGHT:
-     case BTSPELLTYPE_DOORDETECT:
-     case BTSPELLTYPE_SUMMONILLUSION:
-     case BTSPELLTYPE_SUMMONMONSTER:
-     case BTSPELLTYPE_LIGHT:
-     case BTSPELLTYPE_TRAPDESTROY:
-//     case BTSPELLTYPE_HITBONUS:
-      printf("Effect: %s\n", mon.getEffect());
-      break;
-     default:
-      printf("Effect: %s <target>\n", mon.getEffect());
-      break;
-    }
 */    printf("\n");
    }
   }

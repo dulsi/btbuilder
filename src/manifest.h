@@ -43,18 +43,19 @@ class BTTargetedManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTTargetedManifest; }
 };
 
-class BTArmorBonusManifest : public BTManifest
+class BTBonusManifest : public BTManifest
 {
  public:
-  BTArmorBonusManifest() : bonus(0), level(0), maximum(0) {}
-  BTArmorBonusManifest(int b) : BTManifest(BTSPELLTYPE_ARMORBONUS), bonus(b), level(0), maximum(0) {}
+  BTBonusManifest() : bonus(0), level(0), maximum(0) {}
+  BTBonusManifest(int t, int b) : BTManifest(t), bonus(b), level(0), maximum(0) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(BTDice &d, IShort &ex);
 
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTArmorBonusManifest; }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTBonusManifest; }
 
   int bonus;
   int level;
@@ -78,24 +79,6 @@ class BTAttackManifest : public BTManifest
   int effectiveRange;
   BTDice damage;
   int xSpecial;
-  int level;
-  int maximum;
-};
-
-class BTAttackRateBonusManifest : public BTManifest
-{
- public:
-  BTAttackRateBonusManifest() : bonus(0), level(0), maximum(0) {}
-  BTAttackRateBonusManifest(int b) : BTManifest(BTSPELLTYPE_ATTACKRATEBONUS), bonus(b), level(0), maximum(0) {}
-
-  virtual BTManifest *clone();
-  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
-  virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
-
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackRateBonusManifest; }
-
-  int bonus;
   int level;
   int maximum;
 };
@@ -179,42 +162,6 @@ class BTRegenManaManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenManaManifest; }
 
   BTDice mana;
-};
-
-class BTSaveBonusManifest : public BTManifest
-{
- public:
-  BTSaveBonusManifest() : bonus(0), level(0), maximum(0) {}
-  BTSaveBonusManifest(int b) : BTManifest(BTSPELLTYPE_SAVEBONUS), bonus(b), level(0), maximum(0) {}
-
-  virtual BTManifest *clone();
-  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
-  virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
-
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSaveBonusManifest; }
-
-  int bonus;
-  int level;
-  int maximum;
-};
-
-class BTHitBonusManifest : public BTManifest
-{
- public:
-  BTHitBonusManifest() : bonus(0), level(0), maximum(0) {}
-  BTHitBonusManifest(int b) : BTManifest(BTSPELLTYPE_HITBONUS), bonus(b), level(0), maximum(0) {}
-
-  virtual BTManifest *clone();
-  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
-  virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
-
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTHitBonusManifest; }
-
-  int bonus;
-  int level;
-  int maximum;
 };
 
 class BTScrySightManifest : public BTManifest
