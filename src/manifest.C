@@ -38,6 +38,7 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
 {
  s->add("manifest", typeid(BTManifest).name(), &manifest, &BTManifest::create);
  s->add("targetedManifest", typeid(BTTargetedManifest).name(), &manifest, &BTTargetedManifest::create);
+ s->add("rangedManifest", typeid(BTRangedManifest).name(), &manifest, &BTRangedManifest::create);
  s->add("bonusManifest", typeid(BTBonusManifest).name(), &manifest, &BTBonusManifest::create);
  s->add("attackManifest", typeid(BTAttackManifest).name(), &manifest, &BTAttackManifest::create);
  s->add("cureStatusManifest", typeid(BTCureStatusManifest).name(), &manifest, &BTCureStatusManifest::create);
@@ -49,8 +50,6 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("summonManifest", typeid(BTSummonManifest).name(), &manifest, &BTSummonManifest::create);
  s->add("resurrectManifest", typeid(BTResurrectManifest).name(), &manifest, &BTResurrectManifest::create);
  s->add("phaseDoorManifest", typeid(BTPhaseDoorManifest).name(), &manifest, &BTPhaseDoorManifest::create);
- s->add("dispellIllusionManifest", typeid(BTDispellIllusionManifest).name(), &manifest, &BTDispellIllusionManifest::create);
- s->add("dispellMagicManifest", typeid(BTDispellMagicManifest).name(), &manifest, &BTDispellMagicManifest::create);
  s->add("spellBindManifest", typeid(BTSpellBindManifest).name(), &manifest, &BTSpellBindManifest::create);
  s->add("regenSkillManifest", typeid(BTRegenSkillManifest).name(), &manifest, &BTRegenSkillManifest::create);
  // Backward compatability
@@ -70,6 +69,35 @@ std::list<BTBaseEffect*> BTTargetedManifest::manifest(BTDisplay &d, bool partySp
  std::list<BTBaseEffect*> effect;
  effect.push_back(new BTTargetedEffect(type, expire, singer, musicId, group, target));
  return effect;
+}
+
+BTManifest *BTRangedManifest::clone()
+{
+ return new BTRangedManifest(*this);
+}
+
+std::list<BTBaseEffect*> BTRangedManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+{
+ std::list<BTBaseEffect*> effect;
+ switch (type)
+ {
+  case BTSPELLTYPE_DISPELLMAGIC:
+   effect.push_back(new BTDispellMagicEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, effectiveRange, distance, group, target));
+   break;
+  case BTSPELLTYPE_DISPELLILLUSION:
+   effect.push_back(new BTDispellIllusionEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, effectiveRange, distance, group, target));
+   break;
+  default:
+   break;
+ }
+ return effect;
+}
+
+void BTRangedManifest::serialize(ObjectSerializer* s)
+{
+ BTTargetedManifest::serialize(s);
+ s->add("range", &range);
+ s->add("effectiveRange", &effectiveRange);
 }
 
 BTManifest *BTBonusManifest::clone()
@@ -156,9 +184,7 @@ std::list<BTBaseEffect*> BTAttackManifest::manifest(BTDisplay &d, bool partySpel
 
 void BTAttackManifest::serialize(ObjectSerializer* s)
 {
- BTManifest::serialize(s);
- s->add("range", &range);
- s->add("effectiveRange", &effectiveRange);
+ BTRangedManifest::serialize(s);
  s->add("damage", &damage);
  s->add("xSpecial", &xSpecial);
  s->add("level", &level);
@@ -266,19 +292,19 @@ BTManifest *BTPushManifest::clone()
 std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTPushEffect(type, expire, singer, musicId, group, target, distance));
+ effect.push_back(new BTPushEffect(type, expire, singer, musicId, group, target, strength));
  return effect;
 }
 
 void BTPushManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
- s->add("distance", &distance);
+ s->add("strength", &strength);
 }
 
 void BTPushManifest::supportOldFormat(BTDice &d, IShort &ex)
 {
- ex = distance;
+ ex = strength;
 }
 
 BTManifest *BTRegenManaManifest::clone()
@@ -425,44 +451,6 @@ std::list<BTBaseEffect*> BTPhaseDoorManifest::manifest(BTDisplay &d, bool partyS
    break;
  }
  return effect;
-}
-
-BTManifest *BTDispellIllusionManifest::clone()
-{
- return new BTDispellIllusionManifest(*this);
-}
-
-std::list<BTBaseEffect*> BTDispellIllusionManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
-{
- std::list<BTBaseEffect*> effect;
- effect.push_back(new BTDispellIllusionEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, effectiveRange, distance, group, target));
- return effect;
-}
-
-void BTDispellIllusionManifest::serialize(ObjectSerializer* s)
-{
- BTManifest::serialize(s);
- s->add("range", &range);
- s->add("effectiveRange", &effectiveRange);
-}
-
-BTManifest *BTDispellMagicManifest::clone()
-{
- return new BTDispellMagicManifest(*this);
-}
-
-std::list<BTBaseEffect*> BTDispellMagicManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
-{
- std::list<BTBaseEffect*> effect;
- effect.push_back(new BTDispellMagicEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, range, effectiveRange, distance, group, target));
- return effect;
-}
-
-void BTDispellMagicManifest::serialize(ObjectSerializer* s)
-{
- BTManifest::serialize(s);
- s->add("range", &range);
- s->add("effectiveRange", &effectiveRange);
 }
 
 BTManifest *BTSpellBindManifest::clone()

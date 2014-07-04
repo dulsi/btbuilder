@@ -472,10 +472,8 @@ void BTSpell1::upgrade()
     manifest.push_back(new BTPhaseDoorManifest());
     break;
    case BTSPELLTYPE_DISPELLILLUSION:
-    manifest.push_back(new BTDispellIllusionManifest(range, getEffectiveRange()));
-    break;
    case BTSPELLTYPE_DISPELLMAGIC:
-    manifest.push_back(new BTDispellMagicManifest(range, getEffectiveRange()));
+    manifest.push_back(new BTRangedManifest(type, range, getEffectiveRange()));
     break;
    case BTSPELLTYPE_SPELLBIND:
     manifest.push_back(new BTSpellBindManifest());

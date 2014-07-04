@@ -31,12 +31,12 @@
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
-			<armorBonusManifest>
+			<bonusManifest>
 				<type>23</type>
 				<bonus>1</bonus>
 				<level>2</level>
 				<maximum>18</maximum>
-			</armorBonusManifest>
+			</bonusManifest>
 		</multiManifest>
 	</song>
 	<song>
@@ -69,10 +69,10 @@
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
-			<attackRateBonusManifest>
+			<bonusManifest>
 				<type>33</type>
 				<bonus>1</bonus>
-			</attackRateBonusManifest>
+			</bonusManifest>
 		</multiManifest>
 	</song>
 	<song>
@@ -114,10 +114,10 @@
 		<name>Cain's Carrack</name>
 		<multiManifest>
 			<restriction>noncombat</restriction>
-			<saveBonusManifest>
+			<bonusManifest>
 				<type>35</type>
 				<bonus>3</bonus>
-			</saveBonusManifest>
+			</bonusManifest>
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>

@@ -43,6 +43,22 @@ class BTTargetedManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTTargetedManifest; }
 };
 
+class BTRangedManifest : public BTTargetedManifest
+{
+ public:
+  BTRangedManifest() : range(0), effectiveRange(0) {}
+  BTRangedManifest(int t, int r, int eR) : BTTargetedManifest(t), range(r), effectiveRange(eR) {}
+
+  virtual BTManifest *clone();
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRangedManifest; }
+
+  int range;
+  int effectiveRange;
+};
+
 class BTBonusManifest : public BTManifest
 {
  public:
@@ -62,11 +78,11 @@ class BTBonusManifest : public BTManifest
   int maximum;
 };
 
-class BTAttackManifest : public BTManifest
+class BTAttackManifest : public BTRangedManifest
 {
  public:
-  BTAttackManifest() : range(0), effectiveRange(0), xSpecial(BTEXTRADAMAGE_NONE), level(0), maximum(0) {}
-  BTAttackManifest(int r, int eR, const BTDice &d, int xS, int l) : BTManifest(BTSPELLTYPE_DAMAGE), range(r), effectiveRange(eR), xSpecial(xS), level(l), maximum(0) {}
+  BTAttackManifest() : xSpecial(BTEXTRADAMAGE_NONE), level(0), maximum(0) {}
+  BTAttackManifest(int r, int eR, const BTDice &d, int xS, int l) : BTRangedManifest(BTSPELLTYPE_DAMAGE, r, eR), xSpecial(xS), level(l), maximum(0) {}
 
   virtual BTManifest *clone();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
@@ -75,8 +91,6 @@ class BTAttackManifest : public BTManifest
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackManifest; }
 
-  int range;
-  int effectiveRange;
   BTDice damage;
   int xSpecial;
   int level;
@@ -135,8 +149,8 @@ class BTMultiManifest : public BTManifest
 class BTPushManifest : public BTManifest
 {
  public:
-  BTPushManifest() : distance(0) {}
-  BTPushManifest(int d) : BTManifest(BTSPELLTYPE_PUSH), distance(d) {}
+  BTPushManifest() : strength(0) {}
+  BTPushManifest(int s) : BTManifest(BTSPELLTYPE_PUSH), strength(s) {}
 
   virtual BTManifest *clone();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
@@ -145,7 +159,7 @@ class BTPushManifest : public BTManifest
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPushManifest; }
 
-  int distance;
+  int strength;
 };
 
 class BTRegenManaManifest : public BTManifest
@@ -212,38 +226,6 @@ class BTPhaseDoorManifest : public BTManifest
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPhaseDoorManifest; }
-};
-
-class BTDispellIllusionManifest : public BTManifest
-{
- public:
-  BTDispellIllusionManifest() : BTManifest(BTSPELLTYPE_DISPELLILLUSION), range(0), effectiveRange(0) {}
-  BTDispellIllusionManifest(int r, int eR) : BTManifest(BTSPELLTYPE_DISPELLILLUSION), range(r), effectiveRange(eR) {}
-
-  virtual BTManifest *clone();
-  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
-  virtual void serialize(ObjectSerializer *s);
-
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTDispellIllusionManifest; }
-
-  int range;
-  int effectiveRange;
-};
-
-class BTDispellMagicManifest : public BTManifest
-{
- public:
-  BTDispellMagicManifest() : BTManifest(BTSPELLTYPE_DISPELLMAGIC), range(0), effectiveRange(0) {}
-  BTDispellMagicManifest(int r, int eR) : BTManifest(BTSPELLTYPE_DISPELLMAGIC), range(r), effectiveRange(eR) {}
-
-  virtual BTManifest *clone();
-  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
-  virtual void serialize(ObjectSerializer *s);
-
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTDispellMagicManifest; }
-
-  int range;
-  int effectiveRange;
 };
 
 class BTSpellBindManifest : public BTManifest
