@@ -390,6 +390,12 @@ BTManifest *BTSummonManifest::clone()
  return new BTSummonManifest(*this);
 }
 
+std::string BTSummonManifest::createString()
+{
+ BTFactory<BTMonster> &monList(BTCore::getCore()->getMonsterList());
+ return BTManifest::createString() + std::string("   Name: ") + monList[monster].getName();
+}
+
 std::list<BTBaseEffect*> BTSummonManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  BTGame *game = BTGame::getGame();
@@ -417,6 +423,12 @@ std::list<BTBaseEffect*> BTSummonManifest::manifest(BTDisplay &d, bool partySpel
   }
  }
  return effect;
+}
+
+void BTSummonManifest::serialize(ObjectSerializer* s)
+{
+ BTManifest::serialize(s);
+ s->add("monster", &monster);
 }
 
 void BTSummonManifest::supportOldFormat(BTDice &d, IShort &ex)

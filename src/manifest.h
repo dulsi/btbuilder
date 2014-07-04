@@ -235,7 +235,9 @@ class BTSummonManifest : public BTManifest
   BTSummonManifest(int t, int m) : BTManifest(t), monster(m) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSummonManifest; }
