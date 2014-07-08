@@ -289,6 +289,13 @@ BTManifest *BTPushManifest::clone()
  return new BTPushManifest(*this);
 }
 
+std::string BTPushManifest::createString()
+{
+ char s[50];
+ sprintf(s, "%d", strength);
+ return BTManifest::createString() + std::string("   Distance: ") + std::string(s);
+}
+
 std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
@@ -468,6 +475,12 @@ std::list<BTBaseEffect*> BTSpellBindManifest::manifest(BTDisplay &d, bool partyS
 BTManifest *BTRegenSkillManifest::clone()
 {
  return new BTRegenSkillManifest(*this);
+}
+
+std::string BTRegenSkillManifest::createString()
+{
+ XMLVector<BTSkill*> &skillList = BTCore::getCore()->getSkillList();
+ return BTManifest::createString() + std::string("   Skill: ") + skillList[skill]->name + std::string("   Amount: ") + amount.createString();
 }
 
 std::list<BTBaseEffect*> BTRegenSkillManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)

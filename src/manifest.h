@@ -153,6 +153,7 @@ class BTPushManifest : public BTManifest
   BTPushManifest(int s) : BTManifest(BTSPELLTYPE_PUSH), strength(s) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(BTDice &d, IShort &ex);
@@ -246,6 +247,7 @@ class BTRegenSkillManifest : public BTManifest
   BTRegenSkillManifest(int sk, const BTDice &a) : BTManifest(BTSPELLTYPE_REGENBARD), skill(sk), amount(a) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(BTDice &d, IShort &ex);

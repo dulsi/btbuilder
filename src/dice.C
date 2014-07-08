@@ -34,7 +34,8 @@ BTDice::BTDice()
 std::string BTDice::createString()
 {
  std::ostringstream stream;
- stream << number << "d" << type;
+ if (number != 0)
+  stream << number << "d" << type;
  if (modifier < 0)
   stream << modifier;
  else if (modifier > 0)
