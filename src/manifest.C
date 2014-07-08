@@ -170,6 +170,33 @@ BTManifest *BTAttackManifest::clone()
  return new BTAttackManifest(*this);
 }
 
+std::string BTAttackManifest::createString()
+{
+ std::string answer = BTManifest::createString();
+ if (damage.getMax() > 0)
+ {
+  answer += std::string("   Damage: ") + damage.createString();
+  char s[50];
+  if (level == 1)
+   answer += " * level";
+  else if (level > 1)
+  {
+   sprintf(s, " * (level / %d)", level);
+   answer += std::string(s);
+  }
+  if (maximum > 0)
+  {
+   sprintf(s, "[max: %d]", level, maximum);
+   answer += std::string(s);
+  }
+ }
+ if (xSpecial !=  BTEXTRADAMAGE_NONE)
+ {
+  answer += std::string("   Condition: ") + std::string(extraDamage[xSpecial]);
+ }
+ return answer;
+}
+
 std::list<BTBaseEffect*> BTAttackManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;

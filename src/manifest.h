@@ -82,9 +82,10 @@ class BTAttackManifest : public BTRangedManifest
 {
  public:
   BTAttackManifest() : xSpecial(BTEXTRADAMAGE_NONE), level(0), maximum(0) {}
-  BTAttackManifest(int r, int eR, const BTDice &d, int xS, int l) : BTRangedManifest(BTSPELLTYPE_DAMAGE, r, eR), xSpecial(xS), level(l), maximum(0) {}
+  BTAttackManifest(int r, int eR, const BTDice &d, int xS, int l) : BTRangedManifest(BTSPELLTYPE_DAMAGE, r, eR), damage(d), xSpecial(xS), level(l), maximum(0) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(BTDice &d, IShort &ex);

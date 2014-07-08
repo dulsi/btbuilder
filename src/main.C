@@ -286,6 +286,7 @@ int main(int argc, char *argv[])
       mon.getRange() * 10, effectiveRanges[mon.getEffectiveRange()]);
     printf("Target: %s\n", areaEffect[mon.getArea()]);
     printf("Effect: %s <target>\n", mon.getEffect());
+    printf("Duration: %s\n", durations[mon.getDuration()]);
     printf("%s", mon.describeManifest().data());
 /*    printf("Type: %s", spellTypes[mon.getType()]);
     switch (mon.getType())
