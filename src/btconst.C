@@ -49,7 +49,9 @@ char *spellTypes[] =
  "Block Random Encounters",
  "Block Spells",
  "Spell Bind",
- "Levitation"
+ "Levitation",
+ "Regenerate Skill",
+ "Cure Status"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES, spellTypes);
 

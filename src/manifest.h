@@ -22,7 +22,7 @@ class BTManifest : public XMLObject
   std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTManifest; }
 
@@ -69,7 +69,7 @@ class BTBonusManifest : public BTManifest
   std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTBonusManifest; }
 
@@ -88,7 +88,7 @@ class BTAttackManifest : public BTRangedManifest
   std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackManifest; }
 
@@ -102,11 +102,13 @@ class BTCureStatusManifest : public BTManifest
 {
  public:
   BTCureStatusManifest() : status(0) {}
-  BTCureStatusManifest(int t, int s) : BTManifest(t), status(s) {}
+  BTCureStatusManifest(int s) : BTManifest(BTSPELLTYPE_CURESTATUS), status(s) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTCureStatusManifest; }
 
@@ -120,9 +122,10 @@ class BTHealManifest : public BTManifest
   BTHealManifest(const BTDice &h) : BTManifest(BTSPELLTYPE_HEAL), heal(h), level(0), maximum(0) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTHealManifest; }
 
@@ -157,7 +160,7 @@ class BTPushManifest : public BTManifest
   std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPushManifest; }
 
@@ -171,9 +174,10 @@ class BTRegenManaManifest : public BTManifest
   BTRegenManaManifest(BTDice m) : BTManifest(BTSPELLTYPE_REGENMANA), mana(m) {}
 
   virtual BTManifest *clone();
+  std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenManaManifest; }
 
@@ -201,7 +205,7 @@ class BTSummonManifest : public BTManifest
   std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSummonManifest; }
 
@@ -244,14 +248,14 @@ class BTSpellBindManifest : public BTManifest
 class BTRegenSkillManifest : public BTManifest
 {
  public:
-  BTRegenSkillManifest() : BTManifest(BTSPELLTYPE_REGENBARD), skill(-1) {}
-  BTRegenSkillManifest(int sk, const BTDice &a) : BTManifest(BTSPELLTYPE_REGENBARD), skill(sk), amount(a) {}
+  BTRegenSkillManifest() : BTManifest(BTSPELLTYPE_REGENSKILL), skill(-1) {}
+  BTRegenSkillManifest(int sk, const BTDice &a) : BTManifest(BTSPELLTYPE_REGENSKILL), skill(sk), amount(a) {}
 
   virtual BTManifest *clone();
   std::string createString();
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
-  virtual void supportOldFormat(BTDice &d, IShort &ex);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenSkillManifest; }
 

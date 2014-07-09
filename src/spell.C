@@ -102,7 +102,7 @@ void BTSpell::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
  IShort num;
- IShort extra(0);
+ IShort extra(0), type(0);
  char tmp[29];
  BTDice dice(0, 2);
 
@@ -118,11 +118,10 @@ void BTSpell::write(BinaryWriteFile &f)
  f.writeShort(effectiveRange);
  if (manifest.size() != 1)
   throw FileException("Multi effect spells not supported in older file format.");
- num = manifest[0]->type;
- f.writeShort(num);
+ manifest[0]->supportOldFormat(type, dice, extra);
+ f.writeShort(type);
  num = area;
  f.writeShort(num);
- manifest[0]->supportOldFormat(dice, extra);
  dice.write(f);
  f.writeUByte(unknown);
  num = duration;
@@ -424,25 +423,25 @@ void BTSpell1::upgrade()
     manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), dice, BTEXTRADAMAGE_NONE, 1));
     break;
    case BTSPELLTYPE_CUREPOISON:
-    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_POISONED));
+    manifest.push_back(new BTCureStatusManifest(BTSTATUS_POISONED));
     break;
    case BTSPELLTYPE_CUREINSANITY:
-    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_INSANE));
+    manifest.push_back(new BTCureStatusManifest(BTSTATUS_INSANE));
     break;
    case BTSPELLTYPE_YOUTH:
-    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_AGED));
+    manifest.push_back(new BTCureStatusManifest(BTSTATUS_AGED));
     break;
    case BTSPELLTYPE_DISPOSSESS:
-    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_POSSESSED));
+    manifest.push_back(new BTCureStatusManifest(BTSTATUS_POSSESSED));
     break;
    case BTSPELLTYPE_STONETOFLESH:
-    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_STONED));
+    manifest.push_back(new BTCureStatusManifest(BTSTATUS_STONED));
     break;
    case BTSPELLTYPE_CUREPARALYZE:
-    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_PARALYZED));
+    manifest.push_back(new BTCureStatusManifest(BTSTATUS_PARALYZED));
     break;
    case BTSPELLTYPE_RESTORELEVELS:
-    manifest.push_back(new BTCureStatusManifest(type, BTSTATUS_LEVELDRAIN));
+    manifest.push_back(new BTCureStatusManifest(BTSTATUS_LEVELDRAIN));
     break;
    case BTSPELLTYPE_HEAL:
     manifest.push_back(new BTHealManifest(dice));

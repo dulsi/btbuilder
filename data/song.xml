@@ -6,17 +6,17 @@
 		<multiManifest>
 			<restriction>noncombat</restriction>
 			<manifest>
-				<type>36</type>
+				<type>Block Random Encounters</type>
 			</manifest>
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
 			<cureStatusManifest>
-				<type>3</type>
+				<type>Cure Status</type>
 				<status>insane</status>
 			</cureStatusManifest>
 			<cureStatusManifest>
-				<type>5</type>
+				<type>Cure Status</type>
 				<status>possessed</status>
 			</cureStatusManifest>
 		</multiManifest>
@@ -26,13 +26,13 @@
 		<multiManifest>
 			<restriction>noncombat</restriction>
 			<manifest>
-				<type>25</type>
+				<type>Trap Destruction</type>
 			</manifest>
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
 			<bonusManifest>
-				<type>23</type>
+				<type>Armor Class Bonus</type>
 				<bonus>1</bonus>
 				<level>2</level>
 				<maximum>18</maximum>
@@ -45,14 +45,14 @@
 			<restriction>noncombat</restriction>
 			<targetOverride>singer</targetOverride>
 			<healManifest>
-				<type>0</type>
+				<type>Heal</type>
 				<heal><n>0</n><d>2</d><m>1</m></heal>
 			</healManifest>
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
 			<healManifest>
-				<type>0</type>
+				<type>Heal</type>
 				<level>1</level>
 				<heal><n>1</n><d>5</d><m></m></heal>
 			</healManifest>
@@ -63,14 +63,14 @@
 		<multiManifest>
 			<restriction>noncombat</restriction>
 			<regenManaManifest>
-				<type>34</type>
+				<type>Regenerate Spell Points</type>
 				<mana><n>0</n><d>2</d><m>1</m></mana>
 			</regenManaManifest>
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
 			<bonusManifest>
-				<type>33</type>
+				<type>Attack Rate Bonus</type>
 				<bonus>1</bonus>
 			</bonusManifest>
 		</multiManifest>
@@ -80,13 +80,13 @@
 		<multiManifest>
 			<restriction>noncombat</restriction>
 			<manifest>
-				<type>22</type>
+				<type>Light</type>
 			</manifest>
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
 			<pushManifest>
-				<type>32</type>
+				<type>Push</type>
 				<distance>9</distance>
 			</pushManifest>
 		</multiManifest>
@@ -96,14 +96,14 @@
 		<multiManifest>
 			<restriction>noncombat</restriction>
 			<manifest>
-				<type>31</type>
+				<type>Compass</type>
 			</manifest>
 		</multiManifest>
 		<multiManifest>
 			<restriction>combat</restriction>
 			<targetOverride>all monsters</targetOverride>
 			<attackManifest>
-				<type>9</type>
+				<type>Damage</type>
 				<range>9</range>
 				<damage><n>1</n><d>5</d><m>0</m></damage>
 				<level>1</level>
@@ -115,7 +115,7 @@
 		<multiManifest>
 			<restriction>noncombat</restriction>
 			<bonusManifest>
-				<type>35</type>
+				<type>Save Bonus</type>
 				<bonus>3</bonus>
 			</bonusManifest>
 		</multiManifest>
@@ -123,7 +123,7 @@
 			<restriction>combat</restriction>
 			<targetOverride>all monsters</targetOverride>
 			<targetedManifest>
-				<type>37</type>
+				<type>Block Spells</type>
 			</targetedManifest>
 		</multiManifest>
 	</song>

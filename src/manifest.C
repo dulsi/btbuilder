@@ -30,8 +30,9 @@ void BTManifest::serialize(ObjectSerializer* s)
  s->add("type", &type, NULL, &spellTypeLookup);
 }
 
-void BTManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
+ t = type;
 }
 
 void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &manifest)
@@ -107,17 +108,23 @@ BTManifest *BTBonusManifest::clone()
 
 std::string BTBonusManifest::createString()
 {
+ std::string answer = BTManifest::createString() + std::string("   Bonus: ");
  char s[50];
- if (level > 0)
+ sprintf(s, "%d", bonus);
+ answer += s;
+ if (level == 1)
+  answer += " * level";
+ else if (level > 1)
  {
-  if (maximum > 0)
-   sprintf(s, "%d * (level / %d) [max: %d]", bonus, level, maximum);
-  else
-   sprintf(s, "%d * (level / %d)", bonus, level);
+  sprintf(s, " * (level / %d)", level);
+  answer += std::string(s);
  }
- else
-  sprintf(s, "%d", bonus);
- return BTManifest::createString() + std::string("   Bonus: ") + std::string(s);
+ if (maximum > 0)
+ {
+  sprintf(s, "[max: %d]", level, maximum);
+  answer += std::string(s);
+ }
+ return answer;
 }
 
 std::list<BTBaseEffect*> BTBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -156,8 +163,9 @@ void BTBonusManifest::serialize(ObjectSerializer* s)
  s->add("maximum", &maximum);
 }
 
-void BTBonusManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTBonusManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
+ t = type;
  ex = bonus;
  if (level > 0)
   throw FileException("Armor bonus based on caster level not supported in older file format.");
@@ -218,14 +226,69 @@ void BTAttackManifest::serialize(ObjectSerializer* s)
  s->add("maximum", &maximum);
 }
 
-void BTAttackManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTAttackManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
+ if (xSpecial == BTEXTRADAMAGE_NONE)
+ {
+  if (level == 0)
+   t = type;
+  else if (level = 1)
+  {
+   if (maximum != 0)
+    throw FileException("Maximum damage level adjustment is not supported in the old format.");
+   t = BTSPELLTYPE_DAMAGEBYLEVEL;
+  }
+  else
+   throw FileException("Damage spells can only have variable damage based on level other than one in the old format.");
+ }
+ else
+ {
+  if (d.getMax() != 0)
+   throw FileException("Damage spells cannot have additional effects in the old format.");
+  switch (xSpecial)
+  {
+   case BTEXTRADAMAGE_CRITICALHIT:
+    t = BTSPELLTYPE_KILL;
+    break;
+   case BTEXTRADAMAGE_POISON:
+    t = BTSPELLTYPE_POISON;
+    break;
+   case BTEXTRADAMAGE_INSANITY:
+    t = BTSPELLTYPE_CAUSEINSANITY;
+    break;
+   case BTEXTRADAMAGE_POSSESSION:
+    t = BTSPELLTYPE_POSSESS;
+    break;
+   case BTEXTRADAMAGE_STONED:
+    t = BTSPELLTYPE_FLESHTOSTONE;
+    break;
+   case BTEXTRADAMAGE_PARALYSIS:
+    t = BTSPELLTYPE_PARALYZE;
+    break;
+   case BTEXTRADAMAGE_LEVELDRAIN:
+    t = BTSPELLTYPE_DRAINLEVEL;
+    break;
+   case BTEXTRADAMAGE_AGED:
+    t = BTSPELLTYPE_AGE;
+    break;
+  }
+ }
  d = damage;
 }
 
 BTManifest *BTCureStatusManifest::clone()
 {
  return new BTCureStatusManifest(*this);
+}
+
+std::string BTCureStatusManifest::createString()
+{
+ std::string answer = BTManifest::createString() + std::string("  Status: ");
+ if (status == BTSTATUS_LEVELDRAIN)
+  answer += "Level drain";
+ else
+  answer += BTStatusLookup::lookup.getName(status);
+ return answer;
 }
 
 std::list<BTBaseEffect*> BTCureStatusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -238,12 +301,62 @@ std::list<BTBaseEffect*> BTCureStatusManifest::manifest(BTDisplay &d, bool party
 void BTCureStatusManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
- s->add("status", &status, NULL, &BTStatusLookup::lookup);
+ // Can't use lookup at the moment due to level drain being -2.
+ s->add("status", &status /*, NULL, &BTStatusLookup::lookup*/);
+}
+
+void BTCureStatusManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
+{
+ switch (status)
+ {
+  case BTSTATUS_LEVELDRAIN:
+   t = BTSPELLTYPE_RESTORELEVELS;
+   break;
+  case BTSTATUS_POISONED:
+   t = BTSPELLTYPE_CUREPOISON;
+   break;
+  case BTSTATUS_INSANE:
+   t = BTSPELLTYPE_CUREINSANITY;
+   break;
+  case BTSTATUS_AGED:
+   t = BTSPELLTYPE_YOUTH;
+   break;
+  case BTSTATUS_POSSESSED:
+   t = BTSPELLTYPE_DISPOSSESS;
+   break;
+  case BTSTATUS_STONED:
+   t = BTSPELLTYPE_STONETOFLESH;
+   break;
+  case BTSTATUS_PARALYZED:
+   t = BTSPELLTYPE_CUREPARALYZE;
+   break;
+  default:
+   throw FileException("Unsupported cure status effect.");
+ }
 }
 
 BTManifest *BTHealManifest::clone()
 {
  return new BTHealManifest(*this);
+}
+
+std::string BTHealManifest::createString()
+{
+ std::string answer = BTManifest::createString() + std::string("  Heal: ") + heal.createString();
+ char s[50];
+ if (level == 1)
+  answer += " * level";
+ else if (level > 1)
+ {
+  sprintf(s, " * (level / %d)", level);
+  answer += std::string(s);
+ }
+ if (maximum > 0)
+ {
+  sprintf(s, "[max: %d]", level, maximum);
+  answer += std::string(s);
+ }
+ return answer;
 }
 
 std::list<BTBaseEffect*> BTHealManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -266,8 +379,9 @@ void BTHealManifest::serialize(ObjectSerializer* s)
  s->add("maximum", &maximum);
 }
 
-void BTHealManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTHealManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
+ t = type;
  d = heal;
 }
 
@@ -336,14 +450,20 @@ void BTPushManifest::serialize(ObjectSerializer* s)
  s->add("strength", &strength);
 }
 
-void BTPushManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTPushManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
+ t = type;
  ex = strength;
 }
 
 BTManifest *BTRegenManaManifest::clone()
 {
  return new BTRegenManaManifest(*this);
+}
+
+std::string BTRegenManaManifest::createString()
+{
+ return BTManifest::createString() + std::string("  Amount: ") + mana.createString();
 }
 
 std::list<BTBaseEffect*> BTRegenManaManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -359,8 +479,9 @@ void BTRegenManaManifest::serialize(ObjectSerializer* s)
  s->add("mana", &mana);
 }
 
-void BTRegenManaManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTRegenManaManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
+ t = type;
  d = mana;
 }
 
@@ -422,8 +543,9 @@ void BTSummonManifest::serialize(ObjectSerializer* s)
  s->add("monster", &monster);
 }
 
-void BTSummonManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTSummonManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
+ t = type;
  ex = monster;
 }
 
@@ -524,11 +646,14 @@ void BTRegenSkillManifest::serialize(ObjectSerializer* s)
  s->add("amount", &amount);
 }
 
-void BTRegenSkillManifest::supportOldFormat(BTDice &d, IShort &ex)
+void BTRegenSkillManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 {
  XMLVector<BTSkill*> &skillList = BTCore::getCore()->getSkillList();
  if ((skillList[skill]->special != BTSKILLSPECIAL_SONG) && (!skillList[skill]->limited))
   throw FileException("Regen skill only supported for bard songs in older file format.");
+ if (amount.getMin() != amount.getMax())
+  throw FileException("Regen skill does not support variable amount in older file format.");
+ t = BTSPELLTYPE_REGENBARD;
  ex = amount.getModifier();
 }
 
