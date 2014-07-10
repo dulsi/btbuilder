@@ -9,12 +9,11 @@
 
 #include "editor.h"
 
-class BTSerializedEditor
+class BTFactoryEditor
 {
  public:
-  BTSerializedEditor(int num, const char **d, const char **f, bool s = false);
-  virtual ~BTSerializedEditor();
-
+  BTFactoryEditor(bool s = false);
+  virtual ~BTFactoryEditor();
 
   template<typename item, typename item1 = item>
   int editFactoryList(BTDisplay &d, BTFactory<item, item1> &itemList, const BTSortCompare<item> &compare, const std::string &newItem)
@@ -54,6 +53,18 @@ class BTSerializedEditor
     return current;
   }
 
+ protected:
+  int start;
+  int current;
+  bool sorted;
+};
+
+class BTSerializedEditor : public BTFactoryEditor
+{
+ public:
+  BTSerializedEditor(int num, const char **d, const char **f, bool s = false);
+  virtual ~BTSerializedEditor();
+
   void edit(BTDisplay &d, ObjectSerializer &serial);
 
  protected:
@@ -66,9 +77,6 @@ class BTSerializedEditor
   int entries;
   const char **description;
   const char **field;
-  int start;
-  int current;
-  bool sorted;
 };
 
 #define FIELDS_MAP 5

@@ -10,8 +10,17 @@
 #include <algorithm>
 #include <sstream>
 
+BTFactoryEditor::BTFactoryEditor(bool s /*= false*/)
+ : start(0), current(-1), sorted(s)
+{
+}
+
+BTFactoryEditor::~BTFactoryEditor()
+{
+}
+
 BTSerializedEditor::BTSerializedEditor(int num, const char **d, const char **f, bool s /*= false*/)
- : entries(num), description(d), field(f), start(0), current(-1), sorted(s)
+ : BTFactoryEditor(s), entries(num), description(d), field(f)
 {
 }
 
