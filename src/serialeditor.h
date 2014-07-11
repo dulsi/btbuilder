@@ -68,6 +68,7 @@ class BTSerializedEditor : public BTFactoryEditor
   void edit(BTDisplay &d, ObjectSerializer &serial);
 
  protected:
+  void editField(BTDisplay &d, ObjectSerializer &serial, const char *text, XMLAction *curField, int modField, int where);
   virtual void initActive(ObjectSerializer &serial, BitField &active);
   virtual void handleObject(BTDisplay &d, XMLObject *obj, int modField);
   virtual void handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);

@@ -18,6 +18,21 @@ std::string BTManifest::createString()
  return std::string("Type: ") + spellTypes[type];
 }
 
+int BTManifest::getEditFieldNumber()
+{
+ return 0;
+}
+
+const char *BTManifest::getEditFieldDescription(int i)
+{
+ return NULL;
+}
+
+const char *BTManifest::getEditField(int i)
+{
+ return NULL;
+}
+
 std::list<BTBaseEffect*> BTManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
@@ -127,6 +142,21 @@ std::string BTBonusManifest::createString()
  return answer;
 }
 
+int BTBonusManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTBonusManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTBonusManifest::getEditField(int i)
+{
+ return field[i];
+}
+
 std::list<BTBaseEffect*> BTBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
@@ -172,6 +202,10 @@ void BTBonusManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  if (maximum > 0)
   throw FileException("Armor bonus maximum not supported in older file format.");
 }
+
+const int BTBonusManifest::entries = 3;
+const char *BTBonusManifest::description[] = {"Bonus", "Level Increment", "Maximum"};
+const char *BTBonusManifest::field[] = {"bonus", "level", "maximum"};
 
 BTManifest *BTAttackManifest::clone()
 {
