@@ -70,7 +70,8 @@ class BTSerializedEditor : public BTFactoryEditor
  protected:
   virtual void initActive(ObjectSerializer &serial, BitField &active);
   virtual void handleObject(BTDisplay &d, XMLObject *obj, int modField);
-  int setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items);
+  virtual void handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
+  virtual int setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items);
   virtual bool updateActive(ObjectSerializer &serial, BitField &active, int modField);
 
  protected:
@@ -109,7 +110,7 @@ class BTMonsterChanceEditor : public BTSerializedEditor
 
 #define FIELDS_ITEM 14
 #define FIELDS_MONSTER 26
-#define FIELDS_SPELL 18
+#define FIELDS_SPELL 10
 
 class BTItemEditor : public BTSerializedEditor
 {
@@ -142,11 +143,28 @@ class BTSpellEditor : public BTSerializedEditor
  public:
   BTSpellEditor();
 
- protected:
-  virtual void initActive(ObjectSerializer &serial, BitField &active);
+  virtual void handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
+  virtual int setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items);
   virtual bool updateActive(ObjectSerializer &serial, BitField &active, int modField);
 
+  struct extraItems
+  {
+   extraItems(BTManifest *i, const std::string &n) : item(i), name(n) {}
+
+   BTManifest *item;
+   std::string name;
+  };
+
+  struct spellType
+  {
+   int type;
+   XMLObject::create f;
+  };
+
  private:
+  std::vector<extraItems> extra;
+
+  static spellType spellTypes[BT_SPELLTYPES_USED];
   static const char *spellDescription[FIELDS_SPELL];
   static const char *spellField[FIELDS_SPELL];
 };

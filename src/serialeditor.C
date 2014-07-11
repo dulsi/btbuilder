@@ -47,7 +47,9 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
  while (27 != (key = d.process()))
  {
   d.clearText();
-  XMLAction *curField = serial.find(field[list[current].value], NULL);
+  XMLAction *curField = NULL;
+  if (list[current].value < entries)
+   curField = serial.find(field[list[current].value], NULL);
   if (curField)
   {
    switch (curField->getType())
@@ -290,6 +292,10 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
     list[current].name = std::string(description[list[current].value]) + ": " + curField->createString();
    }
   }
+  else
+  {
+   handleSpecialField(d, serial, list[current].value);
+  }
   if (updateActive(serial, active, list[current].value))
    len = setup(serial, active, list);
   d.addSelection(list.data(), len, start, current);
@@ -305,6 +311,10 @@ void BTSerializedEditor::initActive(ObjectSerializer &serial, BitField &active)
 }
 
 void BTSerializedEditor::handleObject(BTDisplay &d, XMLObject *obj, int modField)
+{
+}
+
+void BTSerializedEditor::handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val)
 {
 }
 
@@ -465,159 +475,138 @@ bool BTMonsterEditor::updateActive(ObjectSerializer &serial, BitField &active, i
 const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Illusion", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Combat Actions", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP" };
 const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "illusion", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "combatAction", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp" };
 
-#define SPELLLOC_TYPE 4
-#define SPELLLOC_MONSTER 5
-#define SPELLLOC_ARMORBONUS 6
-#define SPELLLOC_HITBONUS 7
-#define SPELLLOC_PUSH 8
-#define SPELLLOC_SAVEBONUS 9
-#define SPELLLOC_ATTACKRATEBONUS 10
-
 BTSpellEditor::BTSpellEditor()
  : BTSerializedEditor(FIELDS_SPELL, spellDescription, spellField, true)
 {
 }
 
-void BTSpellEditor::initActive(ObjectSerializer &serial, BitField &active)
+void BTSpellEditor::handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val)
 {
- XMLAction *curField = serial.find("type", NULL);
- int type = *(reinterpret_cast<int*>(curField->object));
- for (int i = 0; i < entries; ++i)
+ val -= 100;
+ if ((val == extra.size()) || (extra[val].name == "type"))
  {
-  switch (i)
+  BTDisplay::selectItem lookupItem[BT_SPELLTYPES_USED];
+  int lookupStart(0);
+  int lookupCurrent(0);
+  for (int i = 0; i < BT_SPELLTYPES_USED; ++i)
   {
-   case SPELLLOC_MONSTER:
+   lookupItem[i].name = spellTypeLookup.getName(spellTypes[i].type);
+   if ((val != extra.size()) && (extra[val].item->type == spellTypes[i].type))
+    lookupCurrent = i;
+  }
+  d.addSelection(lookupItem, BT_SPELLTYPES_USED, lookupStart, lookupCurrent);
+  if ((27 != d.process()) && ((val == extra.size()) || (lookupCurrent != extra[val].item->type)))
+  {
+   XMLAction *manifestField = serial.find("manifest", NULL);
+   XMLArray *manifestArray = (reinterpret_cast<XMLArray*>(manifestField->object));
+   XMLVector<BTManifest*> *manifest = dynamic_cast<XMLVector<BTManifest*> *>(manifestArray);
+   if (val == extra.size())
    {
-    if ((type == BTSPELLTYPE_SUMMONMONSTER) || (type == BTSPELLTYPE_SUMMONILLUSION))
-     active.set(i);
-    else
-     active.clear(i);
-    break;
+    manifest->push_back((*spellTypes[lookupCurrent].f)(NULL, NULL));
+    (*manifest)[manifest->size()  - 1]->type = spellTypes[lookupCurrent].type;
    }
-   case SPELLLOC_ARMORBONUS:
+   else
    {
-    if (type == BTSPELLTYPE_ARMORBONUS)
-     active.set(i);
-    else
-     active.clear(i);
-    break;
+    for (int i = 0; i < manifest->size(); ++i)
+    {
+     if (extra[val].item == (*manifest)[i])
+     {
+      (*manifest)[i] = dynamic_cast<BTManifest*>((*spellTypes[lookupCurrent].f)(NULL, NULL));
+      (*manifest)[i]->type = spellTypes[lookupCurrent].type;
+      delete extra[val].item;
+      break;
+     }
+    }
    }
-   case SPELLLOC_HITBONUS:
-   {
-    if (type == BTSPELLTYPE_HITBONUS)
-     active.set(i);
-    else
-     active.clear(i);
-    break;
-   }
-   case SPELLLOC_PUSH:
-   {
-    if (type == BTSPELLTYPE_PUSH)
-     active.set(i);
-    else
-     active.clear(i);
-    break;
-   }
-   case SPELLLOC_SAVEBONUS:
-   {
-    if (type == BTSPELLTYPE_SAVEBONUS)
-     active.set(i);
-    else
-     active.clear(i);
-    break;
-   }
-   case SPELLLOC_ATTACKRATEBONUS:
-   {
-    if (type == BTSPELLTYPE_ATTACKRATEBONUS)
-     active.set(i);
-    else
-     active.clear(i);
-    break;
-   }
-   default:
-    active.set(i);
+  }
+  d.clearText();
+ }
+}
+
+int BTSpellEditor::setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items)
+{
+ int current = BTSerializedEditor::setup(serial, active, items);
+ XMLAction *manifestField = serial.find("manifest", NULL);
+ XMLArray *manifestArray = (reinterpret_cast<XMLArray*>(manifestField->object));
+ XMLVector<BTManifest*> *manifest = dynamic_cast<XMLVector<BTManifest*> *>(manifestArray);
+ extra.clear();
+ int extraVal = 100;
+ char convert[50];
+ for (int i = 0; i < manifest->size(); ++i)
+ {
+  if (current == items.size())
+   items.push_back(BTDisplay::selectItem());
+  extra.push_back(BTSpellEditor::extraItems(dynamic_cast<BTManifest*>(manifest->get(i)), "type"));
+  items[current].name = std::string("Effect: ") + spellTypeLookup.getName(extra[extra.size() - 1].item->type);
+  items[current].value = extraVal++;
+  current++;
+  BTBonusManifest *bonus = dynamic_cast<BTBonusManifest*>(extra[extra.size() - 1].item);
+  if (bonus)
+  {
+   if (current == items.size())
+    items.push_back(BTDisplay::selectItem());
+   extra.push_back(BTSpellEditor::extraItems(bonus, "bonus"));
+   sprintf(convert, "%d", bonus->bonus);
+   items[current].name = std::string("  Bonus: ") + std::string(convert);
+   items[current].value = extraVal++;
+   current++;
+   if (current == items.size())
+    items.push_back(BTDisplay::selectItem());
+   extra.push_back(BTSpellEditor::extraItems(bonus, "level"));
+   sprintf(convert, "%d", bonus->level);
+   items[current].name = std::string("  Level: ") + std::string(convert);
+   items[current].value = extraVal++;
+   current++;
+   if (current == items.size())
+    items.push_back(BTDisplay::selectItem());
+   extra.push_back(BTSpellEditor::extraItems(bonus, "maximum"));
+   sprintf(convert, "%d", bonus->maximum);
+   items[current].name = std::string("  Maximum: ") + std::string(convert);
+   items[current].value = extraVal++;
+   current++;
   }
  }
+ if (current == items.size())
+  items.push_back(BTDisplay::selectItem());
+ items[current].name = std::string("<New Effect>");
+ items[current].value = extraVal++;
+ current++;
+ return current;
 }
 
 bool BTSpellEditor::updateActive(ObjectSerializer &serial, BitField &active, int modField)
 {
- if (modField == SPELLLOC_TYPE)
- {
-  BitField old = active;
-  XMLAction *curField = serial.find("type", NULL);
-  int type = *(reinterpret_cast<int*>(curField->object));
-  if ((type == BTSPELLTYPE_SUMMONMONSTER) || (type == BTSPELLTYPE_SUMMONILLUSION))
-  {
-   if (!active.isSet(SPELLLOC_MONSTER))
-   {
-    active.set(SPELLLOC_MONSTER);
-    XMLAction *extraField = serial.find("extra", NULL);
-    *(reinterpret_cast<int*>(extraField->object)) = 0;
-   }
-  }
-  else
-   active.clear(SPELLLOC_MONSTER);
-  if (type == BTSPELLTYPE_ARMORBONUS)
-  {
-   if (!active.isSet(SPELLLOC_ARMORBONUS))
-   {
-    active.set(SPELLLOC_ARMORBONUS);
-    XMLAction *extraField = serial.find("extra", NULL);
-    *(reinterpret_cast<int*>(extraField->object)) = 0;
-   }
-  }
-  else
-   active.clear(SPELLLOC_ARMORBONUS);
-  if (type == BTSPELLTYPE_HITBONUS)
-  {
-   if (!active.isSet(SPELLLOC_HITBONUS))
-   {
-    active.set(SPELLLOC_HITBONUS);
-    XMLAction *extraField = serial.find("extra", NULL);
-    *(reinterpret_cast<int*>(extraField->object)) = 0;
-   }
-  }
-  else
-   active.clear(SPELLLOC_HITBONUS);
-  if (type == BTSPELLTYPE_PUSH)
-  {
-   if (!active.isSet(SPELLLOC_PUSH))
-   {
-    active.set(SPELLLOC_PUSH);
-    XMLAction *extraField = serial.find("extra", NULL);
-    *(reinterpret_cast<int*>(extraField->object)) = 0;
-   }
-  }
-  else
-   active.clear(SPELLLOC_PUSH);
-  if (type == BTSPELLTYPE_SAVEBONUS)
-  {
-   if (!active.isSet(SPELLLOC_SAVEBONUS))
-   {
-    active.set(SPELLLOC_SAVEBONUS);
-    XMLAction *extraField = serial.find("extra", NULL);
-    *(reinterpret_cast<int*>(extraField->object)) = 0;
-   }
-  }
-  else
-   active.clear(SPELLLOC_SAVEBONUS);
-  if (type == BTSPELLTYPE_ATTACKRATEBONUS)
-  {
-   if (!active.isSet(SPELLLOC_ATTACKRATEBONUS))
-   {
-    active.set(SPELLLOC_ATTACKRATEBONUS);
-    XMLAction *extraField = serial.find("extra", NULL);
-    *(reinterpret_cast<int*>(extraField->object)) = 0;
-   }
-  }
-  else
-   active.clear(SPELLLOC_ATTACKRATEBONUS);
-  return !(active == old);
- }
- return false;
+ return ((modField < 100) ? false : true);
 }
 
-const char *BTSpellEditor::spellDescription[FIELDS_SPELL] = { "Name", "Code", "Mage Class", "Level", "Type", "Monster", "Armor Bonus", "Hit Bonus", "Distance", "Save Bonus", "Attack Rate Bonus", "Points Needed", "Range", "Effective Range", "Area/Target", "Damage/Healing", "Duration", "Spell Effect" };
-const char *BTSpellEditor::spellField[FIELDS_SPELL] = { "name", "code", "caster", "level", "type", "extraMonster", "extra", "extra", "extra", "extra", "extra", "sp", "range", "effectiveRange", "area", "dice", "duration", "effect" };
+BTSpellEditor::spellType BTSpellEditor::spellTypes[BT_SPELLTYPES_USED] =
+{
+ {BTSPELLTYPE_HEAL, BTHealManifest::create},
+ {BTSPELLTYPE_RESURRECT, BTResurrectManifest::create},
+ {BTSPELLTYPE_DAMAGE, BTAttackManifest::create},
+ {BTSPELLTYPE_SUMMONMONSTER, BTSummonManifest::create},
+ {BTSPELLTYPE_SUMMONILLUSION, BTSummonManifest::create},
+ {BTSPELLTYPE_DISPELLILLUSION, BTRangedManifest::create},
+ {BTSPELLTYPE_SCRYSIGHT, BTScrySightManifest::create},
+ {BTSPELLTYPE_LIGHT, BTManifest::create},
+ {BTSPELLTYPE_ARMORBONUS, BTBonusManifest::create},
+ {BTSPELLTYPE_HITBONUS, BTBonusManifest::create},
+ {BTSPELLTYPE_TRAPDESTROY, BTManifest::create},
+ {BTSPELLTYPE_DOORDETECT, BTManifest::create},
+ {BTSPELLTYPE_PHASEDOOR, BTPhaseDoorManifest::create},
+ {BTSPELLTYPE_DISPELLMAGIC, BTRangedManifest::create},
+ {BTSPELLTYPE_COMPASS, BTManifest::create},
+ {BTSPELLTYPE_PUSH, BTPushManifest::create},
+ {BTSPELLTYPE_ATTACKRATEBONUS, BTBonusManifest::create},
+ {BTSPELLTYPE_REGENMANA, BTRegenManaManifest::create},
+ {BTSPELLTYPE_SAVEBONUS, BTBonusManifest::create},
+ {BTSPELLTYPE_BLOCKENCOUNTERS, BTManifest::create},
+ {BTSPELLTYPE_BLOCKMAGIC, BTTargetedManifest::create},
+ {BTSPELLTYPE_SPELLBIND, BTSpellBindManifest::create},
+ {BTSPELLTYPE_LEVITATION, BTManifest::create},
+ {BTSPELLTYPE_REGENSKILL, BTRegenSkillManifest::create},
+ {BTSPELLTYPE_CURESTATUS, BTCureStatusManifest::create}
+};
+const char *BTSpellEditor::spellDescription[FIELDS_SPELL] = { "Name", "Code", "Mage Class", "Level", "Points Needed", "Range", "Effective Range", "Area/Target", "Duration", "Effect Text" };
+const char *BTSpellEditor::spellField[FIELDS_SPELL] = { "name", "code", "caster", "level", "sp", "range", "effectiveRange", "area", "duration", "effect" };
 

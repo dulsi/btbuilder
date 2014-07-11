@@ -53,7 +53,7 @@ char *spellTypes[] =
  "Regenerate Skill",
  "Cure Status"
 };
-ArrayLookup spellTypeLookup(BT_SPELLTYPES, spellTypes);
+ArrayLookup spellTypeLookup(BT_SPELLTYPES_FULL, spellTypes);
 
 char *effectiveRanges[] =
 {

@@ -683,11 +683,11 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    }
    case 'E':
    {
-    BTDisplay::selectItem effects[BT_SPELLTYPES];
-    for (int i = 0; i < BT_SPELLTYPES; ++i)
+    BTDisplay::selectItem effects[BT_SPELLTYPES_FULL];
+    for (int i = 0; i < BT_SPELLTYPES_FULL; ++i)
      effects[i].name = spellTypes[i];
     int effectStart(0);
-    d.addSelection(effects, BT_SPELLTYPES, effectStart, number[count]);
+    d.addSelection(effects, BT_SPELLTYPES_FULL, effectStart, number[count]);
     int key = d.process();
     d.clearText();
     if (key == 27)

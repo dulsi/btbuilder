@@ -9,7 +9,8 @@
 
 class ArrayLookup;
 
-#define BT_SPELLTYPES 42
+#define BT_SPELLTYPES_FULL 42
+#define BT_SPELLTYPES_USED 25
 #define BTSPELLTYPE_HEAL            0
 #define BTSPELLTYPE_RESURRECT       1
 #define BTSPELLTYPE_CUREPOISON      2
