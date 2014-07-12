@@ -239,6 +239,21 @@ std::string BTAttackManifest::createString()
  return answer;
 }
 
+int BTAttackManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTAttackManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTAttackManifest::getEditField(int i)
+{
+ return field[i];
+}
+
 std::list<BTBaseEffect*> BTAttackManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
@@ -255,7 +270,7 @@ void BTAttackManifest::serialize(ObjectSerializer* s)
 {
  BTRangedManifest::serialize(s);
  s->add("damage", &damage);
- s->add("xSpecial", &xSpecial);
+ s->add("xSpecial", &xSpecial, NULL, &extraDamageLookup);
  s->add("level", &level);
  s->add("maximum", &maximum);
 }
@@ -310,6 +325,10 @@ void BTAttackManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  d = damage;
 }
 
+const int BTAttackManifest::entries = 4;
+const char *BTAttackManifest::description[] = {"Damage", "Extra Damage", "Level Increment", "Maximum"};
+const char *BTAttackManifest::field[] = {"damage", "xSpecial", "level", "maximum"};
+
 BTManifest *BTCureStatusManifest::clone()
 {
  return new BTCureStatusManifest(*this);
@@ -323,6 +342,21 @@ std::string BTCureStatusManifest::createString()
  else
   answer += BTStatusLookup::lookup.getName(status);
  return answer;
+}
+
+int BTCureStatusManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTCureStatusManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTCureStatusManifest::getEditField(int i)
+{
+ return field[i];
 }
 
 std::list<BTBaseEffect*> BTCureStatusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -369,6 +403,10 @@ void BTCureStatusManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  }
 }
 
+const int BTCureStatusManifest::entries = 1;
+const char *BTCureStatusManifest::description[] = {"Status"};
+const char *BTCureStatusManifest::field[] = {"status"};
+
 BTManifest *BTHealManifest::clone()
 {
  return new BTHealManifest(*this);
@@ -391,6 +429,21 @@ std::string BTHealManifest::createString()
   answer += std::string(s);
  }
  return answer;
+}
+
+int BTHealManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTHealManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTHealManifest::getEditField(int i)
+{
+ return field[i];
 }
 
 std::list<BTBaseEffect*> BTHealManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -418,6 +471,10 @@ void BTHealManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  t = type;
  d = heal;
 }
+
+const int BTHealManifest::entries = 3;
+const char *BTHealManifest::description[] = {"Heal", "Level Increment", "Maximum"};
+const char *BTHealManifest::field[] = {"heal", "level", "maximum"};
 
 BTManifest *BTMultiManifest::clone()
 {
@@ -468,7 +525,7 @@ std::string BTPushManifest::createString()
 {
  char s[50];
  sprintf(s, "%d", strength);
- return BTManifest::createString() + std::string("   Distance: ") + std::string(s);
+ return BTManifest::createString() + std::string("   Force: ") + std::string(s);
 }
 
 std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -476,6 +533,21 @@ std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell,
  std::list<BTBaseEffect*> effect;
  effect.push_back(new BTPushEffect(type, expire, singer, musicId, group, target, strength));
  return effect;
+}
+
+int BTPushManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTPushManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTPushManifest::getEditField(int i)
+{
+ return field[i];
 }
 
 void BTPushManifest::serialize(ObjectSerializer* s)
@@ -490,6 +562,10 @@ void BTPushManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  ex = strength;
 }
 
+const int BTPushManifest::entries = 1;
+const char *BTPushManifest::description[] = {"Force"};
+const char *BTPushManifest::field[] = {"strength"};
+
 BTManifest *BTRegenManaManifest::clone()
 {
  return new BTRegenManaManifest(*this);
@@ -498,6 +574,21 @@ BTManifest *BTRegenManaManifest::clone()
 std::string BTRegenManaManifest::createString()
 {
  return BTManifest::createString() + std::string("  Amount: ") + mana.createString();
+}
+
+int BTRegenManaManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTRegenManaManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTRegenManaManifest::getEditField(int i)
+{
+ return field[i];
 }
 
 std::list<BTBaseEffect*> BTRegenManaManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -518,6 +609,10 @@ void BTRegenManaManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  t = type;
  d = mana;
 }
+
+const int BTRegenManaManifest::entries = 1;
+const char *BTRegenManaManifest::description[] = {"Amount"};
+const char *BTRegenManaManifest::field[] = {"mana"};
 
 BTManifest *BTScrySightManifest::clone()
 {
@@ -540,6 +635,21 @@ std::string BTSummonManifest::createString()
 {
  BTFactory<BTMonster> &monList(BTCore::getCore()->getMonsterList());
  return BTManifest::createString() + std::string("   Name: ") + monList[monster].getName();
+}
+
+int BTSummonManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTSummonManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTSummonManifest::getEditField(int i)
+{
+ return field[i];
 }
 
 std::list<BTBaseEffect*> BTSummonManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -575,6 +685,7 @@ void BTSummonManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
  s->add("monster", &monster);
+ s->add("monsterName", &monster, NULL, &BTCore::getCore()->getMonsterList());
 }
 
 void BTSummonManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
@@ -582,6 +693,10 @@ void BTSummonManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  t = type;
  ex = monster;
 }
+
+const int BTSummonManifest::entries = 1;
+const char *BTSummonManifest::description[] = {"Monster"};
+const char *BTSummonManifest::field[] = {"monsterName"};
 
 BTManifest *BTResurrectManifest::clone()
 {
@@ -666,6 +781,21 @@ std::string BTRegenSkillManifest::createString()
  return BTManifest::createString() + std::string("   Skill: ") + skillList[skill]->name + std::string("   Amount: ") + amount.createString();
 }
 
+int BTRegenSkillManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTRegenSkillManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTRegenSkillManifest::getEditField(int i)
+{
+ return field[i];
+}
+
 std::list<BTBaseEffect*> BTRegenSkillManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
@@ -690,4 +820,8 @@ void BTRegenSkillManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  t = BTSPELLTYPE_REGENBARD;
  ex = amount.getModifier();
 }
+
+const int BTRegenSkillManifest::entries = 2;
+const char *BTRegenSkillManifest::description[] = {"Skill", "Amount"};
+const char *BTRegenSkillManifest::field[] = {"skill", "amount"};
 

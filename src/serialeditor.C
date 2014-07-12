@@ -44,56 +44,90 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
  int len = setup(serial, active, list);
  d.addSelection(list.data(), len, start, current);
  int key;
- while (27 != (key = d.process()))
+ char extra[2] = {BTKEY_DEL, 0};
+ while (27 != (key = d.process(extra)))
  {
   d.clearText();
   XMLAction *curField = NULL;
   if (list[current].value < entries)
    curField = serial.find(field[list[current].value], NULL);
-  if (curField)
+  if (key == BTKEY_DEL)
   {
-   int where = 0;
-   if (curField->getType() == XMLTYPE_CREATE)
+   if (curField)
    {
-    XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
     int where = 0;
-    for (int i = current - 1; (i >= 0) && (list[i].value == list[current].value); --i)
+    if (curField->getType() == XMLTYPE_CREATE)
     {
-     ++where;
-    }
-    if (where >= obj->size())
-    {
-     obj->push_back((*reinterpret_cast<XMLObject::create>(curField->data))(field[list[current].value], NULL));
-     list.push_back(BTDisplay::selectItem());
-     for (int i = list.size() - 1; i > current; --i)
+     XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
+     int where = 0;
+     for (int i = current - 1; (i >= 0) && (list[i].value == list[current].value); --i)
      {
-      list[i].name = list[i - 1].name;
-      list[i].value = list[i - 1].value;
+      ++where;
      }
-     len++;
+     if (where < obj->size())
+     {
+      obj->erase(where);
+      for (int i = current; i < len - 1; ++i)
+      {
+       list[i].name = list[i + 1].name;
+       list[i].value = list[i + 1].value;
+      }
+      --len;
+     }
     }
-   }
-   editField(d, serial, description[list[current].value], curField, list[current].value, where);
-   if (curField->getType() == XMLTYPE_OBJECT)
-   {
-    XMLObject *obj = reinterpret_cast<XMLObject*>(curField->object);
-    BTDice *dice = dynamic_cast<BTDice*>(obj);
-    if (dice)
-     list[current].name = std::string(description[list[current].value]) + ": " + dice->createString();
-   }
-   else if (curField->getType() != XMLTYPE_CREATE)
-   {
-    list[current].name = std::string(description[list[current].value]) + ": " + curField->createString();
    }
    else
    {
-    XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
-    list[current].name = std::string(description[list[current].value]) + ": " + obj->get(where)->createString();
+    delSpecialField(d, serial, list[current].value);
    }
   }
   else
   {
-   handleSpecialField(d, serial, list[current].value);
+   if (curField)
+   {
+    int where = 0;
+    if (curField->getType() == XMLTYPE_CREATE)
+    {
+     XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
+     int where = 0;
+     for (int i = current - 1; (i >= 0) && (list[i].value == list[current].value); --i)
+     {
+      ++where;
+     }
+     if (where >= obj->size())
+     {
+      obj->push_back((*reinterpret_cast<XMLObject::create>(curField->data))(field[list[current].value], NULL));
+      list.push_back(BTDisplay::selectItem());
+      for (int i = list.size() - 1; i > current; --i)
+      {
+       list[i].name = list[i - 1].name;
+       list[i].value = list[i - 1].value;
+      }
+      len++;
+     }
+    }
+    editField(d, serial, description[list[current].value], curField, list[current].value, where);
+    if (curField->getType() == XMLTYPE_OBJECT)
+    {
+     XMLObject *obj = reinterpret_cast<XMLObject*>(curField->object);
+     BTDice *dice = dynamic_cast<BTDice*>(obj);
+     if (dice)
+      list[current].name = std::string(description[list[current].value]) + ": " + dice->createString();
+    }
+    else if (curField->getType() != XMLTYPE_CREATE)
+    {
+     list[current].name = std::string(description[list[current].value]) + ": " + curField->createString();
+    }
+    else
+    {
+     XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
+     list[current].name = std::string(description[list[current].value]) + ": " + obj->get(where)->createString();
+    }
+   }
+   else
+   {
+    handleSpecialField(d, serial, list[current].value);
+   }
   }
   if (updateActive(serial, active, list[current].value))
    len = setup(serial, active, list);
@@ -101,6 +135,10 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
  }
  d.clearText();
  d.setConfig(oldConfig);
+}
+
+void BTSerializedEditor::delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val)
+{
 }
 
 void BTSerializedEditor::editField(BTDisplay &d, ObjectSerializer &serial, const char *text, XMLAction *curField, int modField, int where)
@@ -493,6 +531,25 @@ BTSpellEditor::BTSpellEditor()
 {
 }
 
+void BTSpellEditor::delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val)
+{
+ val -= 100;
+ if ((val != extra.size()) && (extra[val].name == "type"))
+ {
+  XMLAction *manifestField = serial.find("manifest", NULL);
+  XMLArray *manifestArray = (reinterpret_cast<XMLArray*>(manifestField->object));
+  XMLVector<BTManifest*> *manifest = dynamic_cast<XMLVector<BTManifest*> *>(manifestArray);
+  for (int i = 0; i < manifest->size(); ++i)
+  {
+   if (extra[val].item == (*manifest)[i])
+   {
+    manifest->erase(i);
+    break;
+   }
+  }
+ }
+}
+
 void BTSpellEditor::handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val)
 {
  val -= 100;
@@ -534,6 +591,13 @@ void BTSpellEditor::handleSpecialField(BTDisplay &d, ObjectSerializer &serial, i
   }
   d.clearText();
  }
+ else
+ {
+  ObjectSerializer serialSub;
+  extra[val].item->serialize(&serialSub);
+  XMLAction *manifestField = serialSub.find(extra[val].name.c_str(), NULL);
+  editField(d, serialSub, extra[val].item->getEditFieldDescription(extra[val].value), manifestField, extra[val].value, 0);
+ }
 }
 
 int BTSpellEditor::setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items)
@@ -550,7 +614,7 @@ int BTSpellEditor::setup(ObjectSerializer &serial, BitField &active, std::vector
   if (current == items.size())
    items.push_back(BTDisplay::selectItem());
   BTManifest *manifestObj = dynamic_cast<BTManifest*>(manifest->get(i));
-  extra.push_back(BTSpellEditor::extraItems(manifestObj, "type"));
+  extra.push_back(BTSpellEditor::extraItems(manifestObj, "type", -1));
   items[current].name = std::string("Effect: ") + spellTypeLookup.getName(manifestObj->type);
   items[current].value = extraVal++;
   current++;
@@ -563,7 +627,7 @@ int BTSpellEditor::setup(ObjectSerializer &serial, BitField &active, std::vector
    {
     if (current == items.size())
      items.push_back(BTDisplay::selectItem());
-    extra.push_back(BTSpellEditor::extraItems(manifestObj, manifestObj->getEditField(n)));
+    extra.push_back(BTSpellEditor::extraItems(manifestObj, manifestObj->getEditField(n), n));
     XMLAction *curField = serialSub.find(manifestObj->getEditField(n), NULL);
     items[current].name = std::string("  ") + std::string(manifestObj->getEditFieldDescription(n)) + ": " + curField->createString();
     items[current].value = extraVal++;

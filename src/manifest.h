@@ -97,6 +97,9 @@ class BTAttackManifest : public BTRangedManifest
 
   virtual BTManifest *clone();
   std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -107,6 +110,11 @@ class BTAttackManifest : public BTRangedManifest
   int xSpecial;
   int level;
   int maximum;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
 };
 
 class BTCureStatusManifest : public BTManifest
@@ -117,6 +125,9 @@ class BTCureStatusManifest : public BTManifest
 
   virtual BTManifest *clone();
   std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -124,6 +135,11 @@ class BTCureStatusManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTCureStatusManifest; }
 
   int status;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
 };
 
 class BTHealManifest : public BTManifest
@@ -134,6 +150,9 @@ class BTHealManifest : public BTManifest
 
   virtual BTManifest *clone();
   std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -143,6 +162,11 @@ class BTHealManifest : public BTManifest
   BTDice heal;
   int level;
   int maximum;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
 };
 
 class BTMultiManifest : public BTManifest
@@ -169,6 +193,9 @@ class BTPushManifest : public BTManifest
 
   virtual BTManifest *clone();
   std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -176,6 +203,11 @@ class BTPushManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPushManifest; }
 
   int strength;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
 };
 
 class BTRegenManaManifest : public BTManifest
@@ -186,6 +218,9 @@ class BTRegenManaManifest : public BTManifest
 
   virtual BTManifest *clone();
   std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -193,6 +228,11 @@ class BTRegenManaManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenManaManifest; }
 
   BTDice mana;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
 };
 
 class BTScrySightManifest : public BTManifest
@@ -209,11 +249,14 @@ class BTScrySightManifest : public BTManifest
 class BTSummonManifest : public BTManifest
 {
  public:
-  BTSummonManifest() : monster(-1) {}
+  BTSummonManifest() : monster(0) {}
   BTSummonManifest(int t, int m) : BTManifest(t), monster(m) {}
 
   virtual BTManifest *clone();
   std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -221,6 +264,11 @@ class BTSummonManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSummonManifest; }
 
   int monster;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
 };
 
 class BTResurrectManifest : public BTManifest
@@ -264,6 +312,9 @@ class BTRegenSkillManifest : public BTManifest
 
   virtual BTManifest *clone();
   std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -272,6 +323,11 @@ class BTRegenSkillManifest : public BTManifest
 
   int skill;
   BTDice amount;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
 };
 
 #endif

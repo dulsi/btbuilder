@@ -36,6 +36,7 @@ class XMLObject
 class XMLArray
 {
  public:
+  virtual void erase(size_t i) = 0;
   virtual XMLObject *get(size_t i) = 0;
   virtual void push_back(XMLObject *obj) = 0;
   virtual size_t size() const = 0;
@@ -66,6 +67,7 @@ class XMLVector : public XMLArray, public std::vector<T>
   typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position) { if (clear) { delete *position; } std::vector<T>::erase(position); }
   typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position, bool clearOveride) { if (clearOveride) { delete *position; } std::vector<T>::erase(position); }
   typename std::vector<T>::iterator erase(typename std::vector<T>::iterator first, typename std::vector<T>::iterator last) { if (clear) { for (typename std::vector<T>::iterator current = first; current != last; current++) delete *current; } std::vector<T>::erase(first, last); }
+  void erase(size_t i) { erase(this->begin() + i); }
   virtual size_t size() const { return std::vector<T>::size(); }
 
  private:

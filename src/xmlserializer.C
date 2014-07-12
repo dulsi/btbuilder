@@ -138,6 +138,9 @@ std::string XMLAction::createString()
    sprintf(convert, "%d", reinterpret_cast<PictureIndex*>(object)->value);
    content = convert;
    break;
+  case XMLTYPE_OBJECT:
+   content = reinterpret_cast<XMLObject*>(object)->createString();
+   break;
   default:
    break;
  }

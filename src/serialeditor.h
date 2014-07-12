@@ -68,6 +68,7 @@ class BTSerializedEditor : public BTFactoryEditor
   void edit(BTDisplay &d, ObjectSerializer &serial);
 
  protected:
+  virtual void delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
   void editField(BTDisplay &d, ObjectSerializer &serial, const char *text, XMLAction *curField, int modField, int where);
   virtual void initActive(ObjectSerializer &serial, BitField &active);
   virtual void handleObject(BTDisplay &d, XMLObject *obj, int modField);
@@ -144,16 +145,18 @@ class BTSpellEditor : public BTSerializedEditor
  public:
   BTSpellEditor();
 
+  virtual void delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
   virtual void handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
   virtual int setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items);
   virtual bool updateActive(ObjectSerializer &serial, BitField &active, int modField);
 
   struct extraItems
   {
-   extraItems(BTManifest *i, const std::string &n) : item(i), name(n) {}
+   extraItems(BTManifest *i, const std::string &n, int v) : item(i), name(n), value(v) {}
 
    BTManifest *item;
    std::string name;
+   int value;
   };
 
   struct spellType
