@@ -68,6 +68,7 @@ class BTSerializedEditor : public BTFactoryEditor
   void edit(BTDisplay &d, ObjectSerializer &serial);
 
  protected:
+  virtual void complete(ObjectSerializer &serial);
   virtual void delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
   void editField(BTDisplay &d, ObjectSerializer &serial, const char *text, XMLAction *curField, int modField, int where);
   virtual void initActive(ObjectSerializer &serial, BitField &active);
@@ -145,6 +146,7 @@ class BTSpellEditor : public BTSerializedEditor
  public:
   BTSpellEditor();
 
+  virtual void complete(ObjectSerializer &serial);
   virtual void delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
   virtual void handleSpecialField(BTDisplay &d, ObjectSerializer &serial, int val);
   virtual int setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items);

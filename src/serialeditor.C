@@ -133,8 +133,13 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
    len = setup(serial, active, list);
   d.addSelection(list.data(), len, start, current);
  }
+ complete(serial);
  d.clearText();
  d.setConfig(oldConfig);
+}
+
+void BTSerializedEditor::complete(ObjectSerializer &serial)
+{
 }
 
 void BTSerializedEditor::delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val)
@@ -529,6 +534,23 @@ const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralNam
 BTSpellEditor::BTSpellEditor()
  : BTSerializedEditor(FIELDS_SPELL, spellDescription, spellField, true)
 {
+}
+
+void BTSpellEditor::complete(ObjectSerializer &serial)
+{
+ XMLAction *rangeField = serial.find("range", NULL);
+ XMLAction *effectiveRangeField = serial.find("effectiveRange", NULL);
+ IShort range = *(reinterpret_cast<IShort*>(rangeField->object));
+ IShort effectiveRange = *(reinterpret_cast<IShort*>(effectiveRangeField->object));
+ XMLAction *manifestField = serial.find("manifest", NULL);
+ XMLArray *manifestArray = (reinterpret_cast<XMLArray*>(manifestField->object));
+ XMLVector<BTManifest*> *manifest = dynamic_cast<XMLVector<BTManifest*> *>(manifestArray);
+ for (int i = 0; i < manifest->size(); ++i)
+ {
+  BTRangedManifest *rangedManifest = dynamic_cast<BTRangedManifest*>(manifest->get(i));
+  rangedManifest->range = range;
+  rangedManifest->effectiveRange = effectiveRange;
+ }
 }
 
 void BTSpellEditor::delSpecialField(BTDisplay &d, ObjectSerializer &serial, int val)
