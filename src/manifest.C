@@ -337,10 +337,7 @@ BTManifest *BTCureStatusManifest::clone()
 std::string BTCureStatusManifest::createString()
 {
  std::string answer = BTManifest::createString() + std::string("  Status: ");
- if (status == BTSTATUS_LEVELDRAIN)
-  answer += "Level drain";
- else
-  answer += BTStatusLookup::lookup.getName(status);
+ answer += statusLookup.getName(status);
  return answer;
 }
 
@@ -369,8 +366,7 @@ std::list<BTBaseEffect*> BTCureStatusManifest::manifest(BTDisplay &d, bool party
 void BTCureStatusManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
- // Can't use lookup at the moment due to level drain being -2.
- s->add("status", &status /*, NULL, &BTStatusLookup::lookup*/);
+ s->add("status", &status , NULL, &statusLookup);
 }
 
 void BTCureStatusManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)

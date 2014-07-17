@@ -267,6 +267,28 @@ char *genderPronouns[] =
  "it"
 };
 
+int statusValue[] =
+{
+ BTSTATUS_LEVELDRAIN,
+ BTSTATUS_POISONED,
+ BTSTATUS_INSANE,
+ BTSTATUS_AGED,
+ BTSTATUS_POSSESSED,
+ BTSTATUS_STONED,
+ BTSTATUS_PARALYZED
+};
+char *statusNames[] =
+{
+ "Level drain",
+ "Poisoned",
+ "Insane",
+ "Aged",
+ "Possessed",
+ "Stoned",
+ "Paralyzed"
+};
+PairLookup statusLookup(7, statusValue, statusNames);
+
 char *restriction[] =
 {
  "none",

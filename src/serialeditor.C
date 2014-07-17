@@ -225,16 +225,29 @@ void BTSerializedEditor::editField(BTDisplay &d, ObjectSerializer &serial, const
     ValueLookup *lookup = reinterpret_cast<ValueLookup*>(curField->data);
     bool extra = ((curField->extra == EXTRA_NONE) ? false : true);
     BTDisplay::selectItem lookupItem[lookup->size() + (extra ? 1 : 0)];
+    int i = 0;
     if (extra)
+    {
      lookupItem[0].name = curField->extraText;
-    for (int i = 0; i < lookup->size(); ++i)
-     lookupItem[i + (extra ? 1 : 0)].name = lookup->getName(i);
+     lookupItem[0].value = -1;
+     ++i;
+    }
+    int endIndex = lookup->getEndIndex();
+    int lookupCurrent(0);
+    int valIndex((*(reinterpret_cast<int*>(curField->object))) + (extra ? 1 : 0));
+    for (int curIndex = lookup->getFirstIndex(); curIndex != endIndex; curIndex = lookup->getNextIndex(curIndex))
+    {
+     lookupItem[i].name = lookup->getName(curIndex);
+     lookupItem[i].value = curIndex;
+     if (curIndex == valIndex)
+      lookupCurrent = i;
+     ++i;
+    }
     int lookupStart(0);
-    int lookupCurrent((*(reinterpret_cast<int*>(curField->object))) + (extra ? 1 : 0));
     d.addSelection(lookupItem, lookup->size() + (extra ? 1 : 0), lookupStart, lookupCurrent);
     if (27 != d.process())
     {
-     *(reinterpret_cast<int*>(curField->object)) = lookupCurrent - (extra ? 1 : 0);
+     *(reinterpret_cast<int*>(curField->object)) = lookupItem[lookupCurrent].value;
     }
    }
    else
@@ -548,8 +561,11 @@ void BTSpellEditor::complete(ObjectSerializer &serial)
  for (int i = 0; i < manifest->size(); ++i)
  {
   BTRangedManifest *rangedManifest = dynamic_cast<BTRangedManifest*>(manifest->get(i));
-  rangedManifest->range = range;
-  rangedManifest->effectiveRange = effectiveRange;
+  if (rangedManifest)
+  {
+   rangedManifest->range = range;
+   rangedManifest->effectiveRange = effectiveRange;
+  }
  }
 }
 

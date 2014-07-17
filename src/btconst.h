@@ -8,6 +8,7 @@
 \*-------------------------------------------------------------------------*/
 
 class ArrayLookup;
+class PairLookup;
 
 #define BT_SPELLTYPES_FULL 42
 #define BT_SPELLTYPES_USED 25
@@ -285,6 +286,7 @@ extern char *genderPronouns[];
 #define BTSTATUS_STONED     5
 #define BTSTATUS_PARALYZED  6
 #define BTSTATUS_NPC        7
+extern PairLookup statusLookup;
 
 #define BTCOMBAT_MAXENCOUNTERS 4
 

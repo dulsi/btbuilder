@@ -120,7 +120,7 @@ class BTAttackManifest : public BTRangedManifest
 class BTCureStatusManifest : public BTManifest
 {
  public:
-  BTCureStatusManifest() : status(0) {}
+  BTCureStatusManifest() : status(BTSTATUS_POISONED) {}
   BTCureStatusManifest(int s) : BTManifest(BTSPELLTYPE_CURESTATUS), status(s) {}
 
   virtual BTManifest *clone();
