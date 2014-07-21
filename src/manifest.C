@@ -802,7 +802,7 @@ std::list<BTBaseEffect*> BTRegenSkillManifest::manifest(BTDisplay &d, bool party
 void BTRegenSkillManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
- s->add("skill", &skill);
+ s->add("skill", &skill, NULL, &BTCore::getCore()->getSkillList());
  s->add("amount", &amount);
 }
 

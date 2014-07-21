@@ -814,6 +814,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
    select->position.y = text.y + textPos;
    select->position.w = text.w;
    select->position.h = bottomPos - textPos;
+   select->sanitize(*this);
   }
  }
  if (!select)
@@ -1693,6 +1694,19 @@ void BTUISelect::pageUp(BTDisplay &d)
  {
   while ((select + 1 < size) && (list[select].flags.isSet(BTSELECTFLAG_UNSELECTABLE)))
    ++select;
+ }
+}
+
+void BTUISelect::sanitize(BTDisplay &d)
+{
+ int wFirst, h, lines;
+ d.sizeFont("", wFirst, h);
+ lines = position.h / h;
+ if (start > select)
+  start = select;
+ else if (start + lines <= select)
+ {
+  start = select - (lines - 1);
  }
 }
 

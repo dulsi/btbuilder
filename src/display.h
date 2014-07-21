@@ -248,6 +248,7 @@ class BTUISelect : public BTUIElement
   void moveUp(BTDisplay &d);
   void pageDown(BTDisplay &d);
   void pageUp(BTDisplay &d);
+  void sanitize(BTDisplay &d);
 
   BTDisplay::selectItem *list;
   int size;

@@ -57,6 +57,46 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 
 <p><center><img src="spelledit.png" /></center></p>
 
+<p>The Bt Builder spell editor has more flexibility than BTCS allowed. Multiple effects can be added to a spell. Each effect with a saving throw is saved separately. The properties on that effect are shown indented under the type of the effect. Not all properties are supported under the old BTCS file formats. Currently the editor will automatically convert the file to the Bt Builder format if the spells need that functionality. In the future there may be a mode to lock the functionality only to that available in the BTCS.</p>
+
+<p>The damage and various bonus spells have new properties called Level Increment and Maximum. A Level Increment of zero does nothing. A higher level increment will cause the system to multiply the number of dice or bonus by the caster's level divided by the level increment. If maximum is not zero, it will cap the number of dice/bonus.</p>
+
+<p>The following chart shows how to create spells available in BTCS.</p>
+
+<table>
+<tr><th>BTCS Type</th><th>Bt Builder Effect</th><th></th>Additional Settings</th></tr>
+<tr><td>Heal</td><td>Heal</td><td>None</td></tr>
+<tr><td>Resurrect</td><td>Resurrect</td><td>None</td></tr>
+<tr><td>Cure Poison</td><td>Cure Status</td><td>Status: Poisoned</td></tr>
+<tr><td>Cure Insanity</td><td>Cure Status</td><td>Status: Insane</td></tr>
+<tr><td>Youth</td><td>Cure Status</td><td>Status: Aged</td></tr>
+<tr><td>Dispossess</td><td>Cure Status</td><td>Status: Possessed</td></tr>
+<tr><td>Stone to Flesh</td><td>Cure Status</td><td>Status: Stoned</td></tr>
+<tr><td>Cure Paralysis</td><td>Cure Status</td><td>Status: Paralyzed</td></tr>
+<tr><td>Restore Lost Levels</td><td>Cure Status</td><td>Status: Level drained</td></tr>
+<tr><td>Damage</td><td>Damage</td><td>None</td></tr>
+<tr><td>Kill</td><td>Damage</td><td>Damage: 0d2, Extra Damage: Critical hit</td></tr>
+<tr><td>Poison</td>Damage<td></td><td>Damage: 0d2, Extra Damage: Poison</td></tr>
+<tr><td>Cause Insanity</td>Damage<td></td><td>Damage: 0d2, Extra Damage: Insanity</td></tr>
+<tr><td>Age</td><td>Damage</td><td>Damage: 0d2, Extra Damage: Aging</td></tr>
+<tr><td>Possess</td><td>Damage</td><td>Damage: 0d2, Extra Damage: Possession</td></tr>
+<tr><td>Flesh to Stone</td><td>Damage</td><td>Damage: 0d2, Extra Damage: Stoned</td></tr>
+<tr><td>Paralyze</td><td>Damage</td><td>Damage: 0d2, Extra Damage: Paralysis</td></tr>
+<tr><td>Summon Monster</td><td>Summon Monster</td><td>None</td></tr>
+<tr><td>Summon Illusion</td><td>Summon Illusion</td><td>None</td></tr>
+<tr><td>Dispell Illusion</td><td>Dispell Illusion</td><td>None</td></tr>
+<tr><td>Scry Sight</td><td>Scry Sight</td><td>None</td></tr>
+<tr><td>Light</td><td>Light</td><td>None</td></tr>
+<tr><td>Armor Class Bonus</td><td>Armor Class Bonus</td><td>None</td></tr>
+<tr><td>Hit Bonus</td><td>Hit Bonus</td><td>None</td></tr>
+<tr><td>Trap Destruction</td><td>Trap Destruction</td><td>None</td></tr>
+<tr><td>Secret Door Detection</td><td>Secret Door Detection</td><td>None</td></tr>
+<tr><td>Phase Door</td><td>Phase Door</td><td>None</td></tr>
+<tr><td>Dispell Magic</td><td>Dispell Magic</td><td>None</td></tr>
+<tr><td>Regenerate Bard Song</td><td>Regenerate Skill</td><td>Skill: Bard Song, Amount: 0d2+&lt;value&gt;</td></tr>
+<tr><td>Damage by Level</td><td>Damage</td><td>Level Increment: 1</td></tr>
+</table>
+
 <p><h2>Monster Editor</h2></p>
 
 <p><center><img src="monsteredit.png" /></center></p>

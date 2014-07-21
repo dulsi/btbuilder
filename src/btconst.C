@@ -279,7 +279,7 @@ int statusValue[] =
 };
 char *statusNames[] =
 {
- "Level drain",
+ "Level drained",
  "Poisoned",
  "Insane",
  "Aged",
