@@ -379,6 +379,8 @@ void BTSpell1::upgrade()
   switch (type)
   {
    case BTSPELLTYPE_LIGHT:
+    manifest.push_back(new BTLightManifest());
+    break;
    case BTSPELLTYPE_DOORDETECT:
    case BTSPELLTYPE_TRAPDESTROY:
    case BTSPELLTYPE_COMPASS:
