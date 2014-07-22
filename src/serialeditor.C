@@ -695,7 +695,7 @@ BTSpellEditor::spellType BTSpellEditor::spellTypes[BT_SPELLTYPES_USED] =
  {BTSPELLTYPE_SUMMONILLUSION, BTSummonManifest::create},
  {BTSPELLTYPE_DISPELLILLUSION, BTRangedManifest::create},
  {BTSPELLTYPE_SCRYSIGHT, BTScrySightManifest::create},
- {BTSPELLTYPE_LIGHT, BTManifest::create},
+ {BTSPELLTYPE_LIGHT, BTLightManifest::create},
  {BTSPELLTYPE_ARMORBONUS, BTBonusManifest::create},
  {BTSPELLTYPE_HITBONUS, BTBonusManifest::create},
  {BTSPELLTYPE_TRAPDESTROY, BTManifest::create},

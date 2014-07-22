@@ -330,5 +330,29 @@ class BTRegenSkillManifest : public BTManifest
   static const char *field[];
 };
 
+class BTLightManifest : public BTManifest
+{
+ public:
+  BTLightManifest() : BTManifest(BTSPELLTYPE_LIGHT), illumination(5) {}
+
+  virtual BTManifest *clone();
+  std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+  virtual void serialize(ObjectSerializer *s);
+  virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTLightManifest; }
+
+  int illumination;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
+};
+
 #endif
 

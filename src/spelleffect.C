@@ -1446,3 +1446,13 @@ void BTSpellBindEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGE
 {
 }
 
+BTLightEffect::BTLightEffect(int t, int x, int s, int m, int g, int trgt, int illum)
+ : BTTargetedEffect(t, x, s, m, g, trgt), illumination(illum)
+{
+}
+
+void BTLightEffect::serialize(ObjectSerializer *s)
+{
+ s->add("illumination", &illumination);
+}
+

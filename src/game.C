@@ -279,7 +279,13 @@ int BTGame::getLight()
  {
   if (BTSPELLTYPE_LIGHT == (*itr)->type)
   {
-   if (light < 5)
+   BTLightEffect *l = dynamic_cast<BTLightEffect*>(*itr);
+   if (l)
+   {
+    if (l->illumination > light)
+     light = l->illumination;
+   }
+   else if (light < 5)
     light = 5;
   }
  }
@@ -994,6 +1000,7 @@ void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, std::string &star
  s->add("savebonuseffect", typeid(BTSaveBonusEffect).name(), &effect, &BTSaveBonusEffect::create);
  s->add("scrysighteffect", typeid(BTScrySightEffect).name(), &effect, &BTScrySightEffect::create);
  s->add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
+ s->add("lighteffect", typeid(BTLightEffect).name(), &effect, &BTLightEffect::create);
 }
 
 void BTGame::readSaveXML(const char *filename)

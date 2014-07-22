@@ -68,6 +68,7 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("phaseDoorManifest", typeid(BTPhaseDoorManifest).name(), &manifest, &BTPhaseDoorManifest::create);
  s->add("spellBindManifest", typeid(BTSpellBindManifest).name(), &manifest, &BTSpellBindManifest::create);
  s->add("regenSkillManifest", typeid(BTRegenSkillManifest).name(), &manifest, &BTRegenSkillManifest::create);
+ s->add("lightManifest", typeid(BTLightManifest).name(), &manifest, &BTLightManifest::create);
  // Backward compatability
  s->add("armorBonusManifest", "-", &manifest, &BTBonusManifest::create);
  s->add("attackRateBonusManifest", "-", &manifest, &BTBonusManifest::create);
@@ -820,4 +821,56 @@ void BTRegenSkillManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 const int BTRegenSkillManifest::entries = 2;
 const char *BTRegenSkillManifest::description[] = {"Skill", "Amount"};
 const char *BTRegenSkillManifest::field[] = {"skill", "amount"};
+
+BTManifest *BTLightManifest::clone()
+{
+ return new BTLightManifest(*this);
+}
+
+std::string BTLightManifest::createString()
+{
+ char s[50];
+ std::string answer = BTManifest::createString() + std::string("  Illumination: ");
+ sprintf(s, "%d", illumination);
+ answer += std::string(s);
+ return answer;
+}
+
+int BTLightManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTLightManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTLightManifest::getEditField(int i)
+{
+ return field[i];
+}
+
+std::list<BTBaseEffect*> BTLightManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+{
+ std::list<BTBaseEffect*> effect;
+ effect.push_back(new BTLightEffect(type, expire, singer, musicId, group, target, illumination));
+ return effect;
+}
+
+void BTLightManifest::serialize(ObjectSerializer* s)
+{
+ BTManifest::serialize(s);
+ s->add("illumination", &illumination);
+}
+
+void BTLightManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
+{
+ if (illumination != 5)
+  throw FileException("Unsupported illumination level.");
+}
+
+const int BTLightManifest::entries = 1;
+const char *BTLightManifest::description[] = {"Illumination"};
+const char *BTLightManifest::field[] = {"illumination"};
 

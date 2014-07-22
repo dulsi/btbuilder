@@ -340,5 +340,17 @@ class BTSpellBindEffect : public BTResistedEffect
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSpellBindEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE); }
 };
 
+class BTLightEffect : public BTTargetedEffect
+{
+ public:
+  BTLightEffect(int t, int x, int s, int m, int g, int trgt, int illum);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTLightEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE, 5); }
+
+  int illumination;
+};
+
 #endif
 
