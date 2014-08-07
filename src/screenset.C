@@ -2063,7 +2063,7 @@ int BTScreenSet::saveParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int
  {
   if (group[found]->name == readString->getResponse())
   {
-   throw BTSpecialError("exists");
+   throw BTSpecialError("existsparty");
   }
  }
  BTGroup *grp = new BTGroup;

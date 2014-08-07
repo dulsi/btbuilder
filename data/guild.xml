@@ -73,5 +73,6 @@
 	<error type="noroster">No adventurers available.</error>
 	<error type="inparty"><name /> is already in the party.</error>
 	<error type="exists" screen="7">There is already a person by that name.</error>
+	<error type="existsparty" screen="9">There is already a party by that name.</error>
 	<error type="fullparty">Party is full.</error>
 </screenset>
