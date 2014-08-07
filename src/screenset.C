@@ -2010,8 +2010,8 @@ int BTScreenSet::removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
    if (!found)
    {
     b.pc[0]->setName("");
-    b.setPc(NULL);
    }
+   b.setPc(NULL);
    break;
   }
  }
