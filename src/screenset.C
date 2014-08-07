@@ -1973,11 +1973,26 @@ int BTScreenSet::requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
 
 int BTScreenSet::removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
+ XMLVector<BTPc*> &roster = BTGame::getGame()->getRoster();
  BTParty &party = BTGame::getGame()->getParty();
  if ((key >= '1') && (key <= '9') && (key - '1' < party.size()))
  {
   BTGame::getGame()->movedPlayer(d, key - '1', BTPARTY_REMOVE);
   // Add monster to save file
+  bool found = false;
+  BTPc *pc = party[key - '1'];
+  for (XMLVector<BTPc*>::iterator itr = roster.begin(); itr != roster.end(); ++itr)
+  {
+   if (pc == (*itr))
+   {
+    found = true;
+    break;
+   }
+  }
+  if (!found)
+  {
+   roster.push_back(pc);
+  }
   party.remove(key - '1', d);
   d.drawStats();
  }
