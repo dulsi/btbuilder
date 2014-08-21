@@ -104,6 +104,7 @@ void BTTargetedEffect::serialize(ObjectSerializer *s)
 {
  s->add("group", &group);
  s->add("target", &target);
+ BTBaseEffect::serialize(s);
 }
 
 bool BTTargetedEffect::targets(int g, int who, bool exact /*= true*/)
@@ -164,6 +165,7 @@ BTResistedEffect::BTResistedEffect(int t, int x, int s, int m, int g, int trgt)
 void BTResistedEffect::serialize(ObjectSerializer *s)
 {
  s->add("resists", &resists, NULL);
+ BTTargetedEffect::serialize(s);
 }
 
 bool BTResistedEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -279,6 +281,7 @@ void BTAttackEffect::serialize(ObjectSerializer *s)
  s->add("distance", &distance);
  s->add("damage", &damage);
  s->add("status", &status);
+ BTResistedEffect::serialize(s);
 }
 
 int BTAttackEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -516,6 +519,7 @@ BTCureStatusEffect::BTCureStatusEffect(int t, int x, int s, int m, int g, int tr
 void BTCureStatusEffect::serialize(ObjectSerializer *s)
 {
  s->add("status", &status);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -631,6 +635,7 @@ BTHealEffect::BTHealEffect(int t, int x, int s, int m, int g, int trgt, const BT
 void BTHealEffect::serialize(ObjectSerializer *s)
 {
  s->add("heal", &heal);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTHealEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -710,6 +715,7 @@ void BTDispellIllusionEffect::serialize(ObjectSerializer *s)
  s->add("range", &range);
  s->add("effectiveRange", &effectiveRange);
  s->add("distance", &distance);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTDispellIllusionEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -800,6 +806,7 @@ BTArmorBonusEffect::BTArmorBonusEffect(int t, int x, int s, int m, int g, int tr
 void BTArmorBonusEffect::serialize(ObjectSerializer *s)
 {
  s->add("bonus", &bonus);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTArmorBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -919,6 +926,7 @@ BTHitBonusEffect::BTHitBonusEffect(int t, int x, int s, int m, int g, int trgt, 
 void BTHitBonusEffect::serialize(ObjectSerializer *s)
 {
  s->add("bonus", &bonus);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTHitBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -1073,6 +1081,7 @@ void BTDispellMagicEffect::serialize(ObjectSerializer *s)
  s->add("range", &range);
  s->add("effectiveRange", &effectiveRange);
  s->add("distance", &distance);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTDispellMagicEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -1118,6 +1127,7 @@ void BTPhaseDoorEffect::serialize(ObjectSerializer *s)
  s->add("mapX", &mapX);
  s->add("mapY", &mapY);
  s->add("facing", &facing);
+ BTBaseEffect::serialize(s);
 }
 
 BTRegenSkillEffect::BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u)
@@ -1129,6 +1139,7 @@ void BTRegenSkillEffect::serialize(ObjectSerializer *s)
 {
  s->add("skill", &skill);
  s->add("use", &use);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTRegenSkillEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -1165,6 +1176,7 @@ BTPushEffect::BTPushEffect(int t, int x, int s, int m, int g, int trgt, int dis)
 void BTPushEffect::serialize(ObjectSerializer *s)
 {
  s->add("distance", &distance);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTPushEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -1207,6 +1219,7 @@ BTAttackRateBonusEffect::BTAttackRateBonusEffect(int t, int x, int s, int m, int
 void BTAttackRateBonusEffect::serialize(ObjectSerializer *s)
 {
  s->add("bonus", &bonus);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTAttackRateBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -1278,6 +1291,7 @@ BTRegenManaEffect::BTRegenManaEffect(int t, int x, int s, int m, int g, int trgt
 void BTRegenManaEffect::serialize(ObjectSerializer *s)
 {
  s->add("mana", &mana);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -1314,6 +1328,7 @@ BTSaveBonusEffect::BTSaveBonusEffect(int t, int x, int s, int m, int g, int trgt
 void BTSaveBonusEffect::serialize(ObjectSerializer *s)
 {
  s->add("bonus", &bonus);
+ BTTargetedEffect::serialize(s);
 }
 
 int BTSaveBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -1454,5 +1469,6 @@ BTLightEffect::BTLightEffect(int t, int x, int s, int m, int g, int trgt, int il
 void BTLightEffect::serialize(ObjectSerializer *s)
 {
  s->add("illumination", &illumination);
+ BTTargetedEffect::serialize(s);
 }
 
