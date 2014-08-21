@@ -56,7 +56,7 @@ void BTEditor::edit(BTDisplay &d)
  {
   if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
    continue;
-  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
+  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)) || (0 == strcmp("savegame.xml", *i)))
    continue;
   int len = strlen(*i);
   if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
@@ -83,7 +83,7 @@ void BTEditor::edit(BTDisplay &d)
  {
   if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
    continue;
-  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
+  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)) || (0 == strcmp("savegame.xml", *i)))
    continue;
   int len = strlen(*i);
   if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
