@@ -841,7 +841,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
    if ((key >= '1') && (key <= '9'))
    {
     int offset = key - '1';
-    if (select->start + offset < select->size)
+    if ((select->size > 0) && (select->start + offset < select->size))
     {
      select->select = select->start + offset;
      key = 13;
