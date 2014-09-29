@@ -131,10 +131,11 @@ class BTGame : public BTCore, public BTEffectGroup
   void clearEffects(BTDisplay &d);
   void clearEffectsByType(BTDisplay &d, int type);
   void clearEffectsBySource(BTDisplay &d, bool song, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
-  bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
+  bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL, bool exact = false, bool goodOnly = false);
   void addPlayer(BTDisplay &d, int who);
   void movedPlayer(BTDisplay &d, int who, int where);
   void movedPlayer(BTDisplay &d, BTCombat *combatObj, int who, int where);
+  void searchEffect(BTEffectTest &fn);
   unsigned int getExpiration(unsigned int duration);
   bool isExpired(unsigned int expiration);
   bool isDaytime();

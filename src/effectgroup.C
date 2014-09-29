@@ -79,16 +79,24 @@ void BTEffectGroup::clearMapEffects()
  }
 }
 
-bool BTEffectGroup::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/, bool exact /*= false*/)
+bool BTEffectGroup::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/, bool exact /*= false*/, bool goodOnly /*= false*/)
 {
  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
  {
   if ((*itr)->type == type)
   {
+   if (goodOnly)
+   {
+    BTNonStackingBonusEffect *e = dynamic_cast<BTNonStackingBonusEffect*>(*itr);
+    if ((e) && (!e->isGood()))
+     continue;
+   }
    if (group != BTTARGET_NONE)
    {
-    if ((*itr)->targets(group, target, false))
+    if ((*itr)->targets(group, target, exact))
+    {
      return true;
+    }
    }
    else
     return true;
@@ -160,6 +168,17 @@ void BTEffectGroup::checkExpiration(BTDisplay &d, BTCombat *combat /*= NULL*/)
    ++itr;
  }
  checkMusic(d, musicIds);
+}
+
+void BTEffectGroup::searchEffect(BTEffectTest &fn)
+{
+ for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
+ {
+  if (fn.test(*itr))
+  {
+   return;
+  }
+ }
 }
 
 void BTEffectGroup::checkMusic(BTDisplay &d, std::vector<int> &musicIds)

@@ -9,6 +9,12 @@
 
 #include "spelleffect.h"
 
+class BTEffectTest
+{
+ public:
+  virtual bool test(BTBaseEffect *e) = 0;
+};
+
 class BTEffectGroup
 {
  public:
@@ -21,9 +27,10 @@ class BTEffectGroup
   virtual void clearEffectsByType(BTDisplay &d, int type);
   virtual void clearEffectsBySource(BTDisplay &d, bool song, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   virtual void clearMapEffects();
-  virtual bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL, bool exact = false);
+  virtual bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL, bool exact = false, bool goodOnly = false);
   virtual void addPlayer(BTDisplay &d, int who);
   virtual void movedPlayer(BTDisplay &d, BTCombat *combat, int who, int where);
+  virtual void searchEffect(BTEffectTest &fn);
 
  protected:
   void checkMusic(BTDisplay &d, std::vector<int> &musicIds);

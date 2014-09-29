@@ -139,6 +139,7 @@
 		<position><x>136</x><y>34</y><w>20</w><h>20</h></position>
 		<effect>23</effect>
 		<party>true</party>
+		<goodOnly>true</goodOnly>
 	</icon>
 	<icon>
 		<image>ui/icons/carpet.mng</image>

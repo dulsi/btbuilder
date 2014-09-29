@@ -871,11 +871,11 @@ void BTGame::clearEffectsBySource(BTDisplay &d, bool song, int group /*= BTTARGE
  BTEffectGroup::clearEffectsBySource(d, song, group, target);
 }
 
-bool BTGame::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
+bool BTGame::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/, bool exact /*= false*/, bool goodOnly /*= false*/)
 {
- if (BTEffectGroup::hasEffectOfType(type, group, target))
+ if (BTEffectGroup::hasEffectOfType(type, group, target, exact, goodOnly))
   return true;
- return combat.hasEffectOfType(type, group, target);
+ return combat.hasEffectOfType(type, group, target, exact, goodOnly);
 }
 
 void BTGame::addPlayer(BTDisplay &d, int who)
@@ -893,6 +893,12 @@ void BTGame::movedPlayer(BTDisplay &d, BTCombat *combatObj, int who, int where)
 {
  combatObj->movedPlayer(d, combatObj, who, where);
  BTEffectGroup::movedPlayer(d, combatObj, who, where);
+}
+
+void BTGame::searchEffect(BTEffectTest &fn)
+{
+ combat.searchEffect(fn);
+ BTEffectGroup::searchEffect(fn);
 }
 
 unsigned int BTGame::getExpiration(unsigned int duration)

@@ -176,15 +176,34 @@ class BTDispellIllusionEffect : public BTTargetedEffect
   int distance;
 };
 
-class BTArmorBonusEffect : public BTTargetedEffect
+class BTNonStackingBonusEffect : public BTTargetedEffect
+{
+ public:
+  BTNonStackingBonusEffect(int t, int x, int s, int m, int g, int trgt);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual int applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt) = 0;
+  virtual bool greater(BTNonStackingBonusEffect *b) = 0;
+  virtual bool isGood() = 0;
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual void finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt) = 0;
+
+  bool active;
+};
+
+class BTArmorBonusEffect : public BTNonStackingBonusEffect
 {
  public:
   BTArmorBonusEffect(int t, int x, int s, int m, int g, int trgt, int b);
 
   virtual void serialize(ObjectSerializer *s);
 
-  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
-  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual int applyBonus(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual bool greater(BTNonStackingBonusEffect *b);
+  virtual bool isGood();
+  virtual void finishBonus(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTArmorBonusEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE, 0); }
 

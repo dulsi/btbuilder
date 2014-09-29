@@ -11,7 +11,7 @@
 #include <string.h>
 
 BTModule::BTModule()
- : name(NULL), author(NULL), content(NULL), startX(0), startY(0), startFace(0), maxItems(8), maxTime(14400), nightTime(7200)
+ : name(NULL), author(NULL), content(NULL), startX(0), startY(0), startFace(0), maxItems(8), maxTime(14400), nightTime(7200), bonusStacking(true)
 {
  item = new char[strlen("DEFAULT.ITM") + 1];
  strcpy(item, "DEFAULT.ITM");
@@ -87,4 +87,5 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("maxItems", &maxItems);
  s->add("maxTime", &maxTime);
  s->add("nightTime", &nightTime);
+ s->add("bonusStacking", &bonusStacking);
 }

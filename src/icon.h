@@ -18,7 +18,7 @@ class BTDisplay;
 class BTIcon : public XMLObject
 {
  public:
-  BTIcon() : image(0), effect(0), party(false), active(false), img(0) { animation.animation = 0; }
+  BTIcon() : image(0), effect(0), party(false), goodOnly(false), active(false), img(0) { animation.animation = 0; }
   ~BTIcon();
 
   virtual void draw(BTDisplay &d, unsigned long ticks);
@@ -32,6 +32,7 @@ class BTIcon : public XMLObject
   SerialRect position;
   int effect;
   bool party;
+  bool goodOnly;
   bool active;
   SDL_Surface *img;
   MNG_AnimationState animation;
