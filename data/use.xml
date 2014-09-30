@@ -22,4 +22,6 @@
 	<error type="nobow" screen="exit">You have no equipped bow!</error>
 	<error type="dead" screen="exit"><name /> is dead!</error>
 	<error type="paralyzed" screen="exit"><name /> has been paralyzed and cannot move!</error>
+	<error type="nocombat" screen="exit">Thou art not battling monsters.</error>
+	<error type="combatonly" screen="exit">Thou art not in combat.</error>
 </screenset>

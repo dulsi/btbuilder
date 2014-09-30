@@ -1070,17 +1070,17 @@ void BTArmorBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int 
 }
 
 BTHitBonusEffect::BTHitBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
- : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
+ : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(b)
 {
 }
 
 void BTHitBonusEffect::serialize(ObjectSerializer *s)
 {
  s->add("bonus", &bonus);
- BTTargetedEffect::serialize(s);
+ BTNonStackingBonusEffect::serialize(s);
 }
 
-int BTHitBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+int BTHitBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
@@ -1135,7 +1135,39 @@ int BTHitBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
  return 0;
 }
 
-void BTHitBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+bool BTHitBonusEffect::greater(BTNonStackingBonusEffect *b)
+{
+ BTHitBonusEffect *other = dynamic_cast<BTHitBonusEffect*>(b);
+ if (other == NULL)
+ {
+  printf("Incorrect Type\n");
+  exit(0);
+ }
+ if (isGood())
+ {
+  if (bonus > other->bonus)
+   return true;
+  else
+   return false;
+ }
+ else
+ {
+  if (bonus <= other->bonus)
+   return true;
+  else
+   return false;
+ }
+}
+
+bool BTHitBonusEffect::isGood()
+{
+ if (bonus >= 0)
+  return true;
+ else
+  return false;
+}
+
+void BTHitBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();

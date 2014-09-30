@@ -1690,6 +1690,8 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
    {
     if (b.getPc()->sp < spellList[i].getSp())
      throw BTSpecialError("nosp");
+    if (spellList[i].getDuration() == BTDURATION_COMBAT)
+     throw BTSpecialError("combatonly");
     int pcNumber = 0;
     for (int k = 0; k < party.size(); ++k)
     {
@@ -2340,6 +2342,8 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  else
  {
   int spellCast = itemList[b.pc[0]->item[select->select].id].getSpellCast();
+  if (spellList[spellCast].getDuration() == BTDURATION_COMBAT)
+   throw BTSpecialError("combatonly");
   if (spellCast == BTITEMCAST_NONE)
    throw BTSpecialError("notusable");
   int pcNumber = 0;
@@ -2388,6 +2392,8 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
   BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
   b.pc[0]->sp -= spellList[b.pc[0]->combat.object].getSp();
   d.drawStats();
+  if (spellList[b.pc[0]->combat.object].getDuration() == BTDURATION_COMBAT)
+   throw BTSpecialError("combatonly");
   spellList[b.pc[0]->combat.object].cast(d, b.pc[0]->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, key - '1');
   return -1;
  }
@@ -2411,6 +2417,8 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
    BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
    int spellCast = itemList[b.pc[0]->item[b.pc[0]->combat.object].id].getSpellCast();
    d.drawStats();
+   if (spellList[b.pc[0]->combat.object].getDuration() == BTDURATION_COMBAT)
+    throw BTSpecialError("combatonly");
    spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, key - '1');
   }
   b.pc[0]->takeItemCharge(b.pc[0]->combat.object);

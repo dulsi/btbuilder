@@ -15,6 +15,8 @@
 		<selectParty action="useOn" screen="exit" />
 	</screen>
 	<error type="nocaster" screen="exit">Thou art not a spell caster!</error>
+	<error type="nocombat" screen="exit">Thou art not battling monsters.</error>
+	<error type="combatonly" screen="exit">Thou art not in combat.</error>
 	<error type="nospell" screen="exit">No spell by that name.</error>
 	<error type="dontknow" screen="exit">You don't know this spell.</error>
 	<error type="nosp" screen="exit">Not enough spell points.</error>
