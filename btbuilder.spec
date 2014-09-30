@@ -52,7 +52,7 @@ fi
 %{_datadir}/applications/btbuilder.desktop
 
 %changelog
-* Mon Sep 29 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.4.9-1
+* Mon Sep 29 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.0-1
 - New version of btbuilder released.
 
 * Mon Jul 21 2014 Dennis Payne <dulsi@identicalsoftware.com> - 0.4.7-1
