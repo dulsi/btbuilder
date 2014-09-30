@@ -10,4 +10,5 @@
  <startX>1</startX>
  <startY>0</startY>
  <startFace>south</startFace>
+ <bonusStacking>false</bonusStacking>
 </module>
