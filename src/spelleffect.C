@@ -1084,11 +1084,6 @@ int BTHitBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- if (g == BTTARGET_NONE)
- {
-  g = group;
-  trgt = target;
- }
  if (BTTARGET_PARTY == g)
  {
   if (BTTARGET_INDIVIDUAL == trgt)
@@ -1171,11 +1166,6 @@ void BTHitBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int tr
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- if (g == BTTARGET_NONE)
- {
-  g = group;
-  trgt = target;
- }
  if (BTTARGET_PARTY == g)
  {
   if (BTTARGET_INDIVIDUAL == trgt)
@@ -1395,25 +1385,20 @@ int BTPushEffect::maintain(BTDisplay &d, BTCombat *combat)
 }
 
 BTAttackRateBonusEffect::BTAttackRateBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
- : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
+ : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(b)
 {
 }
 
 void BTAttackRateBonusEffect::serialize(ObjectSerializer *s)
 {
  s->add("bonus", &bonus);
- BTTargetedEffect::serialize(s);
+ BTNonStackingBonusEffect::serialize(s);
 }
 
-int BTAttackRateBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+int BTAttackRateBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- if (g == BTTARGET_NONE)
- {
-  g = group;
-  trgt = target;
- }
  if (BTTARGET_PARTY == g)
  {
   if (BTTARGET_INDIVIDUAL == trgt)
@@ -1436,15 +1421,42 @@ int BTAttackRateBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTT
  return 0;
 }
 
-void BTAttackRateBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+bool BTAttackRateBonusEffect::greater(BTNonStackingBonusEffect *b)
+{
+ BTAttackRateBonusEffect *other = dynamic_cast<BTAttackRateBonusEffect*>(b);
+ if (other == NULL)
+ {
+  printf("Incorrect Type\n");
+  exit(0);
+ }
+ if (isGood())
+ {
+  if (bonus > other->bonus)
+   return true;
+  else
+   return false;
+ }
+ else
+ {
+  if (bonus <= other->bonus)
+   return true;
+  else
+   return false;
+ }
+}
+
+bool BTAttackRateBonusEffect::isGood()
+{
+ if (bonus >= 0)
+  return true;
+ else
+  return false;
+}
+
+void BTAttackRateBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- if (g == BTTARGET_NONE)
- {
-  g = group;
-  trgt = target;
- }
  if (BTTARGET_PARTY == g)
  {
   if (BTTARGET_INDIVIDUAL == trgt)
@@ -1504,25 +1516,20 @@ int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
 }
 
 BTSaveBonusEffect::BTSaveBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
- : BTTargetedEffect(t, x, s, m, g, trgt), bonus(b)
+ : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(b)
 {
 }
 
 void BTSaveBonusEffect::serialize(ObjectSerializer *s)
 {
  s->add("bonus", &bonus);
- BTTargetedEffect::serialize(s);
+ BTNonStackingBonusEffect::serialize(s);
 }
 
-int BTSaveBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+int BTSaveBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- if (g == BTTARGET_NONE)
- {
-  g = group;
-  trgt = target;
- }
  if (BTTARGET_PARTY == g)
  {
   if (BTTARGET_INDIVIDUAL == trgt)
@@ -1545,15 +1552,42 @@ int BTSaveBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_
  return 0;
 }
 
-void BTSaveBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+bool BTSaveBonusEffect::greater(BTNonStackingBonusEffect *b)
+{
+ BTSaveBonusEffect *other = dynamic_cast<BTSaveBonusEffect*>(b);
+ if (other == NULL)
+ {
+  printf("Incorrect Type\n");
+  exit(0);
+ }
+ if (isGood())
+ {
+  if (bonus > other->bonus)
+   return true;
+  else
+   return false;
+ }
+ else
+ {
+  if (bonus <= other->bonus)
+   return true;
+  else
+   return false;
+ }
+}
+
+bool BTSaveBonusEffect::isGood()
+{
+ if (bonus >= 0)
+  return true;
+ else
+  return false;
+}
+
+void BTSaveBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- if (g == BTTARGET_NONE)
- {
-  g = group;
-  trgt = target;
- }
  if (BTTARGET_PARTY == g)
  {
   if (BTTARGET_INDIVIDUAL == trgt)

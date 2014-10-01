@@ -296,15 +296,17 @@ class BTPushEffect : public BTTargetedEffect
   int distance;
 };
 
-class BTAttackRateBonusEffect : public BTTargetedEffect
+class BTAttackRateBonusEffect : public BTNonStackingBonusEffect
 {
  public:
   BTAttackRateBonusEffect(int t, int x, int s, int m, int g, int trgt, int b);
 
   virtual void serialize(ObjectSerializer *s);
 
-  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
-  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual int applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt);
+  virtual bool greater(BTNonStackingBonusEffect *b);
+  virtual bool isGood();
+  virtual void finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackRateBonusEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE, 0); }
 
@@ -325,15 +327,17 @@ class BTRegenManaEffect : public BTTargetedEffect
   BTDice mana;
 };
 
-class BTSaveBonusEffect : public BTTargetedEffect
+class BTSaveBonusEffect : public BTNonStackingBonusEffect
 {
  public:
   BTSaveBonusEffect(int t, int x, int s, int m, int g, int trgt, int b);
 
   virtual void serialize(ObjectSerializer *s);
 
-  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
-  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+  virtual int applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt);
+  virtual bool greater(BTNonStackingBonusEffect *b);
+  virtual bool isGood();
+  virtual void finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSaveBonusEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE, 0); }
 
