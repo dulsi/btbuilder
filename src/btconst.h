@@ -60,11 +60,12 @@ extern ArrayLookup spellTypeLookup;
 #define BT_EFFECTIVERANGES 2
 extern char *effectiveRanges[];
 
-#define BT_AREAEFFECT 4
+#define BT_AREAEFFECT 5
 #define BTAREAEFFECT_NONE  0
 #define BTAREAEFFECT_FOE   1
 #define BTAREAEFFECT_GROUP 2
 #define BTAREAEFFECT_ALL   3
+#define BTAREAEFFECT_CASTER 4
 extern char *areaEffect[];
 extern ArrayLookup areaLookup;
 

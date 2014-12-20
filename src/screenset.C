@@ -1722,6 +1722,14 @@ int BTScreenSet::castNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
       return BTSCREEN_ESCAPE;
      case BTAREAEFFECT_ALL:
       throw BTSpecialError("nocombat");
+     case BTAREAEFFECT_CASTER:
+     {
+      d.clearText();
+      b.pc[0]->sp -= spellList[i].getSp();
+      d.drawStats();
+      spellList[i].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, pcNumber);
+      return BTSCREEN_ESCAPE;
+     }
      default:
       return BTSCREEN_ESCAPE;
     }
@@ -2374,6 +2382,14 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
     return BTSCREEN_ESCAPE;
    case BTAREAEFFECT_ALL:
     throw BTSpecialError("nocombat");
+   case BTAREAEFFECT_CASTER:
+   {
+    d.clearText();
+    b.pc[0]->sp -= spellList[spellCast].getSp();
+    d.drawStats();
+    spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, pcNumber);
+    return BTSCREEN_ESCAPE;
+   }
    default:
     return BTSCREEN_ESCAPE;
   }

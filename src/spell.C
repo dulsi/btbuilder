@@ -187,6 +187,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
     text += ".";
    }
    break;
+  case BTAREAEFFECT_CASTER:
   case BTAREAEFFECT_FOE:
    text += " ";
    if (BTTARGET_PARTY == group)

@@ -66,7 +66,8 @@ char *areaEffect[] =
  "N/A",
  "Single Target",
  "Group Target",
- "All Monster Groups"
+ "All Monster Groups",
+ "Caster Only"
 };
 ArrayLookup areaLookup(BT_AREAEFFECT, areaEffect);
 

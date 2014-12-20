@@ -762,11 +762,19 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
   {
    case BTRANGEDTYPE_MAGIC:
    {
+    int groupTarget = BTTARGET_PARTY;
     int target = BTTARGET_INDIVIDUAL;
     if (spellList[monList[grp.monsterType].getRangedSpell()].getArea() == BTAREAEFFECT_FOE)
+    {
      if (!findTargetPC(BT_PARTYSIZE, target))
       break;
-    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName().c_str(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, BTTARGET_PARTY, target);
+    }
+    else if (spellList[monList[grp.monsterType].getRangedSpell()].getArea() == BTAREAEFFECT_CASTER)
+    {
+     groupTarget = monGroup;
+     target = monNumber;
+    }
+    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName().c_str(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, monGroup, target);
     break;
    }
    case BTRANGEDTYPE_FOE:
@@ -1310,6 +1318,19 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
      case BTAREAEFFECT_ALL:
       b.getPc()->combat.setTarget(BTTARGET_ALLMONSTERS);
       return 0;
+     case BTAREAEFFECT_CASTER:
+     {
+      BTParty &party = BTGame::getGame()->getParty();
+      b.getPc()->combat.setTarget(BTTARGET_PARTY);
+      for (int i = 0; i < party.size(); ++i)
+      {
+       if (b.getPc() == party[i])
+       {
+        b.getPc()->combat.setTarget(BTTARGET_PARTY, i);
+       }
+      }
+      return 0;
+     }
      default:
       return 0;
     }
@@ -1487,6 +1508,19 @@ int BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
    case BTAREAEFFECT_ALL:
     b.getPc()->combat.setTarget(BTTARGET_ALLMONSTERS);
     return 0;
+   case BTAREAEFFECT_CASTER:
+   {
+    BTParty &party = BTGame::getGame()->getParty();
+    b.getPc()->combat.setTarget(BTTARGET_PARTY);
+    for (int who = 0; who < party.size(); ++who)
+    {
+     if (b.getPc() == party[who])
+     {
+      b.getPc()->combat.setTarget(BTTARGET_PARTY, who);
+     }
+    }
+    return 0;
+   }
    default:
     return 0;
   }
