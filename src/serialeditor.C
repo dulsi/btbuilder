@@ -75,6 +75,25 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
       --len;
      }
     }
+    else if (curField->getType() == XMLTYPE_VECTORSTRING)
+    {
+     std::vector<std::string> *obj = reinterpret_cast<std::vector<std::string>*>(curField->object);
+     int where = 0;
+     for (int i = current - 1; (i >= 0) && (list[i].value == list[current].value); --i)
+     {
+      ++where;
+     }
+     if (where < obj->size())
+     {
+      obj->erase(obj->begin() + where);
+      for (int i = current; i < len - 1; ++i)
+      {
+       list[i].name = list[i + 1].name;
+       list[i].value = list[i + 1].value;
+      }
+      --len;
+     }
+    }
    }
    else
    {
@@ -89,7 +108,6 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
     if (curField->getType() == XMLTYPE_CREATE)
     {
      XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
-     int where = 0;
      for (int i = current - 1; (i >= 0) && (list[i].value == list[current].value); --i)
      {
       ++where;
@@ -106,6 +124,25 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
       len++;
      }
     }
+    else if (curField->getType() == XMLTYPE_VECTORSTRING)
+    {
+     std::vector<std::string> *obj = reinterpret_cast<std::vector<std::string>*>(curField->object);
+     for (int i = current - 1; (i >= 0) && (list[i].value == list[current].value); --i)
+     {
+      ++where;
+     }
+     if (where >= obj->size())
+     {
+      obj->push_back(std::string());
+      list.push_back(BTDisplay::selectItem());
+      for (int i = list.size() - 1; i > current; --i)
+      {
+       list[i].name = list[i - 1].name;
+       list[i].value = list[i - 1].value;
+      }
+      len++;
+     }
+    }
     editField(d, serial, description[list[current].value], curField, list[current].value, where);
     if (curField->getType() == XMLTYPE_OBJECT)
     {
@@ -113,6 +150,11 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
      BTDice *dice = dynamic_cast<BTDice*>(obj);
      if (dice)
       list[current].name = std::string(description[list[current].value]) + ": " + dice->createString();
+    }
+    else if (curField->getType() == XMLTYPE_VECTORSTRING)
+    {
+     std::vector<std::string> *obj = reinterpret_cast<std::vector<std::string>*>(curField->object);
+     list[current].name = std::string(description[list[current].value]) + ": " + (*obj)[where];
     }
     else if (curField->getType() != XMLTYPE_CREATE)
     {
@@ -366,6 +408,16 @@ void BTSerializedEditor::editField(BTDisplay &d, ObjectSerializer &serial, const
     reinterpret_cast<PictureIndex*>(curField->object)->value = val;
    break;
   }
+  case XMLTYPE_VECTORSTRING:
+  {
+   std::vector<std::string> *obj = reinterpret_cast<std::vector<std::string>*>(curField->object);
+   std::string val = (*obj)[where];
+   d.addReadString(std::string(text) + ": ", 100, val);
+   key = d.process();
+   if ('\r' == key)
+    (*obj)[where] = val;
+   break;
+  }
   default:
    printf("Unsuppported type: %d\n", curField->getType());
    break;
@@ -412,6 +464,23 @@ int BTSerializedEditor::setup(ObjectSerializer &serial, BitField &active, std::v
     if (current >= items.size())
      items.push_back(BTDisplay::selectItem());
     items[current].name = std::string(description[i]) + ": " + obj->get(k)->createString();
+    items[current].value = i;
+    ++current;
+   }
+   if (current >= items.size())
+    items.push_back(BTDisplay::selectItem());
+   items[current].name = std::string(description[i]) + ": <New>";
+   items[current].value = i;
+   ++current;
+  }
+  else if (curField->getType() == XMLTYPE_VECTORSTRING)
+  {
+   std::vector<std::string> *obj = reinterpret_cast<std::vector<std::string>*>(curField->object);
+   for (int k = 0; k < obj->size(); k++)
+   {
+    if (current >= items.size())
+     items.push_back(BTDisplay::selectItem());
+    items[current].name = std::string(description[i]) + ": " + (*obj)[k];
     items[current].value = i;
     ++current;
    }
@@ -541,8 +610,8 @@ bool BTMonsterEditor::updateActive(ObjectSerializer &serial, BitField &active, i
  return refresh;
 }
 
-const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Illusion", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Combat Actions", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP" };
-const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "illusion", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "combatAction", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp" };
+const char *BTMonsterEditor::monsterDescription[FIELDS_MONSTER] = { "Name", "Plural", "Illusion", "Picture", "Gender", "Level", "Starting Distance", "Moves Per Round", "Rate of Attacks", "Base AC", "Upper Limit Appearing", "Hit Points", "Thaumaturigal Resistance", "Gold", "Wandering", "Combat Actions", "Attack Msg.", "Damage", "Extra Damage", "Ranged Type", "Ranged Spell", "Ranged Message", "Range", "Ranged Damage", "Ranged X-Damage", "XP", "Tag" };
+const char *BTMonsterEditor::monsterField[FIELDS_MONSTER] = { "name", "pluralName", "illusion", "picture", "gender", "level", "startDistance", "move", "rateAttacks", "ac", "maxAppearing", "hp", "magicResistance", "gold", "wandering", "combatAction", "meleeMessage", "meleeDamage", "meleeExtra", "rangedType", "rangedSpellName", "rangedMessage", "range", "rangedDamage", "rangedExtra", "xp", "tag" };
 
 BTSpellEditor::BTSpellEditor()
  : BTSerializedEditor(FIELDS_SPELL, spellDescription, spellField, true)

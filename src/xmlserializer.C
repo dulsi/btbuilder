@@ -662,7 +662,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
    continue;
   prevObject = (*itr)->object;
   int type = (*itr)->getType();
-  if ((XMLTYPE_CREATE != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
+  if ((XMLTYPE_CREATE != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type) && (XMLTYPE_VECTORSTRING != type))
   {
    std::string tag = (*itr)->createTag();
    write(physFile, file, "<", 1);
@@ -772,7 +772,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
   }
   if (content.length())
    write(physFile, file, content.c_str(), content.length());
-  if ((XMLTYPE_CREATE != type) && (XMLTYPE_OBJECT != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type))
+  if ((XMLTYPE_CREATE != type) && (XMLTYPE_OBJECT != type) && (XMLTYPE_BITFIELD != type) && (XMLTYPE_VECTORUINT != type) && (XMLTYPE_VECTORSTRING != type))
   {
    write(physFile, file, "</", 2);
    write(physFile, file, (*itr)->name.c_str(), (*itr)->name.length());

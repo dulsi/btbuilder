@@ -122,6 +122,7 @@ class BTMonster : public XMLObject
   BTDice rangedDamage;
   int rangedExtra;
   IShort range;
+  std::vector<std::string> tag;
 };
 
 class BTMonsterListCompare : public BTSortCompare<BTMonster>

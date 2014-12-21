@@ -112,7 +112,7 @@ class BTMonsterChanceEditor : public BTSerializedEditor
 
 
 #define FIELDS_ITEM 14
-#define FIELDS_MONSTER 26
+#define FIELDS_MONSTER 27
 #define FIELDS_SPELL 10
 
 class BTItemEditor : public BTSerializedEditor

@@ -381,6 +381,7 @@ void BTMonster::serialize(ObjectSerializer* s)
  s->add("rangedDamage", &rangedDamage);
  s->add("rangedExtra", &rangedExtra, NULL, &extraDamageLookup);
  s->add("range", &range);
+ s->add("tag", &tag);
 }
 
 void BTMonster::readXML(const char *filename, XMLVector<BTMonster*> &monster)
