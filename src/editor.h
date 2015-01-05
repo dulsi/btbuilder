@@ -33,7 +33,7 @@ class BTEditor : public BTCore
     BTSpecialOperation *op;
   };
 
-  void buildOperationList(BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level = 0);
+  void buildOperationList(BTDisplay &d, BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level = 0);
   BTSpecialOperation *editSpecialOperation(BTDisplay &d, BTSpecialOperation *special);
 
  protected:

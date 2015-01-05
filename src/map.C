@@ -1026,6 +1026,16 @@ IShort BTSpecialConditional::getType() const
  return type;
 }
 
+std::string BTSpecialConditional::getText() const
+{
+ return (text ? text : "");
+}
+
+IUShort BTSpecialConditional::getNumber() const
+{
+ return number;
+}
+
 IBool BTSpecialConditional::isNothing() const
 {
  return ((-1 == type) && (thenClause.isNothing()));

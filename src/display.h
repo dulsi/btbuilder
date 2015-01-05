@@ -142,6 +142,7 @@ class BTDisplay : public ImageLoader
   void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(Psuedo3DConfigList *p3dl);
   Psuedo3DConfig *setWallGraphics(int type);
+  void splitText(const char *words, const std::string &prefix, std::vector<std::string> &lines);
   void stopMusic(int id);
   void toggleFullScreen();
 

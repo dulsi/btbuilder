@@ -384,7 +384,7 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  list[0].name = std::string("Name: ") + special->getName();
  list[1].name = "Flags: " + special->printFlags();
  int spaces = 0;
- buildOperationList(body, list, ops);
+ buildOperationList(d, body, list, ops);
  d.addSelection(list.data(), list.size(), start, current);
  int key;
  char extra[3] = {BTKEY_INS, BTKEY_DEL, 0};
@@ -408,71 +408,75 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
   {
    if (BTKEY_INS == key)
    {
-    if ((ops[current - 2].op != NULL) && (ops[current - 2].parent != NULL))
+    if ((ops[list[current].value].op != NULL) && (ops[list[current].value].parent != NULL))
     {
-     ops[current - 2].parent->insertOperation(ops[current - 2].op, new BTSpecialCommand(BTSPECIALCOMMAND_NOTHING));
+     ops[list[current].value].parent->insertOperation(ops[list[current].value].op, new BTSpecialCommand(BTSPECIALCOMMAND_NOTHING));
     }
    }
    else if (BTKEY_DEL == key)
    {
-    if ((ops[current - 2].op != NULL) && (ops[current - 2].parent != NULL))
+    if ((ops[list[current].value].op != NULL) && (ops[list[current].value].parent != NULL))
     {
-     ops[current - 2].parent->eraseOperation(ops[current - 2].op);
+     ops[list[current].value].parent->eraseOperation(ops[list[current].value].op);
     }
    }
    else if ('\r' == key)
    {
-    BTSpecialOperation *op = editSpecialOperation(d, ops[current - 2].op);
+    BTSpecialOperation *op = editSpecialOperation(d, ops[list[current].value].op);
     if (op)
     {
-     if (ops[current - 2].op)
-      ops[current - 2].parent->replaceOperation(ops[current - 2].op, op);
+     if (ops[list[current].value].op)
+      ops[list[current].value].parent->replaceOperation(ops[list[current].value].op, op);
      else
-      ops[current - 2].parent->addOperation(op);
+      ops[list[current].value].parent->addOperation(op);
     }
    }
   }
   ops.clear();
   list.resize(2);
-  buildOperationList(body, list, ops);
+  buildOperationList(d, body, list, ops);
   d.addSelection(list.data(), list.size(), start, current);
  }
  d.clearText();
  d.setConfig(oldConfig);
 }
 
-void BTEditor::buildOperationList(BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level /*= 0*/)
+void BTEditor::buildOperationList(BTDisplay &d, BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level /*= 0*/)
 {
  std::string spaces(level, ' ');
  for (int i = 0; i < body->numOfOperations(false); ++i)
  {
+  std::vector<std::string> lines;
   BTSpecialOperation *op = body->getOperation(i);
-  if (level == 0)
+  std::string words = spaces + op->print();
+  d.splitText(words.c_str(), spaces + "\\", lines);
+  for (std::vector<std::string>::const_iterator itr(lines.begin()); itr != lines.end(); itr++)
   {
-   list.push_back(BTDisplay::selectItem(spaces + op->print()));
+   list.push_back(BTDisplay::selectItem(*itr));
+   list.back().value = ops.size();
+   if (itr != lines.begin())
+    list.back().flags.set(BTSELECTFLAG_UNSELECTABLE);
   }
-  else
-   list.push_back(BTDisplay::selectItem(spaces + op->print()));
   ops.push_back(operationList(body, op));
   BTSpecialBody *subBody = dynamic_cast<BTSpecialBody*>(op);
   if (subBody)
   {
-   buildOperationList(subBody, list, ops, level + 1);
+   buildOperationList(d, subBody, list, ops, level + 1);
   }
   else
   {
    BTSpecialConditional *conditional = dynamic_cast<BTSpecialConditional*>(op);
    if (conditional)
    {
-    buildOperationList(conditional->getThenClause(), list, ops, level + 1);
+    buildOperationList(d, conditional->getThenClause(), list, ops, level + 1);
     list.push_back(BTDisplay::selectItem(spaces + "ELSE"));
     list.back().flags.set(BTSELECTFLAG_UNSELECTABLE);
-    ops.push_back(operationList(NULL, NULL));
-    buildOperationList(conditional->getElseClause(), list, ops, level + 1);
+    buildOperationList(d, conditional->getElseClause(), list, ops, level + 1);
    }
   }
  }
  list.push_back(BTDisplay::selectItem(spaces + "<New Operation>"));
+ list.back().value = ops.size();
  ops.push_back(operationList(body, NULL));
 }
 
@@ -492,6 +496,33 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  std::sort(cmds, cmds + BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS);
  int start(0);
  int current(0);
+ {
+  BTSpecialConditional *specialCond = dynamic_cast<BTSpecialConditional*>(special);
+  if (NULL != specialCond)
+  {
+   for (int i = 0; i < BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS; i++)
+   {
+    if (cmds[i].value == specialCond->getType())
+    {
+     current = i;
+     break;
+    }
+   }
+  }
+  BTSpecialCommand *specialCom = dynamic_cast<BTSpecialCommand*>(special);
+  if (NULL != specialCom)
+  {
+   for (int i = 0; i < BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS; i++)
+   {
+    if (cmds[i].value == specialCom->getType() + BT_CONDITIONALCOMMANDS)
+    {
+     current = i;
+     break;
+    }
+   }
+  }
+ }
+ int original = current;
  d.addSelection(cmds, BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS, start, current);
  int key = d.process();
  d.clearText();
@@ -504,10 +535,31 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  if (cmds[current].value < BT_CONDITIONALCOMMANDS)
  {
   cmd = conditionalCommands[cmds[current].value];
+  if (original == current)
+  {
+   BTSpecialConditional *specialCond = dynamic_cast<BTSpecialConditional*>(special);
+   if (NULL != specialCond)
+   {
+    number[0] = specialCond->getNumber();
+    text = specialCond->getText();
+   }
+  }
  }
  else
  {
   cmd = specialCommands[cmds[current].value - BT_CONDITIONALCOMMANDS];
+  if (original == current)
+  {
+   BTSpecialCommand *specialCom = dynamic_cast<BTSpecialCommand*>(special);
+   if (NULL != specialCom)
+   {
+    for (int i = 0; i < 3; i++)
+    {
+     number[i] = specialCom->getNumber(i);
+    }
+    text = specialCom->getText();
+   }
+  }
  }
  const char *dollarSign;
  while (dollarSign = strchr(cmd, '$'))
@@ -580,6 +632,12 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    case 'L':
    {
     std::string val;
+    if (number[count] != 0)
+    {
+     char convert[30];
+     sprintf(convert, "%d", number[count]);
+     val = convert;
+    }
     d.addReadString("X>", 100, val);
     key = d.process();
     d.clearText();
@@ -587,6 +645,12 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
      return NULL;
     number[count++] = atol(val.c_str());
     val = "";
+    if (number[count] != 0)
+    {
+     char convert[30];
+     sprintf(convert, "%d", number[count]);
+     val = convert;
+    }
     d.addReadString("Y>", 100, val);
     key = d.process();
     d.clearText();
@@ -660,6 +724,12 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    case 'J':
    {
     std::string val;
+    if (number[count] != 0)
+    {
+     char convert[30];
+     sprintf(convert, "%d", number[count]);
+     val = convert;
+    }
     d.addReadString("Number>", 100, val);
     key = d.process();
     d.clearText();

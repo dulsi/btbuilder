@@ -223,6 +223,8 @@ class BTSpecialConditional : public BTSpecialOperation
   void addElseOperation(BTSpecialOperation *op) { elseClause.addOperation(op); }
   BTSpecialOperation *clone() const;
   IShort getType() const;
+  std::string getText() const;
+  IUShort getNumber() const;
   BTSpecialBody *getThenClause() { return &thenClause; }
   BTSpecialBody *getElseClause() { return &elseClause; }
   IBool isNothing() const;

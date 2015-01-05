@@ -1249,6 +1249,58 @@ bool BTDisplay::sizeFont(const char *text, int &w, int &h)
  return true;
 }
 
+void BTDisplay::splitText(const char *words, const std::string &prefix, std::vector<std::string> &lines)
+{
+ int w, h, prefixW;
+ char *tmp = new char[strlen(words)];
+ const char *partial = words;
+ sizeFont(prefix.c_str(), prefixW, h);
+ while (partial)
+ {
+  if (!sizeFont(partial, w, h))
+  {
+   delete [] tmp;
+   lines.push_back(std::string(partial));
+   return;
+  }
+  const char *end = NULL;
+  if (w > text.w)
+  {
+   const char *sp = partial;
+   for (end = partial; *end; ++end)
+   {
+    if (isspace(*end))
+    {
+     memcpy(tmp + (sp - partial), sp, end - sp);
+     tmp[end - partial] = 0;
+     sizeFont(tmp, w, h);
+     if (w > text.w - ((partial == words) ? 0 : prefixW))
+     {
+      end = sp;
+      break;
+     }
+     sp = end;
+    }
+   }
+   if (!(*end))
+    end = sp;
+   if (end == partial)
+    end = NULL;
+   else
+   {
+    tmp[end - partial] = 0;
+    while (isspace(*end))
+     ++end;
+    if (!(*end))
+     end = NULL;
+   }
+  }
+  lines.push_back(((partial == words) ? std::string() : prefix) + std::string((end ? tmp : partial)));
+  partial = end;
+ }
+ delete [] tmp;
+}
+
 void BTDisplay::stopMusic(int id)
 {
  if ((!music.empty()) && (music.front()->musicObj != NULL) && ((music.front()->musicId == id) || (id == BTMUSICID_ALL)))
