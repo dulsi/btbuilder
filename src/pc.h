@@ -73,6 +73,7 @@ class BTPc : public XMLObject, public BTCombatant
   void giveSkillUse(int skNum, int amount);
   void giveXP(unsigned int amount);
   bool hasItem(int id) const;
+  bool hasTag(const std::string &t) const;
   bool hasSkillUse(int skNum);
   bool isIllusion() const;
   virtual void restoreLevel();

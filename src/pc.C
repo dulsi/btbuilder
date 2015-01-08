@@ -571,6 +571,17 @@ bool BTPc::hasItem(int id) const
  return false;
 }
 
+bool BTPc::hasTag(const std::string &t) const
+{
+ if (monster != BTMONSTER_NONE)
+ {
+  BTGame *game = BTGame::getGame();
+  BTFactory<BTMonster> &monList = game->getMonsterList();
+  return monList[monster].hasTag(t);
+ }
+ return false;
+}
+
 bool BTPc::hasSkillUse(int skNum)
 {
  for (int i = 0; i < skill.size(); ++i)

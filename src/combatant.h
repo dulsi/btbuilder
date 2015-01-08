@@ -26,6 +26,7 @@ class BTCombatant
   virtual bool drainLevel();
   virtual int getGender() const = 0;
   virtual std::string getName() const = 0;
+  virtual bool hasTag(const std::string &t) const = 0;
   bool isAlive() const;
   virtual bool isIllusion() const = 0;
   virtual void restoreLevel();

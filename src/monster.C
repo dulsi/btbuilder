@@ -7,6 +7,7 @@
 
 #include "monster.h"
 #include "game.h"
+#include <algorithm>
 
 #define MONSTER_RANGEDTYPENONE   0
 #define MONSTER_RANGEDTYPEONEFOE 1
@@ -233,6 +234,11 @@ IShort BTMonster::getStartDistance() const
 unsigned int BTMonster::getXp() const
 {
  return xp;
+}
+
+bool BTMonster::hasTag(const std::string &t) const
+{
+ return (std::find<>(tag.begin(), tag.end(), t) != tag.end());
 }
 
 IBool BTMonster::isIllusion() const

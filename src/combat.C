@@ -43,6 +43,12 @@ std::string BTMonsterCombatant::getName() const
  return monList[group->monsterType].getName();
 }
 
+bool BTMonsterCombatant::hasTag(const std::string &t) const
+{
+ BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
+ return monList[group->monsterType].hasTag(t);
+}
+
 bool BTMonsterCombatant::isIllusion() const
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();

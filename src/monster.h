@@ -75,6 +75,7 @@ class BTMonster : public XMLObject
   IShort getRateAttacks() const;
   IShort getStartDistance() const;
   unsigned int getXp() const;
+  bool hasTag(const std::string &t) const;
   IBool isIllusion() const;
   bool isWandering() const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;

@@ -269,8 +269,8 @@ bool BTResistedEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/,
  return false;
 }
 
-BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts)
- : BTResistedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts)
+BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const std::string& tOnly)
+ : BTResistedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts), tagOnly(tOnly)
 {
 }
 
@@ -281,6 +281,7 @@ void BTAttackEffect::serialize(ObjectSerializer *s)
  s->add("distance", &distance);
  s->add("damage", &damage);
  s->add("status", &status);
+ s->add("tagOnly", &tagOnly);
  BTResistedEffect::serialize(s);
 }
 
@@ -318,7 +319,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   }
   else
   {
-   if (party[target]->isAlive())
+   if ((party[target]->isAlive()) && ((tagOnly.empty()) || (party[target]->hasTag(tagOnly))))
    {
     int activeNum = 0;
     std::string text = BTCombatant::specialAttack(party[target], damage, status, (distance > range), activeNum);
@@ -350,7 +351,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
   }
   else
   {
-   if (grp->individual[target].isAlive())
+   if ((grp->individual[target].isAlive()) && ((tagOnly.empty()) || (grp->individual[target].hasTag(tagOnly))))
    {
     int activeNum = 0;
     std::string text = BTCombatant::specialAttack(&(grp->individual[target]), damage, status, (abs(grp->distance - distance) > range), activeNum);
@@ -374,7 +375,7 @@ int BTAttackEffect::applyToGroup(BTDisplay &d, BTCombatantCollection *grp, int r
  {
   bool saved = resists.isSet(resistOffset + i);
   int activeNum = 0;
-  if ((grp->at(i)->isAlive()) && ((first) || (!saved)))
+  if ((grp->at(i)->isAlive()) && ((first) || (!saved)) && ((tagOnly.empty()) || (grp->at(i)->hasTag(tagOnly))))
   {
    std::string text = BTCombatant::specialAttack(grp->at(i), damage, status, (abs(grp->getDistance() - distance) > range), activeNum, (first ? &saved : NULL));
    killed += abs(activeNum);
@@ -398,7 +399,7 @@ void BTAttackEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
   {
    for (int i = 0; i < party.size(); ++i)
    {
-    if (party[i]->status.isSet(status))
+    if ((party[i]->status.isSet(status)) && ((tagOnly.empty()) || (party[i]->hasTag(tagOnly))))
     {
      party[i]->status.clear(status);
     }
@@ -406,7 +407,7 @@ void BTAttackEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
   }
   else
   {
-   if (party[target]->status.isSet(status))
+   if ((party[target]->status.isSet(status)) && ((tagOnly.empty()) || (party[target]->hasTag(tagOnly))))
    {
     party[target]->status.clear(status);
    }
@@ -421,7 +422,7 @@ void BTAttackEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
     break;
    for (int k = 0; k < grp->individual.size(); ++k)
    {
-    if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)))
+    if ((grp->individual[k].isAlive()) && (!grp->individual[k].status.isSet(status)) && ((tagOnly.empty()) || (grp->individual[k].hasTag(tagOnly))))
     {
      grp->individual[k].status.clear(status);
     }
@@ -435,7 +436,7 @@ void BTAttackEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
   {
    for (int i = 0; i < grp->individual.size(); ++i)
    {
-    if (grp->individual[i].status.isSet(status))
+    if ((grp->individual[i].status.isSet(status)) && ((tagOnly.empty()) || (grp->individual[i].hasTag(tagOnly))))
     {
      grp->individual[i].status.clear(status);
     }
@@ -443,7 +444,7 @@ void BTAttackEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_N
   }
   else
   {
-   if (grp->individual[target].status.isSet(status))
+   if ((grp->individual[target].status.isSet(status)) && ((tagOnly.empty()) || (grp->individual[target].hasTag(tagOnly))))
    {
     grp->individual[target].status.clear(status);
    }

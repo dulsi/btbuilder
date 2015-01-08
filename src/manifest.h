@@ -110,6 +110,7 @@ class BTAttackManifest : public BTRangedManifest
   int xSpecial;
   int level;
   int maximum;
+  std::string tagOnly;
 
  private:
   static const int entries;
