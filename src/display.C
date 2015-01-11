@@ -542,6 +542,73 @@ void BTDisplay::drawMap(bool knowledge)
   if (mapYStart + config->heightMap <= curY)
    mapYStart = curY - config->heightMap + 1;
  }
+ if (config->coordinatesMap)
+ {
+  for (int k = 0; k < config->heightMap; ++k)
+  {
+   char sz[3] = {0, 0, 0};
+   int coordinate = m->getYSize() - (k + mapYStart) - 1;
+   if (coordinate < 100)
+   {
+    if (coordinate < 10)
+    {
+     sz[0] = '0' + (coordinate);
+     sz[1] = 0;
+    }
+    else
+    {
+     sz[0] = '0' + ((coordinate) / 10);
+     sz[1] = '0' + ((coordinate) % 10);
+     sz[2] = 0;
+    }
+   }
+   SDL_Rect dst;
+   dst.x = (config->xMap - 2 - (2 * p3d.config->mapWidth)) * xMult;
+   dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
+   dst.w = 2 * p3d.config->mapWidth * xMult;
+   dst.h = p3d.config->mapHeight * yMult;
+   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+   drawFont(sz, dst, black, right);
+  }
+  for (int i = 0; i < config->widthMap; ++i)
+  {
+   char sz[2] = {0, 0};
+   int coordinate = i + mapXStart;
+   if (coordinate < 100)
+   {
+    if (coordinate < 10)
+    {
+     sz[0] = '0' + (coordinate);
+     sz[1] = 0;
+    }
+    else
+    {
+     sz[0] = '0' + ((coordinate) / 10);
+     sz[1] = 0;
+    }
+   }
+   SDL_Rect dst;
+   dst.x = (config->xMap + (i * p3d.config->mapWidth)) * xMult;
+   dst.y = (config->yMap + (config->heightMap * p3d.config->mapHeight) + 2) * yMult;
+   dst.w = p3d.config->mapWidth * xMult;
+   dst.h = p3d.config->mapHeight * yMult;
+   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+   drawFont(sz, dst, black, right);
+   sz[0] = 0;
+   if (coordinate < 100)
+   {
+    if (coordinate >= 10)
+    {
+     sz[0] = '0' + ((coordinate) % 10);
+     sz[1] = 0;
+    }
+   }
+   dst.y = (config->yMap + ((config->heightMap + 1) * p3d.config->mapHeight) + 2) * yMult;
+   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+   if (sz[0])
+    drawFont(sz, dst, black, right);
+  }
+ }
  for (int i = 0; i < config->widthMap; ++i)
  {
   for (int k = 0; k < config->heightMap; ++k)

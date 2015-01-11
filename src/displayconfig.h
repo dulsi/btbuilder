@@ -56,6 +56,7 @@ class BTDisplayConfig : public XMLObject
   int widthMap, heightMap;
   int mapDisplayMode;
   bool centerMap;
+  bool coordinatesMap;
 };
 
 #endif
