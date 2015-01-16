@@ -12,12 +12,16 @@
 #include <sstream>
 
 BTEditor::BTEditor(BTModule *m)
- : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0)
+ : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0), swapMap(0)
 {
 }
 
 BTEditor::~BTEditor()
 {
+ if (swapMap)
+ {
+  delete swapMap;
+ }
 }
 
 int BTEditor::getLight()
@@ -562,6 +566,8 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
   }
  }
  const char *dollarSign;
+ std::string newMap;
+ int facingDir = -1;
  while (dollarSign = strchr(cmd, '$'))
  {
   switch (dollarSign[1])
@@ -630,6 +636,95 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     break;
    }
    case 'L':
+   {
+    if ((newMap.empty()) || (0 != PHYSFS_exists(newMap.c_str())))
+    {
+     int origX = xPos;
+     int origY = yPos;
+     int origFacing = facing;
+     bool toggle = false;
+     if ((!newMap.empty()) && (newMap != levelMap->getFilename()))
+     {
+      toggleMap();
+      loadMap(newMap.c_str());
+      toggle = true;
+     }
+     BTDisplayConfig *oldConfig = d.getConfig();
+     BTDisplayConfig config;
+     XMLSerializer parser;
+     config.serialize(&parser);
+     parser.parse("data/mapedit.xml", true);
+     d.setConfig(&config);
+     xPos = number[count] % levelMap->getXSize(); yPos = levelMap->getYSize() - 1 - (number[count + 1] % levelMap->getYSize()); facing = number[count + 2];
+     p3dConfig = d.setWallGraphics(levelMap->getType());
+     unsigned char key = ' ';
+     while (key != '\r')
+     {
+      if (levelMap->getSquare(yPos, xPos).getSpecial() > -1)
+       d.drawLabel(levelMap->getSpecial(levelMap->getSquare(yPos, xPos).getSpecial())->getName());
+      else
+       d.drawLabel("");
+      d.drawView();
+      key = d.readChar();
+      switch (key)
+      {
+       case BTKEY_UP:
+        if (yPos > 0)
+         yPos--;
+        else
+         yPos = getYSize() - 1;
+        break;
+       case BTKEY_LEFT:
+        if (xPos > 0)
+         xPos--;
+        else
+         xPos = getXSize() - 1;
+        break;
+       case BTKEY_DOWN:
+        if (yPos < getYSize() - 1)
+         yPos++;
+        else
+         yPos = 0;
+        break;
+       case BTKEY_RIGHT:
+        if (xPos < getXSize() - 1)
+         xPos++;
+        else
+         xPos = 0;
+        break;
+       case BTKEY_PGDN:
+        if (facing < 3)
+         facing++;
+        else
+         facing = 0;
+        break;
+       case BTKEY_END:
+        if (facing > 0)
+         facing--;
+        else
+         facing = 3;
+        break;
+       default:
+        break;
+      }
+     }
+     number[count++] = xPos;
+     number[count++] = levelMap->getYSize() - 1 - yPos;
+     facingDir = facing;
+     d.clearText();
+     d.setConfig(oldConfig);
+     if (toggle)
+     {
+      toggleMap();
+     }
+     xPos = origX;
+     yPos = origY;
+     facing = origFacing;
+     break;
+    }
+    // Fall through to $K processing if map file does not exist.
+   }
+   case 'K':
    {
     std::string val;
     if (number[count] != 0)
@@ -705,16 +800,23 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    }
    case 'D':
    {
-    BTDisplay::selectItem dir[BT_DIRECTIONS];
-    for (int i = 0; i < BT_DIRECTIONS; ++i)
-     dir[i].name = directions[i];
-    int dirStart(0);
-    d.addSelection(dir, BT_DIRECTIONS, dirStart, number[count]);
-    int key = d.process();
-    d.clearText();
-    if (key == 27)
-     return NULL;
-    count++;
+    if (facingDir != -1)
+    {
+     number[count++] = facingDir;
+    }
+    else
+    {
+     BTDisplay::selectItem dir[BT_DIRECTIONS];
+     for (int i = 0; i < BT_DIRECTIONS; ++i)
+      dir[i].name = directions[i];
+     int dirStart(0);
+     d.addSelection(dir, BT_DIRECTIONS, dirStart, number[count]);
+     int key = d.process();
+     d.clearText();
+     if (key == 27)
+      return NULL;
+     count++;
+    }
     break;
    }
    case '#':
@@ -839,6 +941,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
      if (27 == key)
       return NULL;
     }
+    newMap = text;
     break;
    }
    case '$':
@@ -871,5 +974,13 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    opNew->setNumber(i, number[i]);
   return opNew;
  }
+}
+
+void BTEditor::toggleMap()
+{
+ BTMap *tmp;
+ tmp = levelMap;
+ levelMap = swapMap;
+ swapMap = tmp;
 }
 

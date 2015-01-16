@@ -330,6 +330,7 @@ std::string BTSpecialCommand::print() const
     answer += BTCore::getCore()->getSpellList()[number[count++]].getName();
     break;
    case 'L':
+   case 'K':
    {
     char s[50];
     snprintf(s, 50, "X:%d Y:%d", number[count], number[count + 1]);

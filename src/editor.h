@@ -35,11 +35,13 @@ class BTEditor : public BTCore
 
   void buildOperationList(BTDisplay &d, BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level = 0);
   BTSpecialOperation *editSpecialOperation(BTDisplay &d, BTSpecialOperation *special);
+  void toggleMap();
 
  protected:
   int currentWall;
   int startSpecial;
   int currentSpecial;
+  BTMap *swapMap;
 };
 
 #endif

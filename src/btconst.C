@@ -185,7 +185,7 @@ char *specialCommands[] =
  "take $# bard songs",
  "move back one space",
  "move one square forward",
- "teleport to $L dir:$D in $N",
+ "teleport to $N at $L dir:$D",
  "exit to guild",
  "exit to review",
  "exit to garths",
@@ -222,8 +222,8 @@ char *specialCommands[] =
  "cancel timed special",
  "goto $$",
  "subtract $# from counter",
- "relative teleport by $L dir: $D in $N",
- "tele-activate to $L dir: $D in $N",
+ "relative teleport by $K dir: $D in $N",
+ "tele-activate to $N at $L dir: $D",
  "label $$"
 };
 
