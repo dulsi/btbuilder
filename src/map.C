@@ -804,7 +804,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
   case BTSPECIALCOMMAND_PLAYSOUND:
   {
    char tmp[100];
-   snprintf(tmp, 100, "sound/sound%d.wav", number[0]);
+   snprintf(tmp, 100, "sound/sound%d.ogg", number[0]);
    d.playSound(tmp, true);
    break;
   }
