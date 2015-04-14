@@ -212,7 +212,7 @@ BTCore *BTCore::getCore()
 }
 
 BTGame::BTGame(BTModule *m)
- : BTCore(m), jobAbbrevList(&jobList), gameTime(0), timedSpecial(-1), delay(1000)
+ : BTCore(m), jobAbbrevList(&jobList), gameTime(0), timedSpecial(-1), delay(1000), activateSpecial(false)
 {
  BTDice::Init();
  if (NULL == game)
@@ -503,9 +503,14 @@ void BTGame::setGlobalFlag(int index, bool value)
   global.clear(index);
 }
 
+void BTGame::setRunSpecial()
+{
+ activateSpecial = true;
+}
+
 void BTGame::run(BTDisplay &d)
 {
- bool special = false;
+ activateSpecial = false;
  try
  {
   d.drawFullScreen(module->title, 5000);
@@ -538,7 +543,7 @@ void BTGame::run(BTDisplay &d)
    catch (const BTSpecialFlipGoForward &)
    {
     turnAround(d);
-    special = move(d, facing);
+    activateSpecial = move(d, facing);
    }
   }
   while (true)
@@ -557,26 +562,26 @@ void BTGame::run(BTDisplay &d)
      d.drawView();
      d.drawIcons();
     }
-    if (special)
+    if (activateSpecial)
     {
-     special = false;
+     activateSpecial = false;
      const BTMapSquare& current = levelMap->getSquare(yPos, xPos);
      IShort s = current.getSpecial();
      if (s >= 0)
-      special = runSpecial(d, s);
+      activateSpecial = runSpecial(d, s);
     }
     setKnowledge(xPos, yPos, true);
-    if ((!special) && (timedSpecial >= 0) && (isExpired(timedExpiration)))
+    if ((!activateSpecial) && (timedSpecial >= 0) && (isExpired(timedExpiration)))
     {
      IShort s = timedSpecial;
      clearTimedSpecial();
-     special = runSpecial(d, s);
+     activateSpecial = runSpecial(d, s);
      continue;
     }
     setKnowledge(xPos, yPos, true);
     d.drawView();
     d.drawLabel(levelMap->getName());
-    if (!special)
+    if (!activateSpecial)
     {
      if (!hasEffectOfType(BTSPELLTYPE_BLOCKENCOUNTERS))
      {
@@ -586,7 +591,7 @@ void BTGame::run(BTDisplay &d)
      switch (key)
      {
       case BTKEY_UP:
-       special = move(d, facing);
+       activateSpecial = move(d, facing);
        break;
       case BTKEY_LEFT:
        turnLeft(d);
@@ -738,7 +743,7 @@ void BTGame::run(BTDisplay &d)
     catch (const BTSpecialFlipGoForward &)
     {
      turnAround(d);
-     special = move(d, facing);
+     activateSpecial = move(d, facing);
     }
    }
   }

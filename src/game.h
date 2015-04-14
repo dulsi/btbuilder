@@ -118,6 +118,7 @@ class BTGame : public BTCore, public BTEffectGroup
   void setLocalFlag(int index, bool value);
   void setKnowledge(int x, int y, bool value);
   void setGlobalFlag(int index, bool value);
+  void setRunSpecial();
 
   void run(BTDisplay &d);
   bool runSpecial(BTDisplay &d, IShort special);
@@ -174,6 +175,7 @@ class BTGame : public BTCore, public BTEffectGroup
   unsigned int timedExpiration;
   IShort timedSpecial;
   int delay;
+  bool activateSpecial;
 
   static BTGame *game;
 };

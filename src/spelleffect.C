@@ -1699,6 +1699,7 @@ void BTTeleportEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET
 {
  BTGame *game = BTGame::getGame();
  game->teleport(d, mapFile, mapX, mapY, game->getFacing());
+ game->setRunSpecial();
 }
 
 void BTTeleportEffect::serialize(ObjectSerializer *s)
