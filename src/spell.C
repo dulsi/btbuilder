@@ -98,6 +98,18 @@ IShort BTSpell::getSp() const
  return sp;
 }
 
+bool BTSpell::hasCombatEffect() const
+{
+ for (int i = 0; i < manifest.size(); ++i)
+ {
+  if (manifest[i]->hasCombatEffect())
+  {
+   return true;
+  }
+ }
+ return false;
+}
+
 void BTSpell::write(BinaryWriteFile &f)
 {
  IUByte unknown = 0x00;
@@ -494,6 +506,9 @@ void BTSpell1::upgrade()
     }
     break;
    }
+   case BTSPELLTYPE_TELEPORT:
+    manifest.push_back(new BTTeleportManifest());
+    break;
    default:
     break;
   }

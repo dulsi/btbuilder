@@ -523,8 +523,8 @@ void BTMapPropertiesEditor::handleObject(BTDisplay &d, XMLObject *obj, int modFi
  }
 }
 
-const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Monster Level", "Encounter Chance" };
-const char *BTMapPropertiesEditor::mapField[FIELDS_MAP] = { "name", "type", "light", "monsterLevel", "monsterChance" };
+const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Flags", "Monster Level", "Encounter Chance" };
+const char *BTMapPropertiesEditor::mapField[FIELDS_MAP] = { "name", "type", "light", "flag", "monsterLevel", "monsterChance" };
 
 BTMonsterChanceEditor::BTMonsterChanceEditor()
  : BTSerializedEditor(FIELDS_MONSTERCHANCE, monsterChanceDescription, monsterChanceField)
@@ -781,7 +781,8 @@ BTSpellEditor::spellType BTSpellEditor::spellTypes[BT_SPELLTYPES_USED] =
  {BTSPELLTYPE_SPELLBIND, BTSpellBindManifest::create},
  {BTSPELLTYPE_LEVITATION, BTManifest::create},
  {BTSPELLTYPE_REGENSKILL, BTRegenSkillManifest::create},
- {BTSPELLTYPE_CURESTATUS, BTCureStatusManifest::create}
+ {BTSPELLTYPE_CURESTATUS, BTCureStatusManifest::create},
+ {BTSPELLTYPE_TELEPORT, BTTeleportManifest::create}
 };
 const char *BTSpellEditor::spellDescription[FIELDS_SPELL] = { "Name", "Code", "Mage Class", "Level", "Points Needed", "Range", "Effective Range", "Area/Target", "Duration", "Effect Text" };
 const char *BTSpellEditor::spellField[FIELDS_SPELL] = { "name", "code", "caster", "level", "sp", "range", "effectiveRange", "area", "duration", "effect" };

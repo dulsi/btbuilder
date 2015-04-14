@@ -10,8 +10,8 @@
 class ArrayLookup;
 class PairLookup;
 
-#define BT_SPELLTYPES_FULL 42
-#define BT_SPELLTYPES_USED 25
+#define BT_SPELLTYPES_FULL 43
+#define BT_SPELLTYPES_USED 26
 #define BTSPELLTYPE_HEAL            0
 #define BTSPELLTYPE_RESURRECT       1
 #define BTSPELLTYPE_CUREPOISON      2
@@ -54,6 +54,7 @@ class PairLookup;
 #define BTSPELLTYPE_LEVITATION      39
 #define BTSPELLTYPE_REGENSKILL      40
 #define BTSPELLTYPE_CURESTATUS      41
+#define BTSPELLTYPE_TELEPORT        42
 extern char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 
@@ -216,10 +217,11 @@ extern char *specialCommands[];
 
 #define BTSPECIAL_NONE -1
 
-#define BT_SPECIALFLAGS 3
+#define BT_SPECIALFLAGS 4
 #define BTSPECIALFLAG_SILENCE   0
 #define BTSPECIALFLAG_ANTIMAGIC 1
 #define BTSPECIALFLAG_DARKNESS  2
+#define BTSPECIALFLAG_ANTITELEPORT  3
 extern char *specialFlag[];
 extern ArrayLookup specialFlagLookup;
 

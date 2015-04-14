@@ -23,6 +23,7 @@ class BTManifest : public XMLObject
   virtual int getEditFieldNumber();
   virtual const char *getEditFieldDescription(int i);
   virtual const char *getEditField(int i);
+  virtual bool hasCombatEffect() const;
   virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
   virtual void serialize(ObjectSerializer *s);
   virtual void supportOldFormat(IShort &t, BTDice &d, IShort &ex);
@@ -353,6 +354,19 @@ class BTLightManifest : public BTManifest
   static const int entries;
   static const char *description[];
   static const char *field[];
+};
+
+class BTTeleportManifest : public BTManifest
+{
+ public:
+  BTTeleportManifest() {}
+  BTTeleportManifest(int t) : BTManifest(t) {}
+
+  virtual BTManifest *clone();
+  virtual bool hasCombatEffect() const;
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTTeleportManifest; }
 };
 
 #endif

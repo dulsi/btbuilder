@@ -51,7 +51,8 @@ char *spellTypes[] =
  "Spell Bind",
  "Levitation",
  "Regenerate Skill",
- "Cure Status"
+ "Cure Status",
+ "Teleport"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES_FULL, spellTypes);
 
@@ -231,7 +232,8 @@ char *specialFlag[] =
 {
  "Silence",
  "Anti-magic",
- "Darkness"
+ "Darkness",
+ "Anti-Teleport"
 };
 ArrayLookup specialFlagLookup(BT_SPECIALFLAGS, specialFlag);
 

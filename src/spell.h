@@ -36,8 +36,6 @@ extra info: short (monster for summon monster and summon illusion,
 spell effect: char[22];
 */
 
-class BTSpell1;
-
 class BTSpell : public XMLObject
 {
  public:
@@ -56,6 +54,7 @@ class BTSpell : public XMLObject
   IShort getLevel() const;
   IShort getRange() const;
   IShort getSp() const;
+  bool hasCombatEffect() const;
   void write(BinaryWriteFile &f);
 
   int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);

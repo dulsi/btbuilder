@@ -939,6 +939,16 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
      select->pageDown(*this);
      continue;
     }
+    else if (key == BTKEY_LEFT)
+    {
+     select->decrement(*this);
+     continue;
+    }
+    else if (key == BTKEY_RIGHT)
+    {
+     select->increment(*this);
+     continue;
+    }
     else if ((key == 13) && (select->select >= 0))
      break;
    }
@@ -1736,6 +1746,22 @@ void BTUISelect::draw(BTDisplay &d)
     d.drawFont(list[i].name.c_str(), dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
    dst.y += h;
   }
+ }
+}
+
+void BTUISelect::decrement(BTDisplay &d)
+{
+ if (list[select].flags.isSet(BTSELECTFLAG_NUMBER))
+ {
+  list[select].value--;
+ }
+}
+
+void BTUISelect::increment(BTDisplay &d)
+{
+ if (list[select].flags.isSet(BTSELECTFLAG_NUMBER))
+ {
+  list[select].value++;
  }
 }
 

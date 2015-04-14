@@ -1423,6 +1423,11 @@ BTSpecialBody *BTSpecial::getBody()
  return &body;
 }
 
+const BitField &BTSpecial::getFlag() const
+{
+ return flags;
+}
+
 const char *BTSpecial::getName() const
 {
  return name;
@@ -1719,6 +1724,11 @@ const char *BTMap::getFilename() const
  return filename;
 }
 
+const BitField &BTMap::getFlag() const
+{
+ return flags;
+}
+ 
 IShort BTMap::getLevel() const
 {
  return level;
@@ -1882,6 +1892,7 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("monsterChance", &monsterChance, &BTMonsterChance::create);
  s->add("monsterLevel", &monsterLevel);
  s->add("light", &light);
+ s->add("flag", &flags, &specialFlagLookup);
  s->add("square", &square, &BTMapSquare::create);
  s->add("special", &specials, &BTSpecial::create);
 }
@@ -1948,5 +1959,42 @@ void BTMap::upgrade()
   }
  }
  version = 2;
+}
+
+bool BTLevel::contains(const std::string &f)
+{
+ for (int i = 0; i < filename.size(); ++i)
+ {
+  if (filename[i] == f)
+   return true;
+ }
+ return false;
+}
+
+std::string BTLevel::deeper(const std::string &f, int down)
+{
+ int where = -1;
+ for (int i = 0; i < filename.size(); ++i)
+ {
+  if (filename[i] == f)
+   where = i;
+ }
+ if ((where == -1) || (where + down >= filename.size()) || (where + down < 0))
+  return "";
+ else
+  return filename[where + down];
+}
+
+void BTLevel::serialize(ObjectSerializer* s)
+{
+ s->add("group", &group);
+ s->add("filename", &filename);
+}
+
+void BTLevel::readXML(const char *filename, XMLVector<BTLevel*> &level)
+{
+ XMLSerializer parser;
+ parser.add("level", &level, &BTLevel::create);
+ parser.parse(filename, true);
 }
 

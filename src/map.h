@@ -255,6 +255,7 @@ class BTSpecial : public XMLObject
   ~BTSpecial();
 
   BTSpecialBody *getBody();
+  const BitField &getFlag() const;
   const char *getName() const;
   std::string printFlags() const;
   void print(FILE *f) const;
@@ -299,6 +300,7 @@ class BTMap : public XMLObject
   void addSpecial(BTSpecial *s);
   void checkRandomEncounter(BTDisplay &d) const;
   const char *getFilename() const;
+  const BitField &getFlag() const;
   IShort getLevel() const;
   int getLight() const;
   int getMonsterChance() const;
@@ -327,10 +329,27 @@ class BTMap : public XMLObject
   IShort ySize;
   IShort monsterLevel;
   int light;
+  BitField flags;
   char *filename;
   XMLVector<BTMonsterChance*> monsterChance;
   XMLVector<BTMapSquare*> square;
   XMLVector<BTSpecial*> specials;
+};
+
+class BTLevel : public XMLObject
+{
+ public:
+  bool contains(const std::string &f);
+  std::string deeper(const std::string &f, int down);
+
+  void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTLevel; }
+  static void readXML(const char *filename, XMLVector<BTLevel*> &level);
+
+ private:
+  std::string group;
+  std::vector<std::string> filename;
 };
 
 #endif

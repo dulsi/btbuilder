@@ -22,6 +22,7 @@ BTCore::BTCore(BTModule *m)
  BTRace::readXML(m->race, raceList);
  BTSkill::readXML(m->skill, skillList);
  BTXpChart::readXML(m->xpChart, xpChartList);
+ BTLevel::readXML(m->level, levelList);
  BTJob::readXML(m->job, jobList);
  BTShop::readXML("shops.xml", shops);
  spellList.load(m->spell);
@@ -41,6 +42,18 @@ BTCore::~BTCore()
  {
   core = NULL;
  }
+}
+
+std::string BTCore::descendMap(int depth)
+{
+ for (XMLVector<BTLevel*>::iterator itr = levelList.begin(); itr != levelList.end(); ++itr)
+ {
+  if ((*itr)->contains(levelMap->getFilename()))
+  {
+   return (*itr)->deeper(levelMap->getFilename(), depth);
+  }
+ }
+ return "";
 }
 
 BTFactory<BTItem> &BTCore::getItemList()
@@ -136,21 +149,41 @@ BTMap *BTCore::loadMap(const char *filename)
    return levelMap;
   delete levelMap;
  }
+ levelMap = readMap(finalname);
+ return levelMap;
+}
+
+BTMap *BTCore::readMap(const std::string &filename)
+{
+ BTMap *newMap = NULL;
+ std::string finalname = filename;
+ int len = filename.length();
+ if ((len > 4) && (strcmp(".MAP", filename.c_str() + (len - 4)) == 0))
+ {
+  char tmp[len + 1];
+  strcpy(tmp, filename.c_str());
+  strcpy(tmp + len - 3, "xml");
+  if (0 != PHYSFS_exists(tmp))
+  {
+   finalname = tmp;
+   len = finalname.length();
+  }
+ }
  if ((len > 4) && (strcmp(".MAP", finalname.c_str() + (len - 4)) == 0))
  {
   BinaryReadFile levelFile(finalname.c_str());
-  levelMap = new BTMap(levelFile);
+  newMap = new BTMap(levelFile);
  }
  else
  {
-  levelMap = new BTMap(1); // Assume version 1 file unless version is in the file.
+  newMap = new BTMap(1); // Assume version 1 file unless version is in the file.
   XMLSerializer parser;
-  levelMap->serialize(&parser);
+  newMap->serialize(&parser);
   parser.parse(finalname.c_str(), true);
-  levelMap->upgrade();
+  newMap->upgrade();
  }
- levelMap->setFilename(finalname.c_str());
- return levelMap;
+ newMap->setFilename(finalname.c_str());
+ return newMap;
 }
 
 int BTCore::getMapType(int x, int y, int direction)
@@ -729,23 +762,7 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
  }
  catch (const BTSpecialTeleport &t)
  {
-  loadMap(t.map.c_str());
-  p3dConfig = d.setWallGraphics(levelMap->getType());
-  xPos = t.x;
-  yPos = t.y;
-  while (xPos < 0)
-  {
-   xPos += levelMap->getXSize();
-  }
-  xPos = xPos % levelMap->getXSize();
-  while (yPos < 0)
-  {
-   yPos += levelMap->getYSize();
-  }
-  yPos = yPos % levelMap->getYSize();
-  facing = t.facing;
-  d.drawView();
-  flags.clearAll();
+  teleport(d, t.map, t.x, t.y, t.facing);
   return t.activate;
  }
  catch (const BTSpecialBack &)
@@ -822,6 +839,27 @@ void BTGame::turnAround(BTDisplay &d)
 {
  facing += 2;
  facing = facing % 4;
+}
+
+void BTGame::teleport(BTDisplay &d, const std::string &newMap, int newX, int newY, int newFacing)
+{
+ loadMap(newMap.c_str());
+ p3dConfig = d.setWallGraphics(levelMap->getType());
+ xPos = newX;
+ yPos = newY;
+ while (xPos < 0)
+ {
+  xPos += levelMap->getXSize();
+ }
+ xPos = xPos % levelMap->getXSize();
+ while (yPos < 0)
+ {
+  yPos += levelMap->getYSize();
+ }
+ yPos = yPos % levelMap->getYSize();
+ facing = newFacing;
+ d.drawView();
+ flags.clearAll();
 }
 
 void BTGame::setTimedSpecial(IShort special, unsigned int expire)
@@ -1007,6 +1045,7 @@ void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, std::string &star
  s->add("scrysighteffect", typeid(BTScrySightEffect).name(), &effect, &BTScrySightEffect::create);
  s->add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
  s->add("lighteffect", typeid(BTLightEffect).name(), &effect, &BTLightEffect::create);
+ s->add("teleporteffect", typeid(BTTeleportEffect).name(), &effect, &BTTeleportEffect::create);
 }
 
 void BTGame::readSaveXML(const char *filename)

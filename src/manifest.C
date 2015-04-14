@@ -7,6 +7,7 @@
 
 #include "game.h"
 #include "manifest.h"
+#include <memory>
 
 BTManifest *BTManifest::clone()
 {
@@ -31,6 +32,11 @@ const char *BTManifest::getEditFieldDescription(int i)
 const char *BTManifest::getEditField(int i)
 {
  return NULL;
+}
+
+bool BTManifest::hasCombatEffect() const
+{
+ return true;
 }
 
 std::list<BTBaseEffect*> BTManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
@@ -69,6 +75,7 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("spellBindManifest", typeid(BTSpellBindManifest).name(), &manifest, &BTSpellBindManifest::create);
  s->add("regenSkillManifest", typeid(BTRegenSkillManifest).name(), &manifest, &BTRegenSkillManifest::create);
  s->add("lightManifest", typeid(BTLightManifest).name(), &manifest, &BTLightManifest::create);
+ s->add("teleportManifest", typeid(BTTeleportManifest).name(), &manifest, &BTTeleportManifest::create);
  // Backward compatability
  s->add("armorBonusManifest", "-", &manifest, &BTBonusManifest::create);
  s->add("attackRateBonusManifest", "-", &manifest, &BTBonusManifest::create);
@@ -878,4 +885,74 @@ void BTLightManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
 const int BTLightManifest::entries = 1;
 const char *BTLightManifest::description[] = {"Illumination"};
 const char *BTLightManifest::field[] = {"illumination"};
+
+BTManifest *BTTeleportManifest::clone()
+{
+ return new BTTeleportManifest(*this);
+}
+
+bool BTTeleportManifest::hasCombatEffect() const
+{
+ return false;
+}
+
+std::list<BTBaseEffect*> BTTeleportManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+{
+ std::list<BTBaseEffect*> effect;
+ if (combat != NULL)
+  return effect;
+ d.clearText();
+ d.addText("Teleport");
+ BTDisplay::selectItem items[3];
+ items[0].name = "North: ";
+ items[0].flags.set(BTSELECTFLAG_NUMBER);
+ items[0].flags.set(BTSELECTFLAG_SHOWVALUE);
+ items[1].name = "East: ";
+ items[1].flags.set(BTSELECTFLAG_NUMBER);
+ items[1].flags.set(BTSELECTFLAG_SHOWVALUE);
+ items[2].name = "Down: ";
+ items[2].flags.set(BTSELECTFLAG_NUMBER);
+ items[2].flags.set(BTSELECTFLAG_SHOWVALUE);
+ int start = 0;
+ int select = 0;
+ d.addSelection(items, 3, start, select);
+ int key = d.process();
+ d.clearText();
+ if (key != 27)
+ {
+  BTGame *game = BTGame::getGame();
+  std::unique_ptr<BTMap> autoMap;
+  BTMap *map = game->getMap();
+  if (items[2].value != 0)
+  {
+   std::string newFile = game->descendMap(items[2].value);
+   if (newFile == "")
+    return effect;
+   map = game->readMap(newFile);
+   std::unique_ptr<BTMap> tmpMap(map);
+   autoMap = std::move(tmpMap);
+  }
+  int x = game->getX() + items[1].value;
+  while (x < 0)
+   x += map->getXSize();
+  x = x % map->getXSize();
+  int y = game->getY() - items[0].value;
+  while (y < 0)
+   y += map->getYSize();
+  y = y % map->getYSize();
+  int sp = map->getSquare(x, y).getSpecial();
+  if (sp == -1)
+  {
+   if (map->getFlag().isSet(BTSPECIALFLAG_ANTITELEPORT))
+    return effect;
+  }
+  else
+  {
+   if (map->getSpecial(sp)->getFlag().isSet(BTSPECIALFLAG_ANTITELEPORT))
+    return effect;
+  }
+  effect.push_back(new BTTeleportEffect(type, expire, singer, musicId, x, y, map->getFilename()));
+ }
+ return effect;
+}
 

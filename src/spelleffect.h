@@ -378,5 +378,21 @@ class BTLightEffect : public BTTargetedEffect
   int illumination;
 };
 
+class BTTeleportEffect : public BTBaseEffect
+{
+ public:
+  BTTeleportEffect(int t, int x, int s, int m, int mX, int mY, const std::string &mFile);
+
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTTeleportEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, 0, 0, ""); }
+
+  int mapX;
+  int mapY;
+  std::string mapFile;
+};
+
 #endif
 

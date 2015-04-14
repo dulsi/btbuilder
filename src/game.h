@@ -40,6 +40,7 @@ class BTCore : public Psuedo3DMap
   BTCore(BTModule *m);
   ~BTCore();
 
+  std::string descendMap(int depth);
   BTFactory<BTItem> &getItemList();
   BTJobList &getJobList();
   BTModule *getModule();
@@ -53,6 +54,7 @@ class BTCore : public Psuedo3DMap
   BTXpChartList &getXpChartList();
   BTMap *getMap();
   BTMap *loadMap(const char *filename);
+  BTMap *readMap(const std::string &filename);
 
   int getMapType(int x, int y, int direction);
   int getXSize() const;
@@ -72,6 +74,7 @@ class BTCore : public Psuedo3DMap
   XMLVector<BTSong*> songList;
   BTFactory<BTSpell, BTSpell1> spellList;
   BTXpChartList xpChartList;
+  XMLVector<BTLevel*> levelList;
   BTMap *levelMap;
   Psuedo3DConfigList p3dConfigList;
   Psuedo3DConfig *p3dConfig;
@@ -122,6 +125,7 @@ class BTGame : public BTCore, public BTEffectGroup
   void turnLeft(BTDisplay &d);
   void turnRight(BTDisplay &d);
   void turnAround(BTDisplay &d);
+  void teleport(BTDisplay &d, const std::string &newMap, int newX, int newY, int newFacing);
 
   void setTimedSpecial(IShort special, unsigned int expire);
   void clearTimedSpecial();

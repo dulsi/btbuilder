@@ -39,6 +39,7 @@
 
 #define BTSELECTFLAG_UNSELECTABLE 0
 #define BTSELECTFLAG_SHOWVALUE 1
+#define BTSELECTFLAG_NUMBER 2
 
 class BTUIElement
 {
@@ -245,6 +246,8 @@ class BTUISelect : public BTUIElement
 
   void draw(BTDisplay &d);
 
+  void decrement(BTDisplay &d);
+  void increment(BTDisplay &d);
   void moveDown(BTDisplay &d);
   void moveUp(BTDisplay &d);
   void pageDown(BTDisplay &d);

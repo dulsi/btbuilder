@@ -28,6 +28,7 @@ class BTModule : public XMLObject
   char *song;
   char *xpChart;
   char *job;
+  char *level;
   char *title;
   char *wall;
   std::string startMap;

@@ -29,6 +29,8 @@ BTModule::BTModule()
  strcpy(xpChart, "data/experience.xml");
  job = new char[strlen("data/job.xml") + 1];
  strcpy(job, "data/job.xml");
+ level = new char[strlen("level.xml") + 1];
+ strcpy(level, "level.xml");
  title = new char[strlen("USRSCR.LBM") + 1];
  strcpy(title, "USRSCR.LBM");
  wall = new char[strlen("data/wall.xml") + 1];
@@ -59,6 +61,8 @@ BTModule::~BTModule()
   delete [] xpChart;
  if (job)
   delete [] job;
+ if (level)
+  delete [] level;
  if (title)
   delete [] title;
  if (wall)
@@ -78,6 +82,7 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("song", &song);
  s->add("xpChart", &xpChart);
  s->add("job", &job);
+ s->add("level", &level);
  s->add("title", &title);
  s->add("wall", &wall);
  s->add("startMap", &startMap);

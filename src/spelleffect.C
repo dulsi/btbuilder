@@ -1690,3 +1690,22 @@ void BTLightEffect::serialize(ObjectSerializer *s)
  BTTargetedEffect::serialize(s);
 }
 
+BTTeleportEffect::BTTeleportEffect(int t, int x, int s, int m, int mX, int mY, const std::string &mFile)
+ : BTBaseEffect(t, x, s, m), mapX(mX), mapY(mY), mapFile(mFile)
+{
+}
+
+void BTTeleportEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ BTGame *game = BTGame::getGame();
+ game->teleport(d, mapFile, mapX, mapY, game->getFacing());
+}
+
+void BTTeleportEffect::serialize(ObjectSerializer *s)
+{
+ BTBaseEffect::serialize(s);
+ s->add("mapX", &mapX);
+ s->add("mapY", &mapY);
+ s->add("mapFile", &mapFile);
+}
+
