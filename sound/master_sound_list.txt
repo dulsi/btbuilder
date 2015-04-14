@@ -1,20 +1,20 @@
 00 Ouch SFX
-01 Door Slam
-02 Door Close
-03 Trap Door
-04 Cell Door
-05 Creaking Door
-06 Trap Arrow
-07 Trap Gas
-08 Trap Collapsing Wall
-09 Trap Fireball
-10 Trap Flame Arrow
-11 Earthquake
-12 Avalanche 
+01 Character Dead 1
+02 Character Dead 2
+03 Monster Hurt 0
+04 Monster Hurt 1
+05 Monster Hurt 2
+06 Weapon Miss
+07 Heal Spell
+08 Cure Spell
+09 Spell Success
+10 Spell Failure
+11 Resurrect Spell
+12 Avalanche
 13 Bonus Spell
-14 Cure Spell
-15 Heal Spell
-16 Resurrect Spell
+14 Reserved
+15 Reserved
+16 Reserved
 17 Restore Spell
 18 Youth Spell
 19 Dispel Spell
@@ -39,7 +39,7 @@
 38 Electricity Spell
 39 Ice Spell
 40 Hit SFX
-41 Miss SFX
+41 Reserved
 42 Bell Toll
 43 Coins Thrown
 44 Bubbles
@@ -61,17 +61,17 @@
 60 Creature Footsteps 1
 61 Creature Footsteps 2
 62 Marching Footsteps
-63 Reserved
-64 Reserved
-65 Reserved
-66 Reserved
-67 Reserved
-68 Reserved
-69 Reserved
-70 Reserved
-71 Reserved
-72 Reserved
-73 Reserved
+63 Door Slam
+64 Door Close
+65 Trap Door
+66 Cell Door
+67 Creaking Door
+68 Trap Arrow
+69 Trap Gas
+70 Trap Collapsing Wall
+71 Trap Fireball
+72 Trap Flame Arrow
+73 Earthquake
 74 Reserved
 75 Reserved
 76 Reserved
