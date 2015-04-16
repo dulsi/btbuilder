@@ -186,7 +186,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
   }
   else
   {
-/*   XMLVector<BTSkill*> &skill = game->getSkillList();
+   XMLVector<BTSkill*> &skill = game->getSkillList();
    for (int i = 0; i < skill.size(); ++i)
    {
     if ((skill[i]->special == BTSKILLSPECIAL_BAREHANDS) && (hasSkillUse(i)))
@@ -196,7 +196,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
       damageDice = *skillDice;
      break;
     }
-   }*/
+   }
   }
  }
  else
