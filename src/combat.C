@@ -1299,6 +1299,8 @@ int BTCombat::cast(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
    {
     if (b.getPc()->sp < spellList[i].getSp())
      throw BTSpecialError("nosp");
+    if (!spellList[i].hasCombatEffect())
+     throw BTSpecialError("nocombatspell");
     b.getPc()->combat.action = BTPc::BTPcAction::cast;
     b.getPc()->combat.object = i;
     b.getPc()->combat.type = BTPc::BTPcAction::spell;

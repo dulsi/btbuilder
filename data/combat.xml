@@ -75,6 +75,7 @@
 	<error type="runAway">You are attempting to run away.
 You manage to get away!</error>
 	<error type="nospell" screen="2">No spell by that name.</error>
+	<error type="nocombatspell" screen="2">Not a combat spell.</error>
 	<error type="dontknow" screen="2">You don't know this spell.</error>
 	<error type="nosp" screen="2">Not enough spell points.</error>
 	<error type="novoice" screen="2"><name /> lost his voice!</error>
