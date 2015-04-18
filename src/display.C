@@ -1731,7 +1731,7 @@ void BTUISelect::draw(BTDisplay &d)
    tmp[0] = list[i].first;
    tmp[1] = 0;
    d.drawFont(tmp, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
-   if ((list[i].value) && (list[i].flags.isSet(BTSELECTFLAG_SHOWVALUE)))
+   if (((list[i].value) && (list[i].flags.isSet(BTSELECTFLAG_SHOWVALUE))) || (list[i].flags.isSet(BTSELECTFLAG_NUMBER)))
    {
     snprintf(tmp, 20, "%d", list[i].value);
     d.sizeFont(tmp, wValue, hTmp);
