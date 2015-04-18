@@ -106,6 +106,7 @@ class PictureIndex
 #define XMLTYPE_VECTORUINT 11
 #define XMLTYPE_VECTORSTRING 12
 #define XMLTYPE_PICTURE    13
+#define XMLTYPE_VECTORINT  14
 
 #define EXTRA_NONE -999
 
@@ -158,6 +159,7 @@ class ObjectSerializer
   void add(const char *name, std::vector<unsigned int> *p, ValueLookup *lookup = NULL, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::vector<std::string> *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, PictureIndex *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, std::vector<int> *p, ValueLookup *lookup = NULL, std::vector<XMLAttribute> *atts = NULL);
 
   void addLevel(XMLLevel *newLevel);
   XMLAction *find(const char *name, const char **atts);

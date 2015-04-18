@@ -355,7 +355,6 @@ std::string BTSpecialCommand::print() const
    case 'G':
    case 'F':
    case '!':
-   case 'J':
    {
     char s[50];
     snprintf(s, 50, "%d", number[count++]);
@@ -1004,8 +1003,8 @@ BTSpecialConditional::BTSpecialConditional(const BTSpecialConditional &copy)
  strcpy(text, copy.text);
 }
 
-BTSpecialConditional::BTSpecialConditional(IShort t, const char *txt, IShort num)
-: type(t), number(num)
+BTSpecialConditional::BTSpecialConditional(IShort t, const char *txt)
+: type(t)
 {
  text = new char[strlen(txt) + 1];
  strcpy(text, txt);
@@ -1017,9 +1016,19 @@ BTSpecialConditional::~BTSpecialConditional()
   delete [] text;
 }
 
+void BTSpecialConditional::addNumber(int value)
+{
+ number.push_back(value);
+}
+
 BTSpecialOperation *BTSpecialConditional::clone() const
 {
  return new BTSpecialConditional(*this);
+}
+
+int BTSpecialConditional::getArgumentCount() const
+{
+ return number.size();
 }
 
 IShort BTSpecialConditional::getType() const
@@ -1032,9 +1041,9 @@ std::string BTSpecialConditional::getText() const
  return (text ? text : "");
 }
 
-IUShort BTSpecialConditional::getNumber() const
+int BTSpecialConditional::getNumber(int indx) const
 {
- return number;
+ return number[indx];
 }
 
 IBool BTSpecialConditional::isNothing() const
@@ -1046,8 +1055,10 @@ std::string BTSpecialConditional::print() const
 {
  char *dollarSign;
  long len;
+ int count;
  std::string answer;
 
+ count = 0;
  answer += "IF   ";
  dollarSign = strchr(conditionalCommands[type], '$');
  if (dollarSign)
@@ -1057,31 +1068,31 @@ std::string BTSpecialConditional::print() const
   switch (dollarSign[1])
   {
    case 'I':
-    answer += BTCore::getCore()->getItemList()[number].getName();
+    answer += BTCore::getCore()->getItemList()[number[count++]].getName();
     break;
    case 'A':
-    answer += BTCore::getCore()->getMonsterList()[number].getName().c_str();
+    answer += BTCore::getCore()->getMonsterList()[number[count++]].getName().c_str();
     break;
    case 'C':
-    answer += BTCore::getCore()->getJobList()[number]->name;
+    answer += BTCore::getCore()->getJobList()[number[count++]]->name;
     break;
    case 'R':
-    answer += BTCore::getCore()->getRaceList()[number]->name;
+    answer += BTCore::getCore()->getRaceList()[number[count++]]->name;
     break;
    case 'D':
-    answer += directions[number];
+    answer += directions[number[count++]];
     break;
    case '#':
    case 'G':
    case 'F':
    {
     char s[50];
-    snprintf(s, 50, "%d", number);
+    snprintf(s, 50, "%d", number[count++]);
     answer += s;
     break;
    }
    case 'E':
-    answer += spellTypes[number];
+    answer += spellTypes[number[count++]];
     break;
    case '$':
    default:
@@ -1119,7 +1130,9 @@ void BTSpecialConditional::read(BinaryReadFile &f)
  f.readShort(type);
  f.readUByteArray(26, (IUByte *)tmp);
  tmp[26] = 0;
- f.readShort(number);
+ IShort tmpNum;
+ f.readShort(tmpNum);
+ number.push_back(tmpNum);
  BTSpecialCommand *op = new BTSpecialCommand;
  op->read(f);
  thenClause.addOperation(op);
@@ -1139,7 +1152,7 @@ void BTSpecialConditional::run(BTDisplay &d) const
    truth = false;
    for (int i = 0; i < party.size(); ++i)
    {
-    if (party[i]->hasItem(number))
+    if (party[i]->hasItem(number[0]))
     {
      truth = true;
      break;
@@ -1151,7 +1164,7 @@ void BTSpecialConditional::run(BTDisplay &d) const
   {
    for (int i = 0; i < party.size(); ++i)
    {
-    if (!party[i]->hasItem(number))
+    if (!party[i]->hasItem(number[0]))
     {
      truth = false;
      break;
@@ -1171,19 +1184,19 @@ void BTSpecialConditional::run(BTDisplay &d) const
    break;
   }
   case BTCONDITION_LOCALFLAGSET:
-   truth = (true == BTGame::getGame()->getLocalFlag(number));
+   truth = (true == BTGame::getGame()->getLocalFlag(number[0]));
    break;
   case BTCONDITION_LOCALFLAGCLEAR:
-   truth = (false == BTGame::getGame()->getLocalFlag(number));
+   truth = (false == BTGame::getGame()->getLocalFlag(number[0]));
    break;
   case BTCONDITION_GROUPFACING:
-   truth = (BTGame::getGame()->getFacing() == number);
+   truth = (BTGame::getGame()->getFacing() == number[0]);
    break;
   case BTCONDITION_MONSTERINPARTY:
   {
    truth = false;
    for (int i = 0; i < party.size(); ++i)
-    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number].getName().c_str())))
+    if ((party[i]->job == BTJOB_MONSTER) && (party[i]->monster == number[0]) && (0 == strcmp(party[i]->name, BTGame::getGame()->getMonsterList()[number[0]].getName().c_str())))
      truth = true;
    break;
   }
@@ -1191,7 +1204,7 @@ void BTSpecialConditional::run(BTDisplay &d) const
   {
    truth = false;
    for (int i = 0; i < party.size(); ++i)
-    if (party[i]->race == number)
+    if (party[i]->race == number[0])
      truth = true;
    break;
   }
@@ -1199,31 +1212,31 @@ void BTSpecialConditional::run(BTDisplay &d) const
    truth = BTGame::getGame()->isDaytime();
    break;
   case BTCONDITION_COUNTERGREATER:
-   truth = ((BTGame::getGame()->getCounter() > number) ? true : false);
+   truth = ((BTGame::getGame()->getCounter() > number[0]) ? true : false);
    break;
   case BTCONDITION_COUNTEREQUAL:
-   truth = ((BTGame::getGame()->getCounter() == number) ? true : false);
+   truth = ((BTGame::getGame()->getCounter() == number[0]) ? true : false);
    break;
   case BTCONDITION_COMBATWON:
    truth = BTGame::getGame()->getCombat().isWinner();
    break;
   case BTCONDITION_GLOBALFLAGSET:
-   truth = (true == BTGame::getGame()->getGlobalFlag(number));
+   truth = (true == BTGame::getGame()->getGlobalFlag(number[0]));
    break;
   case BTCONDITION_GLOBALFLAGCLEAR:
-   truth = (false == BTGame::getGame()->getGlobalFlag(number));
+   truth = (false == BTGame::getGame()->getGlobalFlag(number[0]));
    break;
   case BTCONDITION_RANDOM:
   {
    int roll = BTDice(1, 100).roll();
-   truth = (roll <= number);
+   truth = (roll <= number[0]);
    break;
   }
   case BTCONDITION_RACEINPARTY:
   {
    truth = false;
    for (int i = 0; i < party.size(); ++i)
-    if (party[i]->race == number)
+    if (party[i]->race == number[0])
      truth = true;
    break;
   }
@@ -1234,14 +1247,14 @@ void BTSpecialConditional::run(BTDisplay &d) const
    for (int i = 0; i < party.size(); ++i)
    {
     gold += party[i]->getGold();
-    if (gold > number)
+    if (gold > number[0])
      truth = true;
    }
    break;
   }
   case BTCONDITION_EFFECTACTIVE:
   {
-   truth = BTGame::getGame()->hasEffectOfType(number);
+   truth = BTGame::getGame()->hasEffectOfType(number[0]);
   }
   default:
    break;
@@ -1276,6 +1289,8 @@ void BTSpecialConditional::write(BinaryWriteFile &f)
   throw FileException("Too many operations in then clause.");
  if (elseClause.ops.size() > 1)
   throw FileException("Too many operations in else clause.");
+ if (number.size() > 1)
+  throw FileException("Too many arguments to conditional.");
  BTSpecialCommand empty;
  BTSpecialCommand *thenCmd = &empty;
  BTSpecialCommand *elseCmd = &empty;
@@ -1295,7 +1310,10 @@ void BTSpecialConditional::write(BinaryWriteFile &f)
  strcpy(tmp, text);
  memset(tmp + len, 0, 26 - len);
  f.writeUByteArray(26, (IUByte *)tmp);
- f.writeShort(number);
+ IShort tmpNum = 0;
+ if (number.size() > 0)
+	tmpNum = number[0];
+ f.writeShort(tmpNum);
  thenCmd->write(f);
  elseCmd->write(f);
 }
@@ -1373,7 +1391,8 @@ BTSpecial::BTSpecial(BinaryReadFile &f)
      body.addOperation(new BTSpecialCommand(BTSPECIALCOMMAND_NOTHING));
      --nothing;
     }
-    BTSpecialConditional *op = new BTSpecialConditional(type, tmp, number);
+    BTSpecialConditional *op = new BTSpecialConditional(type, tmp);
+    op->addNumber(number);
     if (opThen->getType() == BTSPECIALCOMMAND_GOTO)
     {
      labelNeeded.set(opThen->getNumber(0));

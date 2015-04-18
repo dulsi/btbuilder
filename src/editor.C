@@ -544,7 +544,10 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    BTSpecialConditional *specialCond = dynamic_cast<BTSpecialConditional*>(special);
    if (NULL != specialCond)
    {
-    number[0] = specialCond->getNumber();
+    for (int i = 0; i < specialCond->getArgumentCount(); i++)
+    {
+     number[i] = specialCond->getNumber(i);
+    }
     text = specialCond->getText();
    }
   }
@@ -716,6 +719,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
      if (toggle)
      {
       toggleMap();
+      p3dConfig = d.setWallGraphics(levelMap->getType());
      }
      xPos = origX;
      yPos = origY;
@@ -957,7 +961,9 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
  }
  if (cmds[current].value < BT_CONDITIONALCOMMANDS)
  {
-  BTSpecialConditional *opNew = new BTSpecialConditional(cmds[current].value, text.c_str(), number[0]);
+  BTSpecialConditional *opNew = new BTSpecialConditional(cmds[current].value, text.c_str());
+  for (int i = 0; i < count; ++i)
+   opNew->addNumber(number[i]);
   BTSpecialConditional *opOld = dynamic_cast<BTSpecialConditional*>(special);
   if (opOld)
   {

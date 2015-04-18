@@ -216,15 +216,17 @@ class BTSpecialConditional : public BTSpecialOperation
  public:
   BTSpecialConditional();
   BTSpecialConditional(const BTSpecialConditional &copy);
-  BTSpecialConditional(IShort t, const char *txt, IShort num);
+  BTSpecialConditional(IShort t, const char *txt);
   ~BTSpecialConditional();
 
+  void addNumber(int value);
   void addThenOperation(BTSpecialOperation *op) { thenClause.addOperation(op); }
   void addElseOperation(BTSpecialOperation *op) { elseClause.addOperation(op); }
   BTSpecialOperation *clone() const;
+  int getArgumentCount() const;
   IShort getType() const;
   std::string getText() const;
-  IUShort getNumber() const;
+  int getNumber(int indx) const;
   BTSpecialBody *getThenClause() { return &thenClause; }
   BTSpecialBody *getElseClause() { return &elseClause; }
   IBool isNothing() const;
@@ -241,7 +243,7 @@ class BTSpecialConditional : public BTSpecialOperation
  private:
   IShort type;
   char *text;
-  IShort number;
+  std::vector<int> number;
   BTSpecialBody thenClause;
   BTSpecialBody elseClause;
 };

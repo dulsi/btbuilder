@@ -122,7 +122,7 @@ std::string XMLAction::createString()
    std::vector<unsigned int> *val = reinterpret_cast<std::vector<unsigned int> *>(object);
    if (val->size() > 1)
     content = "Multiple";
-   if (data)
+   else if (data)
    {
     if (val->size() == 1)
      content = reinterpret_cast<ValueLookup*>(data)->getName((*val)[0]);
@@ -130,6 +130,23 @@ std::string XMLAction::createString()
    else
    {
     sprintf(convert, "%u", (*val)[0]);
+    content = convert;
+   }
+   break;
+  }
+  case XMLTYPE_VECTORINT:
+  {
+   std::vector<int> *val = reinterpret_cast<std::vector<int> *>(object);
+   if (val->size() > 1)
+    content = "Multiple";
+   else if (data)
+   {
+    if (val->size() == 1)
+     content = reinterpret_cast<ValueLookup*>(data)->getName((*val)[0]);
+   }
+   else
+   {
+    sprintf(convert, "%d", (*val)[0]);
     content = convert;
    }
    break;
@@ -321,6 +338,18 @@ void ObjectSerializer::add(const char *name, PictureIndex *p, std::vector<XMLAtt
  act->type = XMLTYPE_PICTURE;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
+void ObjectSerializer::add(const char *name, std::vector<int> *p, ValueLookup *lookup /*= NULL*/, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = ns + name;
+ act->attrib = atts;
+ act->type = XMLTYPE_VECTORINT;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ act->data = reinterpret_cast<void*>(lookup);
  action.push_back(act);
 }
 
@@ -530,6 +559,22 @@ void XMLSerializer::endElement(const XML_Char *name)
      reinterpret_cast<std::vector<unsigned int> *>(state->object)->push_back(u);
      break;
     }
+    case XMLTYPE_VECTORINT:
+    {
+     int u;
+     if (state->data)
+     {
+      int val = reinterpret_cast<ValueLookup*>(state->data)->getIndex(content);
+      if (-1 != val)
+      {
+       reinterpret_cast<std::vector<int> *>(state->object)->push_back(val);
+       break;
+      }
+     }
+     sscanf(content.c_str(), "%d", &u);
+     reinterpret_cast<std::vector<int> *>(state->object)->push_back(u);
+     break;
+    }
     case XMLTYPE_VECTORSTRING:
     {
      reinterpret_cast<std::vector<std::string> *>(state->object)->push_back(content);
@@ -716,6 +761,16 @@ void XMLSerializer::write(const char *filename, bool physfs)
     for (int i = 0; i < v->size(); ++i)
     {
      sprintf(convert, "%u", (*v)[i]);
+     content += "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
+    }
+    break;
+   }
+   case XMLTYPE_VECTORINT:
+   {
+    std::vector<unsigned int> *v = reinterpret_cast<std::vector<unsigned int> *>((*itr)->object);
+    for (int i = 0; i < v->size(); ++i)
+    {
+     sprintf(convert, "%d", (*v)[i]);
      content += "<" + (*itr)->createTag() + ">" + convert + "</" + (*itr)->name + ">";
     }
     break;

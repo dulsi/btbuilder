@@ -139,6 +139,25 @@ char *itemTypes[] =
 };
 ArrayLookup itemTypesLookup(BT_ITEMTYPES, itemTypes);
 
+/*
+ * $A or $M - monster
+ * $C - class
+ * $D - direction
+ * $E - spell type
+ * $F - flag number
+ * $I - item
+ * $S - special
+ * $L - location
+ * $K - relative location
+ * $N - map file
+ * $P - picture
+ * $R - race
+ * $T - trap special attack
+ * $X - spell
+ * $# or $G - number
+ * $$ - text
+ * $! - sound
+ */
 char *conditionalCommands[] =
 {
  "anyone is carrying $I",
