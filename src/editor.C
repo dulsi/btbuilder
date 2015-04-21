@@ -726,9 +726,9 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
      facing = origFacing;
      break;
     }
-    // Fall through to $K processing if map file does not exist.
+    // Fall through to $O processing if map file does not exist.
    }
-   case 'K':
+   case 'O':
    {
     std::string val;
     if (number[count] != 0)
@@ -946,6 +946,21 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
       return NULL;
     }
     newMap = text;
+    break;
+   }
+   case 'K':
+   {
+    BTSkillList &skillList = getSkillList();
+    BTDisplay::selectItem items[skillList.size()];
+    for (int i = 0; i < skillList.size(); ++i)
+     items[i].name = skillList[i]->name;
+    int itemStart(0);
+    d.addSelection(items, skillList.size(), itemStart, number[count]);
+    int key = d.process();
+    d.clearText();
+    if (key == 27)
+     return NULL;
+    count++;
     break;
    }
    case '$':

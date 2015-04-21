@@ -212,7 +212,7 @@ BTCore *BTCore::getCore()
 }
 
 BTGame::BTGame(BTModule *m)
- : BTCore(m), jobAbbrevList(&jobList), gameTime(0), timedSpecial(-1), delay(1000), activateSpecial(false)
+ : BTCore(m), jobAbbrevList(&jobList), pc(NULL), gameTime(0), timedSpecial(-1), delay(1000), activateSpecial(false)
 {
  BTDice::Init();
  if (NULL == game)
@@ -442,6 +442,16 @@ int BTGame::getCounter() const
 void BTGame::setCounter(int val)
 {
  counter = val;
+}
+
+BTPc *BTGame::getPc()
+{
+ return pc;
+}
+
+void BTGame::setPc(BTPc *c)
+{
+ pc = c;
 }
 
 BTChest &BTGame::getChest()

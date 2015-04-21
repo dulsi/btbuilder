@@ -107,6 +107,8 @@ class BTGame : public BTCore, public BTEffectGroup
 
   int getCounter() const;
   void setCounter(int val);
+  BTPc *getPc();
+  void setPc(BTPc *c);
 
   BTChest &getChest();
   BTCombat &getCombat();
@@ -165,6 +167,7 @@ class BTGame : public BTCore, public BTEffectGroup
   BTParty party;
   std::string lastInput;
   int counter;
+  BTPc *pc;
   BTChest chest;
   BTCombat combat;
   BTStatus status;

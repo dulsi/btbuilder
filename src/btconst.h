@@ -128,7 +128,7 @@ extern ArrayLookup itemTypesLookup;
 
 #define BTTIMESUSABLE_UNLIMITED 255
 
-#define BT_CONDITIONALCOMMANDS 19
+#define BT_CONDITIONALCOMMANDS 20
 #define BTCONDITION_ANYONEITEM      0
 #define BTCONDITION_EVERYONEITEM    1
 #define BTCONDITION_LASTINPUT       2
@@ -148,6 +148,7 @@ extern ArrayLookup itemTypesLookup;
 #define BTCONDITION_RACEINPARTY     16
 #define BTCONDITION_CANTAKEGOLD     17
 #define BTCONDITION_EFFECTACTIVE    18
+#define BTCONDITION_PARTYSKILLCHECK 19
 extern char *conditionalCommands[];
 
 #define BT_SPECIALCOMMANDS 62

@@ -330,7 +330,7 @@ std::string BTSpecialCommand::print() const
     answer += BTCore::getCore()->getSpellList()[number[count++]].getName();
     break;
    case 'L':
-   case 'K':
+   case 'O':
    {
     char s[50];
     snprintf(s, 50, "X:%d Y:%d", number[count], number[count + 1]);
@@ -1054,17 +1054,18 @@ IBool BTSpecialConditional::isNothing() const
 std::string BTSpecialConditional::print() const
 {
  char *dollarSign;
+ char *start;
  long len;
  int count;
  std::string answer;
 
  count = 0;
  answer += "IF   ";
- dollarSign = strchr(conditionalCommands[type], '$');
- if (dollarSign)
+ start = conditionalCommands[type];
+ while (dollarSign = strchr(start, '$'))
  {
-  len = (long)dollarSign - (long)conditionalCommands[type];
-  answer += std::string(conditionalCommands[type], len);
+  len = (long)dollarSign - (long)start;
+  answer += std::string(start, len);
   switch (dollarSign[1])
   {
    case 'I':
@@ -1094,18 +1095,17 @@ std::string BTSpecialConditional::print() const
    case 'E':
     answer += spellTypes[number[count++]];
     break;
+   case 'K':
+    answer += BTCore::getCore()->getSkillList()[number[count++]]->name;
+    break;
    case '$':
    default:
     answer += text;
     break;
   }
-  dollarSign += 2;
-  answer += dollarSign;
+  start = dollarSign + 2;
  }
- else
- {
-  answer += conditionalCommands[type];
- }
+ answer += start;
  return answer;
 }
 
@@ -1255,6 +1255,20 @@ void BTSpecialConditional::run(BTDisplay &d) const
   case BTCONDITION_EFFECTACTIVE:
   {
    truth = BTGame::getGame()->hasEffectOfType(number[0]);
+  }
+  case BTCONDITION_PARTYSKILLCHECK:
+  {
+   truth = false;
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i]->useSkill(number[0], number[1]))
+    {
+     truth = true;
+     BTGame::getGame()->setPc(party[i]);
+     break;
+    }
+   }
+   break;
   }
   default:
    break;

@@ -146,12 +146,13 @@ ArrayLookup itemTypesLookup(BT_ITEMTYPES, itemTypes);
  * $E - spell type
  * $F - flag number
  * $I - item
- * $S - special
+ * $K - skill
  * $L - location
- * $K - relative location
  * $N - map file
+ * $O - relative location
  * $P - picture
  * $R - race
+ * $S - special
  * $T - trap special attack
  * $X - spell
  * $# or $G - number
@@ -178,7 +179,8 @@ char *conditionalCommands[] =
  "random percent <= $G",
  "race $R is in party",
  "can take $# gold from party",
- "$E is active"
+ "$E is active",
+ "party passess $K check of $#"
 };
 
 char *specialCommands[] =
@@ -242,7 +244,7 @@ char *specialCommands[] =
  "cancel timed special",
  "goto $$",
  "subtract $# from counter",
- "relative teleport by $K dir: $D in $N",
+ "relative teleport by $O dir: $D in $N",
  "tele-activate to $N at $L dir: $D",
  "label $$"
 };
