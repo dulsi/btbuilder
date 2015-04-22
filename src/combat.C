@@ -45,6 +45,8 @@ std::string BTMonsterCombatant::getName() const
 
 bool BTMonsterCombatant::hasTag(const std::string &t) const
 {
+ if (t[0] == '!')
+  return !hasTag(t.c_str() + 1);
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
  return monList[group->monsterType].hasTag(t);
 }

@@ -573,6 +573,8 @@ bool BTPc::hasItem(int id) const
 
 bool BTPc::hasTag(const std::string &t) const
 {
+ if (t[0] == '!')
+  return !hasTag(t.c_str() + 1);
  if (monster != BTMONSTER_NONE)
  {
   BTGame *game = BTGame::getGame();
