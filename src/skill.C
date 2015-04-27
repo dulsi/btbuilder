@@ -9,7 +9,7 @@
 #include "game.h"
 #include <stdio.h>
 
-char *use[] =
+const char *use[] =
 {
  "autocombat",
  "autocombat-melee",
@@ -21,7 +21,7 @@ char *use[] =
 };
 ArrayLookup useLookup(7, use);
 ArrayLookup effectLookup(BT_MONSTEREXTRADAMAGE, extraDamage);
-char *specialSkill[] =
+const char *specialSkill[] =
 {
  "disarm",
  "hide",

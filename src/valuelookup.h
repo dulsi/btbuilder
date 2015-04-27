@@ -23,7 +23,7 @@ class ValueLookup
 class ArrayLookup : public ValueLookup
 {
  public:
-  ArrayLookup(size_t s, char **a) : sz(s), array(a) {}
+  ArrayLookup(size_t s, const char **a) : sz(s), array(a) {}
 
   virtual std::string getName(int index);
   virtual int getIndex(std::string name);
@@ -31,7 +31,7 @@ class ArrayLookup : public ValueLookup
 
  private:
   size_t sz;
-  char **array;
+  const char **array;
 };
 
 class PairLookup : public ValueLookup

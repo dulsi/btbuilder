@@ -167,7 +167,7 @@ class BTStatusLookup : public ArrayLookup
   static BTStatusLookup lookup;
 
  private:
-  static char *value[8];
+  static const char *value[8];
 };
 
 #endif

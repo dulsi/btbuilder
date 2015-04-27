@@ -55,7 +55,7 @@ class PairLookup;
 #define BTSPELLTYPE_REGENSKILL      40
 #define BTSPELLTYPE_CURESTATUS      41
 #define BTSPELLTYPE_TELEPORT        42
-extern char *spellTypes[];
+extern const char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 
 #define BT_EFFECTIVERANGES 2
@@ -67,7 +67,7 @@ extern char *effectiveRanges[];
 #define BTAREAEFFECT_GROUP 2
 #define BTAREAEFFECT_ALL   3
 #define BTAREAEFFECT_CASTER 4
-extern char *areaEffect[];
+extern const char *areaEffect[];
 extern ArrayLookup areaLookup;
 
 #define BT_DURATION 6
@@ -79,7 +79,7 @@ extern ArrayLookup areaLookup;
 #define BTDURATION_PERMANENT  5
 #define BTDURATION_CONTINUOUS 6
 #define BTDURATION_INDEFINITE 7
-extern char *durations[];
+extern const char *durations[];
 extern ArrayLookup durationLookup;
 
 #define BT_MONSTEREXTRADAMAGE 11
@@ -94,7 +94,7 @@ extern ArrayLookup durationLookup;
 #define BTEXTRADAMAGE_CRITICALHIT 8
 #define BTEXTRADAMAGE_ITEMZOT     9
 #define BTEXTRADAMAGE_POINTPHAZE 10
-extern char *extraDamage[];
+extern const char *extraDamage[];
 extern ArrayLookup extraDamageLookup;
 
 #define BT_RANGEDTYPES 4
@@ -102,7 +102,7 @@ extern ArrayLookup extraDamageLookup;
 #define BTRANGEDTYPE_FOE   1
 #define BTRANGEDTYPE_GROUP 2
 #define BTRANGEDTYPE_MAGIC 3
-extern char *rangedTypes[];
+extern const char *rangedTypes[];
 extern ArrayLookup rangedTypeLookup;
 
 #define BT_COMBATACTIONS 6
@@ -112,7 +112,7 @@ extern ArrayLookup rangedTypeLookup;
 #define BTCOMBATACTION_SPECIALATTACK   3
 #define BTCOMBATACTION_RANDOM          4
 #define BTCOMBATACTION_NOTHING         5
-extern char *combatActions[];
+extern const char *combatActions[];
 extern ArrayLookup combatActionLookup;
 
 #define BT_ITEMTYPES 13
@@ -121,7 +121,7 @@ extern ArrayLookup combatActionLookup;
 #define BTITEM_BOW          10
 #define BTITEM_ARROW        11
 #define BTITEM_THROWNWEAPON 12
-extern char *itemTypes[];
+extern const char *itemTypes[];
 extern ArrayLookup itemTypesLookup;
 
 #define BTITEMCAST_NONE -1
@@ -223,7 +223,7 @@ extern char *specialCommands[];
 #define BTSPECIALFLAG_ANTIMAGIC 1
 #define BTSPECIALFLAG_DARKNESS  2
 #define BTSPECIALFLAG_ANTITELEPORT  3
-extern char *specialFlag[];
+extern const char *specialFlag[];
 extern ArrayLookup specialFlagLookup;
 
 #define BT_DIRECTIONS 4
@@ -231,7 +231,7 @@ extern ArrayLookup specialFlagLookup;
 #define BTDIRECTION_EAST  1
 #define BTDIRECTION_SOUTH 2
 #define BTDIRECTION_WEST  3
-extern char *directions[];
+extern const char *directions[];
 extern ArrayLookup directionsLookup;
 
 #define BTMAPTYPE_CITY       2
@@ -244,14 +244,14 @@ extern ArrayLookup directionsLookup;
 #define BTSTAT_DX 2
 #define BTSTAT_CN 3
 #define BTSTAT_LK 4
-extern char *statAbbrev[];
+extern const char *statAbbrev[];
 extern ArrayLookup statLookup;
 
 #define BT_GENDERS 3
 #define BTGENDER_MALE   0
 #define BTGENDER_FEMALE 1
 #define BTGENDER_IT     2
-extern char *genderNames[];
+extern const char *genderNames[];
 extern ArrayLookup genderLookup;
 extern char *genderPronouns[];
 
@@ -320,21 +320,21 @@ extern PairLookup statusLookup;
 #define BTRESTRICTION_NONE      0
 #define BTRESTRICTION_COMBAT    1
 #define BTRESTRICTION_NONCOMBAT 2
-extern char *restriction[];
+extern const char *restriction[];
 extern ArrayLookup restrictionLookup;
 
 #define BT_TARGETOVERRIDES 3
 #define BTTARGETOVERRIDE_NONE        0
 #define BTTARGETOVERRIDE_SINGER      1
 #define BTTARGETOVERRIDE_ALLMONSTERS 2
-extern char *targetOverride[];
+extern const char *targetOverride[];
 extern ArrayLookup targetOverrideLookup;
 
 #define BT_MAPDISPLAYMODES 3
 #define BTMAPDISPLAYMODE_REQUEST 0
 #define BTMAPDISPLAYMODE_NO3D    1
 #define BTMAPDISPLAYMODE_ALWAYS  2
-extern char *mapDisplayMode[];
+extern const char *mapDisplayMode[];
 extern ArrayLookup mapDisplayModeLookup;
 
 #define BTKNOWLEDGE_NO   0

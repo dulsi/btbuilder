@@ -153,4 +153,4 @@ void BTConditional::serialize(ObjectSerializer* s)
 }
 
 BTAlignmentLookup BTAlignmentLookup::lookup;
-char *BTAlignmentLookup::value[3] = { "left", "center", "right" };
+const char *BTAlignmentLookup::value[3] = { "left", "center", "right" };

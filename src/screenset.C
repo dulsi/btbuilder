@@ -1565,7 +1565,7 @@ int BTScreenSet::advanceLevel(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
   int stat = (wasDrained ? -1 : b.pc[0]->incrementStat());
   d.drawStats();
   if (stat != -1)
-   b.add("increaseStat", &statAbbrev[stat]);
+   b.add("increaseStat", const_cast<char **>(&statAbbrev[stat]));
   return BTSCREEN_ADVANCELEVEL;
  }
  else

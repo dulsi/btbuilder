@@ -573,18 +573,25 @@ bool BTPc::hasItem(int id) const
 
 bool BTPc::hasTag(const std::string &t) const
 {
+ BTGame *game = BTGame::getGame();
  if (t[0] == '!')
   return !hasTag(t.c_str() + 1);
- if (0 == t.compare(genderNames[gender]))
-  return true;
  bool answer = (std::find<>(tag.begin(), tag.end(), t) != tag.end());
  if (answer)
   return answer;
  if (monster != BTMONSTER_NONE)
  {
-  BTGame *game = BTGame::getGame();
   BTFactory<BTMonster> &monList = game->getMonsterList();
   return monList[monster].hasTag(t);
+ }
+ else
+ {
+  if (0 == t.compare(genderNames[gender]))
+   return true;
+  if (0 == t.compare(game->getRaceList()[race]->name))
+   return true;
+  if (0 == t.compare(game->getJobList()[job]->name))
+   return true;
  }
  return false;
 }
@@ -1112,5 +1119,4 @@ size_t BTParty::size()
 }
 
 BTStatusLookup BTStatusLookup::lookup;
-char *BTStatusLookup::value[8] = { "dead", "poisoned", "insane", "aged", "possessed", "stoned", "paralyzed", "npc" };
-
+const char *BTStatusLookup::value[8] = { "dead", "poisoned", "insane", "aged", "possessed", "stoned", "paralyzed", "npc" };

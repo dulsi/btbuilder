@@ -109,7 +109,7 @@ class BTAlignmentLookup : public ArrayLookup
   static BTAlignmentLookup lookup;
 
  private:
-  static char *value[3];
+  static const char *value[3];
 };
 
 #endif

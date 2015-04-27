@@ -8,7 +8,7 @@
 #include "btconst.h"
 #include "valuelookup.h"
 
-char *spellTypes[] =
+const char *spellTypes[] =
 {
  "Heal",
  "Resurrect",
@@ -62,7 +62,7 @@ char *effectiveRanges[] =
  "Double"
 };
 
-char *areaEffect[] =
+const char *areaEffect[] =
 {
  "N/A",
  "Single Target",
@@ -72,7 +72,7 @@ char *areaEffect[] =
 };
 ArrayLookup areaLookup(BT_AREAEFFECT, areaEffect);
 
-char *durations[] =
+const char *durations[] =
 {
  "One Turn",
  "Short",
@@ -85,7 +85,7 @@ char *durations[] =
 };
 ArrayLookup durationLookup(BT_DURATION, durations);
 
-char *extraDamage[] =
+const char *extraDamage[] =
 {
  "Nothing special",
  "Poison",
@@ -101,7 +101,7 @@ char *extraDamage[] =
 };
 ArrayLookup extraDamageLookup(BT_MONSTEREXTRADAMAGE, extraDamage);
 
-char *rangedTypes[] =
+const char *rangedTypes[] =
 {
  "None",
  "Physical: 1 Foe",
@@ -110,7 +110,7 @@ char *rangedTypes[] =
 };
 ArrayLookup rangedTypeLookup(BT_RANGEDTYPES, rangedTypes);
 
-char *combatActions[] =
+const char *combatActions[] =
 {
  "Attack",
  "Move and Attack",
@@ -121,7 +121,7 @@ char *combatActions[] =
 };
 ArrayLookup combatActionLookup(BT_COMBATACTIONS, combatActions);
 
-char *itemTypes[] =
+const char *itemTypes[] =
 {
  "miscellaneous item",
  "hand weapon",
@@ -249,7 +249,7 @@ char *specialCommands[] =
  "label $$"
 };
 
-char *specialFlag[] =
+const char *specialFlag[] =
 {
  "Silence",
  "Anti-magic",
@@ -258,7 +258,7 @@ char *specialFlag[] =
 };
 ArrayLookup specialFlagLookup(BT_SPECIALFLAGS, specialFlag);
 
-char *directions[] =
+const char *directions[] =
 {
  "north",
  "east",
@@ -267,7 +267,7 @@ char *directions[] =
 };
 ArrayLookup directionsLookup(BT_DIRECTIONS, directions);
 
-char *statAbbrev[] =
+const char *statAbbrev[] =
 {
  "St",
  "IQ",
@@ -277,7 +277,7 @@ char *statAbbrev[] =
 };
 ArrayLookup statLookup(BT_STATS, statAbbrev);
 
-char *genderNames[] =
+const char *genderNames[] =
 {
  "male",
  "female",
@@ -313,7 +313,7 @@ char *statusNames[] =
 };
 PairLookup statusLookup(7, statusValue, statusNames);
 
-char *restriction[] =
+const char *restriction[] =
 {
  "none",
  "combat",
@@ -321,7 +321,7 @@ char *restriction[] =
 };
 ArrayLookup restrictionLookup(BT_RESTRICTIONS, restriction);
 
-char *targetOverride[] =
+const char *targetOverride[] =
 {
  "none",
  "singer",
@@ -329,7 +329,7 @@ char *targetOverride[] =
 };
 ArrayLookup targetOverrideLookup(BT_TARGETOVERRIDES, targetOverride);
 
-char *mapDisplayMode[] =
+const char *mapDisplayMode[] =
 {
  "request",
  "no3d",
