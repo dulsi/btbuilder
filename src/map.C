@@ -568,8 +568,33 @@ void BTSpecialCommand::run(BTDisplay &d) const
    break;
   }
   case BTSPECIALCOMMAND_PRINT:
-   d.drawText(text);
+  {
+   BTPc *pc = game->getPc();
+   std::string result;
+   if (pc)
+   {
+    char *where = strstr(text, "<name");
+    if (where)
+    {
+     if (where != text)
+      result.append(text, where - text);
+     char *end = strstr(where, "/>");
+     if (end)
+     {
+      result.append(pc->getName());
+      result.append(end + 2);
+     }
+     else
+      result.append(where);
+    }
+    else
+     result = text;
+   }
+   else
+    result = text;
+   d.drawText(result.c_str());
    break;
+  }
   case BTSPECIALCOMMAND_REGENERATESPELLS:
   {
    XMLVector<BTPc*> &party = game->getParty();
@@ -1259,6 +1284,7 @@ void BTSpecialConditional::run(BTDisplay &d) const
   case BTCONDITION_PARTYSKILLCHECK:
   {
    truth = false;
+   BTGame::getGame()->setPc(NULL);
    for (int i = 0; i < party.size(); ++i)
    {
     if (party[i]->useSkill(number[0], number[1]))

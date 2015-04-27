@@ -726,7 +726,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
    case XMLTYPE_STRING:
    case XMLTYPE_STDSTRING:
    case XMLTYPE_PICTURE:
-    content = (*itr)->createString();
+    content = encode((*itr)->createString());
     break;
    case XMLTYPE_BITFIELD:
    {
@@ -860,3 +860,27 @@ void XMLSerializer::write(PHYSFS_file *physFile, FILE *file, const char *content
  }
 }
 
+std::string XMLSerializer::encode(const std::string &data)
+{
+ std::string buffer;
+ buffer.reserve(data.size());
+ for(size_t pos = 0; pos != data.size(); ++pos)
+ {
+  switch(data[pos])
+  {
+   case '&':
+    buffer.append("&amp;");
+    break;
+   case '<':
+    buffer.append("&lt;");
+    break;
+   case '>':
+    buffer.append("&gt;");
+    break;
+   default:
+    buffer.append(&data[pos], 1);
+    break;
+  }
+ }
+ return buffer;
+}

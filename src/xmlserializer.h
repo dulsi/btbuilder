@@ -187,6 +187,7 @@ class XMLSerializer : public ObjectSerializer, public ExpatXMLParser
 
  protected:
   void write(PHYSFS_file *physFile, FILE *file, const char *content, size_t len);
+  std::string encode(const std::string &data);
 
  private:
   XMLAction *state;

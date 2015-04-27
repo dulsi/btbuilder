@@ -111,6 +111,7 @@ class BTPc : public XMLObject, public BTCombatant
   unsigned int gold;
   XMLVector<BTSkillValue*> skill;
   BTEquipment *item;
+  std::vector<std::string> tag;
 
   // Combat actions
   class BTPcAction

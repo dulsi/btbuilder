@@ -575,6 +575,11 @@ bool BTPc::hasTag(const std::string &t) const
 {
  if (t[0] == '!')
   return !hasTag(t.c_str() + 1);
+ if (0 == t.compare(genderNames[gender]))
+  return true;
+ bool answer = (std::find<>(tag.begin(), tag.end(), t) != tag.end());
+ if (answer)
+  return answer;
  if (monster != BTMONSTER_NONE)
  {
   BTGame *game = BTGame::getGame();
@@ -685,6 +690,7 @@ void BTPc::serialize(ObjectSerializer* s)
   attrib->push_back(XMLAttribute("number", tmp));
   s->add("item", &item[i], attrib);
  }
+ s->add("tag", &tag);
 }
 
 void BTPc::setName(const char *nm)
