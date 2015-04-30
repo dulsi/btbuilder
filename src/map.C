@@ -213,16 +213,16 @@ void BTSpecialBody::print(FILE *f, int indent) const
  }
 }
 
-void BTSpecialBody::run(BTDisplay &d) const
+void BTSpecialBody::run(BTDisplay &d, BTSpecialContext *context) const
 {
- runFromLine(d, 0);
+ runFromLine(d, context, 0);
 }
 
-void BTSpecialBody::runFromLine(BTDisplay &d, int line) const
+void BTSpecialBody::runFromLine(BTDisplay &d, BTSpecialContext *context, int line) const
 {
  while (line < ops.size())
  {
-  ops[line]->run(d);
+  ops[line]->run(d, context);
   ++line;
  }
 }
@@ -393,7 +393,7 @@ void BTSpecialCommand::read(BinaryReadFile &f)
  f.readShortArray(3, (IShort *)number);
 }
 
-void BTSpecialCommand::run(BTDisplay &d) const
+void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
 {
  BTGame *game = BTGame::getGame();
  switch (type)
@@ -569,7 +569,7 @@ void BTSpecialCommand::run(BTDisplay &d) const
   }
   case BTSPECIALCOMMAND_PRINT:
   {
-   BTPc *pc = game->getPc();
+   BTPc *pc = context->getPc();
    std::string result;
    if (pc)
    {
@@ -1166,7 +1166,7 @@ void BTSpecialConditional::read(BinaryReadFile &f)
  elseClause.addOperation(op);
 }
 
-void BTSpecialConditional::run(BTDisplay &d) const
+void BTSpecialConditional::run(BTDisplay &d, BTSpecialContext *context) const
 {
  XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
  bool truth = true;
@@ -1284,13 +1284,13 @@ void BTSpecialConditional::run(BTDisplay &d) const
   case BTCONDITION_PARTYSKILLCHECK:
   {
    truth = false;
-   BTGame::getGame()->setPc(NULL);
+   context->setPc(NULL);
    for (int i = 0; i < party.size(); ++i)
    {
     if (party[i]->useSkill(number[0], number[1]))
     {
      truth = true;
-     BTGame::getGame()->setPc(party[i]);
+     context->setPc(party[i]);
      break;
     }
    }
@@ -1300,9 +1300,9 @@ void BTSpecialConditional::run(BTDisplay &d) const
    break;
  }
  if (truth)
-  thenClause.run(d);
+  thenClause.run(d, context);
  else
-  elseClause.run(d);
+  elseClause.run(d, context);
 }
 
 void BTSpecialConditional::setType(IShort val)
@@ -1515,7 +1515,7 @@ void BTSpecial::print(FILE *f) const
  body.print(f, 0);
 }
 
-void BTSpecial::run(BTDisplay &d) const
+void BTSpecial::run(BTDisplay &d, BTSpecialContext *context) const
 {
  BTGame::getGame()->addFlags(d, flags);
  try
@@ -1526,7 +1526,7 @@ void BTSpecial::run(BTDisplay &d) const
   {
    try
    {
-    body.runFromLine(d, line);
+    body.runFromLine(d, context, line);
     stop = true;
    }
    catch (const BTSpecialGoto &g)

@@ -1201,9 +1201,8 @@ XMLObject *BTEffect::create(const XML_Char *name, const XML_Char **atts)
 }
 
 BTScreenSet::BTScreenSet()
- : picture(-1), label(0), building(false), clearMagic(false), grp(0)
+ : picture(-1), label(0), building(false), clearMagic(false)
 {
- pc[0] = pc[1] = 0;
  actionList["advanceLevel"] = &advanceLevel;
  actionList["addToParty"] = &addToParty;
  actionList["buy"] = &buy;
@@ -1249,15 +1248,8 @@ BTScreenSet::BTScreenSet()
 
 BTScreenSet::~BTScreenSet()
 {
- if ((pc[0]) && (0 == pc[0]->name[0]))
-  delete pc[0];
  if (label)
   delete [] label;
-}
-
-BTPc* BTScreenSet::getPc()
-{
- return pc[0];
 }
 
 void BTScreenSet::checkEffects(BTDisplay &d)
@@ -1517,27 +1509,6 @@ void BTScreenSet::setEffect(int type)
    effects[i]->setProcessed();
   }
  }
-}
-
-void BTScreenSet::setGroup(BTGroup *g)
-{
- if ((pc[0]) && (0 == pc[0]->name[0]))
-  delete pc[0];
- pc[0] = 0;
- grp = g;
-}
-
-void BTScreenSet::setPc(BTPc *c, int who /*= 0*/)
-{
- if ((pc[who]) && (0 == pc[who]->name[0]))
-  delete pc[who];
- pc[who] = c;
- if (pc[who])
- {
-  pc[who]->combat.object = -1;
-  pc[who]->combat.type = BTPc::BTPcAction::none;
- }
- grp = 0;
 }
 
 void BTScreenSet::setPicture(BTDisplay &d, int pic, const char *l)

@@ -12,6 +12,7 @@
 #include "map.h"
 #include "pc.h"
 #include "shop.h"
+#include "specialcontext.h"
 #include <map>
 
 #define BTSCREEN_EXIT -1
@@ -404,7 +405,7 @@ class BTEffect : public BTLine
   bool processed;
 };
 
-class BTScreenSet : public ObjectSerializer
+class BTScreenSet : public ObjectSerializer, public BTSpecialContext
 {
  public:
   typedef int (*action)(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
@@ -412,7 +413,6 @@ class BTScreenSet : public ObjectSerializer
   BTScreenSet();
   ~BTScreenSet();
 
-  BTPc* getPc();
   void checkEffects(BTDisplay &d);
   int displayError(BTDisplay &d, const BTSpecialError &e);
   virtual void endScreen(BTDisplay &d) {}
@@ -422,8 +422,6 @@ class BTScreenSet : public ObjectSerializer
   virtual void open(const char *filename);
   void run(BTDisplay &d, int start = 0, bool status = true);
   void setEffect(int type);
-  void setGroup(BTGroup *g);
-  void setPc(BTPc *c, int who = 0);
   void setPicture(BTDisplay &d, int pic, const char *l);
 
   // Actions
@@ -468,10 +466,6 @@ class BTScreenSet : public ObjectSerializer
   static int unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
-
- private:
-  BTPc *pc[2];
-  BTGroup *grp;
 
  protected:
   int picture;

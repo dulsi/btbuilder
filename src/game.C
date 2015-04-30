@@ -212,7 +212,7 @@ BTCore *BTCore::getCore()
 }
 
 BTGame::BTGame(BTModule *m)
- : BTCore(m), jobAbbrevList(&jobList), pc(NULL), gameTime(0), timedSpecial(-1), delay(1000), activateSpecial(false)
+ : BTCore(m), jobAbbrevList(&jobList), gameTime(0), timedSpecial(-1), delay(1000), activateSpecial(false)
 {
  BTDice::Init();
  if (NULL == game)
@@ -444,16 +444,6 @@ void BTGame::setCounter(int val)
  counter = val;
 }
 
-BTPc *BTGame::getPc()
-{
- return pc;
-}
-
-void BTGame::setPc(BTPc *c)
-{
- pc = c;
-}
-
 BTChest &BTGame::getChest()
 {
  return chest;
@@ -548,7 +538,7 @@ void BTGame::run(BTDisplay &d)
    setKnowledge(xPos, yPos, true);
    try
    {
-    BTSpecialCommand::Guild.run(d);
+    BTSpecialCommand::Guild.run(d, this);
    }
    catch (const BTSpecialFlipGoForward &)
    {
@@ -748,7 +738,7 @@ void BTGame::run(BTDisplay &d)
     loadStart();
     try
     {
-     BTSpecialCommand::Guild.run(d);
+     BTSpecialCommand::Guild.run(d, this);
     }
     catch (const BTSpecialFlipGoForward &)
     {
@@ -773,7 +763,7 @@ bool BTGame::runSpecial(BTDisplay &d, IShort special)
  {
   BTSpecial* sp = levelMap->getSpecial(special);
   if (sp)
-   sp->run(d);
+   sp->run(d, this);
  }
  catch (const BTSpecialTeleport &t)
  {

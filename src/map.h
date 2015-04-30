@@ -10,6 +10,7 @@
 #include "istdlib.h"
 #include <file.h>
 #include "display.h"
+#include "specialcontext.h"
 #include <typeinfo>
 
 /*
@@ -143,7 +144,7 @@ class BTSpecialOperation : public XMLObject
   virtual IBool isNothing() const = 0;
   virtual std::string print() const = 0;
   virtual void print(FILE *f, int indent) const = 0;
-  virtual void run(BTDisplay &d) const = 0;
+  virtual void run(BTDisplay &d, BTSpecialContext *context) const = 0;
 };
 
 class BTSpecialBody : public BTSpecialOperation
@@ -169,8 +170,8 @@ class BTSpecialBody : public BTSpecialOperation
   int numOfOperations(bool recursive) const;
   std::string print() const;
   void print(FILE *f, int indent) const;
-  void run(BTDisplay &d) const;
-  void runFromLine(BTDisplay &d, int line) const;
+  void run(BTDisplay &d, BTSpecialContext *context) const;
+  void runFromLine(BTDisplay &d, BTSpecialContext *context, int line) const;
   void serialize(ObjectSerializer* s);
   void upgradeToLabel(BitField &labelNeeded);
 
@@ -195,7 +196,7 @@ class BTSpecialCommand : public BTSpecialOperation
   std::string print() const;
   void print(FILE *f, int indent) const;
   void read(BinaryReadFile &f);
-  void run(BTDisplay &d) const;
+  void run(BTDisplay &d, BTSpecialContext *context) const;
   void serialize(ObjectSerializer* s);
   void setText(const std::string &t);
   void setNumber(int indx, IUShort value);
@@ -233,7 +234,7 @@ class BTSpecialConditional : public BTSpecialOperation
   std::string print() const;
   void print(FILE *f, int indent) const;
   void read(BinaryReadFile &f);
-  void run(BTDisplay &d) const;
+  void run(BTDisplay &d, BTSpecialContext *context) const;
   void setType(IShort val);
   void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
@@ -261,7 +262,7 @@ class BTSpecial : public XMLObject
   const char *getName() const;
   std::string printFlags() const;
   void print(FILE *f) const;
-  void run(BTDisplay &d) const;
+  void run(BTDisplay &d, BTSpecialContext *context) const;
   void serialize(ObjectSerializer* s);
   void setName(const std::string &nm);
   void write(BinaryWriteFile &f);
