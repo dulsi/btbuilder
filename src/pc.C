@@ -707,6 +707,16 @@ void BTPc::setName(const char *nm)
  strcpy(name, nm);
 }
 
+void BTPc::setTag(const std::string &t)
+{
+ for (int i = 0; i < tag.size(); ++i)
+ {
+  if (tag[i] == t)
+   return;
+ }
+ tag.push_back(t);
+}
+
 void BTPc::setSkill(int skNum, int value, int uses)
 {
  for (int i = 0; i < skill.size(); ++i)

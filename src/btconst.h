@@ -59,7 +59,7 @@ extern const char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 
 #define BT_EFFECTIVERANGES 2
-extern char *effectiveRanges[];
+extern const char *effectiveRanges[];
 
 #define BT_AREAEFFECT 5
 #define BTAREAEFFECT_NONE  0
@@ -128,7 +128,7 @@ extern ArrayLookup itemTypesLookup;
 
 #define BTTIMESUSABLE_UNLIMITED 255
 
-#define BT_CONDITIONALCOMMANDS 20
+#define BT_CONDITIONALCOMMANDS 22
 #define BTCONDITION_ANYONEITEM      0
 #define BTCONDITION_EVERYONEITEM    1
 #define BTCONDITION_LASTINPUT       2
@@ -149,9 +149,11 @@ extern ArrayLookup itemTypesLookup;
 #define BTCONDITION_CANTAKEGOLD     17
 #define BTCONDITION_EFFECTACTIVE    18
 #define BTCONDITION_PARTYSKILLCHECK 19
-extern char *conditionalCommands[];
+#define BTCONDITION_ANYONEHASTAG    20
+#define BTCONDITION_PERSONHASTAG    21
+extern const char *conditionalCommands[];
 
-#define BT_SPECIALCOMMANDS 62
+#define BT_SPECIALCOMMANDS 63
 #define BTSPECIALCOMMAND_NOTHING          0
 #define BTSPECIALCOMMAND_STOP             1
 #define BTSPECIALCOMMAND_SPIN             2
@@ -214,7 +216,8 @@ extern char *conditionalCommands[];
 #define BTSPECIALCOMMAND_TELEPORTRELATIVE 59
 #define BTSPECIALCOMMAND_TELEACTIVATE     60
 #define BTSPECIALCOMMAND_LABEL            61
-extern char *specialCommands[];
+#define BTSPECIALCOMMAND_PERSONSETTAG     62
+extern const char *specialCommands[];
 
 #define BTSPECIAL_NONE -1
 
@@ -253,7 +256,7 @@ extern ArrayLookup statLookup;
 #define BTGENDER_IT     2
 extern const char *genderNames[];
 extern ArrayLookup genderLookup;
-extern char *genderPronouns[];
+extern const char *genderPronouns[];
 
 #define BTSP_REGEN 50
 

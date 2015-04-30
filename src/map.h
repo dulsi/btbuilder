@@ -134,7 +134,9 @@ class BTSpecialQuit
 class BTSpecialStop
 {
  public:
-  BTSpecialStop() {}
+  BTSpecialStop(int r) : ret(r) {}
+
+  int ret;
 };
 
 class BTSpecialOperation : public XMLObject

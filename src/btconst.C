@@ -56,7 +56,7 @@ const char *spellTypes[] =
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES_FULL, spellTypes);
 
-char *effectiveRanges[] =
+const char *effectiveRanges[] =
 {
  "Normal",
  "Double"
@@ -159,7 +159,7 @@ ArrayLookup itemTypesLookup(BT_ITEMTYPES, itemTypes);
  * $$ - text
  * $! - sound
  */
-char *conditionalCommands[] =
+const char *conditionalCommands[] =
 {
  "anyone is carrying $I",
  "everyone is carrying $I",
@@ -180,10 +180,12 @@ char *conditionalCommands[] =
  "race $R is in party",
  "can take $# gold from party",
  "$E is active",
- "party passess $K check of $#"
+ "party passess $K check of $#",
+ "anyone has tag $$",
+ "selected PC has tag $$"
 };
 
-char *specialCommands[] =
+const char *specialCommands[] =
 {
  "nothing",
  "stop",
@@ -246,7 +248,8 @@ char *specialCommands[] =
  "subtract $# from counter",
  "relative teleport by $O dir: $D in $N",
  "tele-activate to $N at $L dir: $D",
- "label $$"
+ "label $$",
+ "selected PC gains tag $$"
 };
 
 const char *specialFlag[] =
@@ -284,7 +287,7 @@ const char *genderNames[] =
  "it"
 };
 ArrayLookup genderLookup(BT_GENDERS, genderNames);
-char *genderPronouns[] =
+const char *genderPronouns[] =
 {
  "him",
  "her",

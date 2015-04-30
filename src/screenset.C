@@ -1200,6 +1200,51 @@ XMLObject *BTEffect::create(const XML_Char *name, const XML_Char **atts)
  return new BTEffect(type, action);
 }
 
+BTAction::BTAction()
+{
+}
+
+BTAction::~BTAction()
+{
+}
+
+const std::string &BTAction::getName() const
+{
+ return name;
+}
+
+int BTAction::run(BTDisplay &d, BTSpecialContext *context) const
+{
+ try
+ {
+  bool stop = false;
+  int line = 0;
+  while (!stop)
+  {
+   try
+   {
+    body.runFromLine(d, context, line);
+    stop = true;
+   }
+   catch (const BTSpecialGoto &g)
+   {
+    line = body.findLabel(g.label);
+   }
+  }
+ }
+ catch (const BTSpecialStop &s)
+ {
+  return s.ret;
+ }
+ return 0;
+}
+
+void BTAction::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("body", &body);
+}
+
 BTScreenSet::BTScreenSet()
  : picture(-1), label(0), building(false), clearMagic(false)
 {
@@ -1264,9 +1309,15 @@ void BTScreenSet::checkEffects(BTDisplay &d)
    d.process(BTDisplay::allKeys);
    try
    {
-    BTScreenSet::action a = findAction(effects[i]->getAction());
+    BTAction *a = findAction(effects[i]->getAction());
     if (a)
-     (*a)(*this, d, effects[i], 13);
+     a->run(d, this);
+    else
+    {
+     BTScreenSet::action a2 = findAction2(effects[i]->getAction());
+     if (a2)
+      (*a2)(*this, d, effects[i], 13);
+    }
    }
    catch (const BTSpecialError &e)
    {
@@ -1306,7 +1357,19 @@ int BTScreenSet::displayError(BTDisplay &d, const BTSpecialError &e)
   return 0;
 }
 
-BTScreenSet::action BTScreenSet::findAction(const std::string &actionName)
+BTAction *BTScreenSet::findAction(const std::string &actionName)
+{
+ for (int i = 0; i < actions.size(); ++i)
+ {
+  if (actionName == actions[i]->getName())
+  {
+   return actions[i];
+  }
+ }
+ return NULL;
+}
+
+BTScreenSet::action BTScreenSet::findAction2(const std::string &actionName)
 {
  std::map<std::string, BTScreenSet::action>::iterator actionItr = actionList.find(actionName);
  if (actionList.end() != actionItr)
@@ -1335,6 +1398,7 @@ void BTScreenSet::open(const char *filename)
  parser.add("building", &building);
  parser.add("clearMagic", &clearMagic);
  parser.add("screen", &screen, &BTScreenSetScreen::create);
+ parser.add("action", &actions, &BTAction::create);
  parser.add("error", &errors, &BTError::create);
  parser.add("effect", &effects, &BTEffect::create);
  parser.parse(filename, true);
@@ -1437,9 +1501,17 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
    removeLevel();
    try
     {
-     BTScreenSet::action a = findAction(item->getAction());
+     BTAction *a = findAction(item->getAction());
      if (a)
-      next = (*a)(*this, d, item, key);
+     {
+      next = a->run(d, this);
+     }
+     else
+     {
+      BTScreenSet::action a = findAction2(item->getAction());
+      if (a)
+       next = (*a)(*this, d, item, key);
+     }
     }
     catch (const BTSpecialError &e)
     {
@@ -1786,7 +1858,7 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
    throw BTSpecialDead();
  }
  else
-  throw BTSpecialStop();
+  throw BTSpecialStop(0);
 }
 
 int BTScreenSet::exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)

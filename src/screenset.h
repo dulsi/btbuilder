@@ -405,6 +405,23 @@ class BTEffect : public BTLine
   bool processed;
 };
 
+class BTAction : public XMLObject
+{
+ public:
+  BTAction();
+  ~BTAction();
+
+  const std::string &getName() const;
+  int run(BTDisplay &d, BTSpecialContext *context) const;
+  void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAction; }
+
+ private:
+  std::string name;
+  BTSpecialBody body;
+};
+
 class BTScreenSet : public ObjectSerializer, public BTSpecialContext
 {
  public:
@@ -416,7 +433,8 @@ class BTScreenSet : public ObjectSerializer, public BTSpecialContext
   void checkEffects(BTDisplay &d);
   int displayError(BTDisplay &d, const BTSpecialError &e);
   virtual void endScreen(BTDisplay &d) {}
-  action findAction(const std::string &actionName);
+  BTAction *findAction(const std::string &actionName);
+  action findAction2(const std::string &actionName);
   virtual int findScreen(int num);
   virtual void initScreen(BTDisplay &d) {}
   virtual void open(const char *filename);
@@ -473,6 +491,7 @@ class BTScreenSet : public ObjectSerializer, public BTSpecialContext
   bool building;
   bool clearMagic;
   XMLVector<BTScreenSetScreen*> screen;
+  XMLVector<BTAction*> actions;
   XMLVector<BTError*> errors;
   XMLVector<BTEffect*> effects;
   std::map<std::string, action> actionList;

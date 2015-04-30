@@ -29,7 +29,7 @@ void BTStatus::run(BTDisplay &d, BTPc *pc)
  }
  catch (const BTSpecialDead &e)
  {
-  throw BTSpecialStop();
+  throw BTSpecialStop(0);
  }
  setPc(NULL);
  d.clearText();

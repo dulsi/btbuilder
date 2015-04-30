@@ -309,7 +309,7 @@ std::string BTSpecialCommand::print() const
  std::string answer;
 
  count = 0;
- start = specialCommands[type];
+ start = const_cast<char*>(specialCommands[type]);
  while (dollarSign = strchr(start, '$'))
  {
   len = (long)dollarSign - (long)start;
@@ -399,7 +399,7 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
  switch (type)
  {
   case BTSPECIALCOMMAND_STOP:
-   throw BTSpecialStop();
+   throw BTSpecialStop(number[0]);
    break;
   case BTSPECIALCOMMAND_SPIN:
    game->setFacing(BTDice(1, 4, 0).roll() % 4);
@@ -720,7 +720,7 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
    if (game->hasEffectOfType(BTSPELLTYPE_TRAPDESTROY))
    {
     d.drawText("A trap is magically disabled!");
-    throw BTSpecialStop();
+    throw BTSpecialStop(0);
    }
    else
    {
@@ -737,7 +737,7 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
         char tmp[100];
         snprintf(tmp, 100, "%s finds and disarms a trap!", party[k]->name);
         d.drawText(tmp);
-        throw BTSpecialStop();
+        throw BTSpecialStop(0);
        }
       }
      }
@@ -969,6 +969,13 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
   case BTSPECIALCOMMAND_TELEACTIVATE:
    throw BTSpecialTeleport(text, number[0], -number[1] - 1, number[2], true);
    break;
+  case BTSPECIALCOMMAND_PERSONSETTAG:
+  {
+   BTPc *c = context->getPc();
+   if (c)
+    c->setTag(text);
+   break;
+  }
   default:
    break;
  }
@@ -1086,7 +1093,7 @@ std::string BTSpecialConditional::print() const
 
  count = 0;
  answer += "IF   ";
- start = conditionalCommands[type];
+ start = const_cast<char*>(conditionalCommands[type]);
  while (dollarSign = strchr(start, '$'))
  {
   len = (long)dollarSign - (long)start;
@@ -1294,6 +1301,27 @@ void BTSpecialConditional::run(BTDisplay &d, BTSpecialContext *context) const
      break;
     }
    }
+   break;
+  }
+  case BTCONDITION_ANYONEHASTAG:
+  {
+   truth = false;
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (party[i]->hasTag(text))
+    {
+     truth = true;
+     context->setPc(party[i]);
+     break;
+    }
+   }
+   break;
+  }
+  case BTCONDITION_PERSONHASTAG:
+  {
+   BTPc *c = context->getPc();
+   if ((c == NULL) || (!c->hasTag(text)))
+    truth = false;
    break;
   }
   default:

@@ -81,6 +81,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
   virtual void serialize(ObjectSerializer* s);
   void setName(const char *nm);
+  void setTag(const std::string &t);
   void setSkill(int skNum, int value, int uses);
   unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);
