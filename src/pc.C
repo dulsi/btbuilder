@@ -613,6 +613,18 @@ bool BTPc::isIllusion() const
  return job == BTJOB_ILLUSION;
 }
 
+void BTPc::removeTag(const std::string &t)
+{
+ for (int i = 0; i < tag.size(); ++i)
+ {
+  if (tag[i] == t)
+  {
+   tag.erase(tag.begin() + i);
+   break;
+  }
+ }
+}
+
 void BTPc::restoreLevel()
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();

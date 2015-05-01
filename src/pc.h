@@ -76,6 +76,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool hasTag(const std::string &t) const;
   bool hasSkillUse(int skNum);
   bool isIllusion() const;
+  void removeTag(const std::string &t);
   virtual void restoreLevel();
   virtual void rollInitiative();
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;

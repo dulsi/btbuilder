@@ -976,6 +976,20 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
     c->setTag(text);
    break;
   }
+  case BTSPECIALCOMMAND_PERSONDELETETAG:
+  {
+   BTPc *c = context->getPc();
+   if (c)
+    c->removeTag(text);
+   break;
+  }
+  case BTSPECIALCOMMAND_RUNXML:
+  {
+   BTScreenSet b;
+   b.open(text);
+   b.run(d);
+   break;
+  }
   default:
    break;
  }

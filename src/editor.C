@@ -12,7 +12,7 @@
 #include <sstream>
 
 BTEditor::BTEditor(BTModule *m)
- : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0), swapMap(0)
+ : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0), swapMap(0), clipboard(0)
 {
 }
 
@@ -21,6 +21,10 @@ BTEditor::~BTEditor()
  if (swapMap)
  {
   delete swapMap;
+ }
+ if (clipboard)
+ {
+  delete clipboard;
  }
 }
 
@@ -391,7 +395,7 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  buildOperationList(d, body, list, ops);
  d.addSelection(list.data(), list.size(), start, current);
  int key;
- char extra[3] = {BTKEY_INS, BTKEY_DEL, 0};
+ char extra[6] = {BTKEY_INS, BTKEY_DEL, BTKEY_CTRL_C, BTKEY_CTRL_V, BTKEY_CTRL_X, 0};
  while (27 != (key = d.process(extra)))
  {
   d.clearText();
@@ -422,6 +426,35 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
     if ((ops[list[current].value].op != NULL) && (ops[list[current].value].parent != NULL))
     {
      ops[list[current].value].parent->eraseOperation(ops[list[current].value].op);
+    }
+   }
+   else if (BTKEY_CTRL_X == key)
+   {
+    if ((ops[list[current].value].op != NULL) && (ops[list[current].value].parent != NULL))
+    {
+     if (clipboard)
+      delete clipboard;
+     clipboard = ops[list[current].value].op->clone();
+     ops[list[current].value].parent->eraseOperation(ops[list[current].value].op);
+    }
+   }
+   else if (BTKEY_CTRL_C == key)
+   {
+    if ((ops[list[current].value].op != NULL) && (ops[list[current].value].parent != NULL))
+    {
+     if (clipboard)
+      delete clipboard;
+     clipboard = ops[list[current].value].op->clone();
+    }
+   }
+   else if (BTKEY_CTRL_V == key)
+   {
+    if ((ops[list[current].value].parent != NULL) && (clipboard))
+    {
+     if (ops[list[current].value].op)
+      ops[list[current].value].parent->insertOperation(ops[list[current].value].op, clipboard->clone());
+     else
+      ops[list[current].value].parent->addOperation(clipboard->clone());
     }
    }
    else if ('\r' == key)

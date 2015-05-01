@@ -42,6 +42,7 @@ class BTEditor : public BTCore
   int startSpecial;
   int currentSpecial;
   BTMap *swapMap;
+  BTSpecialOperation *clipboard;
 };
 
 #endif

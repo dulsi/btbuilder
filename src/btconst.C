@@ -249,7 +249,9 @@ const char *specialCommands[] =
  "relative teleport by $O dir: $D in $N",
  "tele-activate to $N at $L dir: $D",
  "label $$",
- "selected PC gains tag $$"
+ "selected PC gains tag $$",
+ "selected PC removes tag $$",
+ "run xml file $$"
 };
 
 const char *specialFlag[] =

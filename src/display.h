@@ -27,13 +27,16 @@
 
 #define BTKEY_UP 1
 #define BTKEY_DOWN 2
-#define BTKEY_LEFT 3
-#define BTKEY_RIGHT 4
-#define BTKEY_PGDN 5
+#define BTKEY_LEFT 4
+#define BTKEY_RIGHT 5
+#define BTKEY_PGDN 6
 #define BTKEY_PGUP SDLK_PAGEUP
-#define BTKEY_END 6
-#define BTKEY_INS 7
+#define BTKEY_END 7
+#define BTKEY_INS 8
 #define BTKEY_DEL 127
+#define BTKEY_CTRL_C 3
+#define BTKEY_CTRL_X 24
+#define BTKEY_CTRL_V 22
 
 #define BTMUSICID_ALL 0
 
