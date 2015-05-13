@@ -550,7 +550,12 @@ void BTDisplay::drawMap(bool knowledge)
    int coordinate = m->getYSize() - (k + mapYStart) - 1;
    if (coordinate < 100)
    {
-    if (coordinate < 10)
+    if (coordinate < 0)
+    {
+     sz[0] = 0;
+     sz[1] = 0;
+    }
+    else if (coordinate < 10)
     {
      sz[0] = '0' + (coordinate);
      sz[1] = 0;
