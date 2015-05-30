@@ -10,6 +10,7 @@
 #include "game.h"
 #include "pc.h"
 #include "status.h"
+#include <algorithm>
 
 #define BTSCREEN_ADVANCELEVEL 4
 #define BTSCREEN_XPNEEDED     3
@@ -73,6 +74,25 @@ std::string BTElement::eval(ObjectSerializer *obj) const
     case XMLTYPE_STDSTRING:
      return state->createString();
      break;
+    case XMLTYPE_VECTORSTRING:
+    {
+     std::vector<std::string> *ary = reinterpret_cast<std::vector<std::string>*>(state->object);
+     const char **attx = const_cast<const char**>(atts);
+     if (attx)
+     {
+      for (int i = 0; attx[i]; i += 2)
+      {
+       if (0 == strcmp(attx[i], "name"))
+       {
+        bool answer = (std::find<>(ary->begin(), ary->end(), attx[i + 1]) != ary->end());
+        if (answer)
+         return attx[i + 1];
+       }
+      }
+     }
+     return "";
+     break;
+    }
     case XMLTYPE_CREATE:
     {
      const char *field = NULL;
