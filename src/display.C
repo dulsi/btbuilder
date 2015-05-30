@@ -58,14 +58,30 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  expanded = config->findExpanded(xMult, yMult);
  if (expanded)
  {
-  xMult = ((xFull - 10) / (config->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
-  yMult = ((yFull - 10) / (config->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
-  if (xMult > yMult)
-   xMult = yMult;
+  if (multiplier == 0)
+  {
+   // Do not expand as big as possible when not explicitly set.
+   // User with multiple monitors had a problem.
+   xMult = expanded->xMult;
+   yMult = expanded->yMult;
+  }
   else
-   yMult = xMult;
+  {
+   xMult = ((xFull - 10) / (config->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
+   yMult = ((yFull - 10) / (config->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
+   if (xMult > yMult)
+    xMult = yMult;
+   else
+    yMult = xMult;
+  }
   font = expanded->font;
   fontsize = expanded->fontsize;
+ }
+ else if (multiplier == 0)
+ {
+  // Do not expand as big as possible when not explicitly set.
+  // User with multiple monitors had a problem.
+  xMult = yMult = 1;
  }
  p3d.setMultiplier(xMult, yMult);
  label.x = config->label.x * xMult;
