@@ -13,6 +13,7 @@ BuildRequires: physfs-devel
 BuildRequires: SDL-devel
 BuildRequires: SDL_image-devel
 BuildRequires: SDL_mixer-devel
+BuildRequires: SDL_mng-devel
 BuildRequires: SDL_ttf-devel
 BuildRequires: desktop-file-utils
 
