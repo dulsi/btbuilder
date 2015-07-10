@@ -67,8 +67,8 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   }
   else
   {
-   xMult = ((xFull - 10) / (config->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
-   yMult = ((yFull - 10) / (config->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
+   xMult = ((config->width * multiplier) / (config->width * expanded->xMult)) * expanded->xMult;
+   yMult = ((config->height * multiplier) / (config->height * expanded->yMult)) * expanded->yMult;
    if (xMult > yMult)
     xMult = yMult;
    else
