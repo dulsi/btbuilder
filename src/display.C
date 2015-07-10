@@ -1257,14 +1257,30 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  expanded = c->findExpanded(newXMult, newYMult);
  if (expanded)
  {
-  newXMult = ((xFull - 10) / (c->width * expanded->xMult)) * expanded->xMult; // Allow for window decoration
-  newYMult = ((yFull - 10) / (c->height * expanded->yMult)) * expanded->yMult; // Allow for window decoration
-  if (newXMult > newYMult)
-   newXMult = newYMult;
+  if (lockMult == 0)
+  {
+   // Do not expand as big as possible when not explicitly set.
+   // User with multiple monitors had a problem.
+   newXMult = expanded->xMult;
+   newYMult = expanded->yMult;
+  }
   else
-   newYMult = newXMult;
+  {
+   newXMult = ((config->width * lockMult) / (config->width * expanded->xMult)) * expanded->xMult;
+   newYMult = ((config->height * lockMult) / (config->height * expanded->yMult)) * expanded->yMult;
+   if (newXMult > newYMult)
+    newXMult = newYMult;
+   else
+    newYMult = newXMult;
+  }
   font = expanded->font;
   fontsize = expanded->fontsize;
+ }
+ else if (lockMult == 0)
+ {
+  // Do not expand as big as possible when not explicitly set.
+  // User with multiple monitors had a problem.
+  newXMult = newYMult = 1;
  }
  p3d.setMultiplier(newXMult, newYMult);
  label.x = c->label.x * newXMult;
