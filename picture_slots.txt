@@ -1,39 +1,39 @@
 Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn't look good it is probably due to my cropping and scalling of the image. Artist and link to original content is provided below.
 
-000 Orc (Orc 002 Concept by Misha - http://opengameart.org/content/orc-002-concept)
+000 Orc (by Madin Tolifen)
 001 Wizard (Aldriel's Defiance by Santiago Iborra - http://opengameart.org/content/aldriels-defiance)
 002 Lizard/Dragon (Modified Iguana Photo by Dennis Payne)
 003 Dragon (Dregbin by surt - http://opengameart.org/content/dregbin)
 004 Dragon
 005 Wolf (Werewolf Magic by gdane - http://opengameart.org/content/werewolf-magic)
-006 Horned Warrior
-007 Ogre (Cyclops by Santiago Iborra - http://opengameart.org/content/cyclops)
+006 Horned Warrior(by Madin Tolifen)
+007 Ogre (by Madin Tolifen)
 008 Ghost
 009 Slime (Swamp Dryad by 5hiroi - http://opengameart.org/content/swamp-dryad)
 010 Kobold
-011 Female Rogue (Scouting Dispatch by Santiago Iborra - http://opengameart.org/content/scouting-dispatch)
+011 Female Rogue (by Madin Tolifen)
 012 Barbarian
-013 Gryphon
-014 Lizardman
+013 Gryphon (by Madin Tolifen)
+014 Lizardman (by Madin Tolifen)
 015 Sorcerer
 016 Rat
 017 Minotaur
-018 Gnome
-019 City Guard
-020 Goblin (Orc by Felipe Moreira - http://opengameart.org/content/orc-0)
+018 Gnome (by Madin Tolifen)
+019 City Guard (by Madin Tolifen)
+020 Goblin (by Madin Tolifen)
 021 Golem (Metal Elemental Guardian by Justin Nichol - http://opengameart.org/content/metal-elemental-guardian)
 022 Thief (by Madin Tolifen)
 023 Sorceress
 024 Skeleton
 025 Spider (Spider Flare Sprite Sheet by Wciow and John.d.h - http://opengameart.org/content/spider-flare-sprite-sheets)
-026 Vampire
-027 Dwarf/Nomad
+026 Vampire (by Madin Tolifen)
+027 Dwarf/Nomad (by Madin Tolifen)
 028 Treasure (by Madin Tolifen)
 029 Female Wizard
 030 Male Warrior (Imperial Guard by Santiago Iborra - http://opengameart.org/content/imperial-guard)
-031 Male Paladin
+031 Male Paladin (by Madin Tolifen)
 032 Male Rogue (by Madin Tolifen)
-033 Bard (Call to Arms by Santiago Iborra - http://opengameart.org/content/call-to-arms)
+033 Bard (by Madin Tolifen)
 034 Hunter (by Madin Tolifen)
 035 Monk (Oracle Portrait by Justin Nichol - http://opengameart.org/content/oracle-portrait)
 036 Wizard
@@ -41,9 +41,9 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 038 City Gates (by Madin Tolifen)
 039 Garth's 
 040 Adventurer's Guild
-041 Tavern 
-042 Empty House
-043 Temple (Queen Giving Orders to Princess by -AP- http://opengameart.org/content/queen-giving-orders-to-princess)
+041 Tavern (by Madin Tolifen)
+042 Empty House (by Madin Tolifen)
+043 Temple (by Madin Tolifen)
 044 Review Board
 075 Female Warrior
 076 Female Paladin
