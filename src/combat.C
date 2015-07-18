@@ -1491,7 +1491,7 @@ int BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  else
  {
   int spellCast = itemList[b.getPc()->item[select->select].id].getSpellCast();
-  if ((!b.getPc()->item[b.getPc()->combat.object].charges == 0) || (spellCast == BTITEMCAST_NONE))
+  if ((b.getPc()->item[select->select].charges == 0) || (spellCast == BTITEMCAST_NONE))
    throw BTSpecialError("notusable");
   b.getPc()->combat.action = BTPc::BTPcAction::useItem;
   b.getPc()->combat.type = BTPc::BTPcAction::item;
