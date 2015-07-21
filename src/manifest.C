@@ -76,6 +76,7 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("regenSkillManifest", typeid(BTRegenSkillManifest).name(), &manifest, &BTRegenSkillManifest::create);
  s->add("lightManifest", typeid(BTLightManifest).name(), &manifest, &BTLightManifest::create);
  s->add("teleportManifest", typeid(BTTeleportManifest).name(), &manifest, &BTTeleportManifest::create);
+ s->add("rangeBonusManifest", typeid(BTRangeBonusManifest).name(), &manifest, &BTRangeBonusManifest::create);
  // Backward compatability
  s->add("armorBonusManifest", "-", &manifest, &BTBonusManifest::create);
  s->add("attackRateBonusManifest", "-", &manifest, &BTBonusManifest::create);
@@ -956,3 +957,72 @@ std::list<BTBaseEffect*> BTTeleportManifest::manifest(BTDisplay &d, bool partySp
  return effect;
 }
 
+BTManifest *BTRangeBonusManifest::clone()
+{
+ return new BTRangeBonusManifest(*this);
+}
+
+std::string BTRangeBonusManifest::createString()
+{
+ std::string answer = BTManifest::createString() + std::string("   Bonus: ") + bonus.createString();
+ char s[50];
+ if (level == 1)
+  answer += " * level";
+ else if (level > 1)
+ {
+  sprintf(s, " * (level / %d)", level);
+  answer += std::string(s);
+ }
+ if (maximum > 0)
+ {
+  sprintf(s, "[max: %d]", level, maximum);
+  answer += std::string(s);
+ }
+ return answer;
+}
+
+int BTRangeBonusManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTRangeBonusManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTRangeBonusManifest::getEditField(int i)
+{
+ return field[i];
+}
+
+std::list<BTBaseEffect*> BTRangeBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+{
+ std::list<BTBaseEffect*> effect;
+ BTDice value = bonus;
+ if (level > 0)
+  value.setNumber(value.getNumber() * (casterLevel / level));
+ if ((0 != maximum) && (value.getNumber() > maximum))
+  value.setNumber(maximum);
+ switch (type)
+ {
+  case BTSPELLTYPE_DAMAGEBONUS:
+   effect.push_back(new BTDamageBonusEffect(type, expire, singer, musicId, group, target, value, true));
+   break;
+  default:
+   break;
+ }
+ return effect;
+}
+
+void BTRangeBonusManifest::serialize(ObjectSerializer* s)
+{
+ BTManifest::serialize(s);
+ s->add("bonus", &bonus);
+ s->add("level", &level);
+ s->add("maximum", &maximum);
+}
+
+const int BTRangeBonusManifest::entries = 3;
+const char *BTRangeBonusManifest::description[] = {"Bonus", "Level Increment", "Maximum"};
+const char *BTRangeBonusManifest::field[] = {"bonus", "level", "maximum"};

@@ -692,6 +692,7 @@ void BTPc::serialize(ObjectSerializer* s)
  s->add("rateAttacks", &rateAttacks);
  s->add("save", &save);
  s->add("status", &status, &BTStatusLookup::lookup);
+ s->add("dmgBonus", &dmgBonus, &BTDamageBonus::create);
  s->add("maxhp", &maxHp);
  s->add("hp", &hp);
  s->add("maxsp", &maxSp);

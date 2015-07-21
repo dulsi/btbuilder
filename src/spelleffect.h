@@ -19,6 +19,26 @@ class BTCombatantCollection;
 class BTCombatant;
 class BTGame;
 
+class BTDamageBonus : public XMLObject
+{
+ public:
+  BTDamageBonus(const BTDice &amt, bool m) : amount(amt), melee(m) {}
+  BTDamageBonus() {}
+
+  bool operator==(const BTDamageBonus &val) const;
+
+  int apply(bool m);
+  int getMax() { amount.getMax(); }
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTDamageBonus; }
+
+ private:
+  BTDice amount;
+  bool melee;
+};
+
 class BTAllResistException
 {
  public:
@@ -392,6 +412,23 @@ class BTTeleportEffect : public BTBaseEffect
   int mapX;
   int mapY;
   std::string mapFile;
+};
+
+class BTDamageBonusEffect : public BTNonStackingBonusEffect
+{
+ public:
+  BTDamageBonusEffect(int t, int x, int s, int m, int g, int trgt, const BTDice &d, bool melee);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  virtual int applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt);
+  virtual bool greater(BTNonStackingBonusEffect *b);
+  virtual bool isGood();
+  virtual void finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTDamageBonusEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE, BTDice(0, 2), true); }
+
+  BTDamageBonus bonus;
 };
 
 #endif

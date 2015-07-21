@@ -31,6 +31,11 @@ BTDice::BTDice()
 {
 }
 
+bool BTDice::operator==(const BTDice &other) const
+{
+ return ((number == other.number) && (type == other.type) && (modifier == other.modifier));
+}
+
 std::string BTDice::createString()
 {
  std::ostringstream stream;

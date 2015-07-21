@@ -10,6 +10,7 @@
 #include "bitfield.h"
 #include "btconst.h"
 #include "dice.h"
+#include "spelleffect.h"
 #include <string>
 
 class BTCombatant
@@ -47,6 +48,7 @@ class BTCombatant
   int maxHp, hp;
   BitField status;
   int initiative;
+  XMLVector<BTDamageBonus*> dmgBonus;
 };
 
 class BTCombatantCollection

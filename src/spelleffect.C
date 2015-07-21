@@ -1710,3 +1710,179 @@ void BTTeleportEffect::serialize(ObjectSerializer *s)
  s->add("mapFile", &mapFile);
 }
 
+BTDamageBonusEffect::BTDamageBonusEffect(int t, int x, int s, int m, int g, int trgt, const BTDice &d, bool melee)
+ : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(d, melee)
+{
+}
+
+void BTDamageBonusEffect::serialize(ObjectSerializer *s)
+{
+ s->add("bonus", &bonus);
+ BTNonStackingBonusEffect::serialize(s);
+}
+
+int BTDamageBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (BTTARGET_PARTY == g)
+ {
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    party[i]->dmgBonus.push_back(new BTDamageBonus(bonus));
+   }
+  }
+  else
+  {
+   party[trgt]->dmgBonus.push_back(new BTDamageBonus(bonus));
+  }
+  d.drawStats();
+ }
+ else if (BTTARGET_ALLMONSTERS == g)
+ {
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   for (int k = 0; k < grp->individual.size(); ++k)
+   {
+    grp->individual[k].dmgBonus.push_back(new BTDamageBonus(bonus));
+   }
+  }
+ }
+ else if (g >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < grp->individual.size(); ++i)
+   {
+    grp->individual[i].dmgBonus.push_back(new BTDamageBonus(bonus));
+   }
+  }
+  else
+  {
+   grp->individual[trgt].dmgBonus.push_back(new BTDamageBonus(bonus));
+  }
+ }
+ return 0;
+}
+
+bool BTDamageBonusEffect::greater(BTNonStackingBonusEffect *b)
+{
+ BTDamageBonusEffect *other = dynamic_cast<BTDamageBonusEffect*>(b);
+ if (other == NULL)
+ {
+  printf("Incorrect Type\n");
+  exit(0);
+ }
+ if (isGood())
+ {
+  if (bonus.getMax() > other->bonus.getMax())
+   return true;
+  else
+   return false;
+ }
+ else
+ {
+  if (bonus.getMax() <= other->bonus.getMax())
+   return true;
+  else
+   return false;
+ }
+}
+
+bool BTDamageBonusEffect::isGood()
+{
+ if (bonus.getMax() >= 0)
+  return true;
+ else
+  return false;
+}
+
+void BTDamageBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int trgt)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ if (BTTARGET_PARTY == g)
+ {
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < party.size(); ++i)
+   {
+    for (int dmgNum = 0; dmgNum < party[i]->dmgBonus.size(); dmgNum++)
+    {
+     if ((*party[i]->dmgBonus[dmgNum]) == bonus)
+     {
+      party[i]->dmgBonus.erase(dmgNum);
+      break;
+     }
+    }
+   }
+  }
+  else
+  {
+   for (int dmgNum = 0; dmgNum < party[trgt]->dmgBonus.size(); dmgNum++)
+   {
+    if ((*party[trgt]->dmgBonus[dmgNum]) == bonus)
+    {
+     party[trgt]->dmgBonus.erase(dmgNum);
+     break;
+    }
+   }
+  }
+  d.drawStats();
+ }
+ else if (BTTARGET_ALLMONSTERS == g)
+ {
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   for (int k = 0; k < grp->individual.size(); ++k)
+   {
+    for (int dmgNum = 0; dmgNum < grp->individual[k].dmgBonus.size(); dmgNum++)
+    {
+     if ((*grp->individual[k].dmgBonus[dmgNum]) == bonus)
+     {
+      grp->individual[k].dmgBonus.erase(dmgNum);
+      break;
+     }
+    }
+   }
+  }
+ }
+ else if (g >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (int i = 0; i < grp->individual.size(); ++i)
+   {
+    for (int dmgNum = 0; dmgNum < grp->individual[i].dmgBonus.size(); dmgNum++)
+    {
+     if ((*grp->individual[i].dmgBonus[dmgNum]) == bonus)
+     {
+      grp->individual[i].dmgBonus.erase(dmgNum);
+      break;
+     }
+    }
+   }
+  }
+  else
+  {
+   for (int dmgNum = 0; dmgNum < grp->individual[trgt].dmgBonus.size(); dmgNum++)
+   {
+    if ((*grp->individual[trgt].dmgBonus[dmgNum]) == bonus)
+    {
+     grp->individual[trgt].dmgBonus.erase(dmgNum);
+     break;
+    }
+   }
+  }
+ }
+}

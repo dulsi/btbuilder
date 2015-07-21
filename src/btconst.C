@@ -52,7 +52,8 @@ const char *spellTypes[] =
  "Levitation",
  "Regenerate Skill",
  "Cure Status",
- "Teleport"
+ "Teleport",
+ "Melee Damage Bonus"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES_FULL, spellTypes);
 

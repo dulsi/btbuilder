@@ -33,6 +33,8 @@ class BTDice : public XMLObject
   BTDice(int n, int t, int m = 0);
   BTDice();
 
+  bool operator==(const BTDice &other) const;
+
   std::string createString();
   int getMax() const;
   int getMin() const;

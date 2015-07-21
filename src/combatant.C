@@ -9,6 +9,25 @@
 #include "combatant.h"
 #include "game.h"
 
+bool BTDamageBonus::operator==(const BTDamageBonus &val) const
+{
+ return ((melee == val.melee) && (amount == val.amount));
+}
+
+int BTDamageBonus::apply(bool m)
+{
+ if (m == melee)
+  return amount.roll();
+ else
+  return 0;
+}
+
+void BTDamageBonus::serialize(ObjectSerializer* s)
+{
+ s->add("amount", &amount);
+ s->add("melee", &melee);
+}
+
 bool BTCombatant::age()
 {
  return drainLevel();
@@ -30,6 +49,8 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
    int damage = 0;
    BitField special;
    damage = damageDice.roll();
+   for (int i = 0; i < dmgBonus.size(); i++)
+    damage += dmgBonus[i]->apply(melee);
    if ((BTEXTRADAMAGE_NONE != xSpecial) && (BTDice(1, 100).roll() <= chanceXSpecial))
     special.set(xSpecial);
    totalDamage += damage;
