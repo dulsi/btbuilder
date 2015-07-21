@@ -53,6 +53,8 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
     damage += dmgBonus[i]->apply(melee);
    if ((BTEXTRADAMAGE_NONE != xSpecial) && (BTDice(1, 100).roll() <= chanceXSpecial))
     special.set(xSpecial);
+   if (damage < 0)
+    damage = 0;
    totalDamage += damage;
    if (defender->takeHP(damage))
    {
