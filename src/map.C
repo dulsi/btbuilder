@@ -1534,7 +1534,7 @@ const char *BTSpecial::getName() const
  return name;
 }
 
-std::string BTSpecial::printFlags() const
+std::string BTSpecial::printFlags(bool bAll /*= true*/) const
 {
  std::string results;
  for (int i = 0; i < BT_SPECIALFLAGS; ++i)
@@ -1542,7 +1542,15 @@ std::string BTSpecial::printFlags() const
   if (flags.isSet(i))
   {
    if (results.length() > 0)
-    results += " ";
+   {
+    if (bAll)
+     results += " ";
+    else
+    {
+     results = "Multiple";
+     break;
+    }
+   }
    results += specialFlag[i];
   }
  }
@@ -1587,6 +1595,11 @@ void BTSpecial::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("flag", &flags, &specialFlagLookup);
  s->add("body", &body);
+}
+
+void BTSpecial::setFlag(const BitField &f)
+{
+ flags = f;
 }
 
 void BTSpecial::setName(const std::string &nm)

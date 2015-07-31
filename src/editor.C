@@ -390,7 +390,7 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  std::vector<operationList> ops;
  std::vector<BTDisplay::selectItem> list(2);
  list[0].name = std::string("Name: ") + special->getName();
- list[1].name = "Flags: " + special->printFlags();
+ list[1].name = "Flags: " + special->printFlags(false);
  int spaces = 0;
  buildOperationList(d, body, list, ops);
  d.addSelection(list.data(), list.size(), start, current);
@@ -411,6 +411,29 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
   }
   else if (current == 1)
   {
+   ValueLookup *lookup = &specialFlagLookup;
+   BitField bits = special->getFlag();
+   BTDisplay::selectItem lookupItem[specialFlagLookup.size()];
+   for (int i = 0; i < specialFlagLookup.size(); ++i)
+   {
+    lookupItem[i].name = specialFlagLookup.getName(i);
+    if (bits.isSet(i))
+     lookupItem[i].first = '*';
+   }
+   int lookupStart(0);
+   int lookupCurrent(0);
+   d.addSelection(lookupItem, specialFlagLookup.size(), lookupStart, lookupCurrent);
+   int key;
+   while (27 != (key = d.process()))
+   {
+    if (bits.toggle(lookupCurrent))
+     lookupItem[lookupCurrent].first = '*';
+    else
+     lookupItem[lookupCurrent].first = 0;
+   }
+   special->setFlag(bits);
+   d.clearText();
+   list[1].name = "Flags: " + special->printFlags(false);
   }
   else
   {
