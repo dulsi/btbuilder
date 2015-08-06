@@ -1,0 +1,30 @@
+<data>
+ <specialFlag>
+  <name>Silence</name>
+  <detect>There is something special near.</detect>
+ </specialFlag>
+ <specialFlag>
+  <name>Anti-magic</name>
+  <detect>There is something special near.</detect>
+ </specialFlag>
+ <specialFlag>
+  <name>Darkness</name>
+  <detect>There is something special near.</detect>
+ </specialFlag>
+ <specialFlag>
+  <name>Anti-Teleport</name>
+  <detect>There is something special near.</detect>
+ </specialFlag>
+ <specialFlag>
+  <name>Trap</name>
+  <detect>There is a trap near.</detect>
+ </specialFlag>
+ <specialFlag>
+  <name>Special</name>
+  <detect>There is something special near.</detect>
+ </specialFlag>
+ <specialFlag>
+  <name>Stairs</name>
+  <detect>There are stairs near.</detect>
+ </specialFlag>
+</data>
