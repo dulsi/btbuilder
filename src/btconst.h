@@ -10,8 +10,8 @@
 class ArrayLookup;
 class PairLookup;
 
-#define BT_SPELLTYPES_FULL 44
-#define BT_SPELLTYPES_USED 27
+#define BT_SPELLTYPES_FULL 45
+#define BT_SPELLTYPES_USED 28
 #define BTSPELLTYPE_HEAL            0
 #define BTSPELLTYPE_RESURRECT       1
 #define BTSPELLTYPE_CUREPOISON      2
@@ -56,6 +56,7 @@ class PairLookup;
 #define BTSPELLTYPE_CURESTATUS      41
 #define BTSPELLTYPE_TELEPORT        42
 #define BTSPELLTYPE_DAMAGEBONUS     43
+#define BTSPELLTYPE_DETECT          44
 extern const char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 

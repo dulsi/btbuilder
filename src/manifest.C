@@ -1077,6 +1077,6 @@ void BTDetectManifest::serialize(ObjectSerializer* s)
  s->add("flag", &flags, &flagList);
 }
 
-const int BTDetectManifest::entries = 2;
-const char *BTDetectManifest::description[] = {"Range", "Flags"};
-const char *BTDetectManifest::field[] = {"range", "flag"};
+const int BTDetectManifest::entries = 1;
+const char *BTDetectManifest::description[] = {"Flags"};
+const char *BTDetectManifest::field[] = {"flag"};

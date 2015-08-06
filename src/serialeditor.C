@@ -783,7 +783,8 @@ BTSpellEditor::spellType BTSpellEditor::spellTypes[BT_SPELLTYPES_USED] =
  {BTSPELLTYPE_REGENSKILL, BTRegenSkillManifest::create},
  {BTSPELLTYPE_CURESTATUS, BTCureStatusManifest::create},
  {BTSPELLTYPE_TELEPORT, BTTeleportManifest::create},
- {BTSPELLTYPE_DAMAGEBONUS, BTRangeBonusManifest::create}
+ {BTSPELLTYPE_DAMAGEBONUS, BTRangeBonusManifest::create},
+ {BTSPELLTYPE_DETECT, BTDetectManifest::create}
 };
 const char *BTSpellEditor::spellDescription[FIELDS_SPELL] = { "Name", "Code", "Mage Class", "Level", "Points Needed", "Range", "Effective Range", "Area/Target", "Duration", "Effect Text" };
 const char *BTSpellEditor::spellField[FIELDS_SPELL] = { "name", "code", "caster", "level", "sp", "range", "effectiveRange", "area", "duration", "effect" };

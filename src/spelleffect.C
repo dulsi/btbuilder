@@ -1894,6 +1894,36 @@ BTDetectEffect::BTDetectEffect(int t, int x, int s, int m, int r, const BitField
 
 int BTDetectEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
+ // If in combat do not report anything.
+ if (!combat)
+ {
+  BTGame *game = BTGame::getGame();
+  BTSpecialFlagList &flagList = game->getSpecialFlagList();
+  BitField found;
+  int x = game->getX();
+  int y = game->getY();
+  int dir = game->getFacing();
+  for (int i = 0; i < 3; ++i)
+  {
+   x += Psuedo3D::changeXY[dir][0];
+   y += Psuedo3D::changeXY[dir][1];
+   game->rationalize(x, y);
+   IShort s = game->getMap()->getSquare(y, x).getSpecial();
+   if (s != BTSPECIAL_NONE)
+   {
+    BTSpecial *sp = game->getMap()->getSpecial(s);
+    found |= flags & sp->getFlag();
+   }
+  }
+  int max = flagList.size();
+  for (int i = 0; i < max; ++i)
+  {
+   if (found.isSet(i))
+   {
+    d.drawText(flagList[i]->detect.c_str());
+   }
+  }
+ }
 }
 
 void BTDetectEffect::serialize(ObjectSerializer* s)

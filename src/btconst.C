@@ -53,7 +53,8 @@ const char *spellTypes[] =
  "Regenerate Skill",
  "Cure Status",
  "Teleport",
- "Melee Damage Bonus"
+ "Melee Damage Bonus",
+ "Detect Special"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES_FULL, spellTypes);
 
