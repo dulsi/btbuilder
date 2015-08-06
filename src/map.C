@@ -1546,6 +1546,8 @@ void BTSpecial::print(FILE *f) const
  int i, last;
 
  fprintf(f, "%s\n", name);
+ if (flags.getMaxSet() != -1)
+  fprintf(f, "    FLAGS: %s\n", printFlags().c_str());
  body.print(f, 0);
 }
 
