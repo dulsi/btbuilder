@@ -1886,3 +1886,21 @@ void BTDamageBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int
   }
  }
 }
+
+BTDetectEffect::BTDetectEffect(int t, int x, int s, int m, int r, const BitField &f)
+ : BTBaseEffect(t, x, s, m), range(r), flags(f)
+{
+}
+
+int BTDetectEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+}
+
+void BTDetectEffect::serialize(ObjectSerializer* s)
+{
+ BTCore *game = BTCore::getCore();
+ BTSpecialFlagList &flagList = game->getSpecialFlagList();
+ BTBaseEffect::serialize(s);
+ s->add("range", &range);
+ s->add("flag", &flags, &flagList);
+}

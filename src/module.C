@@ -25,6 +25,8 @@ BTModule::BTModule()
  strcpy(skill, "data/skill.xml");
  song = new char[strlen("data/song.xml") + 1];
  strcpy(song, "data/song.xml");
+ specialFlag = new char[strlen("data/specialflag.xml") + 1];
+ strcpy(specialFlag, "data/specialflag.xml");
  xpChart = new char[strlen("data/experience.xml") + 1];
  strcpy(xpChart, "data/experience.xml");
  job = new char[strlen("data/job.xml") + 1];
@@ -57,6 +59,8 @@ BTModule::~BTModule()
   delete [] skill;
  if (song)
   delete [] song;
+ if (specialFlag)
+  delete [] specialFlag;
  if (xpChart)
   delete [] xpChart;
  if (job)
@@ -80,6 +84,7 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("race", &race);
  s->add("skill", &skill);
  s->add("song", &song);
+ s->add("specialFlag", &specialFlag);
  s->add("xpChart", &xpChart);
  s->add("job", &job);
  s->add("level", &level);

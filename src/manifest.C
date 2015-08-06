@@ -77,6 +77,7 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("lightManifest", typeid(BTLightManifest).name(), &manifest, &BTLightManifest::create);
  s->add("teleportManifest", typeid(BTTeleportManifest).name(), &manifest, &BTTeleportManifest::create);
  s->add("rangeBonusManifest", typeid(BTRangeBonusManifest).name(), &manifest, &BTRangeBonusManifest::create);
+ s->add("detectManifest", typeid(BTDetectManifest).name(), &manifest, &BTDetectManifest::create);
  // Backward compatability
  s->add("armorBonusManifest", "-", &manifest, &BTBonusManifest::create);
  s->add("attackRateBonusManifest", "-", &manifest, &BTBonusManifest::create);
@@ -1026,3 +1027,56 @@ void BTRangeBonusManifest::serialize(ObjectSerializer* s)
 const int BTRangeBonusManifest::entries = 3;
 const char *BTRangeBonusManifest::description[] = {"Bonus", "Level Increment", "Maximum"};
 const char *BTRangeBonusManifest::field[] = {"bonus", "level", "maximum"};
+
+BTManifest *BTDetectManifest::clone()
+{
+ return new BTDetectManifest(*this);
+}
+
+std::string BTDetectManifest::createString()
+{
+ BTCore *game = BTCore::getCore();
+ BTSpecialFlagList &flagList = game->getSpecialFlagList();
+ char s[50];
+ std::string answer = BTManifest::createString() + std::string("   Range: ");
+ sprintf(s, "%d", range);
+ answer += std::string(s);
+ answer += "  Flags: ";
+ answer += flags.print(&flagList, false);
+ return answer;
+}
+
+int BTDetectManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTDetectManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTDetectManifest::getEditField(int i)
+{
+ return field[i];
+}
+
+std::list<BTBaseEffect*> BTDetectManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+{
+ std::list<BTBaseEffect*> effect;
+ effect.push_back(new BTDetectEffect(type, expire, singer, musicId, range, flags));
+ return effect;
+}
+
+void BTDetectManifest::serialize(ObjectSerializer* s)
+{
+ BTCore *game = BTCore::getCore();
+ BTSpecialFlagList &flagList = game->getSpecialFlagList();
+ BTManifest::serialize(s);
+ s->add("range", &range);
+ s->add("flag", &flags, &flagList);
+}
+
+const int BTDetectManifest::entries = 2;
+const char *BTDetectManifest::description[] = {"Range", "Flags"};
+const char *BTDetectManifest::field[] = {"range", "flag"};

@@ -59,19 +59,7 @@ std::string XMLAction::createString()
    if (data)
    {
     ValueLookup *lookup = reinterpret_cast<ValueLookup*>(data);
-    for (int i = 0; i < lookup->size(); ++i)
-    {
-     if (field->isSet(i))
-     {
-      if (content.empty())
-       content = lookup->getName(i);
-      else
-      {
-       content = "Multiple";
-       break;
-      }
-     }
-    }
+    content = field->print(lookup, false);
    }
    break;
   }

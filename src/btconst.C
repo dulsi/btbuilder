@@ -255,15 +255,6 @@ const char *specialCommands[] =
  "run xml file $$"
 };
 
-const char *specialFlag[] =
-{
- "Silence",
- "Anti-magic",
- "Darkness",
- "Anti-Teleport"
-};
-ArrayLookup specialFlagLookup(BT_SPECIALFLAGS, specialFlag);
-
 const char *directions[] =
 {
  "north",

@@ -1518,8 +1518,8 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
    {
     int next = 0;
 
-   removeLevel();
-   try
+    removeLevel();
+    try
     {
      BTAction *a = findAction(item->getAction());
      if (a)

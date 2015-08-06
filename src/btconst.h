@@ -229,8 +229,6 @@ extern const char *specialCommands[];
 #define BTSPECIALFLAG_ANTIMAGIC 1
 #define BTSPECIALFLAG_DARKNESS  2
 #define BTSPECIALFLAG_ANTITELEPORT  3
-extern const char *specialFlag[];
-extern ArrayLookup specialFlagLookup;
 
 #define BT_DIRECTIONS 4
 #define BTDIRECTION_NORTH 0

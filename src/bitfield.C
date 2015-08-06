@@ -6,6 +6,7 @@
 \*-------------------------------------------------------------------------*/
 
 #include "bitfield.h"
+#include "xmlserializer.h"
 
 BitField::BitField()
  : size(0), bits(0)
@@ -223,6 +224,30 @@ void BitField::move(int index, int where)
   if (value)
    bits[pos2] |= (1 << (where % (sizeof(unsigned int) << 3)));
  }
+}
+
+std::string BitField::print(ValueLookup *lookup, bool all /*= true*/) const
+{
+ std::string answer;
+ for (int i = 0; i < lookup->size(); ++i)
+ {
+  if (isSet(i))
+  {
+   if (answer.empty())
+    answer = lookup->getName(i);
+   else
+   {
+    if (all)
+     answer += " ";
+    else
+    {
+     answer = "Multiple";
+     break;
+    }
+   }
+  }
+ }
+ return answer;
 }
 
 void BitField::remove(int index)

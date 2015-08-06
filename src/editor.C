@@ -411,18 +411,18 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
   }
   else if (current == 1)
   {
-   ValueLookup *lookup = &specialFlagLookup;
+   BTSpecialFlagList &lookup = getSpecialFlagList();
    BitField bits = special->getFlag();
-   BTDisplay::selectItem lookupItem[specialFlagLookup.size()];
-   for (int i = 0; i < specialFlagLookup.size(); ++i)
+   BTDisplay::selectItem lookupItem[lookup.size()];
+   for (int i = 0; i < lookup.size(); ++i)
    {
-    lookupItem[i].name = specialFlagLookup.getName(i);
+    lookupItem[i].name = lookup.getName(i);
     if (bits.isSet(i))
      lookupItem[i].first = '*';
    }
    int lookupStart(0);
    int lookupCurrent(0);
-   d.addSelection(lookupItem, specialFlagLookup.size(), lookupStart, lookupCurrent);
+   d.addSelection(lookupItem, lookup.size(), lookupStart, lookupCurrent);
    int key;
    while (27 != (key = d.process()))
    {

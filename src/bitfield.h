@@ -7,6 +7,10 @@
   03/24/07  Dennis      Created.
 \*-------------------------------------------------------------------------*/
 
+#include <string>
+
+class ValueLookup;
+
 class BitField
 {
  public:
@@ -20,6 +24,7 @@ class BitField
   bool isSet(int index) const;
   int getMaxSet() const;
   void move(int index, int where);
+  std::string print(ValueLookup *lookup, bool all = true) const;
   void remove(int index);
   void set(int index);
   bool toggle(int index);

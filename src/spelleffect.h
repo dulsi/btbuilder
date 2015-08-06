@@ -431,5 +431,20 @@ class BTDamageBonusEffect : public BTNonStackingBonusEffect
   BTDamageBonus bonus;
 };
 
+class BTDetectEffect : public BTBaseEffect
+{
+ public:
+  BTDetectEffect(int t, int x, int s, int m, int r, const BitField &f);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTDetectEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, 0, BitField()); }
+
+  int range;
+  BitField flags;
+};
+
 #endif
 

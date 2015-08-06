@@ -1534,27 +1534,11 @@ const char *BTSpecial::getName() const
  return name;
 }
 
-std::string BTSpecial::printFlags(bool bAll /*= true*/) const
+std::string BTSpecial::printFlags(bool all /*= true*/) const
 {
- std::string results;
- for (int i = 0; i < BT_SPECIALFLAGS; ++i)
- {
-  if (flags.isSet(i))
-  {
-   if (results.length() > 0)
-   {
-    if (bAll)
-     results += " ";
-    else
-    {
-     results = "Multiple";
-     break;
-    }
-   }
-   results += specialFlag[i];
-  }
- }
- return results;
+ BTCore *game = BTCore::getCore();
+ BTSpecialFlagList &flagList = game->getSpecialFlagList();
+ return flags.print(&flagList, all);
 }
 
 void BTSpecial::print(FILE *f) const
@@ -1592,8 +1576,10 @@ void BTSpecial::run(BTDisplay &d, BTSpecialContext *context) const
 
 void BTSpecial::serialize(ObjectSerializer* s)
 {
+ BTCore *game = BTCore::getCore();
+ BTSpecialFlagList &flagList = game->getSpecialFlagList();
  s->add("name", &name);
- s->add("flag", &flags, &specialFlagLookup);
+ s->add("flag", &flags, &flagList);
  s->add("body", &body);
 }
 
@@ -1997,6 +1983,8 @@ void BTMap::setFilename(const char *f)
 
 void BTMap::serialize(ObjectSerializer* s)
 {
+ BTCore *game = BTCore::getCore();
+ BTSpecialFlagList &flagList = game->getSpecialFlagList();
  s->add("name", &name);
  s->add("version", &version);
  s->add("type", &type, NULL, &BTCore::getCore()->getPsuedo3DConfigList());
@@ -2006,7 +1994,7 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("monsterChance", &monsterChance, &BTMonsterChance::create);
  s->add("monsterLevel", &monsterLevel);
  s->add("light", &light);
- s->add("flag", &flags, &specialFlagLookup);
+ s->add("flag", &flags, &flagList);
  s->add("square", &square, &BTMapSquare::create);
  s->add("special", &specials, &BTSpecial::create);
 }

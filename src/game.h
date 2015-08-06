@@ -25,6 +25,7 @@
 #include "status.h"
 #include "map.h"
 #include "specialcontext.h"
+#include "specialflag.h"
 #include "group.h"
 #include "pc.h"
 #include "xpchart.h"
@@ -50,6 +51,7 @@ class BTCore : public Psuedo3DMap
   BTRaceList &getRaceList();
   BTShop *getShop(int id);
   BTSkillList &getSkillList();
+  BTSpecialFlagList &getSpecialFlagList();
   XMLVector<BTSong*> &getSongList();
   BTFactory<BTSpell, BTSpell1> &getSpellList();
   BTXpChartList &getXpChartList();
@@ -72,6 +74,7 @@ class BTCore : public Psuedo3DMap
   BTRaceList raceList;
   XMLVector<BTShop*> shops;
   BTSkillList skillList;
+  BTSpecialFlagList specialFlagList;
   XMLVector<BTSong*> songList;
   BTFactory<BTSpell, BTSpell1> spellList;
   BTXpChartList xpChartList;

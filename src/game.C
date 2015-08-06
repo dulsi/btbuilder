@@ -19,6 +19,7 @@ BTCore::BTCore(BTModule *m)
  {
   core = this;
  }
+ BTSpecialFlag::readXML(m->specialFlag, specialFlagList);
  BTRace::readXML(m->race, raceList);
  BTSkill::readXML(m->skill, skillList);
  BTXpChart::readXML(m->xpChart, xpChartList);
@@ -110,6 +111,11 @@ BTSkillList &BTCore::getSkillList()
 XMLVector<BTSong*> &BTCore::getSongList()
 {
  return songList;
+}
+
+BTSpecialFlagList &BTCore::getSpecialFlagList()
+{
+ return specialFlagList;
 }
 
 BTFactory<BTSpell, BTSpell1> &BTCore::getSpellList()
@@ -1051,6 +1057,8 @@ void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, std::string &star
  s->add("spellbindeffect", typeid(BTSpellBindEffect).name(), &effect, &BTSpellBindEffect::create);
  s->add("lighteffect", typeid(BTLightEffect).name(), &effect, &BTLightEffect::create);
  s->add("teleporteffect", typeid(BTTeleportEffect).name(), &effect, &BTTeleportEffect::create);
+ s->add("damagebonuseffect", typeid(BTDamageBonusEffect).name(), &effect, &BTDamageBonusEffect::create);
+ s->add("detecteffect", typeid(BTDetectEffect).name(), &effect, &BTDetectEffect::create);
 }
 
 void BTGame::readSaveXML(const char *filename)

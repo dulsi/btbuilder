@@ -262,7 +262,7 @@ class BTSpecial : public XMLObject
   BTSpecialBody *getBody();
   const BitField &getFlag() const;
   const char *getName() const;
-  std::string printFlags(bool bAll = true) const;
+  std::string printFlags(bool all = true) const;
   void print(FILE *f) const;
   void run(BTDisplay &d, BTSpecialContext *context) const;
   void serialize(ObjectSerializer* s);
