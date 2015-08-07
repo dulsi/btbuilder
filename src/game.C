@@ -311,6 +311,37 @@ BTParty &BTGame::getParty()
  return party;
 }
 
+bool BTGame::findTrap(BTDisplay &d)
+{
+ if (hasEffectOfType(BTSPELLTYPE_TRAPDESTROY))
+ {
+  d.drawText("A trap is magically disabled!");
+  return true;
+ }
+ else
+ {
+  BTParty &party = getParty();
+  BTSkillList &skillList = getSkillList();
+  for (int i = 0; i < skillList.size(); ++i)
+  {
+   if (skillList[i]->special == BTSKILLSPECIAL_DISARM)
+   {
+    for (int k = 0; k < party.size(); ++k)
+    {
+     if (party[k]->useSkill(i))
+     {
+      char tmp[100];
+      snprintf(tmp, 100, "%s finds and disarms a trap!", party[k]->name);
+      d.drawText(tmp);
+      return true;
+     }
+    }
+   }
+  }
+ }
+ return false;
+}
+
 int BTGame::getLight()
 {
  int light = levelMap->getLight();

@@ -99,6 +99,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   void loadStart();
   BTParty &getParty();
 
+  bool findTrap(BTDisplay &d);
   int getLight();
   const BitField &getFlags();
   void addFlags(BTDisplay &d, const BitField &flagsToAdd);

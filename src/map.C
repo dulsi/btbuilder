@@ -717,32 +717,11 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
   }
   case BTSPECIALCOMMAND_TRAP:
   {
-   if (game->hasEffectOfType(BTSPELLTYPE_TRAPDESTROY))
+   if (game->findTrap(d))
    {
-    d.drawText("A trap is magically disabled!");
     throw BTSpecialStop(0);
    }
-   else
-   {
-    BTParty &party = BTGame::getGame()->getParty();
-    BTSkillList &skillList = game->getSkillList();
-    for (int i = 0; i < skillList.size(); ++i)
-    {
-     if (skillList[i]->special == BTSKILLSPECIAL_DISARM)
-     {
-      for (int k = 0; k < party.size(); ++k)
-      {
-       if (party[k]->useSkill(i))
-       {
-        char tmp[100];
-        snprintf(tmp, 100, "%s finds and disarms a trap!", party[k]->name);
-        d.drawText(tmp);
-        throw BTSpecialStop(0);
-       }
-      }
-     }
-    }
-   }
+   break;
   }
   case BTSPECIALCOMMAND_DRAWPICTURE:
    d.drawImage(number[0]);
@@ -1553,7 +1532,16 @@ void BTSpecial::print(FILE *f) const
 
 void BTSpecial::run(BTDisplay &d, BTSpecialContext *context) const
 {
- BTGame::getGame()->addFlags(d, flags);
+ BTGame *game = BTGame::getGame();
+ if (flags.isSet(BTSPECIALFLAG_TRAP))
+ {
+  game->getMap()->setSpecial(game->getX(), game->getY(), BTSPECIAL_NONE);
+  if (game->findTrap(d))
+  {
+   return;
+  }
+ }
+ game->addFlags(d, flags);
  try
  {
   bool stop = false;
