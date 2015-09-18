@@ -21,7 +21,7 @@ Artwork used by Bt Builder is mostly from opengameart.org. If the artwork doesn'
 018 Gnome (by Madin Tolifen)
 019 City Guard (by Madin Tolifen)
 020 Goblin (by Madin Tolifen)
-021 Golem (Metal Elemental Guardian by Justin Nichol - http://opengameart.org/content/metal-elemental-guardian)
+021 Golem (by Madin Tolifen)
 022 Thief (by Madin Tolifen)
 023 Sorceress
 024 Skeleton
