@@ -155,7 +155,7 @@ extern ArrayLookup itemTypesLookup;
 #define BTCONDITION_PERSONHASTAG    21
 extern const char *conditionalCommands[];
 
-#define BT_SPECIALCOMMANDS 65
+#define BT_SPECIALCOMMANDS 66
 #define BTSPECIALCOMMAND_NOTHING          0
 #define BTSPECIALCOMMAND_STOP             1
 #define BTSPECIALCOMMAND_SPIN             2
@@ -221,6 +221,7 @@ extern const char *conditionalCommands[];
 #define BTSPECIALCOMMAND_PERSONSETTAG     62
 #define BTSPECIALCOMMAND_PERSONDELETETAG  63
 #define BTSPECIALCOMMAND_RUNXML           64
+#define BTSPECIALCOMMAND_SELECTPERSON     65
 extern const char *specialCommands[];
 
 #define BTSPECIAL_NONE -1

@@ -253,7 +253,8 @@ const char *specialCommands[] =
  "label $$",
  "selected PC gains tag $$",
  "selected PC removes tag $$",
- "run xml file $$"
+ "run xml file $$",
+ "answer to \"$$\" is selected PC"
 };
 
 const char *directions[] =

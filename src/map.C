@@ -969,6 +969,24 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
    b.run(d);
    break;
   }
+  case BTSPECIALCOMMAND_SELECTPERSON:
+  {
+   XMLVector<BTPc*> &party = game->getParty();
+   d.drawText(text);
+   context->setPc(NULL);
+   char key;
+   while (true)
+   {
+    key = d.readChar();
+    if ((27 == key) || ((key >= '1') && (key <= '9')))
+     break;
+   }
+   if ((27 != key) && (party.size() > (key - '1')))
+   {
+    context->setPc(party[key - '1']);
+   }
+   break;
+  }
   default:
    break;
  }
