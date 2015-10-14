@@ -1335,6 +1335,34 @@ void BTSpecialConditional::run(BTDisplay &d, BTSpecialContext *context) const
     truth = false;
    break;
   }
+  case BTCONDITION_PERSONSELECTED:
+  {
+   BTPc *c = context->getPc();
+   if (c == NULL)
+    truth = false;
+   break;
+  }
+  case BTCONDITION_PERSONSKILLCHECK:
+  {
+   BTPc *c = context->getPc();
+   if ((c == NULL) || (!c->useSkill(number[0], number[1])))
+    truth = false;
+   break;
+  }
+  case BTCONDITION_EVERYONESKILLCHECK:
+  {
+   context->setPc(NULL);
+   for (int i = 0; i < party.size(); ++i)
+   {
+    if (!party[i]->useSkill(number[0], number[1]))
+    {
+     truth = false;
+     context->setPc(party[i]);
+     break;
+    }
+   }
+   break;
+  }
   default:
    break;
  }

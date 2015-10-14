@@ -182,9 +182,12 @@ const char *conditionalCommands[] =
  "race $R is in party",
  "can take $# gold from party",
  "$E is active",
- "party passess $K check of $#",
+ "anyone passess $K check of $#",
  "anyone has tag $$",
- "selected PC has tag $$"
+ "selected PC has tag $$",
+ "PC is selected",
+ "selected PC passess $K check of $#",
+ "everyone passess $K check of $#"
 };
 
 const char *specialCommands[] =
