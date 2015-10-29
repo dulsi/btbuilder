@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2015 Dennis Payne <dulsi@identicalsoftware.com> -->
+<component type="desktop">
+ <id>btbuilder.desktop</id>
+ <metadata_license>CC0-1.0</metadata_license>
+ <project_license>GPL-3.0+</project_license>
+ <name>Bt Builder</name>
+ <summary>Turn based role-playing game builder and engine</summary>
+ <description>
+  <p>
+   Explore a fantasy world in this turn based single-player role-playing game.
+   Use powerful magic to devastate evil creatures. Solves puzzles to unlock
+   hidden secrets. Save the world and let bards entertain travellers with the
+   tale of your band of heroes.
+  </p>
+  <p>
+   Not satisfied with crushing the evil forces. Build a new world to share
+   with others. Create new monsters to terrorize the adventurers. Design items
+   to reward them for victory. Leave devious puzzles to vex the heroes. Your
+   imagination is the only limit.
+  </p>
+ </description>
+ <screenshots>
+  <screenshot type="default">
+   <image>http://www.identicalsoftware.com/btbuilder/appdata/combat.png</image>
+   <caption>The start of a combat</caption>
+  </screenshot>
+  <screenshot>
+   <image>http://www.identicalsoftware.com/btbuilder/appdata/moduleselect.png</image>
+   <caption>Initial screen to select which module to run</caption>
+  </screenshot>
+  <screenshot>
+   <image>http://www.identicalsoftware.com/btbuilder/appdata/city.png</image>
+   <caption>Entering the city</caption>
+  </screenshot>
+ </screenshots>
+ <url type="homepage">http://www.identicalsoftware.com/btbuilder</url>
+ <updatecontact>dulsi@identicalsoftware.com</updatecontact>
+</component>
