@@ -51,6 +51,7 @@ fi
 %{_datadir}/btbuilder
 %{_datadir}/icons/hicolor/*/apps/btbuilder.png
 %{_datadir}/applications/btbuilder.desktop
+%{_datadir}/appdata/btbuilder.appdata.xml
 
 %changelog
 * Fri Aug 07 2015 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.5-1
