@@ -1316,8 +1316,8 @@ void BTPhaseDoorEffect::serialize(ObjectSerializer *s)
  BTBaseEffect::serialize(s);
 }
 
-BTRegenSkillEffect::BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u)
- : BTTargetedEffect(t, x, s, m, g, trgt), skill(sk), use(u)
+BTRegenSkillEffect::BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u, bool unl)
+ : BTTargetedEffect(t, x, s, m, g, trgt), skill(sk), use(u), unlimited(unl)
 {
 }
 
@@ -1325,7 +1325,37 @@ void BTRegenSkillEffect::serialize(ObjectSerializer *s)
 {
  s->add("skill", &skill);
  s->add("use", &use);
+ s->add("unlimited", &unlimited);
  BTTargetedEffect::serialize(s);
+}
+
+int BTRegenSkillEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ if (unlimited)
+ {
+  BTGame *game = BTGame::getGame();
+  BTParty &party = game->getParty();
+  if (BTTARGET_PARTY == g)
+  {
+   if (BTTARGET_INDIVIDUAL == trgt)
+   {
+    for (int i = 0; i < party.size(); ++i)
+    {
+     party[i]->setSkillUnlimited(skill, unlimited);
+    }
+   }
+   else
+   {
+    party[trgt]->setSkillUnlimited(skill, unlimited);
+   }
+  }
+ }
+ return BTTargetedEffect::apply(d, combat, g, trgt);
 }
 
 int BTRegenSkillEffect::maintain(BTDisplay &d, BTCombat *combat)
@@ -1352,6 +1382,35 @@ int BTRegenSkillEffect::maintain(BTDisplay &d, BTCombat *combat)
   d.drawStats();
  }
  return 0;
+}
+
+void BTRegenSkillEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
+{
+ if (g == BTTARGET_NONE)
+ {
+  g = group;
+  trgt = target;
+ }
+ if (unlimited)
+ {
+  BTGame *game = BTGame::getGame();
+  BTParty &party = game->getParty();
+  if (BTTARGET_PARTY == g)
+  {
+   if (BTTARGET_INDIVIDUAL == trgt)
+   {
+    for (int i = 0; i < party.size(); ++i)
+    {
+     party[i]->setSkillUnlimited(skill, false);
+    }
+   }
+   else
+   {
+    party[trgt]->setSkillUnlimited(skill, false);
+   }
+  }
+ }
+ BTTargetedEffect::finish(d, combat, g, trgt);
 }
 
 BTPushEffect::BTPushEffect(int t, int x, int s, int m, int g, int trgt, int dis)

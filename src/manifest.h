@@ -309,8 +309,8 @@ class BTSpellBindManifest : public BTManifest
 class BTRegenSkillManifest : public BTManifest
 {
  public:
-  BTRegenSkillManifest() : BTManifest(BTSPELLTYPE_REGENSKILL), skill(-1) {}
-  BTRegenSkillManifest(int sk, const BTDice &a) : BTManifest(BTSPELLTYPE_REGENSKILL), skill(sk), amount(a) {}
+  BTRegenSkillManifest() : BTManifest(BTSPELLTYPE_REGENSKILL), skill(-1), unlimited(false) {}
+  BTRegenSkillManifest(int sk, const BTDice &a) : BTManifest(BTSPELLTYPE_REGENSKILL), skill(sk), amount(a), unlimited(false) {}
 
   virtual BTManifest *clone();
   std::string createString();
@@ -325,6 +325,7 @@ class BTRegenSkillManifest : public BTManifest
 
   int skill;
   BTDice amount;
+  bool unlimited;
 
  private:
   static const int entries;

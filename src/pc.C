@@ -752,6 +752,18 @@ void BTPc::setSkill(int skNum, int value, int uses)
  skill.push_back(val);
 }
 
+void BTPc::setSkillUnlimited(int skNum, bool unlimited)
+{
+ for (int i = 0; i < skill.size(); ++i)
+ {
+  if (skill[i]->skill == skNum)
+  {
+   skill[i]->unlimited = unlimited;
+   return ;
+  }
+ }
+}
+
 unsigned int BTPc::takeGold(unsigned int amount)
 {
  if (amount > gold)

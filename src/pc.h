@@ -86,6 +86,7 @@ class BTPc : public XMLObject, public BTCombatant
   void setName(const char *nm);
   void setTag(const std::string &t);
   void setSkill(int skNum, int value, int uses);
+  void setSkillUnlimited(int skNum, bool unlimited);
   unsigned int takeGold(unsigned int amount);
   bool takeItem(int id);
   bool takeItemFromIndex(int index);

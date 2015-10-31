@@ -789,7 +789,10 @@ BTManifest *BTRegenSkillManifest::clone()
 std::string BTRegenSkillManifest::createString()
 {
  XMLVector<BTSkill*> &skillList = BTCore::getCore()->getSkillList();
- return BTManifest::createString() + std::string("   Skill: ") + skillList[skill]->name + std::string("   Amount: ") + amount.createString();
+ std::string answer = BTManifest::createString() + std::string("   Skill: ") + skillList[skill]->name + std::string("   Amount: ") + amount.createString();
+ if (unlimited)
+  answer += "   Unlimited Use";
+ return answer;
 }
 
 int BTRegenSkillManifest::getEditFieldNumber()
@@ -810,7 +813,7 @@ const char *BTRegenSkillManifest::getEditField(int i)
 std::list<BTBaseEffect*> BTRegenSkillManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTRegenSkillEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, skill, amount));
+ effect.push_back(new BTRegenSkillEffect(type, expire, BTTARGET_NOSINGER, BTMUSICID_NONE, group, target, skill, amount, unlimited));
  return effect;
 }
 
@@ -819,6 +822,7 @@ void BTRegenSkillManifest::serialize(ObjectSerializer* s)
  BTManifest::serialize(s);
  s->add("skill", &skill, NULL, &BTCore::getCore()->getSkillList());
  s->add("amount", &amount);
+ s->add("unlimited", &unlimited);
 }
 
 void BTRegenSkillManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
@@ -828,13 +832,15 @@ void BTRegenSkillManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
   throw FileException("Regen skill only supported for bard songs in older file format.");
  if (amount.getMin() != amount.getMax())
   throw FileException("Regen skill does not support variable amount in older file format.");
+ if (unlimited)
+  throw FileException("Regen skill does not support unlimited use in older file format.");
  t = BTSPELLTYPE_REGENBARD;
  ex = amount.getModifier();
 }
 
-const int BTRegenSkillManifest::entries = 2;
-const char *BTRegenSkillManifest::description[] = {"Skill", "Amount"};
-const char *BTRegenSkillManifest::field[] = {"skill", "amount"};
+const int BTRegenSkillManifest::entries = 3;
+const char *BTRegenSkillManifest::description[] = {"Skill", "Amount", "Unlimited Use"};
+const char *BTRegenSkillManifest::field[] = {"skill", "amount", "unlimited"};
 
 BTManifest *BTLightManifest::clone()
 {

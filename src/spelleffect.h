@@ -302,16 +302,19 @@ class BTPhaseDoorEffect : public BTBaseEffect
 class BTRegenSkillEffect : public BTTargetedEffect
 {
  public:
-  BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u);
+  BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u, bool unl);
 
   virtual void serialize(ObjectSerializer *s);
 
+  virtual int apply(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
   virtual int maintain(BTDisplay &d, BTCombat *combat);
+  virtual void finish(BTDisplay &d, BTCombat *combat, int g = BTTARGET_NONE, int trgt = BTTARGET_INDIVIDUAL);
 
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenSkillEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE, 0, BTDice()); }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenSkillEffect(0, 0, BTTARGET_NOSINGER, BTMUSICID_NONE, BTTARGET_NONE, BTTARGET_NONE, 0, BTDice(), false); }
 
   int skill;
   BTDice use;
+  bool unlimited;
 };
 
 class BTPushEffect : public BTTargetedEffect
