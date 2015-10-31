@@ -16,19 +16,20 @@
 class BTEquipment : public XMLObject
 {
  public:
-  BTEquipment() : id(BTITEM_NONE), equipped(BTITEM_NOTEQUIPPED), known(false), charges(0) {}
+  BTEquipment() : id(BTITEM_NONE), equipped(BTITEM_NOTEQUIPPED), known(false), charges(0), effectID(0) {}
   virtual void serialize(ObjectSerializer* s);
 
   int id;
   int equipped;
   bool known;
   int charges;
+  unsigned int effectID;
 };
 
 class BTSkillValue : public XMLObject
 {
  public:
-  BTSkillValue() : skill(0), value(0), uses(0) {}
+  BTSkillValue() : skill(0), value(0), uses(0), unlimited(false) {}
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTSkillValue; }
@@ -36,6 +37,7 @@ class BTSkillValue : public XMLObject
   int skill;
   int value;
   int uses;
+  bool unlimited;
   std::vector<unsigned int> history;
 };
 

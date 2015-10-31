@@ -25,7 +25,7 @@ class BTEffectGroup
   virtual void checkExpiration(BTDisplay &d, BTCombat *combat = NULL);
   virtual void clearEffects(BTDisplay &d);
   virtual void clearEffectsByType(BTDisplay &d, int type);
-  virtual void clearEffectsBySource(BTDisplay &d, bool song, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
+  virtual void clearEffectsBySource(BTDisplay &d, unsigned int source, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   virtual void clearMapEffects();
   virtual bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL, bool exact = false, bool goodOnly = false);
   virtual void addPlayer(BTDisplay &d, int who);

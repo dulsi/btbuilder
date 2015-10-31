@@ -14,8 +14,20 @@
 #define BTSPELLFLG_KILLED 1
 #define BTSPELLFLG_EXCLAMATION 2
 
+BTEffectSource::BTEffectSource(unsigned int t, int w, int e)
+ : type(t), who(w), effectID(e)
+{
+}
+
+void BTEffectSource::serialize(ObjectSerializer *s)
+{
+ s->add("type", &type);
+ s->add("who", &who);
+ s->add("effectID", &effectID);
+}
+
 BTBaseEffect::BTBaseEffect(int t, int x, int s, int m)
- : type(t), expiration(x), expire(false), first(true), singer(s), musicId(m)
+ : type(t), expiration(x), expire(false), first(true), source(((s != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), s, m)
 {
 }
 
@@ -42,7 +54,7 @@ void BTBaseEffect::serialize(ObjectSerializer *s)
  s->add("expiration", &expiration);
  s->add("expire", &expire);
  s->add("first", &first);
- s->add("singer", &singer);
+ s->add("source", &source);
 }
 
 bool BTBaseEffect::targets(int g, int who, bool exact /*= true*/)
@@ -57,17 +69,17 @@ bool BTBaseEffect::targetsMonsters()
 
 void BTBaseEffect::move(int g, int who, int where)
 {
- if ((g == BTTARGET_PARTY) && (who == singer))
+ if ((g == BTTARGET_PARTY) && (who == source.who))
  {
-  singer = where;
+  source.who = where;
  }
- else if ((g == BTTARGET_PARTY) && (who < where) && (where >= singer) && (who < singer))
+ else if ((g == BTTARGET_PARTY) && (who < where) && (where >= source.who) && (who < source.who))
  {
-  singer--;
+  source.who--;
  }
- else if ((g == BTTARGET_PARTY) && (who > where) && (where <= singer) && (who > singer))
+ else if ((g == BTTARGET_PARTY) && (who > where) && (where <= source.who) && (who > source.who))
  {
-  singer++;
+  source.who++;
  }
 }
 
@@ -83,10 +95,10 @@ bool BTBaseEffect::isExpired(BTGame *game)
  {
   return true;
  }
- else if (singer != BTTARGET_NOSINGER)
+ else if (source.who != BTTARGET_NOSINGER)
  {
   BTParty &party = game->getParty();
-  if (!party[singer]->isAlive())
+  if (!party[source.who]->isAlive())
    return true;
   else
    return false;

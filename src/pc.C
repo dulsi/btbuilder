@@ -15,6 +15,7 @@ void BTEquipment::serialize(ObjectSerializer* s)
  s->add("equipped", &equipped);
  s->add("known", &known);
  s->add("charges", &charges);
+ s->add("effectid", &effectID);
 }
 
 void BTSkillValue::serialize(ObjectSerializer* s)
@@ -22,6 +23,7 @@ void BTSkillValue::serialize(ObjectSerializer* s)
  s->add("index", &skill);
  s->add("value", &value);
  s->add("uses", &uses);
+ s->add("unlimited", &unlimited);
  s->add("history", &history);
 }
 
@@ -542,6 +544,8 @@ void BTPc::giveSkillUse(int skNum, int amount)
   {
    if (skill[i]->skill == skNum)
    {
+    if ((amount < 0) && (skill[i]->unlimited))
+     break;
     skill[i]->uses += amount;
     if (skill[i]->uses > skill[i]->value)
      skill[i]->uses = skill[i]->value;
@@ -602,7 +606,7 @@ bool BTPc::hasSkillUse(int skNum)
  {
   if (skill[i]->skill == skNum)
   {
-   return skill[i]->uses > 0;
+   return (skill[i]->uses > 0) || (skill[i]->unlimited);
   }
  }
  return false;

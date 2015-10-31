@@ -45,6 +45,18 @@ class BTAllResistException
   BTAllResistException() {}
 };
 
+class BTEffectSource : public XMLObject
+{
+ public:
+  BTEffectSource(unsigned int t, int w, int e);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  unsigned int type;
+  int who;
+  int effectID;
+};
+
 class BTBaseEffect : public XMLObject
 {
  public:
@@ -68,8 +80,7 @@ class BTBaseEffect : public XMLObject
   int expiration;
   bool expire;
   bool first;
-  int singer;
-  int musicId;
+  BTEffectSource source;
 };
 
 class BTTargetedEffect : public BTBaseEffect

@@ -42,11 +42,11 @@ void BTEffectGroup::clearEffectsByType(BTDisplay &d, int type)
  }
 }
 
-void BTEffectGroup::clearEffectsBySource(BTDisplay &d, bool song, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
+void BTEffectGroup::clearEffectsBySource(BTDisplay &d, unsigned int source, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
 {
  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
  {
-  if (((song == true) && ((*itr)->singer != BTTARGET_NOSINGER)) || ((song == false) && ((*itr)->singer == BTTARGET_NOSINGER)))
+  if ((*itr)->source.type == source)
   {
    BTBaseEffect *current = *itr;
    bool exact = (target != BTTARGET_INDIVIDUAL);
@@ -152,11 +152,11 @@ void BTEffectGroup::checkExpiration(BTDisplay &d, BTCombat *combat /*= NULL*/)
    bool musicFound = false;
    for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
    {
-    if (*itrId == current->musicId)
+    if ((current->source.type == BTEFFECTTYPE_SONG) && (*itrId == current->source.effectID))
      musicFound = true;
    }
    if (!musicFound)
-    musicIds.push_back(current->musicId);
+    musicIds.push_back(current->source.effectID);
    int size = effect.size();
    if ((BTTIME_PERMANENT != current->expiration) && (BTTIME_CONTINUOUS != current->expiration))
     current->finish(d, combat);
@@ -185,11 +185,11 @@ void BTEffectGroup::checkMusic(BTDisplay &d, std::vector<int> &musicIds)
 {
  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
  {
-  if ((*itr)->musicId != BTMUSICID_NONE)
+  if ((*itr)->source.type == BTEFFECTTYPE_SONG)
   {
    for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
    {
-    if (*itrId == (*itr)->musicId)
+    if (*itrId == (*itr)->source.effectID)
     {
      musicIds.erase(itrId);
     }

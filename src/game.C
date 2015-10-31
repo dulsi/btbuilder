@@ -378,12 +378,12 @@ void BTGame::addFlags(BTDisplay &d, const BitField &flagsToAdd)
  }
  if (flagsToAdd.isSet(BTSPECIALFLAG_SILENCE))
  {
-  clearEffectsBySource(d, true);
+  clearEffectsBySource(d, BTEFFECTTYPE_SONG);
   effectChange = true;
  }
  if (flagsToAdd.isSet(BTSPECIALFLAG_ANTIMAGIC))
  {
-  clearEffectsBySource(d, false);
+  clearEffectsBySource(d, BTEFFECTTYPE_MAGIC);
   effectChange = true;
  }
  if (effectChange)

@@ -60,6 +60,10 @@ class PairLookup;
 extern const char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 
+#define BTEFFECTTYPE_MAGIC 0
+#define BTEFFECTTYPE_SONG  1
+#define BTEFFECTTYPE_ITEM  3
+
 #define BT_EFFECTIVERANGES 2
 extern const char *effectiveRanges[];
 
@@ -129,6 +133,7 @@ extern ArrayLookup itemTypesLookup;
 #define BTITEMCAST_NONE -1
 
 #define BTTIMESUSABLE_UNLIMITED 255
+#define BTTIMESUSABLE_CONTINUOUS 256
 
 #define BT_CONDITIONALCOMMANDS 25
 #define BTCONDITION_ANYONEITEM      0
