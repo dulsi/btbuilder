@@ -19,6 +19,11 @@ BTEffectSource::BTEffectSource(unsigned int t, int w, int e)
 {
 }
 
+BTEffectSource::BTEffectSource()
+ : type(BTEFFECTTYPE_MAGIC), who(BTTARGET_NOSINGER), effectID(BTMUSICID_NONE)
+{
+}
+
 void BTEffectSource::serialize(ObjectSerializer *s)
 {
  s->add("type", &type);
@@ -26,8 +31,8 @@ void BTEffectSource::serialize(ObjectSerializer *s)
  s->add("effectID", &effectID);
 }
 
-BTBaseEffect::BTBaseEffect(int t, int x, int s, int m)
- : type(t), expiration(x), expire(false), first(true), source(((s != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), s, m)
+BTBaseEffect::BTBaseEffect(int t, int x, const BTEffectSource &s)
+ : type(t), expiration(x), expire(false), first(true), source(s)
 {
 }
 
@@ -107,8 +112,8 @@ bool BTBaseEffect::isExpired(BTGame *game)
   return false;
 }
 
-BTTargetedEffect::BTTargetedEffect(int t, int x, int s, int m, int g, int trgt)
- : BTBaseEffect(t, x, s, m), group(g), target(trgt)
+BTTargetedEffect::BTTargetedEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
+ : BTBaseEffect(t, x, s), group(g), target(trgt)
 {
 }
 
@@ -169,8 +174,8 @@ void BTTargetedEffect::remove(BTCombat *combat, int g, int who)
  }
 }
 
-BTResistedEffect::BTResistedEffect(int t, int x, int s, int m, int g, int trgt)
- : BTTargetedEffect(t, x, s, m, g, trgt)
+BTResistedEffect::BTResistedEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
+ : BTTargetedEffect(t, x, s, g, trgt)
 {
 }
 
@@ -281,8 +286,8 @@ bool BTResistedEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/,
  return false;
 }
 
-BTAttackEffect::BTAttackEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const std::string& tOnly)
- : BTResistedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts), tagOnly(tOnly)
+BTAttackEffect::BTAttackEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const std::string& tOnly)
+ : BTResistedEffect(t, x, s, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts), tagOnly(tOnly)
 {
 }
 
@@ -524,8 +529,8 @@ void BTAttackEffect::displayResists(BTDisplay &d, BTCombat *combat)
  d.drawMessage(text.c_str(), BTGame::getGame()->getDelay());
 }
 
-BTCureStatusEffect::BTCureStatusEffect(int t, int x, int s, int m, int g, int trgt, int sts)
- : BTTargetedEffect(t, x, s, m, g, trgt), status(sts)
+BTCureStatusEffect::BTCureStatusEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int sts)
+ : BTTargetedEffect(t, x, s, g, trgt), status(sts)
 {
 }
 
@@ -640,8 +645,8 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
  return 0;
 }
 
-BTHealEffect::BTHealEffect(int t, int x, int s, int m, int g, int trgt, const BTDice &h)
- : BTTargetedEffect(t, x, s, m, g, trgt), heal(h)
+BTHealEffect::BTHealEffect(int t, int x, const BTEffectSource &s, int g, int trgt, const BTDice &h)
+ : BTTargetedEffect(t, x, s, g, trgt), heal(h)
 {
 }
 
@@ -677,8 +682,8 @@ int BTHealEffect::maintain(BTDisplay &d, BTCombat *combat)
  return 0;
 }
 
-BTSummonMonsterEffect::BTSummonMonsterEffect(int t, int x, int s, int m, int g, int trgt)
- : BTTargetedEffect(t, x, s, m, g, trgt)
+BTSummonMonsterEffect::BTSummonMonsterEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
+ : BTTargetedEffect(t, x, s, g, trgt)
 {
 }
 
@@ -697,8 +702,8 @@ void BTSummonMonsterEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTT
  }
 }
 
-BTSummonIllusionEffect::BTSummonIllusionEffect(int t, int x, int s, int m, int g, int trgt)
- : BTTargetedEffect(t, x, s, m, g, trgt)
+BTSummonIllusionEffect::BTSummonIllusionEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
+ : BTTargetedEffect(t, x, s, g, trgt)
 {
 }
 
@@ -718,8 +723,8 @@ void BTSummonIllusionEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BT
  }
 }
 
-BTDispellIllusionEffect::BTDispellIllusionEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt)
- : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d)
+BTDispellIllusionEffect::BTDispellIllusionEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt)
+ : BTTargetedEffect(t, x, s, g, trgt), range(rng), effectiveRange(erng), distance(d)
 {
 }
 
@@ -871,8 +876,8 @@ bool BTBestInactiveEffectTest::test(BTBaseEffect *e)
  return false;
 }
 
-BTNonStackingBonusEffect::BTNonStackingBonusEffect(int t, int x, int s, int m, int g, int trgt)
- : BTTargetedEffect(t, x, s, m, g, trgt), active(false)
+BTNonStackingBonusEffect::BTNonStackingBonusEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
+ : BTTargetedEffect(t, x, s, g, trgt), active(false)
 {
 }
 
@@ -940,8 +945,8 @@ void BTNonStackingBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= 
  }
 }
 
-BTArmorBonusEffect::BTArmorBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
- : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(b)
+BTArmorBonusEffect::BTArmorBonusEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int b)
+ : BTNonStackingBonusEffect(t, x, s, g, trgt), bonus(b)
 {
 }
 
@@ -1082,8 +1087,8 @@ void BTArmorBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int 
  }
 }
 
-BTHitBonusEffect::BTHitBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
- : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(b)
+BTHitBonusEffect::BTHitBonusEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int b)
+ : BTNonStackingBonusEffect(t, x, s, g, trgt), bonus(b)
 {
 }
 
@@ -1224,8 +1229,8 @@ void BTHitBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int tr
  }
 }
 
-BTResurrectEffect::BTResurrectEffect(int t, int x, int s, int m, int g, int trgt)
- : BTTargetedEffect(t, x, s, m, g, trgt)
+BTResurrectEffect::BTResurrectEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
+ : BTTargetedEffect(t, x, s, g, trgt)
 {
 }
 
@@ -1257,8 +1262,8 @@ int BTResurrectEffect::maintain(BTDisplay &d, BTCombat *combat)
  }
 }
 
-BTDispellMagicEffect::BTDispellMagicEffect(int t, int x, int s, int m, int rng, int erng, int d, int g, int trgt)
- : BTTargetedEffect(t, x, s, m, g, trgt), range(rng), effectiveRange(erng), distance(d)
+BTDispellMagicEffect::BTDispellMagicEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt)
+ : BTTargetedEffect(t, x, s, g, trgt), range(rng), effectiveRange(erng), distance(d)
 {
 }
 
@@ -1303,8 +1308,8 @@ int BTDispellMagicEffect::maintain(BTDisplay &d, BTCombat *combat)
  return 0;
 }
 
-BTPhaseDoorEffect::BTPhaseDoorEffect(int t, int x, int s, int m, int mX, int mY, int f)
- : BTBaseEffect(t, x, s, m), mapX(mX), mapY(mY), facing(f)
+BTPhaseDoorEffect::BTPhaseDoorEffect(int t, int x, const BTEffectSource &s, int mX, int mY, int f)
+ : BTBaseEffect(t, x, s), mapX(mX), mapY(mY), facing(f)
 {
 }
 
@@ -1316,8 +1321,8 @@ void BTPhaseDoorEffect::serialize(ObjectSerializer *s)
  BTBaseEffect::serialize(s);
 }
 
-BTRegenSkillEffect::BTRegenSkillEffect(int t, int x, int s, int m, int g, int trgt, int sk, const BTDice& u, bool unl)
- : BTTargetedEffect(t, x, s, m, g, trgt), skill(sk), use(u), unlimited(unl)
+BTRegenSkillEffect::BTRegenSkillEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int sk, const BTDice& u, bool unl)
+ : BTTargetedEffect(t, x, s, g, trgt), skill(sk), use(u), unlimited(unl)
 {
 }
 
@@ -1413,8 +1418,8 @@ void BTRegenSkillEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARG
  BTTargetedEffect::finish(d, combat, g, trgt);
 }
 
-BTPushEffect::BTPushEffect(int t, int x, int s, int m, int g, int trgt, int dis)
- : BTTargetedEffect(t, x, s, m, g, trgt), distance(dis)
+BTPushEffect::BTPushEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int dis)
+ : BTTargetedEffect(t, x, s, g, trgt), distance(dis)
 {
 }
 
@@ -1456,8 +1461,8 @@ int BTPushEffect::maintain(BTDisplay &d, BTCombat *combat)
  return 0;
 }
 
-BTAttackRateBonusEffect::BTAttackRateBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
- : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(b)
+BTAttackRateBonusEffect::BTAttackRateBonusEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int b)
+ : BTNonStackingBonusEffect(t, x, s, g, trgt), bonus(b)
 {
 }
 
@@ -1550,8 +1555,8 @@ void BTAttackRateBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g,
  }
 }
 
-BTRegenManaEffect::BTRegenManaEffect(int t, int x, int s, int m, int g, int trgt, const BTDice &sp)
- : BTTargetedEffect(t, x, s, m, g, trgt), mana(sp)
+BTRegenManaEffect::BTRegenManaEffect(int t, int x, const BTEffectSource &s, int g, int trgt, const BTDice &sp)
+ : BTTargetedEffect(t, x, s, g, trgt), mana(sp)
 {
 }
 
@@ -1587,8 +1592,8 @@ int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
  return 0;
 }
 
-BTSaveBonusEffect::BTSaveBonusEffect(int t, int x, int s, int m, int g, int trgt, int b)
- : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(b)
+BTSaveBonusEffect::BTSaveBonusEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int b)
+ : BTNonStackingBonusEffect(t, x, s, g, trgt), bonus(b)
 {
 }
 
@@ -1681,8 +1686,8 @@ void BTSaveBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int t
  }
 }
 
-BTScrySightEffect::BTScrySightEffect(int t, int x, int s, int m)
- : BTBaseEffect(t, x, s, m)
+BTScrySightEffect::BTScrySightEffect(int t, int x, const BTEffectSource &s)
+ : BTBaseEffect(t, x, s)
 {
 }
 
@@ -1692,8 +1697,8 @@ int BTScrySightEffect::maintain(BTDisplay &d, BTCombat *combat)
  d.drawMap(true);
 }
 
-BTSpellBindEffect::BTSpellBindEffect(int t, int x, int s, int m, int g, int trgt)
- : BTResistedEffect(t, x, s, m, g, trgt)
+BTSpellBindEffect::BTSpellBindEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
+ : BTResistedEffect(t, x, s, g, trgt)
 {
 }
 
@@ -1750,8 +1755,8 @@ void BTSpellBindEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGE
 {
 }
 
-BTLightEffect::BTLightEffect(int t, int x, int s, int m, int g, int trgt, int illum)
- : BTTargetedEffect(t, x, s, m, g, trgt), illumination(illum)
+BTLightEffect::BTLightEffect(int t, int x, const BTEffectSource &s, int g, int trgt, int illum)
+ : BTTargetedEffect(t, x, s, g, trgt), illumination(illum)
 {
 }
 
@@ -1761,8 +1766,8 @@ void BTLightEffect::serialize(ObjectSerializer *s)
  BTTargetedEffect::serialize(s);
 }
 
-BTTeleportEffect::BTTeleportEffect(int t, int x, int s, int m, int mX, int mY, const std::string &mFile)
- : BTBaseEffect(t, x, s, m), mapX(mX), mapY(mY), mapFile(mFile)
+BTTeleportEffect::BTTeleportEffect(int t, int x, const BTEffectSource &s, int mX, int mY, const std::string &mFile)
+ : BTBaseEffect(t, x, s), mapX(mX), mapY(mY), mapFile(mFile)
 {
 }
 
@@ -1781,8 +1786,8 @@ void BTTeleportEffect::serialize(ObjectSerializer *s)
  s->add("mapFile", &mapFile);
 }
 
-BTDamageBonusEffect::BTDamageBonusEffect(int t, int x, int s, int m, int g, int trgt, const BTDice &d, bool melee)
- : BTNonStackingBonusEffect(t, x, s, m, g, trgt), bonus(d, melee)
+BTDamageBonusEffect::BTDamageBonusEffect(int t, int x, const BTEffectSource &s, int g, int trgt, const BTDice &d, bool melee)
+ : BTNonStackingBonusEffect(t, x, s, g, trgt), bonus(d, melee)
 {
 }
 
@@ -1958,8 +1963,8 @@ void BTDamageBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int
  }
 }
 
-BTDetectEffect::BTDetectEffect(int t, int x, int s, int m, int r, const BitField &f)
- : BTBaseEffect(t, x, s, m), range(r), flags(f)
+BTDetectEffect::BTDetectEffect(int t, int x, const BTEffectSource &s, int r, const BitField &f)
+ : BTBaseEffect(t, x, s), range(r), flags(f)
 {
 }
 
