@@ -60,9 +60,12 @@ class PairLookup;
 extern const char *spellTypes[];
 extern ArrayLookup spellTypeLookup;
 
+#define BT_EFFECTTYPE 3
 #define BTEFFECTTYPE_MAGIC 0
 #define BTEFFECTTYPE_SONG  1
 #define BTEFFECTTYPE_ITEM  3
+extern const char *effectTypes[];
+extern ArrayLookup effectTypeLookup;
 
 #define BT_EFFECTIVERANGES 2
 extern const char *effectiveRanges[];

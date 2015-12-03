@@ -35,9 +35,10 @@ int BTSong::play(BTDisplay &d, BTPc *singer, BTCombat *combat)
   expire = game->getExpiration(BTDice(1, 241, 239).roll());
  int musicId = d.playMusic((combat ? combatMusic : music));
  d.drawMessage(text.c_str(), game->getDelay());
+ BTEffectSource source(BTEFFECTTYPE_SONG, singerNum, musicId);
  for (int i = 0; i < manifest.size(); ++i)
  {
-  std::list<BTBaseEffect*> sub = manifest[i]->manifest(d, true, combat, expire, singer->level, 9, BTTARGET_PARTY, BTTARGET_INDIVIDUAL, singerNum, musicId);
+  std::list<BTBaseEffect*> sub = manifest[i]->manifest(d, true, combat, expire, singer->level, 9, BTTARGET_PARTY, BTTARGET_INDIVIDUAL, source);
   for (std::list<BTBaseEffect*>::iterator itr = sub.begin(); itr != sub.end(); ++itr)
   {
    try

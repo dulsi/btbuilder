@@ -11,7 +11,7 @@
 int BTSpell::version(1);
 
 BTSpell::BTSpell()
- : caster(0), level(1), sp(1), range(0), effectiveRange(0), area(BTAREAEFFECT_NONE), duration(BTDURATION_ONE)
+ : caster(0), level(1), effectType(BTEFFECTTYPE_MAGIC), sp(1), range(0), effectiveRange(0), area(BTAREAEFFECT_NONE), duration(BTDURATION_ONE)
 {
  code = new char[1];
  code[0] = 0;
@@ -20,7 +20,7 @@ BTSpell::BTSpell()
 }
 
 BTSpell::BTSpell(const BTSpell &copy)
- : name(copy.name), caster(copy.caster), level(copy.level), sp(copy.sp), range(copy.range), effectiveRange(copy.effectiveRange),
+ : name(copy.name), caster(copy.caster), level(copy.level), effectType(copy.effectType), sp(copy.sp), range(copy.range), effectiveRange(copy.effectiveRange),
  area(copy.area), duration(copy.duration)
 {
  code = new char[strlen(copy.code) + 1];
@@ -218,9 +218,10 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
    break;
  }
  d.drawMessage(text.c_str(), game->getDelay());
+ BTEffectSource source(effectType, BTTARGET_NOSINGER, BTMUSICID_NONE);
  for (int i = 0; i < manifest.size(); ++i)
  {
-  std::list<BTBaseEffect*> effect = manifest[i]->manifest(d, partySpell, combat, expire, casterLevel, distance, group, target, BTTARGET_NOSINGER, BTMUSICID_NONE);
+  std::list<BTBaseEffect*> effect = manifest[i]->manifest(d, partySpell, combat, expire, casterLevel, distance, group, target, source);
   for (auto itr = effect.begin(); itr != effect.end(); itr++)
   {
    try
@@ -272,6 +273,7 @@ void BTSpell::serialize(ObjectSerializer* s)
  s->add("code", &code);
  s->add("caster", &caster, NULL, &BTCore::getCore()->getSkillList());
  s->add("level", &level);
+ s->add("effectType", &effectType, NULL, &effectTypeLookup);
  s->add("sp", &sp);
  s->add("range", &range);
  s->add("effectiveRange", &effectiveRange);

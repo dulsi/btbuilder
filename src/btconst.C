@@ -58,6 +58,14 @@ const char *spellTypes[] =
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES_FULL, spellTypes);
 
+const char *effectTypes[] =
+{
+ "Magic",
+ "Song",
+ "Item"
+};
+ArrayLookup effectTypeLookup(BT_EFFECTTYPE, effectTypes);
+
 const char *effectiveRanges[] =
 {
  "Normal",

@@ -72,6 +72,7 @@ class BTSpell : public XMLObject
   char *code;
   int caster;
   IShort level;
+  int effectType;
   IShort sp;
   IShort range;
   IShort effectiveRange;

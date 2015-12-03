@@ -39,10 +39,10 @@ bool BTManifest::hasCombatEffect() const
  return true;
 }
 
-std::list<BTBaseEffect*> BTManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTBaseEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId)));
+ effect.push_back(new BTBaseEffect(type, expire, source));
  return effect;
 }
 
@@ -90,10 +90,10 @@ BTManifest *BTTargetedManifest::clone()
  return new BTTargetedManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTTargetedManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTTargetedManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTTargetedEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target));
+ effect.push_back(new BTTargetedEffect(type, expire, source, group, target));
  return effect;
 }
 
@@ -102,16 +102,16 @@ BTManifest *BTRangedManifest::clone()
  return new BTRangedManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTRangedManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTRangedManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  switch (type)
  {
   case BTSPELLTYPE_DISPELLMAGIC:
-   effect.push_back(new BTDispellMagicEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), range, effectiveRange, distance, group, target));
+   effect.push_back(new BTDispellMagicEffect(type, expire, source, range, effectiveRange, distance, group, target));
    break;
   case BTSPELLTYPE_DISPELLILLUSION:
-   effect.push_back(new BTDispellIllusionEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), range, effectiveRange, distance, group, target));
+   effect.push_back(new BTDispellIllusionEffect(type, expire, source, range, effectiveRange, distance, group, target));
    break;
   default:
    break;
@@ -167,7 +167,7 @@ const char *BTBonusManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  int value = bonus;
@@ -178,16 +178,16 @@ std::list<BTBaseEffect*> BTBonusManifest::manifest(BTDisplay &d, bool partySpell
  switch (type)
  {
   case BTSPELLTYPE_ARMORBONUS:
-   effect.push_back(new BTArmorBonusEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, value));
+   effect.push_back(new BTArmorBonusEffect(type, expire, source, group, target, value));
    break;
   case BTSPELLTYPE_ATTACKRATEBONUS:
-   effect.push_back(new BTAttackRateBonusEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, value));
+   effect.push_back(new BTAttackRateBonusEffect(type, expire, source, group, target, value));
    break;
   case BTSPELLTYPE_SAVEBONUS:
-   effect.push_back(new BTSaveBonusEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, value));
+   effect.push_back(new BTSaveBonusEffect(type, expire, source, group, target, value));
    break;
   case BTSPELLTYPE_HITBONUS:
-   effect.push_back(new BTHitBonusEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, value));
+   effect.push_back(new BTHitBonusEffect(type, expire, source, group, target, value));
    break;
   default:
    break;
@@ -268,7 +268,7 @@ const char *BTAttackManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTAttackManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTAttackManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  BTDice value = damage;
@@ -276,7 +276,7 @@ std::list<BTBaseEffect*> BTAttackManifest::manifest(BTDisplay &d, bool partySpel
   value.setNumber(value.getNumber() * (casterLevel / level));
  if ((0 != maximum) && (value.getNumber() > maximum))
   value.setNumber(maximum);
- effect.push_back(new BTAttackEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), range, effectiveRange, 0, group, target, value, xSpecial, tagOnly));
+ effect.push_back(new BTAttackEffect(type, expire, source, range, effectiveRange, 0, group, target, value, xSpecial, tagOnly));
  return effect;
 }
 
@@ -371,10 +371,10 @@ const char *BTCureStatusManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTCureStatusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTCureStatusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTCureStatusEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, status));
+ effect.push_back(new BTCureStatusEffect(type, expire, source, group, target, status));
  return effect;
 }
 
@@ -457,7 +457,7 @@ const char *BTHealManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTHealManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTHealManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  BTDice value = heal;
@@ -465,7 +465,7 @@ std::list<BTBaseEffect*> BTHealManifest::manifest(BTDisplay &d, bool partySpell,
   value.setNumber(value.getNumber() * (casterLevel / level));
  if ((0 != maximum) && (value.getNumber() > maximum))
   value.setNumber(maximum);
- effect.push_back(new BTHealEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, value));
+ effect.push_back(new BTHealEffect(type, expire, source, group, target, value));
  return effect;
 }
 
@@ -492,7 +492,7 @@ BTManifest *BTMultiManifest::clone()
  return new BTMultiManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTMultiManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTMultiManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  if ((restriction == BTRESTRICTION_COMBAT) && (combat == NULL))
@@ -502,7 +502,7 @@ std::list<BTBaseEffect*> BTMultiManifest::manifest(BTDisplay &d, bool partySpell
  if (targetOverride == BTTARGETOVERRIDE_SINGER)
  {
   group = BTTARGET_PARTY;
-  target = singer;
+  target = source.who;
  }
  else if (targetOverride == BTTARGETOVERRIDE_ALLMONSTERS)
  {
@@ -511,7 +511,7 @@ std::list<BTBaseEffect*> BTMultiManifest::manifest(BTDisplay &d, bool partySpell
  }
  for (int i = 0; i < content.size(); ++i)
  {
-  std::list<BTBaseEffect*> sub = content[i]->manifest(d, partySpell, combat, expire, casterLevel, distance, group, target, singer, musicId);
+  std::list<BTBaseEffect*> sub = content[i]->manifest(d, partySpell, combat, expire, casterLevel, distance, group, target, source);
   for (std::list<BTBaseEffect*>::iterator itr = sub.begin(); itr != sub.end(); ++itr)
   {
    effect.push_back(*itr);
@@ -539,10 +539,10 @@ std::string BTPushManifest::createString()
  return BTManifest::createString() + std::string("   Force: ") + std::string(s);
 }
 
-std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTPushManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTPushEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, strength));
+ effect.push_back(new BTPushEffect(type, expire, source, group, target, strength));
  return effect;
 }
 
@@ -602,10 +602,10 @@ const char *BTRegenManaManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTRegenManaManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTRegenManaManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTRegenManaEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, mana));
+ effect.push_back(new BTRegenManaEffect(type, expire, source, group, target, mana));
  return effect;
 }
 
@@ -630,10 +630,10 @@ BTManifest *BTScrySightManifest::clone()
  return new BTScrySightManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTScrySightManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTScrySightManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTScrySightEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId)));
+ effect.push_back(new BTScrySightEffect(type, expire, source));
  return effect;
 }
 
@@ -663,7 +663,7 @@ const char *BTSummonManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTSummonManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTSummonManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
@@ -684,9 +684,9 @@ std::list<BTBaseEffect*> BTSummonManifest::manifest(BTDisplay &d, bool partySpel
   if ((BTTIME_PERMANENT != expire) && (BTTIME_CONTINUOUS != expire))
   {
    if (type == BTSPELLTYPE_SUMMONMONSTER)
-    effect.push_back(new BTSummonMonsterEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), BTTARGET_PARTY, party.size() - 1));
+    effect.push_back(new BTSummonMonsterEffect(type, expire, source, BTTARGET_PARTY, party.size() - 1));
    else
-    effect.push_back(new BTSummonIllusionEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), BTTARGET_PARTY, party.size() - 1));
+    effect.push_back(new BTSummonIllusionEffect(type, expire, source, BTTARGET_PARTY, party.size() - 1));
   }
  }
  return effect;
@@ -714,7 +714,7 @@ BTManifest *BTResurrectManifest::clone()
  return new BTResurrectManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTResurrectManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTResurrectManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
@@ -723,7 +723,7 @@ std::list<BTBaseEffect*> BTResurrectManifest::manifest(BTDisplay &d, bool partyS
  {
   if (BTTARGET_INDIVIDUAL == target)
   {
-   effect.push_back(new BTResurrectEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target));
+   effect.push_back(new BTResurrectEffect(type, expire, source, group, target));
   }
   else
   {
@@ -746,7 +746,7 @@ BTManifest *BTPhaseDoorManifest::clone()
  return new BTPhaseDoorManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTPhaseDoorManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTPhaseDoorManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  BTGame *game = BTGame::getGame();
@@ -760,7 +760,7 @@ std::list<BTBaseEffect*> BTPhaseDoorManifest::manifest(BTDisplay &d, bool partyS
   int str = game->testWallStrength(testX, testY, f);
   if (1 == str)
   {
-   effect.push_back(new BTPhaseDoorEffect(type, BTTIME_MAP, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), testX, testY, f));
+   effect.push_back(new BTPhaseDoorEffect(type, BTTIME_MAP, source, testX, testY, f));
    break;
   }
   else if (2 == str)
@@ -774,10 +774,10 @@ BTManifest *BTSpellBindManifest::clone()
  return new BTSpellBindManifest(*this);
 }
 
-std::list<BTBaseEffect*> BTSpellBindManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTSpellBindManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTSpellBindEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target));
+ effect.push_back(new BTSpellBindEffect(type, expire, source, group, target));
  return effect;
 }
 
@@ -810,10 +810,10 @@ const char *BTRegenSkillManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTRegenSkillManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTRegenSkillManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTRegenSkillEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, skill, amount, unlimited));
+ effect.push_back(new BTRegenSkillEffect(type, expire, source, group, target, skill, amount, unlimited));
  return effect;
 }
 
@@ -871,10 +871,10 @@ const char *BTLightManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTLightManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTLightManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTLightEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, illumination));
+ effect.push_back(new BTLightEffect(type, expire, source, group, target, illumination));
  return effect;
 }
 
@@ -904,7 +904,7 @@ bool BTTeleportManifest::hasCombatEffect() const
  return false;
 }
 
-std::list<BTBaseEffect*> BTTeleportManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTTeleportManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  if (combat != NULL)
@@ -959,7 +959,7 @@ std::list<BTBaseEffect*> BTTeleportManifest::manifest(BTDisplay &d, bool partySp
    if (map->getSpecial(sp)->getFlag().isSet(BTSPECIALFLAG_ANTITELEPORT))
     return effect;
   }
-  effect.push_back(new BTTeleportEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), x, y, map->getFilename()));
+  effect.push_back(new BTTeleportEffect(type, expire, source, x, y, map->getFilename()));
  }
  return effect;
 }
@@ -1003,7 +1003,7 @@ const char *BTRangeBonusManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTRangeBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTRangeBonusManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
  BTDice value = bonus;
@@ -1014,7 +1014,7 @@ std::list<BTBaseEffect*> BTRangeBonusManifest::manifest(BTDisplay &d, bool party
  switch (type)
  {
   case BTSPELLTYPE_DAMAGEBONUS:
-   effect.push_back(new BTDamageBonusEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), group, target, value, true));
+   effect.push_back(new BTDamageBonusEffect(type, expire, source, group, target, value, true));
    break;
   default:
    break;
@@ -1067,10 +1067,10 @@ const char *BTDetectManifest::getEditField(int i)
  return field[i];
 }
 
-std::list<BTBaseEffect*> BTDetectManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, int singer, int musicId)
+std::list<BTBaseEffect*> BTDetectManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTDetectEffect(type, expire, BTEffectSource(((singer != BTTARGET_NOSINGER) ? BTEFFECTTYPE_SONG : BTEFFECTTYPE_MAGIC), singer, musicId), range, flags));
+ effect.push_back(new BTDetectEffect(type, expire, source, range, flags));
  return effect;
 }
 
