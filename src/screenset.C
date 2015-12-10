@@ -1832,7 +1832,7 @@ int BTScreenSet::create(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
 
 int BTScreenSet::drop(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc[0]->takeItemFromIndex(b.pc[0]->combat.object);
+ b.pc[0]->takeItemFromIndex(d, b.pc[0]->combat.object);
  b.pc[0]->combat.object = -1;
  b.pc[0]->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
@@ -1855,7 +1855,7 @@ int BTScreenSet::dropFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item,
 
 int BTScreenSet::equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc[0]->equip(b.pc[0]->combat.object);
+ b.pc[0]->equip(d, b.pc[0]->combat.object);
  b.pc[0]->combat.object = -1;
  b.pc[0]->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
@@ -1923,7 +1923,7 @@ int BTScreenSet::give(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
   BTEquipment &item = b.pc[0]->item[b.pc[0]->combat.object];
   if (party[key - '1']->giveItem(item.id, item.known, item.charges))
   {
-   b.pc[0]->takeItemFromIndex(b.pc[0]->combat.object);
+   b.pc[0]->takeItemFromIndex(d, b.pc[0]->combat.object);
    b.pc[0]->combat.object = -1;
    b.pc[0]->combat.type = BTPc::BTPcAction::none;
    d.drawStats();
@@ -2172,7 +2172,7 @@ int BTScreenSet::sell(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
   shop->addItem(b.pc[0]->getItem(select->select));
  }
  b.pc[0]->giveGold(itemList[b.pc[0]->getItem(select->select)].getPrice() / 2);
- b.pc[0]->takeItemFromIndex(select->select);
+ b.pc[0]->takeItemFromIndex(d, select->select);
  d.drawStats();
  return 0;
 }
@@ -2361,7 +2361,7 @@ int BTScreenSet::tradeGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int
 
 int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc[0]->unequip(b.pc[0]->combat.object);
+ b.pc[0]->unequip(d, b.pc[0]->combat.object);
  b.pc[0]->combat.object = -1;
  b.pc[0]->combat.type = BTPc::BTPcAction::none;
  d.drawStats();
@@ -2433,13 +2433,13 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
     break;
    case BTAREAEFFECT_GROUP:
     d.clearText();
-    b.pc[0]->takeItemCharge(select->select);
+    b.pc[0]->takeItemCharge(d, select->select);
     d.drawStats();
     spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, BTTARGET_INDIVIDUAL);
     return BTSCREEN_ESCAPE;
    case BTAREAEFFECT_NONE:
     d.clearText();
-    b.pc[0]->takeItemCharge(select->select);
+    b.pc[0]->takeItemCharge(d, select->select);
     d.drawStats();
     spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, 0, BTTARGET_INDIVIDUAL);
     return BTSCREEN_ESCAPE;
@@ -2448,7 +2448,7 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
    case BTAREAEFFECT_CASTER:
    {
     d.clearText();
-    b.pc[0]->sp -= spellList[spellCast].getSp();
+    b.pc[0]->takeItemCharge(d, select->select);
     d.drawStats();
     spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_PARTY, pcNumber, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, pcNumber);
     return BTSCREEN_ESCAPE;
@@ -2500,7 +2500,7 @@ int BTScreenSet::useOn(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key
     throw BTSpecialError("combatonly");
    spellList[spellCast].cast(d, b.pc[0]->name, BTTARGET_NONE, BTTARGET_INDIVIDUAL, true, NULL, b.pc[0]->level, 0, BTTARGET_PARTY, key - '1');
   }
-  b.pc[0]->takeItemCharge(b.pc[0]->combat.object);
+  b.pc[0]->takeItemCharge(d, b.pc[0]->combat.object);
   return -1;
  }
  return 0;

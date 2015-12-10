@@ -112,6 +112,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
 
   int getCounter() const;
   void setCounter(int val);
+  int nextEffectID();
 
   BTChest &getChest();
   BTCombat &getCombat();
@@ -140,7 +141,9 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   void checkExpiration(BTDisplay &d, BTCombat *combatObj = NULL);
   void clearEffects(BTDisplay &d);
   void clearEffectsByType(BTDisplay &d, int type);
+  void clearEffectsByEffectID(BTDisplay &d, unsigned int effectID);
   void clearEffectsBySource(BTDisplay &d, bool song, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
+  bool hasEffectID(unsigned int effectID);
   bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL, bool exact = false, bool goodOnly = false);
   void addPlayer(BTDisplay &d, int who);
   void movedPlayer(BTDisplay &d, int who, int where);
@@ -170,6 +173,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   BTParty party;
   std::string lastInput;
   int counter;
+  int effectID;
   BTChest chest;
   BTCombat combat;
   BTStatus status;

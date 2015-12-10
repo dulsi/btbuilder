@@ -33,7 +33,8 @@ int BTSong::play(BTDisplay &d, BTPc *singer, BTCombat *combat)
   expire = game->getExpiration(1);
  else
   expire = game->getExpiration(BTDice(1, 241, 239).roll());
- int musicId = d.playMusic((combat ? combatMusic : music));
+ int musicId = game->nextEffectID();
+ d.playMusic(musicId, (combat ? combatMusic : music));
  d.drawMessage(text.c_str(), game->getDelay());
  BTEffectSource source(BTEFFECTTYPE_SONG, singerNum, musicId);
  for (int i = 0; i < manifest.size(); ++i)

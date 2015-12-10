@@ -16,7 +16,7 @@
 class BTEquipment : public XMLObject
 {
  public:
-  BTEquipment() : id(BTITEM_NONE), equipped(BTITEM_NOTEQUIPPED), known(false), charges(0), effectID(0) {}
+  BTEquipment() : id(BTITEM_NONE), equipped(BTITEM_NOTEQUIPPED), known(false), charges(0), effectID(BTEFFECTID_NONE) {}
   virtual void serialize(ObjectSerializer* s);
 
   int id;
@@ -48,13 +48,14 @@ class BTPc : public XMLObject, public BTCombatant
   BTPc(int monsterType, int job, BTCombatant *c = NULL);
   ~BTPc() { delete [] name; delete [] item; }
 
+  void activateItems(BTDisplay &d);
   bool advanceLevel();
   bool age();
   std::string attack(BTCombatant *defender, int weapon, int &numAttacksLeft, int &activeNum);
   void changeJob(int newJob);
-  bool drainItem(int amount);
+  bool drainItem(BTDisplay &d, int amount);
   bool drainLevel();
-  void equip(int index);
+  void equip(BTDisplay &d, int index);
   int hiddenTime() const;
   int incrementStat();
   bool isEquipped(int index) const;
@@ -88,11 +89,11 @@ class BTPc : public XMLObject, public BTCombatant
   void setSkill(int skNum, int value, int uses);
   void setSkillUnlimited(int skNum, bool unlimited);
   unsigned int takeGold(unsigned int amount);
-  bool takeItem(int id);
-  bool takeItemFromIndex(int index);
-  void takeItemCharge(int index, int amount = 1);
+  bool takeItem(BTDisplay &d, int id);
+  bool takeItemFromIndex(BTDisplay &d, int index);
+  void takeItemCharge(BTDisplay &d, int index, int amount = 1);
   bool takeSP(int amount);
-  void unequip(int index);
+  void unequip(BTDisplay &d, int index);
   void useAutoCombatSkill(bool melee, BitField &special);
   bool useSkill(int index, int difficulty = BTSKILL_DEFAULTDIFFICULTY);
   void updateSkills();
@@ -152,6 +153,7 @@ class BTParty : public XMLVector<BTPc*>, public BTCombatantCollection
 
   void add(BTDisplay &d, BTPc *pc);
   bool checkDead(BTDisplay &d);
+  int find(BTPc *pc);
   void giveItem(int itemID, BTDisplay &d);
   void moveTo(int who, int where, BTDisplay &d);
   bool remove(int who, BTDisplay &d);

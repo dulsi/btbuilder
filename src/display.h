@@ -58,11 +58,11 @@ class BTUIElement
 class BTMusic
 {
  public:
-  BTMusic(int id) : musicObj(0), musicId(id) {}
+  BTMusic(unsigned int id) : musicObj(0), musicId(id) {}
   ~BTMusic();
 
   Mix_Music *musicObj;
-  int musicId;
+  unsigned int musicId;
 };
 
 class BTSound
@@ -134,7 +134,7 @@ class BTDisplay : public ImageLoader
   std::string getCurrentLabel();
   void getMultiplier(int &x, int &y);
   SDL_Color &getWhite();
-  int playMusic(const char *file, bool physfs = true);
+  void playMusic(unsigned int effectID, const char *file, bool physfs = true);
   void playSound(const char *file, bool physfs = true);
   unsigned int process(const char *specialKeys = NULL, int *delay = 0, int delayOveride = -1);
   unsigned int readChar(int delay = 0);

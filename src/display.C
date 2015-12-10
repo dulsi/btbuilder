@@ -748,24 +748,18 @@ SDL_Color &BTDisplay::getWhite()
  return white;
 }
 
-int BTDisplay::playMusic(const char *file, bool physfs /*= true*/)
+void BTDisplay::playMusic(unsigned int effectID, const char *file, bool physfs /*= true*/)
 {
  if ((!music.empty()) && (music.front()->musicObj != NULL))
  {
   Mix_FadeOutMusic(1000);
  }
- int musicID = 1;
- for (std::list<BTMusic*>::iterator itr(music.begin()); itr != music.end(); ++itr)
- {
-  if (musicID <= (*itr)->musicId)
-   musicID = (*itr)->musicId + 1;
- }
  if ((file == NULL) || (file[0] == 0))
  {
-  music.push_front(new BTMusic(musicID));
-  return musicID;
+  music.push_front(new BTMusic(effectID));
+  return;
  }
- BTMusic *m = new BTMusic(musicID);
+ BTMusic *m = new BTMusic(effectID);
  SDL_RWops *musicFile;
  if (physfs)
   musicFile = PHYSFSRWOPS_openRead(file);
@@ -778,7 +772,6 @@ int BTDisplay::playMusic(const char *file, bool physfs /*= true*/)
    Mix_FadeInMusic(m->musicObj, -1, 1000);
  }
  music.push_front(m);
- return musicID;
 }
 
 void BTDisplay::playSound(const char *file, bool physfs /*= true*/)

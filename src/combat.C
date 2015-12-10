@@ -1084,7 +1084,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
       }
       active -= spellList[spellCast].cast(d, pc.name, BTTARGET_PARTY, pcNumber, true, this, pc.level, 0, pc.combat.getTargetGroup(), target);
      }
-     pc.takeItemCharge(pc.combat.object);
+     pc.takeItemCharge(d, pc.combat.object);
     }
     break;
    }

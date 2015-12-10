@@ -42,6 +42,18 @@ void BTEffectGroup::clearEffectsByType(BTDisplay &d, int type)
  }
 }
 
+void BTEffectGroup::clearEffectsByEffectID(BTDisplay &d, unsigned int effectID)
+{
+ for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
+ {
+  if ((*itr)->source.effectID == effectID)
+  {
+   BTBaseEffect *current = *itr;
+   current->expire = true;
+  }
+ }
+}
+
 void BTEffectGroup::clearEffectsBySource(BTDisplay &d, unsigned int source, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
 {
  for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
@@ -77,6 +89,18 @@ void BTEffectGroup::clearMapEffects()
    }
   }
  }
+}
+
+bool BTEffectGroup::hasEffectID(unsigned int effectID)
+{
+ for (XMLVector<BTBaseEffect*>::iterator itr = effect.begin(); itr != effect.end(); ++itr)
+ {
+  if ((*itr)->source.effectID == effectID)
+  {
+   return true;
+  }
+ }
+ return false;
 }
 
 bool BTEffectGroup::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/, bool exact /*= false*/, bool goodOnly /*= false*/)

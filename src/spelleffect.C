@@ -20,7 +20,7 @@ BTEffectSource::BTEffectSource(unsigned int t, int w, int e)
 }
 
 BTEffectSource::BTEffectSource()
- : type(BTEFFECTTYPE_MAGIC), who(BTTARGET_NOSINGER), effectID(BTMUSICID_NONE)
+ : type(BTEFFECTTYPE_MAGIC), who(BTTARGET_NOSINGER), effectID(BTEFFECTID_NONE)
 {
 }
 

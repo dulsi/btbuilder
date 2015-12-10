@@ -59,6 +59,7 @@ class BTSpell : public XMLObject
 
   int activate(BTDisplay &d, const char *activation, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
   int cast(BTDisplay &d, const char *caster, int casterGroup, int casterTarget, bool partySpell, BTCombat *combat, int casterLevel, int distance, int group, int target);
+  void silentActivate(BTDisplay &d, int target, int effectID, int casterLevel);
 
   virtual void serialize(ObjectSerializer* s);
   virtual void upgrade();

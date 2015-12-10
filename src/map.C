@@ -440,7 +440,7 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
    XMLVector<BTPc*> &party = game->getParty();
    for (int i = 0; i < party.size(); ++i)
    {
-    if (party[i]->takeItem(number[0]))
+    if (party[i]->takeItem(d, number[0]))
      break;
    }
    break;

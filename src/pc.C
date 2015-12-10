@@ -83,6 +83,36 @@ BTPc::BTPc(int monsterType, int j, BTCombatant *c /*= NULL*/)
  updateSkills();
 }
 
+void BTPc::activateItems(BTDisplay &d)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ int pc = party.find(this);
+ BTFactory<BTItem> &itemList = game->getItemList();
+ BTFactory<BTSpell, BTSpell1> &spellList = game->getSpellList();
+ int numItems = 0;
+ for (numItems = 0; numItems < BT_ITEMS; ++numItems)
+ {
+  if (BTITEM_NONE == item[numItems].id)
+   break;
+  if (BTTIMESUSABLE_CONTINUOUS == item[numItems].charges)
+  {
+   int spellCast = itemList[item[numItems].id].getSpellCast();
+   if (spellCast != BTITEMCAST_NONE)
+   {
+    int effectID = item[numItems].effectID;
+    if ((effectID != BTEFFECTID_NONE) && (!game->hasEffectID(effectID)))
+     effectID = BTEFFECTID_NONE;
+    if (effectID == BTEFFECTID_NONE)
+    {
+     item[numItems].effectID = effectID = game->nextEffectID();
+     spellList[spellCast].silentActivate(d, pc, effectID, level);
+    }
+   }
+  }
+ }
+}
+
 bool BTPc::advanceLevel()
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
@@ -303,7 +333,7 @@ void BTPc::changeJob(int newJob)
  xp = 0;
 }
 
-bool BTPc::drainItem(int amount)
+bool BTPc::drainItem(BTDisplay &d, int amount)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  int numItems = 0;
@@ -317,7 +347,7 @@ bool BTPc::drainItem(int amount)
  int i = BTDice(1, numItems, -1).roll();
  if ((item[i].equipped == BTITEM_EQUIPPED) && (BTITEM_ARROW != itemList[item[i].id].getType()) && (BTITEM_BOW != itemList[item[i].id].getType()) && (BTITEM_THROWNWEAPON != itemList[item[i].id].getType()) && (BTITEMCAST_NONE != itemList[item[i].id].getSpellCast()) && (0 < item[i].charges))
  {
-  takeItemCharge(i, amount);
+  takeItemCharge(d, i, amount);
   return true;
  }
  return false;
@@ -351,9 +381,11 @@ bool BTPc::drainLevel()
  return answer;
 }
 
-void BTPc::equip(int index)
+void BTPc::equip(BTDisplay &d, int index)
 {
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
+ BTParty &party = BTGame::getGame()->getParty();
+ int pc = party.find(this);
  int type = itemList[item[index].id].getType();
  for (int i = 0; i < BT_ITEMS; ++i)
  {
@@ -361,12 +393,26 @@ void BTPc::equip(int index)
    break;
   if ((item[i].equipped == BTITEM_EQUIPPED) && (type == itemList[item[i].id].getType()))
   {
-   unequip(i);
+   unequip(d, i);
   }
  }
  ac += itemList[item[index].id].getArmorPlus();
  toHit += itemList[item[index].id].getHitPlus();
  item[index].equipped = BTITEM_EQUIPPED;
+ if (BTTIMESUSABLE_CONTINUOUS == item[index].charges)
+ {
+  BTGame *game = BTGame::getGame();
+  BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
+  int spellCast = itemList[item[index].id].getSpellCast();
+  int effectID = item[index].effectID;
+  if ((effectID != BTEFFECTID_NONE) && (!game->hasEffectID(effectID)))
+   effectID = BTEFFECTID_NONE;
+  if (effectID == BTEFFECTID_NONE)
+  {
+   item[index].effectID = effectID = game->nextEffectID();
+   spellList[spellCast].silentActivate(d, pc, effectID, level);
+  }
+ }
 }
 
 int BTPc::hiddenTime() const
@@ -779,24 +825,24 @@ unsigned int BTPc::takeGold(unsigned int amount)
  }
 }
 
-bool BTPc::takeItem(int id)
+bool BTPc::takeItem(BTDisplay &d, int id)
 {
  for (int i = 0; i < BT_ITEMS; ++i)
  {
   if (id == item[i].id)
   {
-   return takeItemFromIndex(i);
+   return takeItemFromIndex(d, i);
   }
  }
  return false;
 }
 
-bool BTPc::takeItemFromIndex(int index)
+bool BTPc::takeItemFromIndex(BTDisplay &d, int index)
 {
  if (item[index].id == BTITEM_NONE)
   return false;
  if (item[index].equipped == BTITEM_EQUIPPED)
-  unequip(index);
+  unequip(d, index);
  for (int i = index + 1; i < BT_ITEMS; ++i)
  {
   item[i - 1].id = item[i].id;
@@ -808,7 +854,7 @@ bool BTPc::takeItemFromIndex(int index)
  return true;
 }
 
-void BTPc::takeItemCharge(int index, int amount /*= 1*/)
+void BTPc::takeItemCharge(BTDisplay &d, int index, int amount /*= 1*/)
 {
  if (item[index].id == BTITEM_NONE)
   return;
@@ -821,7 +867,7 @@ void BTPc::takeItemCharge(int index, int amount /*= 1*/)
   if (itemList[item[index].id].isConsumed())
   {
    if (item[index].equipped == BTITEM_EQUIPPED)
-    unequip(index);
+    unequip(d, index);
    for (int i = index + 1; i < BT_ITEMS; ++i)
    {
     item[i - 1].id = item[i].id;
@@ -852,8 +898,13 @@ bool BTPc::takeSP(int amount)
   return false;
 }
 
-void BTPc::unequip(int index)
+void BTPc::unequip(BTDisplay &d, int index)
 {
+ if (item[index].effectID != BTEFFECTID_NONE)
+ {
+  BTGame::getGame()->clearEffectsByEffectID(d, item[index].effectID);
+  item[index].effectID = BTEFFECTID_NONE;
+ }
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  ac -= itemList[item[index].id].getArmorPlus();
  toHit -= itemList[item[index].id].getHitPlus();
@@ -1079,6 +1130,16 @@ bool BTParty::checkDead(BTDisplay &d)
   }
  }
  return false;
+}
+
+int BTParty::find(BTPc *pc)
+{
+ for (int who = 0; who < size(); ++who)
+ {
+  if ((*this)[who] == pc)
+   return who;
+ }
+ return -1;
 }
 
 void BTParty::giveItem(int itemID, BTDisplay &d)

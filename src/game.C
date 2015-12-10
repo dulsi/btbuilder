@@ -218,7 +218,7 @@ BTCore *BTCore::getCore()
 }
 
 BTGame::BTGame(BTModule *m)
- : BTCore(m), jobAbbrevList(&jobList), gameTime(0), timedSpecial(-1), delay(1000), activateSpecial(false)
+ : BTCore(m), jobAbbrevList(&jobList), effectID(0), gameTime(0), timedSpecial(-1), delay(1000), activateSpecial(false)
 {
  BTDice::Init();
  if (NULL == game)
@@ -479,6 +479,11 @@ int BTGame::getCounter() const
 void BTGame::setCounter(int val)
 {
  counter = val;
+}
+
+int BTGame::nextEffectID()
+{
+ return ++effectID;
 }
 
 BTChest &BTGame::getChest()
@@ -945,10 +950,23 @@ void BTGame::clearEffectsByType(BTDisplay &d, int type)
  BTEffectGroup::clearEffectsByType(d, type);
 }
 
+void BTGame::clearEffectsByEffectID(BTDisplay &d, unsigned int effectID)
+{
+ combat.clearEffectsByEffectID(d, effectID);
+ BTEffectGroup::clearEffectsByEffectID(d, effectID);
+}
+
 void BTGame::clearEffectsBySource(BTDisplay &d, bool song, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/)
 {
  combat.clearEffectsBySource(d, song, group, target);
  BTEffectGroup::clearEffectsBySource(d, song, group, target);
+}
+
+bool BTGame::hasEffectID(unsigned int effectID)
+{
+ if (combat.hasEffectID(effectID))
+  return true;
+ return BTEffectGroup::hasEffectID(effectID);
 }
 
 bool BTGame::hasEffectOfType(int type, int group /*= BTTARGET_NONE*/, int target /*= BTTARGET_INDIVIDUAL*/, bool exact /*= false*/, bool goodOnly /*= false*/)
@@ -1059,6 +1077,7 @@ void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, std::string &star
  s->add("facing", &facing);
  s->add("curParty", &curParty);
  s->add("counter", &counter);
+ s->add("effectID", &effectID);
  s->add("gameTime", &gameTime);
  s->add("global", &global, NULL);
  s->add("local", &local, NULL);

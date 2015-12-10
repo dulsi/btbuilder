@@ -319,7 +319,8 @@ extern PairLookup statusLookup;
 #define BTTARGET_MONSTER     2
 #define BTTARGET_ALLMONSTERS 7
 
-#define BTMUSICID_NONE -1
+#define BTMUSICID_NONE 0
+#define BTEFFECTID_NONE 0
 
 #define BTTIME_MAXDAYS    256
 #define BTTIME_PERMANENT  0x08000000U

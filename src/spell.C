@@ -267,6 +267,38 @@ int BTSpell::cast(BTDisplay &d, const char *caster, int casterGroup, int casterT
  }
 }
 
+void BTSpell::silentActivate(BTDisplay &d, int target, int effectID, int casterLevel)
+{
+ BTGame *game = BTGame::getGame();
+ if ((game->getFlags().isSet(BTSPECIALFLAG_ANTIMAGIC)) && (effectType == BTEFFECTTYPE_MAGIC))
+ { 
+  return ;
+ }
+ else if ((game->hasEffectOfType(BTSPELLTYPE_BLOCKMAGIC, BTTARGET_PARTY, target)) && (effectType == BTEFFECTTYPE_MAGIC))
+  return ;
+ unsigned int expire = BTTIME_CONTINUOUS;
+ int group = BTTARGET_PARTY;
+ if (area == BTAREAEFFECT_GROUP)
+  target = BTTARGET_INDIVIDUAL;
+ BTEffectSource source(effectType, BTTARGET_NOSINGER, effectID);
+ for (int i = 0; i < manifest.size(); ++i)
+ {
+  std::list<BTBaseEffect*> effect = manifest[i]->manifest(d, true, NULL, expire, casterLevel, 0, group, target, source);
+  for (auto itr = effect.begin(); itr != effect.end(); itr++)
+  {
+   try
+   {
+    (*itr)->apply(d, NULL);
+    game->addEffect((*itr));
+   }
+   catch (const BTAllResistException &e)
+   {
+    delete (*itr);
+   }
+  }
+ }
+}
+
 void BTSpell::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);

@@ -25,8 +25,10 @@ class BTEffectGroup
   virtual void checkExpiration(BTDisplay &d, BTCombat *combat = NULL);
   virtual void clearEffects(BTDisplay &d);
   virtual void clearEffectsByType(BTDisplay &d, int type);
+  virtual void clearEffectsByEffectID(BTDisplay &d, unsigned int effectID);
   virtual void clearEffectsBySource(BTDisplay &d, unsigned int source, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL);
   virtual void clearMapEffects();
+  virtual bool hasEffectID(unsigned int effectID);
   virtual bool hasEffectOfType(int type, int group = BTTARGET_NONE, int target = BTTARGET_INDIVIDUAL, bool exact = false, bool goodOnly = false);
   virtual void addPlayer(BTDisplay &d, int who);
   virtual void movedPlayer(BTDisplay &d, BTCombat *combat, int who, int where);
