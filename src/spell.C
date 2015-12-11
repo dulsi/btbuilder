@@ -499,7 +499,7 @@ void BTSpell1::upgrade()
     manifest.push_back(new BTPushManifest(getExtra()));
     break;
    case BTSPELLTYPE_REGENMANA:
-    manifest.push_back(new BTRegenManaManifest(dice));
+    manifest.push_back(new BTRegenManaManifest(dice, 0));
     break;
    case BTSPELLTYPE_BLOCKMAGIC:
     manifest.push_back(new BTTargetedManifest(type));

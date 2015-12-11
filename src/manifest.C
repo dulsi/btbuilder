@@ -617,7 +617,16 @@ BTManifest *BTRegenManaManifest::clone()
 
 std::string BTRegenManaManifest::createString()
 {
- return BTManifest::createString() + std::string("  Amount: ") + mana.createString();
+ std::string answer = BTManifest::createString() + std::string("  Amount: ") + mana.createString();
+ if (delay)
+ {
+  char s[50];
+  sprintf(s, "%d", delay);
+  answer += std::string(" per ") + std::string(s) + std::string(" turn");
+  if (delay > 1)
+   answer += "s";
+ }
+ return answer;
 }
 
 int BTRegenManaManifest::getEditFieldNumber()
@@ -638,7 +647,7 @@ const char *BTRegenManaManifest::getEditField(int i)
 std::list<BTBaseEffect*> BTRegenManaManifest::manifest(bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
 {
  std::list<BTBaseEffect*> effect;
- effect.push_back(new BTRegenManaEffect(type, expire, source, group, target, mana));
+ effect.push_back(new BTRegenManaEffect(type, expire, source, group, target, mana, delay));
  return effect;
 }
 
@@ -646,6 +655,7 @@ void BTRegenManaManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);
  s->add("mana", &mana);
+ s->add("delay", &delay);
 }
 
 void BTRegenManaManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
@@ -654,9 +664,9 @@ void BTRegenManaManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  d = mana;
 }
 
-const int BTRegenManaManifest::entries = 1;
-const char *BTRegenManaManifest::description[] = {"Amount"};
-const char *BTRegenManaManifest::field[] = {"mana"};
+const int BTRegenManaManifest::entries = 2;
+const char *BTRegenManaManifest::description[] = {"Amount", "Delay"};
+const char *BTRegenManaManifest::field[] = {"mana", "delay"};
 
 BTManifest *BTScrySightManifest::clone()
 {

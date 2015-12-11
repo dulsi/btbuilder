@@ -1555,20 +1555,26 @@ void BTAttackRateBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g,
  }
 }
 
-BTRegenManaEffect::BTRegenManaEffect(int t, int x, const BTEffectSource &s, int g, int trgt, const BTDice &sp)
- : BTTargetedEffect(t, x, s, g, trgt), mana(sp)
+BTRegenManaEffect::BTRegenManaEffect(int t, int x, const BTEffectSource &s, int g, int trgt, const BTDice &sp, int d)
+ : BTTargetedEffect(t, x, s, g, trgt), mana(sp), delay(d)
 {
 }
 
 void BTRegenManaEffect::serialize(ObjectSerializer *s)
 {
  s->add("mana", &mana);
+ s->add("delay", &delay);
  BTTargetedEffect::serialize(s);
 }
 
 int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
  BTGame *game = BTGame::getGame();
+ if (delay > 0)
+ {
+  if ((first) || ((game->getGameTime() % delay) != 0))
+   return 0;
+ }
  BTParty &party = game->getParty();
  if (BTTARGET_PARTY == group)
  {

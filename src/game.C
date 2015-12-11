@@ -1004,6 +1004,11 @@ unsigned int BTGame::getExpiration(unsigned int duration)
  return (duration + gameTime) % (module->maxTime * BTTIME_MAXDAYS);
 }
 
+unsigned int BTGame::getGameTime()
+{
+ return gameTime;
+}
+
 bool BTGame::isExpired(unsigned int expiration)
 {
  if (expiration < ((module->maxTime * BTTIME_MAXDAYS) / 4))

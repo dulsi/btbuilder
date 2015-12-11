@@ -217,8 +217,8 @@ class BTPushManifest : public BTManifest
 class BTRegenManaManifest : public BTManifest
 {
  public:
-  BTRegenManaManifest() {}
-  BTRegenManaManifest(BTDice m) : BTManifest(BTSPELLTYPE_REGENMANA), mana(m) {}
+  BTRegenManaManifest() : delay(0) {}
+  BTRegenManaManifest(BTDice m, int d) : BTManifest(BTSPELLTYPE_REGENMANA), mana(m), delay(d) {}
 
   virtual BTManifest *clone();
   std::string createString();
@@ -232,6 +232,7 @@ class BTRegenManaManifest : public BTManifest
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenManaManifest; }
 
   BTDice mana;
+  int delay;
 
  private:
   static const int entries;

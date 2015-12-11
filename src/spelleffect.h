@@ -352,15 +352,16 @@ class BTAttackRateBonusEffect : public BTNonStackingBonusEffect
 class BTRegenManaEffect : public BTTargetedEffect
 {
  public:
-  BTRegenManaEffect(int t, int x, const BTEffectSource &s, int g, int trgt, const BTDice& sp);
+  BTRegenManaEffect(int t, int x, const BTEffectSource &s, int g, int trgt, const BTDice& sp, int d);
 
   virtual void serialize(ObjectSerializer *s);
 
   virtual int maintain(BTDisplay &d, BTCombat *combat);
 
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenManaEffect(0, 0, BTEffectSource(), BTTARGET_NONE, BTTARGET_NONE, BTDice()); }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRegenManaEffect(0, 0, BTEffectSource(), BTTARGET_NONE, BTTARGET_NONE, BTDice(), 0); }
 
   BTDice mana;
+  int delay;
 };
 
 class BTSaveBonusEffect : public BTNonStackingBonusEffect

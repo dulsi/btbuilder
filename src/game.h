@@ -150,6 +150,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   void movedPlayer(BTDisplay &d, BTCombat *combatObj, int who, int where);
   void searchEffect(BTEffectTest &fn);
   unsigned int getExpiration(unsigned int duration);
+  unsigned int getGameTime();
   bool isExpired(unsigned int expiration);
   bool isDaytime();
   void nextTurn(BTDisplay &d, BTCombat *combat = NULL);
