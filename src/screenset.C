@@ -1584,6 +1584,13 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
  {
   if (building)
   {
+   if (clearMagic)
+   {
+    for (int i = 0; i < party.size(); ++i)
+    {
+     party[i]->activateItems(d);
+    }
+   }
    d.clearText();
    throw BTSpecialFlipGoForward();
   }

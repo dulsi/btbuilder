@@ -588,6 +588,10 @@ void BTGame::run(BTDisplay &d)
     activateSpecial = move(d, facing);
    }
   }
+  for (int i = 0; i < party.size(); ++i)
+  {
+   party[i]->activateItems(d);
+  }
   while (true)
   {
    try

@@ -53,6 +53,7 @@ class BTPc : public XMLObject, public BTCombatant
   bool age();
   std::string attack(BTCombatant *defender, int weapon, int &numAttacksLeft, int &activeNum);
   void changeJob(int newJob);
+  void deactivateItems(BTDisplay &d);
   bool drainItem(BTDisplay &d, int amount);
   bool drainLevel();
   void equip(BTDisplay &d, int index);

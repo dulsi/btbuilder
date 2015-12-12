@@ -95,6 +95,8 @@ void BTPc::activateItems(BTDisplay &d)
  {
   if (BTITEM_NONE == item[numItems].id)
    break;
+  if (BTITEM_EQUIPPED != item[numItems].equipped)
+   continue;
   if (BTTIMESUSABLE_CONTINUOUS == item[numItems].charges)
   {
    int spellCast = itemList[item[numItems].id].getSpellCast();
@@ -331,6 +333,32 @@ void BTPc::changeJob(int newJob)
  }
  maxLevel = level = 1;
  xp = 0;
+}
+
+void BTPc::deactivateItems(BTDisplay &d)
+{
+ BTGame *game = BTGame::getGame();
+ BTParty &party = game->getParty();
+ int pc = party.find(this);
+ BTFactory<BTItem> &itemList = game->getItemList();
+ BTFactory<BTSpell, BTSpell1> &spellList = game->getSpellList();
+ int numItems = 0;
+ for (numItems = 0; numItems < BT_ITEMS; ++numItems)
+ {
+  if (BTITEM_NONE == item[numItems].id)
+   break;
+  if (BTITEM_EQUIPPED != item[numItems].equipped)
+   continue;
+  if (BTTIMESUSABLE_CONTINUOUS == item[numItems].charges)
+  {
+   int effectID = item[numItems].effectID;
+   if (effectID != BTEFFECTID_NONE)
+   {
+    game->clearEffectsByEffectID(d, effectID);
+    item[numItems].effectID = BTEFFECTID_NONE;
+   }
+  }
+ }
 }
 
 bool BTPc::drainItem(BTDisplay &d, int amount)
@@ -1060,6 +1088,7 @@ void BTParty::add(BTDisplay &d, BTPc *pc)
 {
  push_back(pc);
  BTGame::getGame()->addPlayer(d, size() - 1);
+ pc->activateItems(d);
 }
 
 bool BTParty::checkDead(BTDisplay &d)
@@ -1190,6 +1219,7 @@ bool BTParty::remove(int who, BTDisplay &d)
   removing.set(who);
   BTPc *pc = (*this)[who];
   BTGame::getGame()->movedPlayer(d, who, BTPARTY_REMOVE);
+  pc->deactivateItems(d);
   erase(begin() + who);
   if (roster.end() == std::find(roster.begin(), roster.end(), pc))
   {
