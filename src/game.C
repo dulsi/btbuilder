@@ -481,9 +481,12 @@ void BTGame::setCounter(int val)
  counter = val;
 }
 
-int BTGame::nextEffectID()
+unsigned int BTGame::nextEffectID()
 {
- return ++effectID;
+ while ((hasEffectID(++effectID)) && (effectID != BTEFFECTID_NONE))
+ {
+ }
+ return effectID;
 }
 
 BTChest &BTGame::getChest()

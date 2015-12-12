@@ -112,7 +112,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
 
   int getCounter() const;
   void setCounter(int val);
-  int nextEffectID();
+  unsigned int nextEffectID();
 
   BTChest &getChest();
   BTCombat &getCombat();
@@ -174,7 +174,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   BTParty party;
   std::string lastInput;
   int counter;
-  int effectID;
+  unsigned int effectID;
   BTChest chest;
   BTCombat combat;
   BTStatus status;
