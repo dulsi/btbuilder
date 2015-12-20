@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <sstream>
 
+const char *BTEditor::skipFiles[] = {"shops.xml", "roster.xml", "savegame.xml", "btbuilder.appdata.xml"};
+
 BTEditor::BTEditor(BTModule *m)
  : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0), swapMap(0), clipboard(0)
 {
@@ -62,9 +64,7 @@ void BTEditor::edit(BTDisplay &d)
  d.setWallGraphics(0);
  for (i = files; *i != NULL; i++)
  {
-  if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
-   continue;
-  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)) || (0 == strcmp("savegame.xml", *i)))
+  if (checkSkipFiles(*i))
    continue;
   int len = strlen(*i);
   if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
@@ -89,9 +89,7 @@ void BTEditor::edit(BTDisplay &d)
  int current = 3;
  for (i = files; *i != NULL; i++)
  {
-  if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
-   continue;
-  if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)) || (0 == strcmp("savegame.xml", *i)))
+  if (checkSkipFiles(*i))
    continue;
   int len = strlen(*i);
   if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
@@ -540,6 +538,18 @@ void BTEditor::buildOperationList(BTDisplay &d, BTSpecialBody *body, std::vector
  ops.push_back(operationList(body, NULL));
 }
 
+bool BTEditor::checkSkipFiles(const char *f)
+{
+  if ((0 == strcmp(module->monster, f)) || (0 == strcmp(module->item, f)) || (0 == strcmp(module->spell, f)))
+   return true;
+  for (int i = 0; i < BT_SKIPFILES; ++i)
+  {
+   if (0 == strcmp(skipFiles[i], f))
+    return true;
+  }
+  return false;
+}
+
 BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperation *special)
 {
  BTDisplay::selectItem cmds[BT_SPECIALCOMMANDS + BT_CONDITIONALCOMMANDS];
@@ -935,9 +945,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
 
     for (i = files; *i != NULL; i++)
     {
-     if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
-      continue;
-     if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
+     if (checkSkipFiles(*i))
       continue;
      int len = strlen(*i);
      if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))
@@ -959,9 +967,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     int current = 0;
     for (i = files; *i != NULL; i++)
     {
-     if ((0 == strcmp(module->monster, *i)) || (0 == strcmp(module->item, *i)) || (0 == strcmp(module->spell, *i)))
-      continue;
-     if ((0 == strcmp("shops.xml", *i)) || (0 == strcmp("roster.xml", *i)))
+     if (checkSkipFiles(*i))
       continue;
      int len = strlen(*i);
      if ((len > 4) && (strcmp(".MAP", (*i) + (len - 4)) == 0))

@@ -9,6 +9,8 @@
 
 #include "game.h"
 
+#define BT_SKIPFILES 4
+
 class BTEditor : public BTCore
 {
  public:
@@ -34,6 +36,7 @@ class BTEditor : public BTCore
   };
 
   void buildOperationList(BTDisplay &d, BTSpecialBody *body, std::vector<BTDisplay::selectItem> &list, std::vector<operationList> &ops, int level = 0);
+  bool checkSkipFiles(const char *f);
   BTSpecialOperation *editSpecialOperation(BTDisplay &d, BTSpecialOperation *special);
   void toggleMap();
 
@@ -43,6 +46,7 @@ class BTEditor : public BTCore
   int currentSpecial;
   BTMap *swapMap;
   BTSpecialOperation *clipboard;
+  static const char *skipFiles[];
 };
 
 #endif
