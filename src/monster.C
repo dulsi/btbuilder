@@ -80,7 +80,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
 }
 
 BTMonster::BTMonster()
- : gender(BTGENDER_MALE), level(0), startDistance(0), move(1), rateAttacks(1), illusion(0), ac(0), maxAppearing(1), magicResistance(0), wandering(true), meleeExtra(BTEXTRADAMAGE_NONE), rangedType(0), rangedSpell(0), rangedExtra(BTEXTRADAMAGE_NONE), range(0), xp(0)
+ : gender(BTGENDER_MALE), level(0), startDistance(1), move(1), rateAttacks(1), illusion(0), ac(0), maxAppearing(1), magicResistance(0), wandering(true), meleeExtra(BTEXTRADAMAGE_NONE), rangedType(0), rangedSpell(0), rangedExtra(BTEXTRADAMAGE_NONE), range(0), xp(0)
 {
  meleeMessage = new char[1];
  meleeMessage[0] = 0;
