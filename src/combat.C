@@ -635,6 +635,10 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
  --active;
  if (mon.status.isSet(BTSTATUS_PARALYZED))
   return;
+ if (mon.status.isSet(BTSTATUS_DEAD))
+  return;
+ if (mon.status.isSet(BTSTATUS_STONED))
+  return;
  int action = monList[grp.monsterType].getCombatAction(round);
  if (BTCOMBATACTION_RANDOM == action)
  {
@@ -881,6 +885,10 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
   {
    return;
   }
+ if (pc.status.isSet(BTSTATUS_DEAD))
+  return;
+ if (pc.status.isSet(BTSTATUS_STONED))
+  return;
   if ((pc.status.isSet(BTSTATUS_INSANE)) || (pc.status.isSet(BTSTATUS_POSSESSED)))
   {
    int group;
