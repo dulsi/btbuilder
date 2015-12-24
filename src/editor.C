@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <sstream>
 
-const char *BTEditor::skipFiles[] = {"shops.xml", "roster.xml", "savegame.xml", "btbuilder.appdata.xml"};
+const char *BTEditor::skipFiles[] = {"shops.xml", "roster.xml", "savegame.xml", "btbuilder.appdata.xml", "level.xml"};
 
 BTEditor::BTEditor(BTModule *m)
  : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0), swapMap(0), clipboard(0)

@@ -9,7 +9,7 @@
 
 #include "game.h"
 
-#define BT_SKIPFILES 4
+#define BT_SKIPFILES 5
 
 class BTEditor : public BTCore
 {

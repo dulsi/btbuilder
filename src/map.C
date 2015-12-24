@@ -1247,7 +1247,7 @@ void BTSpecialConditional::run(BTDisplay &d, BTSpecialContext *context) const
   {
    truth = false;
    for (int i = 0; i < party.size(); ++i)
-    if (party[i]->race == number[0])
+    if (party[i]->job == number[0])
      truth = true;
    break;
   }
