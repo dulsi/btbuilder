@@ -1818,7 +1818,7 @@ BTMap::BTMap(BinaryReadFile &f)
 }
 
 BTMap::BTMap(int v /*= 2*/)
- : name(NULL), version(v), light(0), filename(NULL)
+ : name(NULL), version(v), type(0), level(0), monsterLevel(0), light(0), filename(NULL)
 {
 }
 
@@ -1828,6 +1828,21 @@ BTMap::~BTMap()
   delete [] name;
  if (filename)
   delete [] filename;
+}
+
+void BTMap::init(const std::string &f)
+{
+ name = new char[1];
+ name[0] = 0;
+ filename = new char[f.length() + 1];
+ strcpy(filename, f.data());
+ xSize = 22;
+ ySize = 22;
+ for (int i = 0; i < ySize; ++i)
+ {
+  for (int k = 0; k < xSize; ++k)
+   square.push_back(new BTMapSquare);
+ }
 }
 
 void BTMap::addSpecial(BTSpecial *s)

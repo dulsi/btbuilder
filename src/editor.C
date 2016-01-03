@@ -58,7 +58,7 @@ void BTEditor::edit(BTDisplay &d)
 {
  char **files = PHYSFS_enumerateFiles("");
  char **i;
- int count(3);
+ int count(4);
 
  d.setPsuedo3DConfig(&getPsuedo3DConfigList());
  d.setWallGraphics(0);
@@ -109,6 +109,7 @@ void BTEditor::edit(BTDisplay &d)
    current++;
   }
  }
+ list[current].name = "<New Map>";
  PHYSFS_freeList(files);
  int start(0);
  int select(0);
@@ -159,6 +160,14 @@ void BTEditor::edit(BTDisplay &d)
     itemEditor.edit(d, serial);
    }
    itemList.save(module->item);
+  }
+  else if (count - 1 == select)
+  {
+   d.clearText();
+   d.drawText("Filename:");
+   std::string name = d.readString("", 60, "");
+   d.clearText();
+   editMap(d, name.c_str());
   }
   else
    editMap(d, list[select].name.c_str());

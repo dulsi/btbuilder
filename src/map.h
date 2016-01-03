@@ -303,6 +303,8 @@ class BTMap : public XMLObject
   BTMap(int v = 2);
   ~BTMap();
 
+  void init(const std::string &f);
+
   void addSpecial(BTSpecial *s);
   void checkRandomEncounter(BTDisplay &d) const;
   const char *getFilename() const;

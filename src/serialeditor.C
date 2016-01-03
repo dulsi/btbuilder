@@ -505,7 +505,7 @@ bool BTSerializedEditor::updateActive(ObjectSerializer &serial, BitField &active
  return false;
 }
 
-#define MAPLOC_MONSTERCHANCE 4
+#define MAPLOC_MONSTERCHANCE 5
 
 BTMapPropertiesEditor::BTMapPropertiesEditor()
  : BTSerializedEditor(FIELDS_MAP, mapDescription, mapField)

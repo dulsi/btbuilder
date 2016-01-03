@@ -182,11 +182,19 @@ BTMap *BTCore::readMap(const std::string &filename)
  }
  else
  {
-  newMap = new BTMap(1); // Assume version 1 file unless version is in the file.
-  XMLSerializer parser;
-  newMap->serialize(&parser);
-  parser.parse(finalname.c_str(), true);
-  newMap->upgrade();
+  if (0 != PHYSFS_exists(finalname.c_str()))
+  {
+   newMap = new BTMap(1); // Assume version 1 file unless version is in the file.
+   XMLSerializer parser;
+   newMap->serialize(&parser);
+   parser.parse(finalname.c_str(), true);
+   newMap->upgrade();
+  }
+  else
+  {
+   newMap = new BTMap;
+   newMap->init(finalname);
+  }
  }
  newMap->setFilename(finalname.c_str());
  return newMap;
