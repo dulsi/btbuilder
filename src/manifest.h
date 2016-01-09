@@ -423,5 +423,44 @@ class BTDetectManifest : public BTManifest
   static const char *field[];
 };
 
+class BTRandomManifestChance : public XMLObject
+{
+ public:
+  BTRandomManifestChance() : chance(0) {}
+  BTRandomManifestChance(const BTRandomManifestChance &other);
+
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRandomManifestChance; }
+  
+  int chance;
+  XMLVector<BTManifest*> content;
+};
+
+class BTRandomManifest : public BTManifest
+{
+ public:
+  BTRandomManifest() {}
+  BTRandomManifest(const BTRandomManifest &other);
+
+  virtual BTManifest *clone();
+  std::string createString();
+  virtual int getEditFieldNumber();
+  virtual const char *getEditFieldDescription(int i);
+  virtual const char *getEditField(int i);
+  virtual std::list<BTBaseEffect*> manifest(bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source);
+  virtual void serialize(ObjectSerializer *s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRandomManifest; }
+
+  BTDice roll;
+  XMLVector<BTRandomManifestChance*> chance;
+
+ private:
+  static const int entries;
+  static const char *description[];
+  static const char *field[];
+};
+
 #endif
 

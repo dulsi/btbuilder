@@ -83,6 +83,7 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("teleportManifest", typeid(BTTeleportManifest).name(), &manifest, &BTTeleportManifest::create);
  s->add("rangeBonusManifest", typeid(BTRangeBonusManifest).name(), &manifest, &BTRangeBonusManifest::create);
  s->add("detectManifest", typeid(BTDetectManifest).name(), &manifest, &BTDetectManifest::create);
+ s->add("randomManifest", typeid(BTRandomManifest).name(), &manifest, &BTRandomManifest::create);
  // Backward compatability
  s->add("armorBonusManifest", "-", &manifest, &BTBonusManifest::create);
  s->add("attackRateBonusManifest", "-", &manifest, &BTBonusManifest::create);
@@ -1133,6 +1134,92 @@ void BTDetectManifest::serialize(ObjectSerializer* s)
  s->add("flag", &flags, &flagList);
 }
 
-const int BTDetectManifest::entries = 1;
-const char *BTDetectManifest::description[] = {"Flags"};
-const char *BTDetectManifest::field[] = {"flag"};
+const int BTDetectManifest::entries = 2;
+const char *BTDetectManifest::description[] = {"Range", "Flags"};
+const char *BTDetectManifest::field[] = {"range", "flag"};
+
+BTRandomManifestChance::BTRandomManifestChance(const BTRandomManifestChance &other)
+: chance(other.chance)
+{
+ for (int i = 0; i < other.content.size(); i++)
+ {
+  content.push_back(other.content[i]->clone());
+ }
+}
+
+void BTRandomManifestChance::serialize(ObjectSerializer *s)
+{
+ s->add("chance", &chance);
+ BTManifest::serializeSetup(s, content);
+}
+
+BTRandomManifest::BTRandomManifest(const BTRandomManifest &other)
+: roll(other.roll)
+{
+ for (int i = 0; i < other.chance.size(); i++)
+ {
+  chance.push_back(new BTRandomManifestChance(*other.chance[i]));
+ }
+}
+
+BTManifest *BTRandomManifest::clone()
+{
+ return new BTRandomManifest(*this);
+}
+
+std::string BTRandomManifest::createString()
+{
+ std::string answer = BTManifest::createString() + std::string("   Roll: ");
+ answer += roll.createString();
+ return answer;
+}
+
+int BTRandomManifest::getEditFieldNumber()
+{
+ return entries;
+}
+
+const char *BTRandomManifest::getEditFieldDescription(int i)
+{
+ return description[i];
+}
+
+const char *BTRandomManifest::getEditField(int i)
+{
+ return field[i];
+}
+
+std::list<BTBaseEffect*> BTRandomManifest::manifest(bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
+{
+ std::list<BTBaseEffect*> effect;
+ int result = roll.roll();
+ for (int i = 0; i < chance.size(); i++)
+ {
+  if (result <= chance[i]->chance)
+  {
+   for (int k = 0; k < chance[i]->content.size(); ++k)
+   {
+    std::list<BTBaseEffect*> sub = chance[i]->content[k]->manifest(partySpell, combat, expire, casterLevel, distance, group, target, source);
+    for (std::list<BTBaseEffect*>::iterator itr = sub.begin(); itr != sub.end(); ++itr)
+    {
+     effect.push_back(*itr);
+    }
+   }
+   break;
+  }
+  else
+   result -= chance[i]->chance;
+ }
+ return effect;
+}
+
+void BTRandomManifest::serialize(ObjectSerializer* s)
+{
+ BTManifest::serialize(s);
+ s->add("roll", &roll);
+ s->add("chance", &chance, &BTRandomManifestChance::create);
+}
+
+const int BTRandomManifest::entries = 1;
+const char *BTRandomManifest::description[] = {"Roll"};
+const char *BTRandomManifest::field[] = {"roll"};
