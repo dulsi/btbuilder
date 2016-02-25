@@ -1213,6 +1213,30 @@ std::list<BTBaseEffect*> BTRandomManifest::manifest(bool partySpell, BTCombat *c
  return effect;
 }
 
+std::list<BTBaseEffect*> BTRandomManifest::manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
+{
+ std::list<BTBaseEffect*> effect;
+ int result = roll.roll();
+ for (int i = 0; i < chance.size(); i++)
+ {
+  if (result <= chance[i]->chance)
+  {
+   for (int k = 0; k < chance[i]->content.size(); ++k)
+   {
+    std::list<BTBaseEffect*> sub = chance[i]->content[k]->manifest(d, partySpell, combat, expire, casterLevel, distance, group, target, source);
+    for (std::list<BTBaseEffect*>::iterator itr = sub.begin(); itr != sub.end(); ++itr)
+    {
+     effect.push_back(*itr);
+    }
+   }
+   break;
+  }
+  else
+   result -= chance[i]->chance;
+ }
+ return effect;
+}
+
 void BTRandomManifest::serialize(ObjectSerializer* s)
 {
  BTManifest::serialize(s);

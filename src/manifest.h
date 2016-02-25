@@ -449,6 +449,7 @@ class BTRandomManifest : public BTManifest
   virtual const char *getEditFieldDescription(int i);
   virtual const char *getEditField(int i);
   virtual std::list<BTBaseEffect*> manifest(bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source);
+  virtual std::list<BTBaseEffect*> manifest(BTDisplay &d, bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source);
   virtual void serialize(ObjectSerializer *s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTRandomManifest; }
