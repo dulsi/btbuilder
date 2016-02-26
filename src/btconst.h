@@ -79,7 +79,7 @@ extern const char *effectiveRanges[];
 extern const char *areaEffect[];
 extern ArrayLookup areaLookup;
 
-#define BT_DURATION 6
+#define BT_DURATION 8
 #define BTDURATION_ONE        0
 #define BTDURATION_SHORT      1
 #define BTDURATION_MEDIUM     2
