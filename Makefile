@@ -17,7 +17,7 @@ BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/xpchart.o src/spelleffect.o src/combatant.o src/group.o \
 	src/icon.o src/song.o src/manifest.o src/chest.o src/mainscreen.o \
 	src/shop.o src/effectgroup.o src/psuedo3dmap.o src/editor.o \
-	src/serialeditor.o src/specialcontext.o src/specialflag.o
+	src/serialeditor.o src/specialcontext.o src/specialflag.o src/imagetag.o
 BTBUILDER_EXE = btbuilder
 
 ifndef prefix

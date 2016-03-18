@@ -921,6 +921,13 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    }
    case 'P':
    {
+    BTDisplayConfig *oldConfig = d.getConfig();
+    BTDisplayConfig config;
+    XMLSerializer parser;
+    config.serialize(&parser);
+    parser.parse("data/pictureselect.xml", true);
+    d.setConfig(&config);
+    d.clearText();
     d.addText("Select Image");
     int val(number[count]);
     d.addSelectImage(val);

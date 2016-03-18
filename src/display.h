@@ -30,7 +30,7 @@
 #define BTKEY_LEFT 4
 #define BTKEY_RIGHT 5
 #define BTKEY_PGDN 6
-#define BTKEY_PGUP SDLK_PAGEUP
+#define BTKEY_PGUP 23
 #define BTKEY_END 7
 #define BTKEY_INS 8
 #define BTKEY_DEL 127
@@ -249,6 +249,7 @@ class BTUISelect : public BTUIElement
 
   void draw(BTDisplay &d);
 
+  void alter(BTDisplay::selectItem *l, int sz);
   void decrement(BTDisplay &d);
   void increment(BTDisplay &d);
   void moveDown(BTDisplay &d);

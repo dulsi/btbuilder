@@ -399,13 +399,21 @@ void BTSerializedEditor::editField(BTDisplay &d, ObjectSerializer &serial, const
   }
   case XMLTYPE_PICTURE:
   {
+   BTDisplayConfig *oldConfig = d.getConfig();
+   BTDisplayConfig config;
+   XMLSerializer parser;
+   config.serialize(&parser);
+   parser.parse("data/pictureselect.xml", true);
+   d.setConfig(&config);
+   d.clearText();
    d.addText(text);
    int val(reinterpret_cast<PictureIndex*>(curField->object)->value);
    d.addSelectImage(val);
    key = d.process();
-   d.clearImage();
    if ('\r' == key)
     reinterpret_cast<PictureIndex*>(curField->object)->value = val;
+   d.clearImage();
+   d.setConfig(oldConfig);
    break;
   }
   case XMLTYPE_VECTORSTRING:
