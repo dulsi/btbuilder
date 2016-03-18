@@ -1174,7 +1174,7 @@ int BTDisplay::selectImage(int initial)
  BTImageTag::readXML("data/imagetag.xml", tagList);
  int sz = 0;
  int st = 0;
- BTDisplay::selectItem *sl = tagList.search(s, sz);
+ BTDisplay::selectItem *sl = tagList.search(s, current, sz, selected);
  BTUISelect *select = new BTUISelect(sl, sz, st, selected);
  select->position.x = text.x;
  select->position.y = text.y + textPos;
@@ -1223,22 +1223,7 @@ int BTDisplay::selectImage(int initial)
   current = sl[selected].value;
   if (searchChange)
   {
-   BTDisplay::selectItem *sl = tagList.search(s, sz);
-   bool found = false;
-   for (int i = 0; i < sz; i++)
-   {
-    if (sl[i].value == current)
-    {
-     found = true;
-     selected = i;
-     break;
-    }
-   }
-   if ((!found) && (sz > 0))
-   {
-    current = sl[0].value;
-    selected = 0;
-   }
+   BTDisplay::selectItem *sl = tagList.search(s, current, sz, selected);
    select->alter(sl, sz);
    select->sanitize(*this);
   }

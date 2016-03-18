@@ -12,12 +12,21 @@ BTImageTag::BTImageTag()
 {
 }
 
+void BTImageTag::buildMatchString()
+{
+ for (int i = 0; i < name.size(); i++)
+  matchString += std::toupper(name[i]);
+ matchString += " ";
+ for (int i = 0; i < artist.size(); i++)
+  matchString += std::toupper(artist[i]);
+}
+
 bool BTImageTag::match(std::vector<std::string> words)
 {
  bool foundAll = true;
  for (int i = 0; i < words.size(); ++i)
  {
-  if ((name.find(words[i]) == std::string::npos) && (artist.find(words[i]) == std::string::npos))
+  if (matchString.find(words[i]) == std::string::npos)
    foundAll = false;
  }
  return foundAll;
@@ -34,19 +43,32 @@ void BTImageTag::readXML(const char *filename, XMLVector<BTImageTag*> &tag)
  XMLSerializer parser;
  parser.add("imageTag", &tag, &BTImageTag::create);
  parser.parse(filename, true);
+ for (int i = 0; i < tag.size(); i++)
+  tag[i]->buildMatchString();
 }
 
-BTDisplay::selectItem *BTImageTagList::search(std::string words, int &sz)
+BTDisplay::selectItem *BTImageTagList::search(std::string words, int &current, int &sz, int &sel)
 {
  if (!last)
   last = new BTDisplay::selectItem[size()];
+ bool found = false;
+ int full = size();
+ sz = 0;
  if (words == "")
  {
-  sz = size();
-  for (int i = 0; i < sz; i++)
+  for (int i = 0; i < full; i++)
   {
-   last[i].name = (*this)[i]->name;
-   last[i].value = i;
+   if (((*this)[i]->name != "") || (i == current))
+   {
+    if (i == current)
+    {
+     found = true;
+     sel = sz;
+    }
+    last[sz].name = (*this)[i]->name;
+    last[sz].value = i;
+    sz++;
+   }
   }
  }
  else
@@ -57,20 +79,31 @@ BTDisplay::selectItem *BTImageTagList::search(std::string words, int &sz)
 
   while (ss >> buf)
   {
+   for (int i = 0; i < buf.size(); i++)
+    buf[i] = std::toupper(buf[i]);
    tokens.push_back(buf);
   }
 
-  int full = size();
-  sz = 0;
   for (int i = 0; i < full; i++)
   {
-   if ((*this)[i]->match(tokens))
+   if (((*this)[i]->match(tokens)) && ((*this)[i]->name != ""))
    {
+    if (i == current)
+    {
+     found = true;
+     sel = sz;
+    }
     last[sz].name = (*this)[i]->name;
     last[sz].value = i;
     sz++;
    }
   }
+ }
+ if (!found)
+ {
+  if (sz > 0)
+   current = last[0].value;
+  sel = 0;
  }
  return last;
 }

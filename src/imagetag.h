@@ -15,6 +15,7 @@ class BTImageTag : public XMLObject
  public:
   BTImageTag();
 
+  void buildMatchString();
   bool match(std::vector<std::string> words);
 
   virtual void serialize(ObjectSerializer* s);
@@ -24,14 +25,16 @@ class BTImageTag : public XMLObject
 
   std::string name;
   std::string artist;
+  std::string matchString;
 };
 
 class BTImageTagList : public XMLVector<BTImageTag*>
 {
  public:
   BTImageTagList() : last(NULL) {}
+  ~BTImageTagList() { if (last) delete [] last; }
 
-  BTDisplay::selectItem *search(std::string words, int &sz);
+  BTDisplay::selectItem *search(std::string words, int &current, int &sz, int &sel);
 
  private:
   BTDisplay::selectItem *last;
