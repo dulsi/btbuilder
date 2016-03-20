@@ -64,9 +64,9 @@ class XMLVector : public XMLArray, public std::vector<T>
   virtual XMLObject *get(size_t i) { return (*this)[i]; }
   virtual void push_back(XMLObject *obj) { std::vector<T>::push_back(static_cast<T>(obj)); }
   void push_back(T obj) { std::vector<T>::push_back(obj); }
-  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position) { if (clear) { delete *position; } std::vector<T>::erase(position); }
-  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position, bool clearOveride) { if (clearOveride) { delete *position; } std::vector<T>::erase(position); }
-  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator first, typename std::vector<T>::iterator last) { if (clear) { for (typename std::vector<T>::iterator current = first; current != last; current++) delete *current; } std::vector<T>::erase(first, last); }
+  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position) { if (clear) { delete *position; } return std::vector<T>::erase(position); }
+  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position, bool clearOveride) { if (clearOveride) { delete *position; } return std::vector<T>::erase(position); }
+  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator first, typename std::vector<T>::iterator last) { if (clear) { for (typename std::vector<T>::iterator current = first; current != last; current++) delete *current; } return std::vector<T>::erase(first, last); }
   void erase(size_t i) { erase(this->begin() + i); }
   virtual size_t size() const { return std::vector<T>::size(); }
 
