@@ -47,7 +47,7 @@ void BTImageTag::readXML(const char *filename, XMLVector<BTImageTag*> &tag)
   tag[i]->buildMatchString();
 }
 
-BTDisplay::selectItem *BTImageTagList::search(std::string words, int &current, int &sz, int &sel)
+BTDisplay::selectItem *BTImageTagList::search(std::string words, bool blank, int &current, int &sz, int &sel)
 {
  if (!last)
   last = new BTDisplay::selectItem[size()];
@@ -58,6 +58,8 @@ BTDisplay::selectItem *BTImageTagList::search(std::string words, int &current, i
  {
   for (int i = 0; i < full; i++)
   {
+   if (((*this)[i]->artist == "") && (!blank))
+    continue;
    if (((*this)[i]->name != "") || (i == current))
    {
     if (i == current)
@@ -86,6 +88,8 @@ BTDisplay::selectItem *BTImageTagList::search(std::string words, int &current, i
 
   for (int i = 0; i < full; i++)
   {
+   if (((*this)[i]->artist == "") && (!blank))
+    continue;
    if (((*this)[i]->match(tokens)) && ((*this)[i]->name != ""))
    {
     if (i == current)

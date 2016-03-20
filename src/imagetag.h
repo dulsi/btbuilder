@@ -34,7 +34,7 @@ class BTImageTagList : public XMLVector<BTImageTag*>
   BTImageTagList() : last(NULL) {}
   ~BTImageTagList() { if (last) delete [] last; }
 
-  BTDisplay::selectItem *search(std::string words, int &current, int &sz, int &sel);
+  BTDisplay::selectItem *search(std::string words, bool blank, int &current, int &sz, int &sel);
 
  private:
   BTDisplay::selectItem *last;

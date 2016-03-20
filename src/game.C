@@ -31,6 +31,7 @@ BTCore::BTCore(BTModule *m)
  monsterList.load(m->monster);
  BTSong::readXML(m->song, songList);
  Psuedo3DConfig::readXML(m->wall, p3dConfigList);
+ BTImageTag::readXML("data/imagetag.xml", tagList);
 }
 
 BTCore::~BTCore()
@@ -55,6 +56,11 @@ std::string BTCore::descendMap(int depth)
   }
  }
  return "";
+}
+
+BTImageTagList &BTCore::getImageTagList()
+{
+ return tagList;
 }
 
 BTFactory<BTItem> &BTCore::getItemList()

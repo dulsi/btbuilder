@@ -37,6 +37,7 @@
 #define BTKEY_CTRL_C 3
 #define BTKEY_CTRL_X 24
 #define BTKEY_CTRL_V 22
+#define BTKEY_F1 28
 
 #define BTMUSICID_ALL 0
 

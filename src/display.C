@@ -1059,6 +1059,8 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     return BTKEY_INS;
    else if ((sdlevent.key.keysym.sym == SDLK_KP_PERIOD) || (sdlevent.key.keysym.sym == SDLK_DELETE))
     return BTKEY_DEL;
+   else if (sdlevent.key.keysym.sym == SDLK_F1)
+    return BTKEY_F1;
    else if (sdlevent.key.keysym.sym == SDLK_F12)
     toggleFullScreen();
    if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
@@ -1149,7 +1151,8 @@ void BTDisplay::removeAnimation(MNG_AnimationState *animState)
 
 int BTDisplay::selectImage(int initial)
 {
- BTImageTagList tagList;
+ BTImageTagList &tagList = BTCore::getCore()->getImageTagList();
+ bool blank = true;
  std::string s;
  int w, h;
  sizeFont(s.c_str(), w, h);
@@ -1171,10 +1174,9 @@ int BTDisplay::selectImage(int initial)
  int current = initial;
  int selected = current;
  drawImage(current);
- BTImageTag::readXML("data/imagetag.xml", tagList);
  int sz = 0;
  int st = 0;
- BTDisplay::selectItem *sl = tagList.search(s, current, sz, selected);
+ BTDisplay::selectItem *sl = tagList.search(s, blank, current, sz, selected);
  BTUISelect *select = new BTUISelect(sl, sz, st, selected);
  select->position.x = text.x;
  select->position.y = text.y + textPos;
@@ -1211,6 +1213,11 @@ int BTDisplay::selectImage(int initial)
   {
    select->pageDown(*this);
   }
+  else if (key == BTKEY_F1)
+  {
+   blank = !blank;
+   searchChange = true;
+  }
   else if ((len < 50) && (key >= ' ') && (key <= '~'))
   {
    s.push_back(key);
@@ -1223,7 +1230,7 @@ int BTDisplay::selectImage(int initial)
   current = sl[selected].value;
   if (searchChange)
   {
-   BTDisplay::selectItem *sl = tagList.search(s, current, sz, selected);
+   BTDisplay::selectItem *sl = tagList.search(s, blank, current, sz, selected);
    select->alter(sl, sz);
    select->sanitize(*this);
   }

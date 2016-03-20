@@ -12,6 +12,7 @@
 #include "combat.h"
 #include "display.h"
 #include "factory.h"
+#include "imagetag.h"
 #include "item.h"
 #include "job.h"
 #include "module.h"
@@ -43,6 +44,7 @@ class BTCore : public Psuedo3DMap
   ~BTCore();
 
   std::string descendMap(int depth);
+  BTImageTagList &getImageTagList();
   BTFactory<BTItem> &getItemList();
   BTJobList &getJobList();
   BTModule *getModule();
@@ -82,6 +84,7 @@ class BTCore : public Psuedo3DMap
   BTMap *levelMap;
   Psuedo3DConfigList p3dConfigList;
   Psuedo3DConfig *p3dConfig;
+  BTImageTagList tagList;
 
   static BTCore *core;
 };
