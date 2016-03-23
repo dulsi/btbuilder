@@ -211,12 +211,14 @@ void BTEffectGroup::checkMusic(BTDisplay &d, std::vector<int> &musicIds)
  {
   if ((*itr)->source.type == BTEFFECTTYPE_SONG)
   {
-   for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end(); ++itrId)
+   for (std::vector<int>::iterator itrId = musicIds.begin(); itrId != musicIds.end();)
    {
     if (*itrId == (*itr)->source.effectID)
     {
-     musicIds.erase(itrId);
+     itrId = musicIds.erase(itrId);
     }
+    else
+     ++itrId;
    }
   }
  }

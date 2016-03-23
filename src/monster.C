@@ -23,7 +23,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
  IShort actions[4];
 
  f.readUByteArray(14, (IUByte *)tmp);
- tmp[15] = 0;
+ tmp[14] = 0;
  name = tmp;
  pluralName = name + "(s)";
  f.readShort(startDistance);
@@ -53,7 +53,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
  hp.read(f);
  meleeDamage.read(f);
  f.readUByteArray(14, (IUByte *)tmp);
- tmp[15] = 0;
+ tmp[14] = 0;
  meleeMessage = new char[strlen(tmp) + 1];
  strcpy(meleeMessage, tmp);
  f.readShort(magicResistance);
@@ -63,7 +63,7 @@ BTMonster::BTMonster(BinaryReadFile &f)
  rangedExtra = num;
  f.readShort(range);
  f.readUByteArray(14, (IUByte *)tmp);
- tmp[15] = 0;
+ tmp[14] = 0;
  rangedMessage = new char[strlen(tmp) + 1];
  strcpy(rangedMessage, tmp);
  f.readShort(num);
