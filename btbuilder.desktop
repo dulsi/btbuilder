@@ -6,5 +6,5 @@ Exec=btbuilder %f
 Terminal=false
 Type=Application
 Icon=btbuilder
-Categories=Game;
+Categories=Game;RolePlaying;
 
