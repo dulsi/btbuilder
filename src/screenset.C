@@ -2190,12 +2190,12 @@ int BTScreenSet::selectBard(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, in
  XMLVector<BTSkill*> &skill = BTGame::getGame()->getSkillList();
  if ((key >= '1') && (key <= '9'))
  {
+  BTSelectParty *select = static_cast<BTSelectParty*>(item);
+  b.setPc(party[key - '1'], select->getWho());
   for (int i = 0; i < skill.size(); ++i)
   {
    if ((skill[i]->special == BTSKILLSPECIAL_SONG) && (party[key - '1']->getSkill(i) > 0))
    {
-    BTSelectParty *select = static_cast<BTSelectParty*>(item);
-    b.setPc(party[key - '1'], select->getWho());
     select->checkDisallow(b.pc[select->getWho()]);
     return 0;
    }

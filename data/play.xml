@@ -11,7 +11,7 @@
 		<choice keys="cC" action="exit">(CANCEL)</choice>
 	</screen>
 	<error type="silence" screen="exit"><name /> can't play a tune! No sound can be heard!</error>
-	<error type="nobard" screen="exit">He can't sing.</error>
+	<error type="nobard" screen="exit"><name /> can't sing.</error>
 	<error type="novoice" screen="exit"><name /> lost his voice!</error>
 	<error type="noinstrument" screen="exit"><name /> has no equipped instrument!</error>
 	<error type="dead" screen="exit"><name /> is dead!</error>
