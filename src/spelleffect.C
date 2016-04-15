@@ -1336,18 +1336,20 @@ void BTRegenSkillEffect::serialize(ObjectSerializer *s)
 
 int BTRegenSkillEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
 {
+ int g2 = g;
+ int trgt2 = trgt;
  if (g == BTTARGET_NONE)
  {
-  g = group;
-  trgt = target;
+  g2 = group;
+  trgt2 = target;
  }
  if (unlimited)
  {
   BTGame *game = BTGame::getGame();
   BTParty &party = game->getParty();
-  if (BTTARGET_PARTY == g)
+  if (BTTARGET_PARTY == g2)
   {
-   if (BTTARGET_INDIVIDUAL == trgt)
+   if (BTTARGET_INDIVIDUAL == trgt2)
    {
     for (int i = 0; i < party.size(); ++i)
     {
@@ -1356,7 +1358,7 @@ int BTRegenSkillEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET
    }
    else
    {
-    party[trgt]->setSkillUnlimited(skill, unlimited);
+    party[trgt2]->setSkillUnlimited(skill, unlimited);
    }
   }
  }
