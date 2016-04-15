@@ -786,7 +786,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
      groupTarget = monGroup;
      target = monNumber;
     }
-    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName().c_str(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, monGroup, target);
+    active -= spellList[monList[grp.monsterType].getRangedSpell()].cast(d, monList[grp.monsterType].getName().c_str(), monGroup, monNumber, true, this, monList[grp.monsterType].getLevel(), grp.distance, groupTarget, target);
     break;
    }
    case BTRANGEDTYPE_FOE:
