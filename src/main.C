@@ -84,7 +84,7 @@ IUByte sideWallsUTF8[4][4] =
 
 int main(int argc, char *argv[])
 {
- char opt;
+ int opt;
  static struct option long_options[] =
  {
   {"item", 0, 0, 'i'},
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
  char *xmlFile = NULL;
  int multiplier = 0;
  std::string libDir(TOSTRING(BTBUILDERDIR));
- while ((opt = getopt_long(argc,argv,"imsap:x:e:l:u:", long_options, NULL)) != EOF)
+ while ((opt = getopt_long(argc,argv,"imsap:x:e:l:u:", long_options, NULL)) != -1)
  {
   switch (opt)
   {
