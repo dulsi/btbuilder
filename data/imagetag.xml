@@ -11,23 +11,19 @@
  </imageTag>
  <imageTag> <!--002-->
   <name>Lizard/Dragon</name>
-  <artist>Dennis Payne</artist>
-  <originalName>Modified Iguana Photo</originalName>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--003-->
-  <name>Dragon</name>
-  <artist>surt</artist>
-  <originalName>Dregbin</originalName>
-  <url>http://opengameart.org/content/dregbin</url>
+  <name>Red Dragon</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--004-->
-  <name>Dragon</name>
+  <name>Black Dragon</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--005-->
   <name>Wolf</name>
-  <artist>gdane</artist>
-  <originalName>Werewolf Magic</originalName>
-  <url>http://opengameart.org/content/werewolf-magic</url>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--006-->
   <name>Horned Warrior</name>
@@ -42,9 +38,7 @@
  </imageTag>
  <imageTag> <!--009-->
   <name>Slime</name>
-  <artist>5hiroi</artist>
-  <originalName>Swamp Dryad</originalName>
-  <url>http://opengameart.org/content/swamp-dryad</url>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--010-->
   <name>Kobold</name>
@@ -69,6 +63,7 @@
  </imageTag>
  <imageTag> <!--016-->
   <name>Rat</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--017-->
   <name>Minotaur</name>
@@ -98,12 +93,11 @@
  </imageTag>
  <imageTag> <!--024-->
   <name>Skeleton</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--025-->
   <name>Spider</name>
-  <artist>Wciow and John.d.h</artist>
-  <originalName>Spider Flare Sprite Sheet</originalName>
-  <url>http://opengameart.org/content/spider-flare-sprite-sheets</url>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--026-->
   <name>Vampire</name>
@@ -280,9 +274,11 @@
  </imageTag>
  <imageTag> <!--078-->
   <name>Female Monk</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--079-->
   <name>Female Bard</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--080-->
   <name>Female Barbarian</name>
@@ -744,12 +740,15 @@
  </imageTag>
  <imageTag> <!--230-->
   <name>Zombie</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--231-->
   <name>Ghoul 01</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--232-->
   <name>Ghoul 02</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--233-->
   <name>Shadow Lord</name>
@@ -983,13 +982,15 @@
   <name>Sea Dragon</name>
  </imageTag>
  <imageTag> <!--307-->
-  <name>Ice Dragon 01</name>
+  <name>Blue Dragon</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--308-->
-  <name>Ice Dragon 02</name>
+  <name>Green Dragon</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--309-->
-  <name>Ice Dragon 03</name>
+  <name>Ice Dragon</name>
  </imageTag>
  <imageTag> <!--310-->
   <name>Eastern Dragon</name>
@@ -1196,6 +1197,18 @@
  </imageTag>
  <imageTag> <!--372-->
   <name>Locust</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--373-->
+  <name>Orc Shaman</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--374-->
+  <name>Wight</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--375-->
+  <name>Gelatinous Cube</name>
   <artist>Madin Tolifen</artist>
  </imageTag>
 </data>
