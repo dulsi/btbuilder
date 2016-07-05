@@ -747,6 +747,12 @@ void BTGame::run(BTDisplay &d)
       }
       case '?':
       {
+       int street = levelMap->getSquare(yPos, xPos).getStreet();
+       if (street != -1)
+       {
+        std::string streetInfo = "You are on " + levelMap->getStreetName(street) + " facing " + directions[facing] + ".";
+        d.drawText(streetInfo.c_str());
+       }
        int quarter = (gameTime / (module->maxTime / 96)) % 4;
        int hour = ((gameTime / (module->maxTime / 24)) + 6) % 24 + ((quarter == 3) ? 1 : 0);
        std::string timeText;

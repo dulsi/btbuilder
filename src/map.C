@@ -12,7 +12,7 @@
 #include "pc.h"
 
 BTMapSquare::BTMapSquare()
- : special(-1)
+ : special(-1), street(-1)
 {
  for (int i = 0; i < BT_DIRECTIONS; ++i)
  {
@@ -28,6 +28,11 @@ IShort BTMapSquare::getWall(IShort dir) const
 IShort BTMapSquare::getSpecial() const
 {
  return special;
+}
+
+int BTMapSquare::getStreet() const
+{
+ return street;
 }
 
 void BTMapSquare::read(BinaryReadFile &f)
@@ -51,6 +56,11 @@ void BTMapSquare::setSpecial(IShort s)
  special = s;
 }
 
+void BTMapSquare::setStreet(int s)
+{
+ street = s;
+}
+
 void BTMapSquare::serialize(ObjectSerializer* s)
 {
  s->add("northgfx", &wallInfo[BTDIRECTION_NORTH]);
@@ -58,6 +68,7 @@ void BTMapSquare::serialize(ObjectSerializer* s)
  s->add("southgfx", &wallInfo[BTDIRECTION_SOUTH]);
  s->add("westgfx", &wallInfo[BTDIRECTION_WEST]);
  s->add("special", &special);
+ s->add("street", &street);
 }
 
 void BTMapSquare::write(BinaryWriteFile &f)
@@ -1850,6 +1861,11 @@ void BTMap::addSpecial(BTSpecial *s)
  specials.push_back(s);
 }
 
+void BTMap::addStreetName(const std::string &s)
+{
+ streetName.push_back(s);
+}
+
 void BTMap::setSpecial(IShort x, IShort y, IShort special)
 {
  square[y * xSize + x]->setSpecial(special);
@@ -1915,6 +1931,11 @@ int BTMap::getNumOfSpecials() const
  return specials.size();
 }
 
+int BTMap::getNumOfStreets() const
+{
+ return streetName.size();
+}
+
 void BTMap::generateRandomEncounter(BTDisplay &d, int groups) const
 {
  BTGame *game = BTGame::getGame();
@@ -1952,6 +1973,11 @@ BTMapSquare &BTMap::getSquare(IShort y, IShort x)
   x += xSize;
  x = x % xSize;
  return *square[y * xSize + x];
+}
+
+std::string BTMap::getStreetName(int num)
+{
+ return ((streetName.size() > num) ? streetName[num] : std::string(""));
 }
 
 IShort BTMap::getType() const
@@ -2032,6 +2058,11 @@ void BTMap::setFilename(const char *f)
  strcpy(filename, f);
 }
 
+void BTMap::setStreetName(int i, const std::string &s)
+{
+ streetName[i] = s;
+}
+
 void BTMap::serialize(ObjectSerializer* s)
 {
  BTCore *game = BTCore::getCore();
@@ -2048,6 +2079,7 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("flag", &flags, &flagList);
  s->add("square", &square, &BTMapSquare::create);
  s->add("special", &specials, &BTSpecial::create);
+ s->add("streetName", &streetName);
 }
 
 void BTMap::write(BinaryWriteFile &f)

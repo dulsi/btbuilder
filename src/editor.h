@@ -44,6 +44,8 @@ class BTEditor : public BTCore
   int currentWall;
   int startSpecial;
   int currentSpecial;
+  int startStreet;
+  int currentStreet;
   BTMap *swapMap;
   BTSpecialOperation *clipboard;
   static const char *skipFiles[];

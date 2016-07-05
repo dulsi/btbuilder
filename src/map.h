@@ -62,9 +62,11 @@ class BTMapSquare : public XMLObject
 
   IShort getWall(IShort dir) const;
   IShort getSpecial() const;
+  int getStreet() const;
   void read(BinaryReadFile &f);
   void setWall(IShort dir, IShort wall);
   void setSpecial(IShort s);
+  void setStreet(int s);
   virtual void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
 
@@ -73,6 +75,7 @@ class BTMapSquare : public XMLObject
  private:
   int wallInfo[4];
   IShort special;
+  int street;
 };
 
 class BTSpecialError
@@ -306,6 +309,7 @@ class BTMap : public XMLObject
   void init(const std::string &f);
 
   void addSpecial(BTSpecial *s);
+  void addStreetName(const std::string &s);
   void checkRandomEncounter(BTDisplay &d) const;
   const char *getFilename() const;
   const BitField &getFlag() const;
@@ -315,15 +319,18 @@ class BTMap : public XMLObject
   IShort getMonsterLevel() const;
   const char *getName() const;
   int getNumOfSpecials() const;
+  int getNumOfStreets() const;
   void generateRandomEncounter(BTDisplay &d, int groups) const;
   BTSpecial *getSpecial(IShort num);
   BTMapSquare &getSquare(IShort y, IShort x);
+  std::string getStreetName(int num);
   IShort getType() const;
   IShort getXSize() const;
   IShort getYSize() const;
   void resize(IShort newXSize, IShort newYSize);
   void setFilename(const char *f);
   void setSpecial(IShort x, IShort y, IShort special);
+  void setStreetName(int i, const std::string &s);
   void serialize(ObjectSerializer* s);
   void write(BinaryWriteFile &f);
   void upgrade();
@@ -342,6 +349,7 @@ class BTMap : public XMLObject
   XMLVector<BTMonsterChance*> monsterChance;
   XMLVector<BTMapSquare*> square;
   XMLVector<BTSpecial*> specials;
+  std::vector<std::string> streetName;
 };
 
 class BTLevel : public XMLObject

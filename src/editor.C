@@ -14,7 +14,7 @@
 const char *BTEditor::skipFiles[] = {"shops.xml", "roster.xml", "savegame.xml", "btbuilder.appdata.xml", "level.xml"};
 
 BTEditor::BTEditor(BTModule *m)
- : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0), swapMap(0), clipboard(0)
+ : BTCore(m), currentWall(0), startSpecial(0), currentSpecial(0), startStreet(0), currentStreet(0), swapMap(0), clipboard(0)
 {
 }
 
@@ -318,6 +318,51 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    }
    case 'l':
     levelMap->getSquare(yPos, xPos).setSpecial(currentSpecial);
+    break;
+   case 'b':
+    levelMap->getSquare(yPos, xPos).setStreet(-1);
+    break;
+   case 'n':
+   {
+    d.clearText();
+    int len = levelMap->getNumOfStreets();
+    BTDisplay::selectItem list[len + 1];
+    for (int i = 0; i < len; ++i)
+    {
+     list[i].name = levelMap->getStreetName(i);
+    }
+    list[len].name = "<New Street>";
+    d.addSelection(list, len + 1, startStreet, currentStreet);
+    int key = d.process("e");
+    d.clearText();
+    if ((key == 'e') || ((currentStreet == len) && (key == '\r')))
+    {
+     std::string name;
+     if (currentStreet != len)
+      name = list[currentStreet].name;
+     d.addReadString("Name: ", 25, name);
+     key = d.process();
+     if (key == '\r')
+     {
+      if (currentStreet == len)
+       levelMap->addStreetName(name);
+      else
+       levelMap->setStreetName(currentStreet, name);
+      levelMap->getSquare(yPos, xPos).setStreet(currentStreet);
+     }
+    }
+    else if (key == '\r')
+    {
+     levelMap->getSquare(yPos, xPos).setStreet(currentStreet);
+    }
+    if (currentWall < p3dConfig->mapType.size())
+     d.drawText(p3dConfig->mapType[currentWall]->name.c_str());
+    else
+     d.drawText("Clear");
+    break;
+   }
+   case 'm':
+    levelMap->getSquare(yPos, xPos).setStreet(currentStreet);
     break;
    case 'p':
    {
