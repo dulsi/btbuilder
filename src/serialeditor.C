@@ -531,7 +531,7 @@ void BTMapPropertiesEditor::handleObject(BTDisplay &d, XMLObject *obj, int modFi
  }
 }
 
-const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Flags", "Monster Level", "Encounter Roll", "Encounter Chance" };
+const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Flags", "Monster Level", "Encounter Roll", "Encounter" };
 const char *BTMapPropertiesEditor::mapField[FIELDS_MAP] = { "name", "type", "light", "flag", "monsterLevel", "monsterRoll", "monsterChance" };
 
 BTMonsterChanceEditor::BTMonsterChanceEditor()

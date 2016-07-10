@@ -1759,7 +1759,7 @@ BTMonsterChance::BTMonsterChance(int c /*= 0*/, int g /*= 1*/)
 std::string BTMonsterChance::createString()
 {
  char tmp[40];
- snprintf(tmp, 40, "%d%% of %d group%s", getChance(), getGroups(), ((getGroups() > 1) ? "s" : ""));
+ snprintf(tmp, 40, "%d chance%s of %d group%s", getChance(), ((getChance() > 1) ? "s" : ""), getGroups(), ((getGroups() > 1) ? "s" : ""));
  return tmp;
 }
 
@@ -1873,12 +1873,12 @@ void BTMap::setSpecial(IShort x, IShort y, IShort special)
 
 void BTMap::checkRandomEncounter(BTDisplay &d) const
 {
- int chance = 0;
+ int chance = monsterRoll.getMin();
  int roll = monsterRoll.roll();
  for (int i = 0; i < monsterChance.size(); ++i)
  {
   chance += monsterChance[i]->getChance();
-  if (roll <= chance)
+  if (roll < chance)
   {
    generateRandomEncounter(d, monsterChance[i]->getGroups());
    break;
