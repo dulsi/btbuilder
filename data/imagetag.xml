@@ -138,9 +138,7 @@
  </imageTag>
  <imageTag> <!--035-->
   <name>Monk</name>
-  <artist>Justin Nichol</artist>
-  <originalName>Oracle Portrait</originalName>
-  <url>http://opengameart.org/content/oracle-portrait</url>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--036-->
   <name>Wizard</name>
@@ -339,7 +337,8 @@
   <name>Chest</name>
  </imageTag>
  <imageTag> <!--098-->
-  <name></name>
+  <name>Female Rogue 01</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--099-->
   <name></name>
@@ -852,9 +851,11 @@
  </imageTag>
  <imageTag> <!--266-->
   <name>Wyvern 01</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--267-->
   <name>Wyvern 02</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--268-->
   <name>Wyvern 03</name>
