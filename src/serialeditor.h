@@ -83,7 +83,7 @@ class BTSerializedEditor : public BTFactoryEditor
   const char **field;
 };
 
-#define FIELDS_MAP 6
+#define FIELDS_MAP 7
 
 class BTMapPropertiesEditor : public BTSerializedEditor
 {

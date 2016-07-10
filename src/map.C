@@ -1780,7 +1780,7 @@ void BTMonsterChance::serialize(ObjectSerializer* s)
 }
 
 BTMap::BTMap(BinaryReadFile &f)
- : filename(0)
+ : filename(0), monsterRoll(1, 100)
 {
  IUByte unknown;
  IShort t;
@@ -1829,7 +1829,7 @@ BTMap::BTMap(BinaryReadFile &f)
 }
 
 BTMap::BTMap(int v /*= 2*/)
- : name(NULL), version(v), type(0), level(0), monsterLevel(0), light(0), filename(NULL)
+ : name(NULL), version(v), type(0), level(0), monsterLevel(0), light(0), filename(NULL), monsterRoll(1, 100)
 {
 }
 
@@ -1874,7 +1874,7 @@ void BTMap::setSpecial(IShort x, IShort y, IShort special)
 void BTMap::checkRandomEncounter(BTDisplay &d) const
 {
  int chance = 0;
- int roll = BTDice(1, 100).roll();
+ int roll = monsterRoll.roll();
  for (int i = 0; i < monsterChance.size(); ++i)
  {
   chance += monsterChance[i]->getChance();
@@ -2073,6 +2073,7 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("level", &level);
  s->add("xSize", &xSize);
  s->add("ySize", &ySize);
+ s->add("monsterRoll", &monsterRoll);
  s->add("monsterChance", &monsterChance, &BTMonsterChance::create);
  s->add("monsterLevel", &monsterLevel);
  s->add("light", &light);
@@ -2094,6 +2095,8 @@ void BTMap::write(BinaryWriteFile &f)
   throw FileException("X size is too large.");
  if (ySize > 22)
   throw FileException("Y size is too large.");
+ if (!(monsterRoll == BTDice(1, 100)))
+  throw FileException("Monster chance not 1d100.");
  int len = strlen(filename);
  if ((len <= 4) || (strcmp(".MAP", filename + (len - 4)) != 0))
   throw FileException("Filename does not end in \".MAP\".");

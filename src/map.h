@@ -346,6 +346,7 @@ class BTMap : public XMLObject
   int light;
   BitField flags;
   char *filename;
+  BTDice monsterRoll;
   XMLVector<BTMonsterChance*> monsterChance;
   XMLVector<BTMapSquare*> square;
   XMLVector<BTSpecial*> specials;

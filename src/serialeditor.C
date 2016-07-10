@@ -513,7 +513,7 @@ bool BTSerializedEditor::updateActive(ObjectSerializer &serial, BitField &active
  return false;
 }
 
-#define MAPLOC_MONSTERCHANCE 5
+#define MAPLOC_MONSTERCHANCE 6
 
 BTMapPropertiesEditor::BTMapPropertiesEditor()
  : BTSerializedEditor(FIELDS_MAP, mapDescription, mapField)
@@ -531,8 +531,8 @@ void BTMapPropertiesEditor::handleObject(BTDisplay &d, XMLObject *obj, int modFi
  }
 }
 
-const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Flags", "Monster Level", "Encounter Chance" };
-const char *BTMapPropertiesEditor::mapField[FIELDS_MAP] = { "name", "type", "light", "flag", "monsterLevel", "monsterChance" };
+const char *BTMapPropertiesEditor::mapDescription[FIELDS_MAP] = { "Name", "Type", "Light", "Flags", "Monster Level", "Encounter Roll", "Encounter Chance" };
+const char *BTMapPropertiesEditor::mapField[FIELDS_MAP] = { "name", "type", "light", "flag", "monsterLevel", "monsterRoll", "monsterChance" };
 
 BTMonsterChanceEditor::BTMonsterChanceEditor()
  : BTSerializedEditor(FIELDS_MONSTERCHANCE, monsterChanceDescription, monsterChanceField)
