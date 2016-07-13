@@ -16,6 +16,7 @@
 #ifndef BTBUILDER_NOTTF
 #include <SDL_ttf.h>
 #endif
+#include <map>
 
 #define BTUI_CHOICE 1
 #define BTUI_SELECT 2
@@ -158,9 +159,12 @@ class BTDisplay : public ImageLoader
 
   void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs = true);
 
+  void render();
+
  private:
   unsigned long drawAnimationFrame();
   void scrollUp(int h);
+  void setupKeyMap();
   static Uint32 timerCallback(Uint32 interval, void *param);
 
  public:
@@ -179,6 +183,9 @@ class BTDisplay : public ImageLoader
   int textPos;
   Psuedo3D p3d;
   Psuedo3DConfigList *p3dConfig;
+  SDL_Window *mainWindow;
+  SDL_Renderer *mainRenderer;
+  SDL_Texture *mainTexture;
   SDL_Surface *mainScreen;
   SDL_Surface *mainBackground;
   std::list<BTMusic*> music;
@@ -195,6 +202,8 @@ class BTDisplay : public ImageLoader
   std::vector<BTUIElement*> element;
   int mapXStart, mapYStart;
   std::list<BTAnimation> activeAnimation;
+  std::map<SDL_Keycode, char> key;
+  std::map<SDL_Keycode, char> shiftKey;
 };
 
 class BTUIText : public BTUIElement

@@ -1,10 +1,10 @@
-SDL_CFLAGS := $(shell sdl-config --cflags)
-SDL_LDFLAGS := $(shell sdl-config --libs)
+SDL_CFLAGS := $(shell pkg-config --cflags sdl2 SDL2_image SDL2_mixer SDL2_ttf)
+SDL_LDFLAGS := $(shell pkg-config --libs sdl2 SDL2_image SDL2_mixer SDL2_ttf)
 
 CXX = g++
 CC = gcc
 CXXFLAGS = -g -DSDLLIB $(SDL_CFLAGS) -Isrc/ --std=c++11
-LIBS = $(SDL_LDFLAGS) --std=c++11 -lSDL_image -lSDL_mixer -lexpat -lSDL_ttf -lphysfs \
+LIBS = $(SDL_LDFLAGS) --std=c++11 -lexpat -lphysfs \
 	-lboost_filesystem -lboost_system -lpng -lSDL_mng
 
 BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \

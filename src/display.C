@@ -32,7 +32,7 @@ BTSound::~BTSound()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier /*= 0*/)
- : fullScreen(false), config(c), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
+ : fullScreen(false), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0), mainWindow(0), mainRenderer(0), mainTexture(0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
  animation.animation = 0;
  animation.frame = 0;
@@ -42,9 +42,15 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   exit(0);
  }
  Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG);
- const SDL_VideoInfo *info = SDL_GetVideoInfo();
- xFull = info->current_w;
- yFull = info->current_h;
+ SDL_DisplayMode info;
+ int success = SDL_GetCurrentDisplayMode(0, &info);
+ if (success != 0)
+ {
+  printf("%s\n", SDL_GetError());
+  exit(0);
+ }
+ xFull = info.w;
+ yFull = info.h;
  if ((xMult == 0) || (yMult == 0))
  {
   xMult = (xFull - 10) / config->width; // Allow for window decoration
@@ -54,9 +60,9 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   else
    yMult = xMult;
  }
+ expanded = config->findExpanded(xMult, yMult);
  char *font = config->font;
  int fontsize = config->fontsize;
- expanded = config->findExpanded(xMult, yMult);
  if (expanded)
  {
   if (multiplier == 0)
@@ -100,11 +106,40 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   exit(0);
  }
 #endif
- mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
-   SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
+ mainWindow = SDL_CreateWindow("Bt Builder",
+                           SDL_WINDOWPOS_UNDEFINED,
+                           SDL_WINDOWPOS_UNDEFINED,
+                           config->width * xMult, config->height * yMult,
+                           (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+ if (mainWindow == NULL)
+ {
+  printf("Failed - SDL_CreateWindow\n");
+  exit(0);
+ }
+
+ mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
+ if (mainRenderer == NULL)
+ {
+  printf("Failed - SDL_CreateRenderer\n");
+  exit(0);
+ }
+ mainTexture = SDL_CreateTexture(mainRenderer,
+                             SDL_PIXELFORMAT_ARGB8888,
+                             SDL_TEXTUREACCESS_STREAMING,
+                             config->width * xMult, config->height * yMult);
+ if (mainTexture == NULL)
+ {
+  printf("Failed - SDL_CreateTexture\n");
+  exit(0);
+ }
+ mainScreen = SDL_CreateRGBSurface(0, config->width * xMult, config->height * yMult, 32,
+                                        0x00FF0000,
+                                        0x0000FF00,
+                                        0x000000FF,
+                                        0xFF000000);
  if (mainScreen == NULL)
  {
-  printf("Failed - SDL_SetVideoMode\n");
+  printf("Failed - SDL_CreateRGBSurface\n");
   exit(0);
  }
 #ifndef BTBUILDER_NOTTF
@@ -123,13 +158,13 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  black.b = 0;
  setBackground(config->background, physfs);
 
- SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+// SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
  SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
  SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
  SDL_EventState(SDL_MOUSEBUTTONUP, SDL_IGNORE);
- SDL_EnableUNICODE(1);
 
  Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024);
+ setupKeyMap();
 }
 
 BTDisplay::~BTDisplay()
@@ -142,6 +177,10 @@ BTDisplay::~BTDisplay()
  if (mainBackground)
  {
   SDL_FreeSurface(mainBackground);
+ }
+ if (mainScreen)
+ {
+  SDL_FreeSurface(mainScreen);
  }
  element.clear();
  Mix_Quit();
@@ -251,7 +290,6 @@ void BTDisplay::addSelectImage(int &select)
 void BTDisplay::clear(SDL_Rect &r, bool update /*= false*/)
 {
  SDL_BlitSurface(mainBackground, &r, mainScreen, &r);
- SDL_UpdateRect(mainScreen, r.x, r.y, r.w, r.h);
 }
 
 void BTDisplay::clearElements()
@@ -278,14 +316,12 @@ void BTDisplay::clearImage()
  dst.w = p3d.config->width * xMult;
  dst.h = p3d.config->height * yMult;
  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
- SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 
 void BTDisplay::clearText()
 {
  clearElements();
  SDL_BlitSurface(mainBackground, &text, mainScreen, &text);
- SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  textPos = 0;
 }
 
@@ -305,7 +341,7 @@ void BTDisplay::drawFullScreen(const char *file, int delay)
    img = img2;
   }
   SDL_BlitSurface(img, NULL, mainScreen, NULL);
-  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+  render();
   SDL_FreeSurface(img);
   if (delay)
    SDL_Delay(delay);
@@ -380,7 +416,6 @@ void BTDisplay::drawImage(int pic)
  if (NULL == img)
  {
   SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
-  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
   return;
  }
  src.x = 0;
@@ -389,7 +424,6 @@ void BTDisplay::drawImage(int pic)
  src.h = p3d.config->height * yMult;
  SDL_BlitSurface(img, &src, mainScreen, &dst);
  SDL_FreeSurface(img);
- SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 
 void BTDisplay::drawLabel(const char *name)
@@ -400,7 +434,6 @@ void BTDisplay::drawLabel(const char *name)
  labelText = name;
  SDL_BlitSurface(mainBackground, &label, mainScreen, &label);
  drawFont(name, label, white, center);
- SDL_UpdateRect(mainScreen, label.x, label.y, label.w, label.h);
 }
 
 void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= left*/)
@@ -415,7 +448,6 @@ void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= le
  dst.h = h;
  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
  drawFont(words, dst, black, a);
- SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
 }
 
 void BTDisplay::drawMessage(const char *words, int *delay)
@@ -481,7 +513,6 @@ void BTDisplay::drawText(const char *words, alignment a /*= left*/)
   dst.h = h;
   drawFont((end ? tmp : partial), dst, black, a);
   textPos += h;
-  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
   partial = end;
  }
  delete [] tmp;
@@ -511,7 +542,6 @@ void BTDisplay::drawView()
  if ((config->mapDisplayMode == BTMAPDISPLAYMODE_ALWAYS) ||
   ((config->mapDisplayMode == BTMAPDISPLAYMODE_NO3D) && (p3d.getConfig()->wallType.empty())))
   drawMap(false);
- SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
 }
 
 void BTDisplay::drawIcons()
@@ -687,12 +717,11 @@ void BTDisplay::drawMap(bool knowledge)
  src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
  src.x = 0;
  src.y = 0;
- SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
  if (config->mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
  {
+  render();
   unsigned char response = readChar();
   SDL_BlitSurface(backup, &src, mainScreen, &dst);
-  SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
   SDL_FreeSurface(backup);
  }
 }
@@ -712,10 +741,6 @@ void BTDisplay::drawStats()
   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
  }
  status.draw();
- for (i = 0; i < BT_PARTYSIZE; ++i)
- {
-  SDL_UpdateRect(mainScreen, config->status[i].x * xMult, config->status[i].y * yMult, config->status[i].w * xMult, config->status[i].h * yMult);
- }
 }
 
 SDL_Color &BTDisplay::getBlack()
@@ -768,7 +793,7 @@ void BTDisplay::playMusic(unsigned int effectID, const char *file, bool physfs /
   musicFile = SDL_RWFromFile(file, "rb");
  if (musicFile)
  {
-  m->musicObj = Mix_LoadMUS_RW(musicFile);
+  m->musicObj = Mix_LoadMUS_RW(musicFile, 0);
   if (m->musicObj)
    Mix_FadeInMusic(m->musicObj, -1, 1000);
  }
@@ -878,14 +903,14 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
   if (BTUI_READSTRING == (*top)->getType())
   {
    BTUIReadString *item = static_cast<BTUIReadString*>(*top);
-   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+   render();
    item->response = readString(item->prompt.c_str(), item->maxLen, item->response);
    return 13;
   }
   else if (BTUI_SELECTIMAGE == (*top)->getType())
   {
    BTUISelectImage *item = static_cast<BTUISelectImage*>(*top);
-   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+   render();
    item->select = selectImage(item->select);
    return 13;
   }
@@ -900,11 +925,13 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
   }
  }
  if (!select)
-  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ {
+  render();
+ }
  else if (select->numbered)
  {
   select->draw(*this);
-  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+  render();
  }
  int start = SDL_GetTicks();
  int delayCurrent = ((delayOveride != -1) ? delayOveride : (delay ? *delay : 0));
@@ -913,7 +940,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
   if ((select) && (!select->numbered))
   {
    select->draw(*this);
-   SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+   render();
   }
   key = readChar(delayCurrent);
   if ((key == 0) || (key == 27))
@@ -1028,6 +1055,7 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
  SDL_TimerID timer;
  unsigned long animationDelay = 0;
  animationDelay = drawAnimationFrame();
+ render();
  if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
   timer = SDL_AddTimer(animationDelay, timerCallback, NULL);
  else if (delay)
@@ -1039,23 +1067,21 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
   {
    if ((animationDelay) || (delay))
     SDL_RemoveTimer(timer);
-   if (sdlevent.key.keysym.unicode)
-    return sdlevent.key.keysym.unicode;
-   else if ((sdlevent.key.keysym.sym == SDLK_UP) || (sdlevent.key.keysym.sym == SDLK_KP8))
+   if ((sdlevent.key.keysym.sym == SDLK_UP) || (sdlevent.key.keysym.sym == SDLK_KP_8))
     return BTKEY_UP;
-   else if ((sdlevent.key.keysym.sym == SDLK_DOWN) || (sdlevent.key.keysym.sym == SDLK_KP2))
+   else if ((sdlevent.key.keysym.sym == SDLK_DOWN) || (sdlevent.key.keysym.sym == SDLK_KP_2))
     return BTKEY_DOWN;
-   else if ((sdlevent.key.keysym.sym == SDLK_LEFT) || (sdlevent.key.keysym.sym == SDLK_KP4))
+   else if ((sdlevent.key.keysym.sym == SDLK_LEFT) || (sdlevent.key.keysym.sym == SDLK_KP_4))
     return BTKEY_LEFT;
-   else if ((sdlevent.key.keysym.sym == SDLK_RIGHT) || (sdlevent.key.keysym.sym == SDLK_KP6))
+   else if ((sdlevent.key.keysym.sym == SDLK_RIGHT) || (sdlevent.key.keysym.sym == SDLK_KP_6))
     return BTKEY_RIGHT;
-   else if ((sdlevent.key.keysym.sym == SDLK_PAGEDOWN) || (sdlevent.key.keysym.sym == SDLK_KP3))
+   else if ((sdlevent.key.keysym.sym == SDLK_PAGEDOWN) || (sdlevent.key.keysym.sym == SDLK_KP_3))
     return BTKEY_PGDN;
-   else if ((sdlevent.key.keysym.sym == SDLK_PAGEUP) || (sdlevent.key.keysym.sym == SDLK_KP9))
+   else if ((sdlevent.key.keysym.sym == SDLK_PAGEUP) || (sdlevent.key.keysym.sym == SDLK_KP_9))
     return BTKEY_PGUP;
-   else if ((sdlevent.key.keysym.sym == SDLK_END) || (sdlevent.key.keysym.sym == SDLK_KP1))
+   else if ((sdlevent.key.keysym.sym == SDLK_END) || (sdlevent.key.keysym.sym == SDLK_KP_1))
     return BTKEY_END;
-   else if ((sdlevent.key.keysym.sym == SDLK_INSERT) || (sdlevent.key.keysym.sym == SDLK_KP0))
+   else if ((sdlevent.key.keysym.sym == SDLK_INSERT) || (sdlevent.key.keysym.sym == SDLK_KP_0))
     return BTKEY_INS;
    else if ((sdlevent.key.keysym.sym == SDLK_KP_PERIOD) || (sdlevent.key.keysym.sym == SDLK_DELETE))
     return BTKEY_DEL;
@@ -1063,6 +1089,28 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     return BTKEY_F1;
    else if (sdlevent.key.keysym.sym == SDLK_F12)
     toggleFullScreen();
+   else
+   {
+    if (sdlevent.key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI) != 0)
+    {
+    }
+    else if (((sdlevent.key.keysym.mod & KMOD_CAPS) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) != 0)) || (((sdlevent.key.keysym.mod & KMOD_CAPS) == 0) && (sdlevent.key.keysym.mod & KMOD_SHIFT)))
+    {
+     auto itr = shiftKey.find(sdlevent.key.keysym.sym);
+     if (itr != shiftKey.end())
+     {
+      return itr->second;
+     }
+    }
+    else
+    {
+     auto itr = key.find(sdlevent.key.keysym.sym);
+     if (itr != key.end())
+     {
+      return itr->second;
+     }
+    }
+   }
    if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
     timer = SDL_AddTimer(animationDelay, timerCallback, NULL);
    else if (delay)
@@ -1080,6 +1128,7 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
    {
     delay -= animationDelay;
     animationDelay = drawAnimationFrame();
+    render();
     if ((animationDelay) && ((delay == 0) || (animationDelay < delay)))
      timer = SDL_AddTimer(animationDelay, timerCallback, NULL);
     else if (delay)
@@ -1132,7 +1181,7 @@ std::string BTDisplay::readString(const char *prompt, int max, const std::string
   drawText(full.c_str());
   if (textPos > endPos)
    endPos = textPos;
-  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, endPos - startPos);
+  render();
  }
  return s;
 }
@@ -1141,7 +1190,7 @@ void BTDisplay::refresh()
 {
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
  drawStats();
- SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+ render();
 }
 
 void BTDisplay::removeAnimation(MNG_AnimationState *animState)
@@ -1184,7 +1233,7 @@ int BTDisplay::selectImage(int initial)
  select->position.h = bottomPos - textPos;
  select->sanitize(*this);
  select->draw(*this);
- SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
+ render();
  while (((key = readChar()) != 13) && (key !=  27))
  {
   bool searchChange = false;
@@ -1241,8 +1290,8 @@ int BTDisplay::selectImage(int initial)
   if (textPos > endPos)
    endPos = textPos;
   select->draw(*this);
-  SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
   drawImage(current);
+  render();
  }
  delete select;
  return ((key == 27) ? initial : current);
@@ -1257,7 +1306,7 @@ void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
  }
  loadImageOrAnimation(file, &mainBackground, NULL, physfs);
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
- SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+ render();
 }
 
 void BTDisplay::setConfig(BTDisplayConfig *c)
@@ -1321,11 +1370,33 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  text.h = c->text.h * newYMult;
  if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
  {
-  mainScreen = SDL_SetVideoMode(c->width * newXMult, c->height * newYMult, 32,
-    SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
-  if (mainScreen == NULL)
+  SDL_DestroyTexture(mainTexture);
+  SDL_DestroyRenderer(mainRenderer);
+  SDL_DestroyWindow(mainWindow);
+  mainWindow = SDL_CreateWindow("Bt Builder",
+                            SDL_WINDOWPOS_UNDEFINED,
+                            SDL_WINDOWPOS_UNDEFINED,
+                            config->width * xMult, config->height * yMult,
+                            (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+  if (mainWindow == NULL)
   {
-   printf("Failed - SDL_SetVideoMode\n");
+   printf("Failed - SDL_CreateWindow\n");
+   exit(0);
+  }
+
+  mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
+  if (mainRenderer == NULL)
+  {
+   printf("Failed - SDL_CreateRenderer\n");
+   exit(0);
+  }
+  mainTexture = SDL_CreateTexture(mainRenderer,
+                              SDL_PIXELFORMAT_ARGB8888,
+                              SDL_TEXTUREACCESS_STREAMING,
+                              config->width * xMult, config->height * yMult);
+  if (mainTexture == NULL)
+  {
+   printf("Failed - SDL_CreateTexture\n");
    exit(0);
   }
  }
@@ -1497,17 +1568,36 @@ void BTDisplay::toggleFullScreen()
  src.h = dst.h = config->height * yMult;
  src.x = dst.x = 0;
  src.y = dst.y = 0;
- SDL_Surface *backup = SDL_CreateRGBSurface(SDL_SWSURFACE, dst.w, dst.h, 32, mainScreen->format->Rmask, mainScreen->format->Gmask, mainScreen->format->Bmask, mainScreen->format->Amask);
- SDL_BlitSurface(mainScreen, &dst, backup, &src);
- mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
-    SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
- if (mainScreen == NULL)
+ SDL_DestroyTexture(mainTexture);
+ SDL_DestroyRenderer(mainRenderer);
+ SDL_DestroyWindow(mainWindow);
+ mainWindow = SDL_CreateWindow("Bt Builder",
+                           SDL_WINDOWPOS_UNDEFINED,
+                           SDL_WINDOWPOS_UNDEFINED,
+                           config->width * xMult, config->height * yMult,
+                           (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+ if (mainWindow == NULL)
  {
-  printf("Failed - SDL_SetVideoMode\n");
+  printf("Failed - SDL_CreateWindow\n");
   exit(0);
  }
- SDL_BlitSurface(backup, &src, mainScreen, &dst);
- SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
+
+ mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
+ if (mainRenderer == NULL)
+ {
+  printf("Failed - SDL_CreateRenderer\n");
+  exit(0);
+ }
+ mainTexture = SDL_CreateTexture(mainRenderer,
+                             SDL_PIXELFORMAT_ARGB8888,
+                             SDL_TEXTUREACCESS_STREAMING,
+                             config->width * xMult, config->height * yMult);
+ if (mainTexture == NULL)
+ {
+  printf("Failed - SDL_CreateTexture\n");
+  exit(0);
+ }
+ render();
 }
 
 void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a)
@@ -1565,7 +1655,6 @@ void BTDisplay::drawImage(SDL_Rect &dst, SDL_Surface *img)
  src.w = dst.w;
  src.h = dst.h;
  SDL_BlitSurface(img, &src, mainScreen, &dst);
- SDL_UpdateRect(mainScreen, dst.x, dst.y, dst.w, dst.h);
 }
 
 void BTDisplay::drawRect(SDL_Rect &dst, SDL_Color c)
@@ -1666,6 +1755,14 @@ void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Im
  }
 }
 
+void BTDisplay::render()
+{
+ SDL_UpdateTexture(mainTexture, NULL, mainScreen->pixels, config->width * xMult * sizeof (Uint32));
+ SDL_RenderClear(mainRenderer);
+ SDL_RenderCopy(mainRenderer, mainTexture, NULL, NULL);
+ SDL_RenderPresent(mainRenderer);
+}
+
 unsigned long BTDisplay::drawAnimationFrame()
 {
  unsigned long ticks = SDL_GetTicks();
@@ -1700,8 +1797,150 @@ void BTDisplay::scrollUp(int h)
  src.w = text.w;
  src.h = h;
  SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
- SDL_UpdateRect(mainScreen, text.x, text.y, text.w, text.h);
  textPos -= h;
+}
+
+void BTDisplay::setupKeyMap()
+{
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_BACKSPACE, '\b'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_TAB, '\t'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_RETURN, '\r'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_ESCAPE, '\033'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_SPACE, ' '));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_EXCLAIM, '!'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_QUOTEDBL, '"'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_HASH, '#'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_DOLLAR, '$'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_PERCENT, '%'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_AMPERSAND, '&'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_QUOTE, '\''));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_LEFTPAREN, '('));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_RIGHTPAREN, ')'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_ASTERISK, '*'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_PLUS, '+'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_COMMA, ','));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_MINUS, '-'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_PERIOD, '.'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_SLASH, '/'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_0, '0'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_1, '1'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_2, '2'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_3, '3'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_4, '4'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_5, '5'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_6, '6'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_7, '7'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_8, '8'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_9, '9'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_COLON, ':'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_SEMICOLON, ';'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_LESS, '<'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_EQUALS, '='));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_GREATER, '>'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_QUESTION, '?'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_AT, '@'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_LEFTBRACKET, '['));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_BACKSLASH, '\\'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_RIGHTBRACKET, ']'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_CARET, '^'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_UNDERSCORE, '_'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_BACKQUOTE, '`'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_a, 'a'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_b, 'b'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_c, 'c'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_d, 'd'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_e, 'e'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_f, 'f'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_g, 'g'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_h, 'h'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_i, 'i'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_j, 'j'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_k, 'k'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_l, 'l'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_m, 'm'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_n, 'n'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_o, 'o'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_p, 'p'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_q, 'q'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_r, 'r'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_s, 's'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_t, 't'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_u, 'u'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_v, 'v'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_w, 'w'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_x, 'x'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_y, 'y'));
+ key.insert(std::pair<SDL_Keycode, char>(SDLK_z, 'z'));
+
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_BACKSPACE, '\b'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_TAB, '\t'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_RETURN, '\r'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_ESCAPE, '\033'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_SPACE, ' '));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_EXCLAIM, '!'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_QUOTEDBL, '"'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_HASH, '#'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_DOLLAR, '$'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_PERCENT, '%'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_AMPERSAND, '&'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_QUOTE, '"'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_LEFTPAREN, '('));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_RIGHTPAREN, ')'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_ASTERISK, '*'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_PLUS, '+'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_COMMA, '<'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_MINUS, '_'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_PERIOD, '>'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_SLASH, '?'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_0, ')'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_1, '!'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_2, '@'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_3, '#'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_4, '$'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_5, '%'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_6, '^'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_7, '&'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_8, '*'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_9, '('));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_COLON, ':'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_SEMICOLON, ':'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_LESS, '<'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_EQUALS, '+'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_GREATER, '>'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_QUESTION, '?'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_AT, '@'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_LEFTBRACKET, '{'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_BACKSLASH, '|'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_RIGHTBRACKET, '}'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_CARET, '^'));
+// shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_UNDERSCORE, '_'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_BACKQUOTE, '~'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_a, 'A'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_b, 'B'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_c, 'C'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_d, 'D'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_e, 'E'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_f, 'F'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_g, 'G'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_h, 'H'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_i, 'I'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_j, 'J'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_k, 'K'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_l, 'L'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_m, 'M'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_n, 'N'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_o, 'O'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_p, 'P'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_q, 'Q'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_r, 'R'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_s, 'S'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_t, 'T'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_u, 'U'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_v, 'V'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_w, 'W'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_x, 'X'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_y, 'Y'));
+ shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_z, 'Z'));
 }
 
 Uint32 BTDisplay::timerCallback(Uint32 interval, void *param)
