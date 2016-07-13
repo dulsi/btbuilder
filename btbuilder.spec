@@ -1,6 +1,6 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.5.8
+Version: 0.5.9
 Release: 1%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
@@ -10,11 +10,11 @@ BuildRequires: boost-devel
 BuildRequires: expat-devel
 BuildRequires: libpng-devel
 BuildRequires: physfs-devel
-BuildRequires: SDL-devel
-BuildRequires: SDL_image-devel
-BuildRequires: SDL_mixer-devel
+BuildRequires: SDL2-devel
+BuildRequires: SDL2_image-devel
+BuildRequires: SDL2_mixer-devel
 BuildRequires: SDL_mng-devel
-BuildRequires: SDL_ttf-devel
+BuildRequires: SDL2_ttf-devel
 BuildRequires: desktop-file-utils
 
 %description
@@ -54,6 +54,9 @@ fi
 %{_datadir}/appdata/btbuilder.appdata.xml
 
 %changelog
+* Tue Jul 12 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.9-1
+- New version of btbuilder released.
+
 * Thu Apr 14 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.8-1
 - New version of btbuilder released.
 
