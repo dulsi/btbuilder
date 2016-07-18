@@ -20,8 +20,8 @@
 
 namespace fs = boost::filesystem;
 
-BTMainScreen::BTMainScreen(const char *a0, std::string lDir, int mult /*= 0*/)
- : argv0(a0), libDir(lDir), mainConfig(0), display(0), multiplier(mult)
+BTMainScreen::BTMainScreen(const char *a0, std::string lDir, int mult /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
+ : argv0(a0), libDir(lDir), mainConfig(0), display(0), multiplier(mult), fullScreen(full), softRenderer(softRender)
 {
 }
 
@@ -36,7 +36,7 @@ BTMainScreen::~BTMainScreen()
 void BTMainScreen::run()
 {
  loadMainConfig();
- display = new BTDisplay(mainConfig, true, multiplier);
+ display = new BTDisplay(mainConfig, true, multiplier, fullScreen, softRenderer);
  std::vector<std::string> fileModule;
  XMLVector<BTModule*> module;
  fs::directory_iterator end_iter;
@@ -101,7 +101,7 @@ void BTMainScreen::runModule(std::string moduleFile)
  }
  else
  {
-  display = new BTDisplay(&config, multiplier);
+  display = new BTDisplay(&config, multiplier, fullScreen, softRenderer);
  }
  BTGame::getGame()->run(*display);
  if (mainConfig)
@@ -124,7 +124,7 @@ void BTMainScreen::editModule(std::string moduleFile, std::string mapFile /*= st
  if (!display)
  {
   loadMainConfig();
-  display = new BTDisplay(mainConfig, true, multiplier);
+  display = new BTDisplay(mainConfig, true, multiplier, fullScreen, softRenderer);
  }
  if (mapFile.empty())
   editor.edit(*display);

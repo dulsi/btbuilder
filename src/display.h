@@ -91,7 +91,7 @@ class BTAnimation
 class BTDisplay : public ImageLoader
 {
  public:
-  BTDisplay(BTDisplayConfig *c, bool physfs = true, int multiplier = 0);
+  BTDisplay(BTDisplayConfig *c, bool physfs = true, int multiplier = 0, bool full = false, bool softRender = false);
   ~BTDisplay();
 
   enum alignment { left, center, right };
@@ -173,6 +173,7 @@ class BTDisplay : public ImageLoader
  private:
   int xFull, yFull;
   bool fullScreen;
+  bool softRenderer;
   BTDisplayConfig *config;
   BTDisplayExpanded *expanded;
   int xMult, yMult, lockMult;

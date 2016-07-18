@@ -31,8 +31,8 @@ BTSound::~BTSound()
  }
 }
 
-BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier /*= 0*/)
- : fullScreen(false), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0), mainWindow(0), mainRenderer(0), mainTexture(0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
+BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
+ : fullScreen(full), softRenderer(softRender), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0), mainWindow(0), mainRenderer(0), mainTexture(0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
  animation.animation = 0;
  animation.frame = 0;
@@ -109,7 +109,8 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  mainWindow = SDL_CreateWindow("Bt Builder",
                            SDL_WINDOWPOS_UNDEFINED,
                            SDL_WINDOWPOS_UNDEFINED,
-                           config->width * xMult, config->height * yMult,
+                           ((fullScreen && softRenderer) ? xFull : config->width * xMult),
+                           ((fullScreen && softRenderer) ? yFull : config->height * yMult),
                            (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
  if (mainWindow == NULL)
  {
@@ -117,7 +118,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   exit(0);
  }
 
- mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
+ mainRenderer = SDL_CreateRenderer(mainWindow, -1, (softRenderer ? SDL_RENDERER_SOFTWARE : 0));
  if (mainRenderer == NULL)
  {
   printf("Failed - SDL_CreateRenderer\n");
@@ -126,7 +127,8 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  mainTexture = SDL_CreateTexture(mainRenderer,
                              SDL_PIXELFORMAT_ARGB8888,
                              SDL_TEXTUREACCESS_STREAMING,
-                             config->width * xMult, config->height * yMult);
+                             ((fullScreen && softRenderer) ? xFull : config->width * xMult),
+                             ((fullScreen && softRenderer) ? yFull : config->height * yMult));
  if (mainTexture == NULL)
  {
   printf("Failed - SDL_CreateTexture\n");
@@ -1757,7 +1759,48 @@ void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Im
 
 void BTDisplay::render()
 {
- SDL_UpdateTexture(mainTexture, NULL, mainScreen->pixels, config->width * xMult * sizeof (Uint32));
+ if (fullScreen && softRenderer)
+ {
+  void *pixels;
+  int pitch;
+  SDL_Rect dest;
+  dest.x = 0;
+  dest.y = 0;
+  dest.w = xFull;
+  dest.h = yFull;
+  SDL_LockTexture(mainTexture, &dest, &pixels, &pitch);
+  double scaleWidth =  ((double)(config->width * xMult)) / (double)xFull;
+  double scaleHeight = ((double)(config->height * yMult)) / (double)yFull;
+  double curX = 0;
+  double curY = 0;
+  Uint8 *realLine;
+  Uint8 *realPos;
+  int cy;
+  int cx;
+
+  SDL_LockSurface(mainScreen);
+  realPos = (Uint8 *)pixels;
+  Uint8 *pixelSource = (Uint8*)mainScreen->pixels;
+  for (cy = 0; cy < yFull; cy++, curY += scaleHeight)
+  {
+   curX = 0;
+   realLine = realPos;
+   for (cx = 0; cx < xFull; cx++, curX += scaleWidth)
+   {
+    int pos = ((int)curY) * mainScreen->pitch + (((int)curX) * 4);
+    realPos[0] = pixelSource[pos];
+    realPos[1] = pixelSource[pos + 1];
+    realPos[2] = pixelSource[pos + 2];
+    realPos[3] = pixelSource[pos + 3];
+    realPos += 4;
+   }
+   realPos = realLine + pitch;
+  }
+  SDL_UnlockSurface(mainScreen);
+  SDL_UnlockTexture(mainTexture);
+ }
+ else
+  SDL_UpdateTexture(mainTexture, NULL, mainScreen->pixels, mainScreen->pitch);
  SDL_RenderClear(mainRenderer);
  SDL_RenderCopy(mainRenderer, mainTexture, NULL, NULL);
  SDL_RenderPresent(mainRenderer);

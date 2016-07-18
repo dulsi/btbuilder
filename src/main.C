@@ -104,7 +104,9 @@ int main(int argc, char *argv[])
  char *xmlFile = NULL;
  int multiplier = 0;
  std::string libDir(TOSTRING(BTBUILDERDIR));
- while ((opt = getopt_long(argc,argv,"imsap:x:e:l:u:", long_options, NULL)) != -1)
+ bool full = false;
+ bool softRender = false;
+ while ((opt = getopt_long(argc,argv,"imsap:x:e:l:u:fw", long_options, NULL)) != -1)
  {
   switch (opt)
   {
@@ -152,12 +154,18 @@ int main(int argc, char *argv[])
      multiplier = atol(optarg);
     }
     break;
+   case 'f':
+    full = true;
+    break;
+   case 'w':
+    softRender = true;
+    break;
    default:
     break;
   }
  }
 
- BTMainScreen mainScreen(argv[0], libDir, multiplier);
+ BTMainScreen mainScreen(argv[0], libDir, multiplier, full, softRender);
  if (optind >= argc)
  {
   if (mode != MODE_STANDARD)
