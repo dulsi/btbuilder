@@ -111,6 +111,8 @@ static size_t physfsrwops_read(SDL_RWops *rw, void *ptr, size_t size, size_t max
     {
         if (!PHYSFS_eof(handle)) /* not EOF? Must be an error. */
             SDL_SetError("PhysicsFS error: %s", PHYSFS_getLastError());
+        if (rc == -1)
+            rc = 0;
     } /* if */
 
     return((size_t) rc);
@@ -123,6 +125,8 @@ static size_t physfsrwops_write(SDL_RWops *rw, const void *ptr, size_t size, siz
     PHYSFS_sint64 rc = PHYSFS_write(handle, ptr, size, num);
     if (rc != num)
         SDL_SetError("PhysicsFS error: %s", PHYSFS_getLastError());
+    if (rc == -1)
+        rc = 0;
 
     return((size_t) rc);
 } /* physfsrwops_write */
