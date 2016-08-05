@@ -48,12 +48,10 @@ BTCore::~BTCore()
 
 std::string BTCore::descendMap(int depth)
 {
- for (XMLVector<BTLevel*>::iterator itr = levelList.begin(); itr != levelList.end(); ++itr)
+ BTLevel *curLevel = getLevel();
+ if (curLevel)
  {
-  if ((*itr)->contains(levelMap->getFilename()))
-  {
-   return (*itr)->deeper(levelMap->getFilename(), depth);
-  }
+  return curLevel->deeper(levelMap->getFilename(), depth);
  }
  return "";
 }
@@ -71,6 +69,18 @@ BTFactory<BTItem> &BTCore::getItemList()
 BTJobList &BTCore::getJobList()
 {
  return jobList;
+}
+
+BTLevel *BTCore::getLevel()
+{
+ for (XMLVector<BTLevel*>::iterator itr = levelList.begin(); itr != levelList.end(); ++itr)
+ {
+  if ((*itr)->contains(levelMap->getFilename()))
+  {
+   return *itr;
+  }
+ }
+ return NULL;
 }
 
 BTModule *BTCore::getModule()
@@ -1141,6 +1151,7 @@ void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, std::string &star
  s->add("teleporteffect", typeid(BTTeleportEffect).name(), &effect, &BTTeleportEffect::create);
  s->add("damagebonuseffect", typeid(BTDamageBonusEffect).name(), &effect, &BTDamageBonusEffect::create);
  s->add("detecteffect", typeid(BTDetectEffect).name(), &effect, &BTDetectEffect::create);
+ s->add("locationeffect", typeid(BTLocationEffect).name(), &effect, &BTLocationEffect::create);
 }
 
 void BTGame::readSaveXML(const char *filename)

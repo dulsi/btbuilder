@@ -358,6 +358,7 @@ class BTLevel : public XMLObject
  public:
   bool contains(const std::string &f);
   std::string deeper(const std::string &f, int down);
+  int level(const std::string &f);
 
   void serialize(ObjectSerializer* s);
 

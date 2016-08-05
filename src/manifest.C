@@ -84,6 +84,7 @@ void BTManifest::serializeSetup(ObjectSerializer *s, XMLVector<BTManifest*> &man
  s->add("rangeBonusManifest", typeid(BTRangeBonusManifest).name(), &manifest, &BTRangeBonusManifest::create);
  s->add("detectManifest", typeid(BTDetectManifest).name(), &manifest, &BTDetectManifest::create);
  s->add("randomManifest", typeid(BTRandomManifest).name(), &manifest, &BTRandomManifest::create);
+ s->add("locationManifest", typeid(BTLocationManifest).name(), &manifest, &BTLocationManifest::create);
  // Backward compatability
  s->add("armorBonusManifest", "-", &manifest, &BTBonusManifest::create);
  s->add("attackRateBonusManifest", "-", &manifest, &BTBonusManifest::create);
@@ -1247,3 +1248,17 @@ void BTRandomManifest::serialize(ObjectSerializer* s)
 const int BTRandomManifest::entries = 1;
 const char *BTRandomManifest::description[] = {"Roll"};
 const char *BTRandomManifest::field[] = {"roll"};
+
+BTManifest *BTLocationManifest::clone()
+{
+ return new BTLocationManifest(*this);
+}
+
+std::list<BTBaseEffect*> BTLocationManifest::manifest(bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source)
+{
+ std::list<BTBaseEffect*> effect;
+ if (combat != NULL)
+  return effect;
+ effect.push_back(new BTLocationEffect(type, expire, source));
+ return effect;
+}

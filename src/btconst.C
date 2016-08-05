@@ -54,7 +54,8 @@ const char *spellTypes[] =
  "Cure Status",
  "Teleport",
  "Melee Damage Bonus",
- "Detect Special"
+ "Detect Special",
+ "Location"
 };
 ArrayLookup spellTypeLookup(BT_SPELLTYPES_FULL, spellTypes);
 
@@ -311,7 +312,7 @@ int statusValue[] =
  BTSTATUS_STONED,
  BTSTATUS_PARALYZED
 };
-char *statusNames[] =
+const char *statusNames[] =
 {
  "Level drained",
  "Poisoned",

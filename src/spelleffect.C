@@ -2018,3 +2018,41 @@ void BTDetectEffect::serialize(ObjectSerializer* s)
  s->add("range", &range);
  s->add("flag", &flags, &flagList);
 }
+
+BTLocationEffect::BTLocationEffect(int t, int x, const BTEffectSource &s)
+ : BTBaseEffect(t, x, s)
+{
+}
+
+int BTLocationEffect::maintain(BTDisplay &d, BTCombat *combat)
+{
+ // If in combat do not report anything.
+ if (!combat)
+ {
+  BTGame *game = BTGame::getGame();
+  std::string text = "You face ";
+  text += directions[game->getFacing()];
+  BTLevel *level = game->getLevel();
+  if (level)
+  {
+   text += ", and are ";
+   char s[50];
+   snprintf(s, 50, "%d", level->level(game->getMap()->getFilename()));
+   text += s;
+   text += " levels below, ";
+   snprintf(s, 50, "%d", game->getYSize() - game->getY());
+   text += s;
+   text += " squares north, ";
+   snprintf(s, 50, "%d", game->getX());
+   text += s;
+   text += " squares east of the entry stairs.";
+  }
+  else
+  {
+   text += " and are in ";
+   text += game->getMap()->getName();
+   text += ".";
+  }
+  d.drawText(text.c_str());
+ }
+}

@@ -47,6 +47,7 @@ class BTCore : public Psuedo3DMap
   BTImageTagList &getImageTagList();
   BTFactory<BTItem> &getItemList();
   BTJobList &getJobList();
+  BTLevel *getLevel();
   BTModule *getModule();
   BTFactory<BTMonster> &getMonsterList();
   Psuedo3DConfigList &getPsuedo3DConfigList();

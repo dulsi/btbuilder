@@ -2173,6 +2173,16 @@ std::string BTLevel::deeper(const std::string &f, int down)
   return filename[where + down];
 }
 
+int BTLevel::level(const std::string &f)
+{
+ for (int i = 0; i < filename.size(); ++i)
+ {
+  if (filename[i] == f)
+   return i + 1;
+ }
+ return 0;
+}
+
 void BTLevel::serialize(ObjectSerializer* s)
 {
  s->add("group", &group);

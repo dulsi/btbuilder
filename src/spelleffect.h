@@ -462,5 +462,15 @@ class BTDetectEffect : public BTBaseEffect
   BitField flags;
 };
 
+class BTLocationEffect : public BTBaseEffect
+{
+ public:
+  BTLocationEffect(int t, int x, const BTEffectSource &s);
+
+  virtual int maintain(BTDisplay &d, BTCombat *combat);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTLocationEffect(0, 0, BTEffectSource()); }
+};
+
 #endif
 

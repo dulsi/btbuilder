@@ -463,5 +463,17 @@ class BTRandomManifest : public BTManifest
   static const char *field[];
 };
 
+class BTLocationManifest : public BTManifest
+{
+ public:
+  BTLocationManifest() {}
+  BTLocationManifest(int t) : BTManifest(t) {}
+
+  virtual BTManifest *clone();
+  virtual std::list<BTBaseEffect*> manifest(bool partySpell, BTCombat *combat, unsigned int expire, int casterLevel, int distance, int group, int target, const BTEffectSource &source);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTLocationManifest; }
+};
+
 #endif
 
