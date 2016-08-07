@@ -32,7 +32,11 @@ BTSound::~BTSound()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
- : fullScreen(full), softRenderer(softRender), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0), mainWindow(0), mainRenderer(0), mainTexture(0), mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
+ : fullScreen(full), softRenderer(softRender), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0),
+#ifdef SDL2LIB
+   mainWindow(0), mainRenderer(0), mainTexture(0),
+#endif
+   mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
 {
  animation.animation = 0;
  animation.frame = 0;
@@ -42,6 +46,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   exit(0);
  }
  Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG);
+#ifdef SDL2LIB
  SDL_DisplayMode info;
  int success = SDL_GetCurrentDisplayMode(0, &info);
  if (success != 0)
@@ -51,6 +56,11 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  }
  xFull = info.w;
  yFull = info.h;
+#else
+ const SDL_VideoInfo *info = SDL_GetVideoInfo();
+ xFull = info->current_w;
+ yFull = info->current_h;
+#endif
  if ((xMult == 0) || (yMult == 0))
  {
   xMult = (xFull - 10) / config->width; // Allow for window decoration
@@ -106,6 +116,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   exit(0);
  }
 #endif
+#ifdef SDL2LIB
  mainWindow = SDL_CreateWindow("Bt Builder",
                            SDL_WINDOWPOS_UNDEFINED,
                            SDL_WINDOWPOS_UNDEFINED,
@@ -144,6 +155,15 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   printf("Failed - SDL_CreateRGBSurface\n");
   exit(0);
  }
+#else
+ mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
+   SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
+ if (mainScreen == NULL)
+ {
+  printf("Failed - SDL_SetVideoMode\n");
+  exit(0);
+ }
+#endif
 #ifndef BTBUILDER_NOTTF
  if (font)
  {
@@ -160,7 +180,9 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  black.b = 0;
  setBackground(config->background, physfs);
 
-// SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+#ifndef SDL2LIB
+ SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+#endif
  SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
  SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
  SDL_EventState(SDL_MOUSEBUTTONUP, SDL_IGNORE);
@@ -180,10 +202,12 @@ BTDisplay::~BTDisplay()
  {
   SDL_FreeSurface(mainBackground);
  }
+#ifdef SDL2LIB
  if (mainScreen)
  {
   SDL_FreeSurface(mainScreen);
  }
+#endif
  element.clear();
  Mix_Quit();
  SDL_Quit();
@@ -795,7 +819,11 @@ void BTDisplay::playMusic(unsigned int effectID, const char *file, bool physfs /
   musicFile = SDL_RWFromFile(file, "rb");
  if (musicFile)
  {
+#ifdef SDL2LIB
   m->musicObj = Mix_LoadMUS_RW(musicFile, 0);
+#else
+  m->musicObj = Mix_LoadMUS_RW(musicFile);
+#endif
   if (m->musicObj)
    Mix_FadeInMusic(m->musicObj, -1, 1000);
  }
@@ -1372,6 +1400,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  text.h = c->text.h * newYMult;
  if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
  {
+#ifdef SDL2LIB
   SDL_DestroyTexture(mainTexture);
   SDL_DestroyRenderer(mainRenderer);
   SDL_DestroyWindow(mainWindow);
@@ -1401,6 +1430,15 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
    printf("Failed - SDL_CreateTexture\n");
    exit(0);
   }
+#else
+  mainScreen = SDL_SetVideoMode(c->width * newXMult, c->height * newYMult, 32,
+    SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
+  if (mainScreen == NULL)
+  {
+   printf("Failed - SDL_SetVideoMode\n");
+   exit(0);
+  }
+#endif
  }
  config = c;
  xMult = newXMult;
@@ -1570,6 +1608,7 @@ void BTDisplay::toggleFullScreen()
  src.h = dst.h = config->height * yMult;
  src.x = dst.x = 0;
  src.y = dst.y = 0;
+#ifdef SDL2LIB
  SDL_DestroyTexture(mainTexture);
  SDL_DestroyRenderer(mainRenderer);
  SDL_DestroyWindow(mainWindow);
@@ -1599,6 +1638,15 @@ void BTDisplay::toggleFullScreen()
   printf("Failed - SDL_CreateTexture\n");
   exit(0);
  }
+#else
+ mainScreen = SDL_SetVideoMode(config->width * xMult, config->height * yMult, 32,
+   SDL_SWSURFACE | (fullScreen ? SDL_FULLSCREEN : 0));
+ if (mainScreen == NULL)
+ {
+  printf("Failed - SDL_SetVideoMode\n");
+  exit(0);
+ }
+#endif
  render();
 }
 
@@ -1759,6 +1807,7 @@ void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Im
 
 void BTDisplay::render()
 {
+#ifdef SDL2LIB
  if (fullScreen && softRenderer)
  {
   void *pixels;
@@ -1804,6 +1853,9 @@ void BTDisplay::render()
  SDL_RenderClear(mainRenderer);
  SDL_RenderCopy(mainRenderer, mainTexture, NULL, NULL);
  SDL_RenderPresent(mainRenderer);
+#else
+ SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
+#endif
 }
 
 unsigned long BTDisplay::drawAnimationFrame()
@@ -1854,7 +1906,9 @@ void BTDisplay::setupKeyMap()
  key.insert(std::pair<SDL_Keycode, char>(SDLK_QUOTEDBL, '"'));
  key.insert(std::pair<SDL_Keycode, char>(SDLK_HASH, '#'));
  key.insert(std::pair<SDL_Keycode, char>(SDLK_DOLLAR, '$'));
+#ifdef SDL2LIB
  key.insert(std::pair<SDL_Keycode, char>(SDLK_PERCENT, '%'));
+#endif
  key.insert(std::pair<SDL_Keycode, char>(SDLK_AMPERSAND, '&'));
  key.insert(std::pair<SDL_Keycode, char>(SDLK_QUOTE, '\''));
  key.insert(std::pair<SDL_Keycode, char>(SDLK_LEFTPAREN, '('));

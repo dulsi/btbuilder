@@ -204,6 +204,9 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
                                         0x0000FF00,
                                         0x000000FF,
                                         0xFF000000);
+#ifdef SDLLIB
+   SDL_SetAlpha(display, 0, 0);
+#endif
   }
  }
 }

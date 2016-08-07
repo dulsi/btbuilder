@@ -23,16 +23,24 @@
 #include <stdio.h>  /* used for SEEK_SET, SEEK_CUR, SEEK_END ... */
 #include "physfsrwops.h"
 
+#ifdef SDL2LIB
 static Sint64 physfsrwops_size(SDL_RWops *rw)
 {
     PHYSFS_File *handle = (PHYSFS_File *) rw->hidden.unknown.data1;
     return PHYSFS_fileLength(handle);
 }
 
-static Sint64 physfsrwops_seek(SDL_RWops *rw, Sint64 offset, int whence)
+#define SDL2_Sint64 Sint64
+#define SDL2_size_t size_t
+#else
+#define SDL2_Sint64 int
+#define SDL2_size_t int
+#endif
+
+static SDL2_Sint64 physfsrwops_seek(SDL_RWops *rw, SDL2_Sint64 offset, int whence)
 {
     PHYSFS_File *handle = (PHYSFS_File *) rw->hidden.unknown.data1;
-    Sint64 pos = 0;
+    SDL2_Sint64 pos = 0;
 
     if (whence == SEEK_SET)
     {
@@ -103,7 +111,7 @@ static Sint64 physfsrwops_seek(SDL_RWops *rw, Sint64 offset, int whence)
 } /* physfsrwops_seek */
 
 
-static size_t physfsrwops_read(SDL_RWops *rw, void *ptr, size_t size, size_t maxnum)
+static SDL2_size_t physfsrwops_read(SDL_RWops *rw, void *ptr, SDL2_size_t size, SDL2_size_t maxnum)
 {
     PHYSFS_File *handle = (PHYSFS_File *) rw->hidden.unknown.data1;
     PHYSFS_sint64 rc = PHYSFS_read(handle, ptr, size, maxnum);
@@ -115,11 +123,11 @@ static size_t physfsrwops_read(SDL_RWops *rw, void *ptr, size_t size, size_t max
             rc = 0;
     } /* if */
 
-    return((size_t) rc);
+    return((SDL2_size_t) rc);
 } /* physfsrwops_read */
 
 
-static size_t physfsrwops_write(SDL_RWops *rw, const void *ptr, size_t size, size_t num)
+static SDL2_size_t physfsrwops_write(SDL_RWops *rw, const void *ptr, SDL2_size_t size, SDL2_size_t num)
 {
     PHYSFS_File *handle = (PHYSFS_File *) rw->hidden.unknown.data1;
     PHYSFS_sint64 rc = PHYSFS_write(handle, ptr, size, num);
@@ -128,7 +136,7 @@ static size_t physfsrwops_write(SDL_RWops *rw, const void *ptr, size_t size, siz
     if (rc == -1)
         rc = 0;
 
-    return((size_t) rc);
+    return((SDL2_size_t) rc);
 } /* physfsrwops_write */
 
 
@@ -158,12 +166,14 @@ static SDL_RWops *create_rwops(PHYSFS_File *handle)
         retval = SDL_AllocRW();
         if (retval != NULL)
         {
-            retval->size  = physfsrwops_size;
             retval->seek  = physfsrwops_seek;
             retval->read  = physfsrwops_read;
             retval->write = physfsrwops_write;
             retval->close = physfsrwops_close;
+#ifdef SDL2LIB
+            retval->size  = physfsrwops_size;
             retval->type = SDL_RWOPS_UNKNOWN;
+#endif
             retval->hidden.unknown.data1 = handle;
         } /* if */
     } /* else */

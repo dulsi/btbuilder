@@ -3,7 +3,7 @@ SDL_LDFLAGS := $(shell pkg-config --libs sdl2 SDL2_image SDL2_mixer SDL2_ttf)
 
 CXX = g++
 CC = gcc
-CXXFLAGS = -g -DSDLLIB $(SDL_CFLAGS) -Isrc/ --std=c++11
+CXXFLAGS = -g -DSDL2LIB $(SDL_CFLAGS) -Isrc/ --std=c++11
 LIBS = $(SDL_LDFLAGS) --std=c++11 -lexpat -lphysfs \
 	-lboost_filesystem -lboost_system -lpng -lSDL_mng
 
