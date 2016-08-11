@@ -778,12 +778,15 @@
  </imageTag>
  <imageTag> <!--242-->
   <name>Lesser Daemon 01</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--243-->
   <name>Lesser Daemon 02</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--244-->
   <name>Lesser Daemon 03</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--245-->
   <name>Greater Daemon 01</name>
@@ -814,9 +817,11 @@
  </imageTag>
  <imageTag> <!--254-->
   <name>Snake 01</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--255-->
   <name>Snake 02</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--256-->
   <name>Giant Wasp</name>
@@ -833,6 +838,7 @@
  </imageTag>
  <imageTag> <!--260-->
   <name>Purple Worm</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--261-->
   <name>Phromina</name>
@@ -1024,7 +1030,8 @@
   <name>Chained Dragon 02</name>
  </imageTag>
  <imageTag> <!--320-->
-  <name>Dragon 01</name>
+  <name>Pseudodragon</name>
+  <artist>Madin Tolifen</artist>
  </imageTag>
  <imageTag> <!--321-->
   <name>Dragon 02</name>
@@ -1210,6 +1217,26 @@
  </imageTag>
  <imageTag> <!--375-->
   <name>Gelatinous Cube</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+  <imageTag> <!--376-->
+  <name>Watcher</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--377-->
+  <name>Lion</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--378-->
+  <name>Cheetah</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+  <imageTag> <!--379-->
+  <name>Tiger</name>
+  <artist>Madin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--380-->
+  <name>Dragon Bug</name>
   <artist>Madin Tolifen</artist>
  </imageTag>
 </data>
