@@ -226,12 +226,14 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
      xPos = 0;
     break;
    case BTKEY_PGDN:
+   case '2':
     if (facing < 3)
      facing++;
     else
      facing = 0;
     break;
    case BTKEY_END:
+   case '1':
     if (facing > 0)
      facing--;
     else
