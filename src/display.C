@@ -1407,7 +1407,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   mainWindow = SDL_CreateWindow("Bt Builder",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
-                            config->width * xMult, config->height * yMult,
+                            c->width * newXMult, c->height * newYMult,
                             (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
   if (mainWindow == NULL)
   {
@@ -1424,7 +1424,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   mainTexture = SDL_CreateTexture(mainRenderer,
                               SDL_PIXELFORMAT_ARGB8888,
                               SDL_TEXTUREACCESS_STREAMING,
-                              config->width * xMult, config->height * yMult);
+                              c->width * newXMult, c->height * newYMult);
   if (mainTexture == NULL)
   {
    printf("Failed - SDL_CreateTexture\n");
