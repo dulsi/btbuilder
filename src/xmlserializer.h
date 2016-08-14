@@ -102,11 +102,12 @@ class PictureIndex
 #define XMLTYPE_BITFIELD   7
 #define XMLTYPE_INT16      8
 #define XMLTYPE_UINT16     9
-#define XMLTYPE_STDSTRING  10
-#define XMLTYPE_VECTORUINT 11
-#define XMLTYPE_VECTORSTRING 12
-#define XMLTYPE_PICTURE    13
-#define XMLTYPE_VECTORINT  14
+#define XMLTYPE_UCHAR      10
+#define XMLTYPE_STDSTRING  11
+#define XMLTYPE_VECTORUINT 12
+#define XMLTYPE_VECTORSTRING 13
+#define XMLTYPE_PICTURE    14
+#define XMLTYPE_VECTORINT  15
 
 #define EXTRA_NONE -999
 
@@ -153,6 +154,7 @@ class ObjectSerializer
   void add(const char *name, unsigned int *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, int16_t *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, uint16_t *p, std::vector<XMLAttribute> *atts = NULL);
+  void add(const char *name, unsigned char *p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, char **p, std::vector<XMLAttribute> *atts = NULL);
   void add(const char *name, std::string *p, std::vector<XMLAttribute> *atts = NULL, bool delFlg = false);
   void add(const char *name, BitField *p, ValueLookup *lookup, std::vector<XMLAttribute> *atts = NULL);

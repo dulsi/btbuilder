@@ -20,6 +20,19 @@ class BTStatusInfo : public XMLObject
   virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc) = 0;
 };
 
+class BTStatCompare : public XMLObject
+{
+ public:
+  BTStatCompare() : full("black"), half("black") {}
+
+  virtual void serialize(ObjectSerializer* s);
+
+ public:
+  std::string attribute;
+  std::string full;
+  std::string half;
+};
+
 class BTStatBlock : public BTStatusInfo
 {
  public:
@@ -39,12 +52,13 @@ class BTStatBlock : public BTStatusInfo
   int maxValue;
   char *overflow;
   /*BTDisplay::alignment*/int align;
+  BTStatCompare compare;
 };
 
 class BTPrint : public BTStatusInfo
 {
  public:
-  BTPrint() : text(0), align(0) {}
+  BTPrint() : text(0), align(0), color("black") {}
   ~BTPrint() { if (text) delete [] text; }
 
   virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
@@ -56,6 +70,7 @@ class BTPrint : public BTStatusInfo
   char *text;
   SerialRect position;
   /*BTDisplay::alignment*/int align;
+  std::string color;
 };
 
 class BTCondition : public XMLObject

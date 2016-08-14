@@ -95,6 +95,10 @@ std::string XMLAction::createString()
    sprintf(convert, "%u", *(reinterpret_cast<uint16_t*>(object)));
    content = convert;
    break;
+  case XMLTYPE_UCHAR:
+   sprintf(convert, "%u", *(reinterpret_cast<unsigned char*>(object)));
+   content = convert;
+   break;
   case XMLTYPE_STRING:
   {
    content = *(reinterpret_cast<char**>(object));
@@ -241,6 +245,17 @@ void ObjectSerializer::add(const char *name, int16_t *p, std::vector<XMLAttribut
  act->name = ns + name;
  act->attrib = atts;
  act->type = XMLTYPE_INT16;
+ act->level = getLevel();
+ act->object = reinterpret_cast<void*>(p);
+ action.push_back(act);
+}
+
+void ObjectSerializer::add(const char *name, unsigned char *p, std::vector<XMLAttribute> *atts /*= NULL*/)
+{
+ XMLAction *act = new XMLAction;
+ act->name = ns + name;
+ act->attrib = atts;
+ act->type = XMLTYPE_UCHAR;
  act->level = getLevel();
  act->object = reinterpret_cast<void*>(p);
  action.push_back(act);
@@ -495,6 +510,13 @@ void XMLSerializer::endElement(const XML_Char *name)
      *(reinterpret_cast<uint16_t*>(state->object)) = u;
      break;
     }
+    case XMLTYPE_UCHAR:
+    {
+     unsigned int u;
+     sscanf(content.c_str(), "%u", &u);
+     *(reinterpret_cast<unsigned char*>(state->object)) = u;
+     break;
+    }
     case XMLTYPE_STRING:
     {
      char *str = *(reinterpret_cast<char**>(state->object));
@@ -711,6 +733,7 @@ void XMLSerializer::write(const char *filename, bool physfs)
    case XMLTYPE_UINT:
    case XMLTYPE_INT16:
    case XMLTYPE_UINT16:
+   case XMLTYPE_UCHAR:
    case XMLTYPE_STRING:
    case XMLTYPE_STDSTRING:
    case XMLTYPE_PICTURE:

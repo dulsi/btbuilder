@@ -146,6 +146,7 @@ class BTDisplay : public ImageLoader
   void drawMap(bool knowledge);
   void drawStats();
   SDL_Color &getBlack();
+  SDL_Color &getColor(const std::string &color);
   BTDisplayConfig *getConfig();
   int getCurrentImage();
   std::string getCurrentLabel();

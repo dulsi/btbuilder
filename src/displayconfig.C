@@ -26,6 +26,23 @@ void BTDisplayExpanded::serialize(ObjectSerializer* s)
  s->add("fontsize", &fontsize);
 }
 
+BTDisplayColor::BTDisplayColor()
+{
+ rgb.a = 255;
+}
+
+BTDisplayColor::~BTDisplayColor()
+{
+}
+
+void BTDisplayColor::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("r", &rgb.r);
+ s->add("g", &rgb.g);
+ s->add("b", &rgb.b);
+}
+
 BTDisplayConfig::BTDisplayConfig()
  : x3d(0), y3d(0), background(0), font(0), fontsize(6), xMap(0), yMap(0), widthMap(0), heightMap(0), mapDisplayMode(BTMAPDISPLAYMODE_REQUEST), centerMap(true), coordinatesMap(false)
 {
@@ -49,6 +66,7 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("fontsize", &fontsize);
  s->add("x3d", &x3d);
  s->add("y3d", &y3d);
+ s->add("color", &color, &BTDisplayColor::create);
  s->add("label", &label);
  s->add("text", &text);
  for (int i = 0; i < BT_PARTYSIZE; ++i)

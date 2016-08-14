@@ -8,6 +8,13 @@
 #include "statusinfo.h"
 #include "display.h"
 
+void BTStatCompare::serialize(ObjectSerializer* s)
+{
+ s->add("attribute", &attribute);
+ s->add("full", &full);
+ s->add("half", &half);
+}
+
 void BTStatBlock::serialize(ObjectSerializer* s)
 {
  s->add("attribute", &attribute);
@@ -17,12 +24,14 @@ void BTStatBlock::serialize(ObjectSerializer* s)
  s->add("max", &maxValue);
  s->add("overflow", &overflow);
  s->add("align", &align, NULL, &BTAlignmentLookup::lookup);
+ s->add("compare", &compare);
 }
 
 void BTStatBlock::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
 {
  int xMult, yMult;
  SDL_Rect dst;
+ std::string color("black");
  d.getMultiplier(xMult, yMult);
  dst.x = (x + position.x) * xMult;
  dst.y = (y + position.y) * yMult;
@@ -35,14 +44,27 @@ void BTStatBlock::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
   {
    case XMLTYPE_BOOL:
     if (*(reinterpret_cast<bool*>(state->object)))
-     d.drawFont("true", dst, d.getBlack(), (BTDisplay::alignment)align);
+     d.drawFont("true", dst, d.getColor(color), (BTDisplay::alignment)align);
     else
-     d.drawFont("false", dst, d.getBlack(), (BTDisplay::alignment)align);
+     d.drawFont("false", dst, d.getColor(color), (BTDisplay::alignment)align);
     break;
    case XMLTYPE_INT:
+    if (compare.attribute != "")
+    {
+     XMLAction *cmpState = pc->find(compare.attribute.c_str(), NULL);
+     if ((cmpState) && (cmpState->getType() == XMLTYPE_INT))
+     {
+      int curVal = *(reinterpret_cast<int*>(state->object));
+      int maxVal = *(reinterpret_cast<int*>(cmpState->object));
+      if (maxVal == curVal)
+       color = compare.full;
+      else if (curVal < (maxVal / 2))
+       color = compare.half;
+     }
+    }
     if (state->data)
     {
-     d.drawFont(reinterpret_cast<ValueLookup*>(state->data)->getName(*(reinterpret_cast<int*>(state->object))).c_str(), dst, d.getBlack(), (BTDisplay::alignment)align);
+     d.drawFont(reinterpret_cast<ValueLookup*>(state->data)->getName(*(reinterpret_cast<int*>(state->object))).c_str(), dst, d.getColor(color), (BTDisplay::alignment)align);
     }
     else
     {
@@ -51,13 +73,13 @@ void BTStatBlock::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
       val *= -1;
      if ((maxValue != -1) && (maxValue < val))
      {
-      d.drawFont(overflow, dst, d.getBlack(), (BTDisplay::alignment)align);
+      d.drawFont(overflow, dst, d.getColor(color), (BTDisplay::alignment)align);
      }
      else
      {
       char tmp[40];
       snprintf(tmp, 40, "%d", val);
-      d.drawFont(tmp, dst, d.getBlack(), (BTDisplay::alignment)align);
+      d.drawFont(tmp, dst, d.getColor(color), (BTDisplay::alignment)align);
      }
     }
     break;
@@ -69,7 +91,7 @@ void BTStatBlock::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
     break;
    }
    case XMLTYPE_STRING:
-    d.drawFont(*(reinterpret_cast<char**>(state->object)), dst, d.getBlack(), (BTDisplay::alignment)align);
+    d.drawFont(*(reinterpret_cast<char**>(state->object)), dst, d.getColor(color), (BTDisplay::alignment)align);
     break;
    case XMLTYPE_BITFIELD:
    default:
@@ -83,6 +105,7 @@ void BTPrint::serialize(ObjectSerializer* s)
  s->add("text", &text);
  s->add("position", &position);
  s->add("align", &align, NULL, &BTAlignmentLookup::lookup);
+ s->add("color", &color);
 }
 
 void BTPrint::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
@@ -94,7 +117,7 @@ void BTPrint::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
  dst.y = (y + position.y) * yMult;
  dst.w = position.w * xMult;
  dst.h = position.h * yMult;
- d.drawFont(text, dst, d.getBlack(), (BTDisplay::alignment)align);
+ d.drawFont(text, dst, d.getColor(color), (BTDisplay::alignment)align);
 }
 
 bool BTCondition::compare(ObjectSerializer *pc) const

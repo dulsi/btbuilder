@@ -774,6 +774,14 @@ SDL_Color &BTDisplay::getBlack()
  return black;
 }
 
+SDL_Color &BTDisplay::getColor(const std::string &color)
+{
+ for (int i = 0; i < config->color.size(); ++i)
+  if (config->color[i]->name == color)
+   return config->color[i]->rgb;
+ return black;
+}
+
 BTDisplayConfig *BTDisplay::getConfig()
 {
  return config;
