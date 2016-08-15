@@ -1344,7 +1344,6 @@ void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
  }
  loadImageOrAnimation(file, &mainBackground, NULL, physfs);
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
- render();
 }
 
 void BTDisplay::setConfig(BTDisplayConfig *c)
@@ -1409,33 +1408,49 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
  {
 #ifdef SDL2LIB
-  SDL_DestroyTexture(mainTexture);
-  SDL_DestroyRenderer(mainRenderer);
-  SDL_DestroyWindow(mainWindow);
-  mainWindow = SDL_CreateWindow("Bt Builder",
-                            SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED,
-                            c->width * newXMult, c->height * newYMult,
-                            (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
-  if (mainWindow == NULL)
+  SDL_FreeSurface(mainScreen);
+  if (!(fullScreen && softRenderer))
   {
-   printf("Failed - SDL_CreateWindow\n");
-   exit(0);
-  }
+   SDL_DestroyTexture(mainTexture);
+   SDL_DestroyRenderer(mainRenderer);
+   SDL_DestroyWindow(mainWindow);
+   mainWindow = SDL_CreateWindow("Bt Builder",
+                             SDL_WINDOWPOS_UNDEFINED,
+                             SDL_WINDOWPOS_UNDEFINED,
+                             ((fullScreen && softRenderer) ? xFull : c->width * newXMult),
+                             ((fullScreen && softRenderer) ? yFull : c->height * newYMult),
+                             (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+   if (mainWindow == NULL)
+   {
+    printf("Failed - SDL_CreateWindow\n");
+    exit(0);
+   }
 
-  mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
-  if (mainRenderer == NULL)
-  {
-   printf("Failed - SDL_CreateRenderer\n");
-   exit(0);
+   mainRenderer = SDL_CreateRenderer(mainWindow, -1, 0);
+   if (mainRenderer == NULL)
+   {
+    printf("Failed - SDL_CreateRenderer\n");
+    exit(0);
+   }
+   mainTexture = SDL_CreateTexture(mainRenderer,
+                               SDL_PIXELFORMAT_ARGB8888,
+                               SDL_TEXTUREACCESS_STREAMING,
+                               ((fullScreen && softRenderer) ? xFull : c->width * newXMult),
+                               ((fullScreen && softRenderer) ? yFull : c->height * newYMult));
+   if (mainTexture == NULL)
+   {
+    printf("Failed - SDL_CreateTexture\n");
+    exit(0);
+   }
   }
-  mainTexture = SDL_CreateTexture(mainRenderer,
-                              SDL_PIXELFORMAT_ARGB8888,
-                              SDL_TEXTUREACCESS_STREAMING,
-                              c->width * newXMult, c->height * newYMult);
-  if (mainTexture == NULL)
+  mainScreen = SDL_CreateRGBSurface(0, c->width * newXMult, c->height * newYMult, 32,
+                                         0x00FF0000,
+                                         0x0000FF00,
+                                         0x000000FF,
+                                         0xFF000000);
+  if (mainScreen == NULL)
   {
-   printf("Failed - SDL_CreateTexture\n");
+   printf("Failed - SDL_CreateRGBSurface\n");
    exit(0);
   }
 #else
@@ -1623,7 +1638,8 @@ void BTDisplay::toggleFullScreen()
  mainWindow = SDL_CreateWindow("Bt Builder",
                            SDL_WINDOWPOS_UNDEFINED,
                            SDL_WINDOWPOS_UNDEFINED,
-                           config->width * xMult, config->height * yMult,
+                           ((fullScreen && softRenderer) ? xFull : config->width * xMult),
+                           ((fullScreen && softRenderer) ? yFull : config->height * yMult),
                            (fullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
  if (mainWindow == NULL)
  {
@@ -1640,7 +1656,8 @@ void BTDisplay::toggleFullScreen()
  mainTexture = SDL_CreateTexture(mainRenderer,
                              SDL_PIXELFORMAT_ARGB8888,
                              SDL_TEXTUREACCESS_STREAMING,
-                             config->width * xMult, config->height * yMult);
+                             ((fullScreen && softRenderer) ? xFull : config->width * xMult),
+                             ((fullScreen && softRenderer) ? yFull : config->height * yMult));
  if (mainTexture == NULL)
  {
   printf("Failed - SDL_CreateTexture\n");
