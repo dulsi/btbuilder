@@ -28,7 +28,9 @@ void BTDisplayExpanded::serialize(ObjectSerializer* s)
 
 BTDisplayColor::BTDisplayColor()
 {
+#ifdef SDL2LIB
  rgb.a = 255;
+#endif
 }
 
 BTDisplayColor::~BTDisplayColor()
