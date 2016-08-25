@@ -157,7 +157,7 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
  config = configNew;
  if (configNew)
  {
-  background = loadImage(config->background);
+  background = loadImage(config->background, true);
   walls = new SDL_Surface_ary[config->wallType.size()];
   for (int i = 0; i < config->wallType.size(); ++i)
   {
@@ -166,7 +166,7 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
    {
     if (config->wallType[i]->walls[j])
     {
-     walls[i][j] = loadImage(config->wallType[i]->walls[j]);
+     walls[i][j] = loadImage(config->wallType[i]->walls[j], true);
     }
     else
      walls[i][j] = NULL;
@@ -179,20 +179,20 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
    for (int j = 0; j < CARDINAL_DIRECTIONS; ++j)
     if (config->mapType[i]->mapWalls[j])
     {
-     mapWalls[i][j] = loadImage(config->mapType[i]->mapWalls[j]);
+     mapWalls[i][j] = loadImage(config->mapType[i]->mapWalls[j], false);
     }
     else
      mapWalls[i][j] = NULL;
   }
   if (config->mapSpecial)
-   mapSpecial = loadImage(config->mapSpecial);
+   mapSpecial = loadImage(config->mapSpecial, false);
   if (config->mapUnknown)
-   mapUnknown = loadImage(config->mapUnknown);
+   mapUnknown = loadImage(config->mapUnknown, false);
   for (int i = 0; i < CARDINAL_DIRECTIONS; ++i)
   {
    if (config->mapArrows[i])
    {
-    mapArrows[i] = loadImage(config->mapArrows[i]);
+    mapArrows[i] = loadImage(config->mapArrows[i], false);
    }
    else
     mapArrows[i] = NULL;
@@ -290,10 +290,10 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
  }
 }
 
-SDL_Surface *Psuedo3D::loadImage(const char *file)
+SDL_Surface *Psuedo3D::loadImage(const char *file, bool imageWindow)
 {
  SDL_Surface *img = NULL;
- imgLoad->loadImageOrAnimation(file, &img, NULL);
+ imgLoad->loadImageOrAnimation(file, &img, NULL, imageWindow);
  if (NULL == img)
  {
   printf((std::string("Failed - Loading image/") + file + std::string("\n")).c_str());

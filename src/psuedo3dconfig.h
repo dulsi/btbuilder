@@ -120,6 +120,7 @@ class Psuedo3DConfig : public XMLObject
 
   std::string name;
   int height, width;
+  std::string directory;
   int divide;
   char *background;
   XMLVector<Psuedo3DWallType*> wallType;

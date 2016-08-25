@@ -389,7 +389,7 @@ void BTDisplay::drawImage(int pic)
  snprintf(filename, 50, "slot%d.ng", pic);
  SDL_Rect src, dst;
  SDL_Surface *img = NULL;
- loadImageOrAnimation(filename, &img, &animation.animation);
+ loadImageOrAnimation(filename, &img, &animation.animation, true);
  if (animation.animation)
  {
   IMG_SetAnimationState(&animation, -1, 0);
@@ -1342,7 +1342,7 @@ void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
   SDL_FreeSurface(mainBackground);
   mainBackground = NULL;
  }
- loadImageOrAnimation(file, &mainBackground, NULL, physfs);
+ loadImageOrAnimation(file, &mainBackground, NULL, false, physfs);
  SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
 }
 
@@ -1737,12 +1737,19 @@ void BTDisplay::drawRect(SDL_Rect &dst, SDL_Color c)
  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, c.r, c.g, c.b));
 }
 
-void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs /*= true*/)
+void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool imageWindow, bool physfs /*= true*/)
 {
  if (expanded)
  {
   std::string filename = "image/";
-  filename += expanded->directory;
+  if ((imageWindow) && ("" != expanded->imageDirectory))
+  {
+   filename += expanded->imageDirectory;
+  }
+  else
+  {
+   filename += expanded->directory;
+  }
   filename += "/";
   filename += file;
   bool exists = false;
@@ -1788,6 +1795,11 @@ void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Im
   }
  }
  std::string filename = "image/";
+ if ((imageWindow) && ("" != p3d.config->directory))
+ {
+  filename += p3d.config->directory;
+  filename += "/";
+ }
  filename += file;
  bool exists = false;
  if (physfs)

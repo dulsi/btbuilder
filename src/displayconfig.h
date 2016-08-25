@@ -26,6 +26,7 @@ class BTDisplayExpanded : public XMLObject
  public:
   int xMult, yMult;
   std::string directory;
+  std::string imageDirectory;
   char *font;
   int fontsize;
 };

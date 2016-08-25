@@ -90,6 +90,7 @@ void Psuedo3DConfig::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("height", &height);
  s->add("width", &width);
+ s->add("directory", &directory);
  s->add("background", &background);
  s->add("divide", &divide);
  s->add("walltype", &wallType, &Psuedo3DWallType::create);

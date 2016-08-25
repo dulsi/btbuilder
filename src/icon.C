@@ -30,7 +30,7 @@ void BTIcon::draw(BTDisplay &d, unsigned long ticks)
  d.getMultiplier(xMult, yMult);
  if ((NULL == img) && (NULL == animation.animation))
  {
-  d.loadImageOrAnimation(image, &img, &animation.animation);
+  d.loadImageOrAnimation(image, &img, &animation.animation, false);
  }
  dst.x = position.x * xMult;
  dst.y = position.y * yMult;
@@ -134,7 +134,7 @@ void BTFacingIcon::draw(BTDisplay &d, unsigned long ticks)
     std::string filename(image, period - image);
     filename.append(1, '0' + facing);
     filename += period;
-    d.loadImageOrAnimation(filename.c_str(), &dirImg[facing], &dirAni[facing].animation);
+    d.loadImageOrAnimation(filename.c_str(), &dirImg[facing], &dirAni[facing].animation, false);
    }
    if (dirImg[facing])
     d.drawImage(dst, dirImg[facing]);

@@ -22,6 +22,7 @@ void BTDisplayExpanded::serialize(ObjectSerializer* s)
  s->add("xMult", &xMult);
  s->add("yMult", &yMult);
  s->add("directory", &directory);
+ s->add("imageDirectory", &imageDirectory);
  s->add("font", &font);
  s->add("fontsize", &fontsize);
 }

@@ -15,7 +15,7 @@
 class ImageLoader
 {
  public:
-  virtual void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs = true) = 0;
+  virtual void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool imageWindow, bool physfs = true) = 0;
 };
 
 class Psuedo3D
@@ -38,7 +38,7 @@ class Psuedo3D
  protected:
   void drawEdge(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
   void drawFront(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
-  SDL_Surface *loadImage(const char *file);
+  SDL_Surface *loadImage(const char *file, bool imageWindow);
 
  public:
   typedef SDL_Surface *SDL_Surface_ptr;

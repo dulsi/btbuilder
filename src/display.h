@@ -173,7 +173,7 @@ class BTDisplay : public ImageLoader
   void drawImage(SDL_Rect &dst, SDL_Surface *img);
   void drawRect(SDL_Rect &dst, SDL_Color c);
 
-  void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool physfs = true);
+  void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool imageWindow, bool physfs = true);
 
   void render();
 
