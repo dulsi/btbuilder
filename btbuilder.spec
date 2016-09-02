@@ -1,7 +1,7 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
 Version: 0.5.11
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
 Group: Amusements/Games
@@ -16,6 +16,7 @@ BuildRequires: SDL2_mixer-devel
 BuildRequires: SDL_mng-devel
 BuildRequires: SDL2_ttf-devel
 BuildRequires: desktop-file-utils
+Requires:       %{name}-data = %{version}
 
 %description
 Bt Builder is a turn based role-playing game builder and engine in the style
@@ -23,6 +24,14 @@ of the old Bard's Tale series. It completely supports the functionality of the
 Bard's Tale Construction Set. The eventual goal is to make a game builder that
 can implement the three main Bard's Tale games in addition to Construction Set
 games.
+
+%package	data
+Summary:	%{summary}
+Requires:	%{name} = %{version}
+BuildArch:      noarch
+
+%description	data
+This package contains the data files for Bt Builder.
 
 %prep
 %setup -q
@@ -46,14 +55,20 @@ fi
 /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %files
-%doc README COPYING
+%doc README
 %{_bindir}/*
-%{_datadir}/btbuilder
 %{_datadir}/icons/hicolor/*/apps/btbuilder.png
 %{_datadir}/applications/btbuilder.desktop
 %{_datadir}/appdata/btbuilder.appdata.xml
 
+%files data
+%license COPYING
+%{_datadir}/btbuilder
+
 %changelog
+* Fri Sep 02 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.11-2
+- Separate data files into seperate package.
+
 * Sat Aug 20 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.11-1
 - New version of btbuilder released.
 
