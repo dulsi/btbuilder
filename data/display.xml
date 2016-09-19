@@ -5,7 +5,7 @@
 	<background>ui/gamescreen.png</background>
 	<x3d>16</x3d>
 	<y3d>15</y3d>
-	<label><x>16</x><y>103</y><w>112</w><h>13</h></label>
+	<label><name>main</name><location><x>16</x><y>103</y><w>112</w><h>13</h></location></label>
 	<text><x>168</x><y>14</y><w>136</w><h>96</h></text>
 	<status number="1"><x>10</x><y>144</y><w>302</w><h>8</h></status>
 	<status number="2"><x>10</x><y>152</y><w>302</w><h>8</h></status>

@@ -71,6 +71,26 @@ class BTUIElement
   SDL_Rect position;
 };
 
+class BTLabelWidget
+{
+ public:
+  BTLabelWidget(BTLabelConfig *c, int xMult, int yMult);
+  virtual ~BTLabelWidget() {}
+
+  std::string getName() { return config->name; }
+
+  std::string getText() { return text; }
+
+  void render(BTDisplay *d);
+
+  void setText(const std::string &t) { text = t; }
+
+ protected:
+  BTLabelConfig *config;
+  SDL_Rect location;
+  std::string text;
+};
+
 
 class BTMusic
 {
@@ -193,8 +213,7 @@ class BTDisplay : public ImageLoader
   BTDisplayConfig *config;
   BTDisplayExpanded *expanded;
   int xMult, yMult, lockMult;
-  SDL_Rect label;
-  std::string labelText;
+  std::vector<BTLabelWidget*> widgets;
   SDL_Rect text;
   BTStatusBar status;
   int textPos;

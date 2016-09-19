@@ -46,6 +46,22 @@ void BTDisplayColor::serialize(ObjectSerializer* s)
  s->add("b", &rgb.b);
 }
 
+BTLabelConfig::BTLabelConfig()
+ : color("white")
+{
+}
+
+BTLabelConfig::~BTLabelConfig()
+{
+}
+
+void BTLabelConfig::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("location", &location);
+ s->add("color", &color);
+}
+
 BTDisplayConfig::BTDisplayConfig()
  : x3d(0), y3d(0), background(0), font(0), fontsize(6), xMap(0), yMap(0), widthMap(0), heightMap(0), mapDisplayMode(BTMAPDISPLAYMODE_REQUEST), centerMap(true), coordinatesMap(false)
 {
@@ -70,7 +86,7 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("x3d", &x3d);
  s->add("y3d", &y3d);
  s->add("color", &color, &BTDisplayColor::create);
- s->add("label", &label);
+ s->add("label", &widgets, &BTLabelConfig::create);
  s->add("text", &text);
  for (int i = 0; i < BT_PARTYSIZE; ++i)
  {

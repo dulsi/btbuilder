@@ -15,6 +15,21 @@
 
 const char *BTDisplay::allKeys = "allKeys";
 
+BTLabelWidget::BTLabelWidget(BTLabelConfig *c, int xMult, int yMult)
+ : config(c)
+{
+ location.x = config->location.x * xMult;
+ location.y = config->location.y * yMult;
+ location.w = config->location.w * xMult;
+ location.h = config->location.h * yMult;
+}
+
+void BTLabelWidget::render(BTDisplay *d)
+{
+ d->clear(location);
+ d->drawFont(text.c_str(), location, d->getColor(config->color), BTDisplay::center);
+}
+
 BTMusic::~BTMusic()
 {
  if (musicObj)
@@ -101,10 +116,10 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   xMult = yMult = 1;
  }
  p3d.setMultiplier(xMult, yMult);
- label.x = config->label.x * xMult;
- label.y = config->label.y * yMult;
- label.w = config->label.w * xMult;
- label.h = config->label.h * yMult;
+ for (int i = 0; i < config->widgets.size(); ++i)
+ {
+  widgets.push_back(new BTLabelWidget(config->widgets[i], xMult, yMult));
+ }
  text.x = config->text.x * xMult;
  text.y = config->text.y * yMult;
  text.w = config->text.w * xMult;
@@ -457,9 +472,14 @@ void BTDisplay::drawLabel(const char *name)
  int w, h;
  if (!sizeFont(name, w, h))
   return;
- labelText = name;
- SDL_BlitSurface(mainBackground, &label, mainScreen, &label);
- drawFont(name, label, white, center);
+ for (int i = 0; i < widgets.size(); i++)
+ {
+  if (widgets[i]->getName() == std::string("main"))
+  {
+   widgets[i]->setText(name);
+   widgets[i]->render(this);
+  }
+ }
 }
 
 void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= left*/)
@@ -779,6 +799,8 @@ SDL_Color &BTDisplay::getColor(const std::string &color)
  for (int i = 0; i < config->color.size(); ++i)
   if (config->color[i]->name == color)
    return config->color[i]->rgb;
+ if (color == "white")
+  return white;
  return black;
 }
 
@@ -794,7 +816,13 @@ int BTDisplay::getCurrentImage()
 
 std::string BTDisplay::getCurrentLabel()
 {
- return labelText;
+ for (int i = 0; i < widgets.size(); i++)
+ {
+  if (widgets[i]->getName() == "main")
+  {
+   return widgets[i]->getText();
+  }
+ }
 }
 
 void BTDisplay::getMultiplier(int &x, int &y)
@@ -1397,10 +1425,11 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   newXMult = newYMult = 1;
  }
  p3d.setMultiplier(newXMult, newYMult);
- label.x = c->label.x * newXMult;
- label.y = c->label.y * newYMult;
- label.w = c->label.w * newXMult;
- label.h = c->label.h * newYMult;
+ widgets.clear();
+ for (int i = 0; i < c->widgets.size(); ++i)
+ {
+  widgets.push_back(new BTLabelWidget(c->widgets[i], xMult, yMult));
+ }
  text.x = c->text.x * newXMult;
  text.y = c->text.y * newYMult;
  text.w = c->text.w * newXMult;

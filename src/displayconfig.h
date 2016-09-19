@@ -46,6 +46,22 @@ class BTDisplayColor : public XMLObject
   SDL_Color rgb;
 };
 
+class BTLabelConfig : public XMLObject
+{
+ public:
+  BTLabelConfig();
+  ~BTLabelConfig();
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTLabelConfig; }
+
+ public:
+  std::string name;
+  SerialRect location;
+  std::string color;
+};
+
 class BTDisplayConfig : public XMLObject
 {
  public:
@@ -61,7 +77,7 @@ class BTDisplayConfig : public XMLObject
   XMLVector<BTDisplayExpanded*> expanded;
   int x3d, y3d;
   XMLVector<BTDisplayColor*> color;
-  SerialRect label;
+  XMLVector<BTLabelConfig*> widgets;
   SerialRect text;
   SerialRect status[BT_PARTYSIZE];
   char *background;

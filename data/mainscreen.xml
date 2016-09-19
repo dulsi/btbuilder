@@ -3,6 +3,5 @@
 	<height>200</height>
 	<expanded><xMult>2</xMult><yMult>2</yMult><directory>640x400</directory></expanded>
 	<background>ui/mainscreen.png</background>
-	<label><x>0</x><y>0</y><w>1</w><h>1</h></label>
 	<text><x>165</x><y>24</y><w>120</w><h>133</h></text>
 </display>

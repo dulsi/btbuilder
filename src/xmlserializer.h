@@ -46,10 +46,15 @@ template<class T>
 class XMLVector : public XMLArray, public std::vector<T>
 {
  public:
-  XMLVector(bool c = true) : clear(c) {}
+  XMLVector(bool c = true) : clr(c) {}
   ~XMLVector()
   {
-   if (clear)
+   clear();
+  }
+
+  void clear()
+  {
+   if (clr)
    {
     for (int i = 0; i < size(); ++i)
     {
@@ -64,14 +69,14 @@ class XMLVector : public XMLArray, public std::vector<T>
   virtual XMLObject *get(size_t i) { return (*this)[i]; }
   virtual void push_back(XMLObject *obj) { std::vector<T>::push_back(static_cast<T>(obj)); }
   void push_back(T obj) { std::vector<T>::push_back(obj); }
-  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position) { if (clear) { delete *position; } return std::vector<T>::erase(position); }
+  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position) { if (clr) { delete *position; } return std::vector<T>::erase(position); }
   typename std::vector<T>::iterator erase(typename std::vector<T>::iterator position, bool clearOveride) { if (clearOveride) { delete *position; } return std::vector<T>::erase(position); }
-  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator first, typename std::vector<T>::iterator last) { if (clear) { for (typename std::vector<T>::iterator current = first; current != last; current++) delete *current; } return std::vector<T>::erase(first, last); }
+  typename std::vector<T>::iterator erase(typename std::vector<T>::iterator first, typename std::vector<T>::iterator last) { if (clr) { for (typename std::vector<T>::iterator current = first; current != last; current++) delete *current; } return std::vector<T>::erase(first, last); }
   void erase(size_t i) { erase(this->begin() + i); }
   virtual size_t size() const { return std::vector<T>::size(); }
 
  private:
-  bool clear;
+  bool clr;
 };
 
 class XMLAttribute

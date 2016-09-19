@@ -5,6 +5,5 @@
 	<background>ui/specialedit.png</background>
 	<x3d>103</x3d>
 	<y3d>10</y3d>
-	<label><x>0</x><y>0</y><w>1</w><h>1</h></label>
 	<text><x>10</x><y>108</y><w>310</w><h>180</h></text>
 </display>
