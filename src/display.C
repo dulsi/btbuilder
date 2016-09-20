@@ -1157,10 +1157,10 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     toggleFullScreen();
    else
    {
-    if (sdlevent.key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI) != 0)
+    if ((sdlevent.key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI)) != 0)
     {
     }
-    else if (((sdlevent.key.keysym.mod & KMOD_CAPS) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) != 0)) || (((sdlevent.key.keysym.mod & KMOD_CAPS) == 0) && (sdlevent.key.keysym.mod & KMOD_SHIFT)))
+    else if ((((sdlevent.key.keysym.mod & KMOD_CAPS) != 0) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) == 0)) || (((sdlevent.key.keysym.mod & KMOD_CAPS) == 0) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) != 0)))
     {
      auto itr = shiftKey.find(sdlevent.key.keysym.sym);
      if (itr != shiftKey.end())
