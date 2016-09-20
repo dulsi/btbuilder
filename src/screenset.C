@@ -1612,8 +1612,11 @@ void BTScreenSet::setEffect(int type)
 
 void BTScreenSet::setPicture(BTDisplay &d, int pic, const char *l)
 {
- picture = pic;
- d.drawImage(picture);
+ if (pic != picture)
+ {
+  picture = pic;
+  d.drawImage(picture);
+ }
  if (label)
   delete [] label;
  if (l)
