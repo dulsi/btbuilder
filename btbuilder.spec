@@ -1,7 +1,7 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.5.11
-Release: 2%{?dist}
+Version: 0.5.12
+Release: 1%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
 Group: Amusements/Games
@@ -16,7 +16,9 @@ BuildRequires: SDL2_mixer-devel
 BuildRequires: SDL_mng-devel
 BuildRequires: SDL2_ttf-devel
 BuildRequires: desktop-file-utils
+BuildRequires: libappstream-glib
 Requires:       %{name}-data = %{version}
+Requires: hicolor-icon-theme
 
 %description
 Bt Builder is a turn based role-playing game builder and engine in the style
@@ -37,10 +39,13 @@ This package contains the data files for Bt Builder.
 %setup -q
 
 %build
-make %{?_smp_mflags}
+%make_build CFLAGS="%{optflags}"
 
 %install
 make prefix=%{buildroot} install
+
+%check
+appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata.xml
 
 %post
 /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
@@ -66,6 +71,11 @@ fi
 %{_datadir}/btbuilder
 
 %changelog
+* Wed Sep 21 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.12-1
+- New version of btbuilder released.
+- Add validation of appdata file.
+- Require hicolor icons.
+
 * Fri Sep 02 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.11-2
 - Separate data files into seperate package.
 
