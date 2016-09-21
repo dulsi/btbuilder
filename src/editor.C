@@ -445,7 +445,6 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  std::vector<BTDisplay::selectItem> list(2);
  list[0].name = std::string("Name: ") + special->getName();
  list[1].name = "Flags: " + special->printFlags(false);
- int spaces = 0;
  buildOperationList(d, body, list, ops);
  d.addSelection(list.data(), list.size(), start, current);
  int key;
@@ -468,7 +467,7 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
    BTSpecialFlagList &lookup = getSpecialFlagList();
    BitField bits = special->getFlag();
    BTDisplay::selectItem lookupItem[lookup.size()];
-   for (int i = 0; i < lookup.size(); ++i)
+   for (size_t i = 0; i < lookup.size(); ++i)
    {
     lookupItem[i].name = lookup.getName(i);
     if (bits.isSet(i))
@@ -718,7 +717,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    {
     BTFactory<BTItem> &itemList = getItemList();
     BTDisplay::selectItem items[itemList.size()];
-    for (int i = 0; i < itemList.size(); ++i)
+    for (size_t i = 0; i < itemList.size(); ++i)
      items[i].name = itemList[i].getName();
     int itemStart(0);
     d.addSelection(items, itemList.size(), itemStart, number[count]);
@@ -734,7 +733,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    {
     BTFactory<BTMonster> &monsterList = getMonsterList();
     BTDisplay::selectItem monsters[monsterList.size()];
-    for (int i = 0; i < monsterList.size(); ++i)
+    for (size_t i = 0; i < monsterList.size(); ++i)
      monsters[i].name = monsterList[i].getName();
     int monsterStart(0);
     d.addSelection(monsters, monsterList.size(), monsterStart, number[count]);
@@ -749,7 +748,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    {
     BTFactory<BTSpell, BTSpell1> &spellList = getSpellList();
     BTDisplay::selectItem spells[spellList.size()];
-    for (int i = 0; i < spellList.size(); ++i)
+    for (size_t i = 0; i < spellList.size(); ++i)
      spells[i].name = spellList[i].getName();
     int spellStart(0);
     d.addSelection(spells, spellList.size(), spellStart, number[count]);
@@ -898,7 +897,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    {
     BTJobList &jobList = getJobList();
     BTDisplay::selectItem jobs[jobList.size()];
-    for (int i = 0; i < jobList.size(); ++i)
+    for (size_t i = 0; i < jobList.size(); ++i)
      jobs[i].name = jobList[i]->name;
     int jobStart(0);
     d.addSelection(jobs, jobList.size(), jobStart, number[count]);
@@ -913,7 +912,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    {
     BTRaceList &raceList = getRaceList();
     BTDisplay::selectItem races[raceList.size()];
-    for (int i = 0; i < raceList.size(); ++i)
+    for (size_t i = 0; i < raceList.size(); ++i)
      races[i].name = raceList[i]->name;
     int raceStart(0);
     d.addSelection(races, raceList.size(), raceStart, number[count]);
@@ -981,6 +980,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     key = d.process();
     d.clearText();
     d.clearImage();
+    d.setConfig(oldConfig);
     if (27 == key)
      return NULL;
     number[count++] = val;
@@ -1077,7 +1077,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    {
     BTSkillList &skillList = getSkillList();
     BTDisplay::selectItem items[skillList.size()];
-    for (int i = 0; i < skillList.size(); ++i)
+    for (size_t i = 0; i < skillList.size(); ++i)
      items[i].name = skillList[i]->name;
     int itemStart(0);
     d.addSelection(items, skillList.size(), itemStart, number[count]);

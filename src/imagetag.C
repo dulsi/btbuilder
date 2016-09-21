@@ -14,17 +14,17 @@ BTImageTag::BTImageTag()
 
 void BTImageTag::buildMatchString()
 {
- for (int i = 0; i < name.size(); i++)
+ for (size_t i = 0; i < name.size(); i++)
   matchString += std::toupper(name[i]);
  matchString += " ";
- for (int i = 0; i < artist.size(); i++)
+ for (size_t i = 0; i < artist.size(); i++)
   matchString += std::toupper(artist[i]);
 }
 
 bool BTImageTag::match(std::vector<std::string> words)
 {
  bool foundAll = true;
- for (int i = 0; i < words.size(); ++i)
+ for (size_t i = 0; i < words.size(); ++i)
  {
   if (matchString.find(words[i]) == std::string::npos)
    foundAll = false;
@@ -43,7 +43,7 @@ void BTImageTag::readXML(const char *filename, XMLVector<BTImageTag*> &tag)
  XMLSerializer parser;
  parser.add("imageTag", &tag, &BTImageTag::create);
  parser.parse(filename, true);
- for (int i = 0; i < tag.size(); i++)
+ for (size_t i = 0; i < tag.size(); i++)
   tag[i]->buildMatchString();
 }
 
@@ -52,11 +52,11 @@ BTDisplay::selectItem *BTImageTagList::search(std::string words, bool blank, int
  if (!last)
   last = new BTDisplay::selectItem[size()];
  bool found = false;
- int full = size();
+ size_t full = size();
  sz = 0;
  if (words == "")
  {
-  for (int i = 0; i < full; i++)
+  for (size_t i = 0; i < full; i++)
   {
    if (((*this)[i]->artist == "") && (!blank))
     continue;
@@ -81,12 +81,12 @@ BTDisplay::selectItem *BTImageTagList::search(std::string words, bool blank, int
 
   while (ss >> buf)
   {
-   for (int i = 0; i < buf.size(); i++)
+   for (size_t i = 0; i < buf.size(); i++)
     buf[i] = std::toupper(buf[i]);
    tokens.push_back(buf);
   }
 
-  for (int i = 0; i < full; i++)
+  for (size_t i = 0; i < full; i++)
   {
    if (((*this)[i]->artist == "") && (!blank))
     continue;

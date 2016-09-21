@@ -194,7 +194,7 @@ BTSortedFactory<item, item1>::BTSortedFactory(BTFactory<item, item1> *fact, cons
 template <typename item, typename item1>
 int BTSortedFactory<item, item1>::getSortedIndex(int index)
 {
- for (int i = 0; i < sortedItems.size(); ++i)
+ for (size_t i = 0; i < sortedItems.size(); ++i)
  {
   if (index == sortedItems[i])
   {

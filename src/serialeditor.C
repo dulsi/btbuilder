@@ -324,7 +324,7 @@ void BTSerializedEditor::editField(BTDisplay &d, ObjectSerializer &serial, const
   {
    std::vector<unsigned int> *vec = reinterpret_cast<std::vector<unsigned int> *>(curField->object);
    std::string val;
-   for (int i = 0; i < vec->size(); ++i)
+   for (size_t i = 0; i < vec->size(); ++i)
    {
     if (i != 0)
      val += ",";
@@ -336,7 +336,7 @@ void BTSerializedEditor::editField(BTDisplay &d, ObjectSerializer &serial, const
    key = d.process();
    if ('\r' == key)
    {
-    int i = 0;
+    size_t i = 0;
     const char *start = val.c_str();
     for (const char *comma = strchr(val.c_str(), ','); (start) && (*start); ++i)
     {
@@ -449,7 +449,7 @@ void BTSerializedEditor::handleSpecialField(BTDisplay &d, ObjectSerializer &seri
 
 int BTSerializedEditor::setup(ObjectSerializer &serial, BitField &active, std::vector<BTDisplay::selectItem> &items)
 {
- int current = 0;
+ size_t current = 0;
  for (int i = 0; i < entries; ++i)
  {
   if (!active.isSet(i))
@@ -467,7 +467,7 @@ int BTSerializedEditor::setup(ObjectSerializer &serial, BitField &active, std::v
   else if (curField->getType() == XMLTYPE_CREATE)
   {
    XMLArray *obj = reinterpret_cast<XMLArray*>(curField->object);
-   for (int k = 0; k < obj->size(); k++)
+   for (size_t k = 0; k < obj->size(); k++)
    {
     if (current >= items.size())
      items.push_back(BTDisplay::selectItem());
@@ -484,7 +484,7 @@ int BTSerializedEditor::setup(ObjectSerializer &serial, BitField &active, std::v
   else if (curField->getType() == XMLTYPE_VECTORSTRING)
   {
    std::vector<std::string> *obj = reinterpret_cast<std::vector<std::string>*>(curField->object);
-   for (int k = 0; k < obj->size(); k++)
+   for (size_t k = 0; k < obj->size(); k++)
    {
     if (current >= items.size())
      items.push_back(BTDisplay::selectItem());
@@ -635,7 +635,7 @@ void BTSpellEditor::complete(ObjectSerializer &serial)
  XMLAction *manifestField = serial.find("manifest", NULL);
  XMLArray *manifestArray = (reinterpret_cast<XMLArray*>(manifestField->object));
  XMLVector<BTManifest*> *manifest = dynamic_cast<XMLVector<BTManifest*> *>(manifestArray);
- for (int i = 0; i < manifest->size(); ++i)
+ for (size_t i = 0; i < manifest->size(); ++i)
  {
   BTRangedManifest *rangedManifest = dynamic_cast<BTRangedManifest*>(manifest->get(i));
   if (rangedManifest)
@@ -654,7 +654,7 @@ void BTSpellEditor::delSpecialField(BTDisplay &d, ObjectSerializer &serial, int 
   XMLAction *manifestField = serial.find("manifest", NULL);
   XMLArray *manifestArray = (reinterpret_cast<XMLArray*>(manifestField->object));
   XMLVector<BTManifest*> *manifest = dynamic_cast<XMLVector<BTManifest*> *>(manifestArray);
-  for (int i = 0; i < manifest->size(); ++i)
+  for (size_t i = 0; i < manifest->size(); ++i)
   {
    if (extra[val].item == (*manifest)[i])
    {
@@ -723,8 +723,7 @@ int BTSpellEditor::setup(ObjectSerializer &serial, BitField &active, std::vector
  XMLVector<BTManifest*> *manifest = dynamic_cast<XMLVector<BTManifest*> *>(manifestArray);
  extra.clear();
  int extraVal = 100;
- char convert[50];
- for (int i = 0; i < manifest->size(); ++i)
+ for (size_t i = 0; i < manifest->size(); ++i)
  {
   if (current == items.size())
    items.push_back(BTDisplay::selectItem());

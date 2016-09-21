@@ -36,7 +36,7 @@ std::string BTSpecialFlagList::getName(int index)
 
 int BTSpecialFlagList::getIndex(std::string name)
 {
- for (int i = 0; i < size(); ++i)
+ for (size_t i = 0; i < size(); ++i)
   if (strcmp(name.c_str(), operator[](i)->getName().c_str()) == 0)
    return i;
  return -1;

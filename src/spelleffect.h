@@ -28,7 +28,7 @@ class BTDamageBonus : public XMLObject
   bool operator==(const BTDamageBonus &val) const;
 
   int apply(bool m);
-  int getMax() { amount.getMax(); }
+  int getMax() { return amount.getMax(); }
 
   virtual void serialize(ObjectSerializer* s);
 

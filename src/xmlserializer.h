@@ -56,7 +56,7 @@ class XMLVector : public XMLArray, public std::vector<T>
   {
    if (clr)
    {
-    for (int i = 0; i < size(); ++i)
+    for (size_t i = 0; i < size(); ++i)
     {
      if (std::vector<T>::operator[](i))
      {
@@ -119,7 +119,7 @@ class PictureIndex
 class XMLAction
 {
  public:
-  XMLAction() : attrib(NULL), type(0), next(NULL), extra(EXTRA_NONE) {}
+  XMLAction() : attrib(NULL), type(0), extra(EXTRA_NONE), next(NULL) {}
   ~XMLAction();
 
   std::string createTag();

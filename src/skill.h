@@ -25,7 +25,7 @@
 class BTSkill : public XMLObject
 {
  public:
-  BTSkill() : use(-1), effect(-1), after(-1), special(-1), limited(false), defaultDifficulty(0)
+  BTSkill() : use(-1), effect(-1), after(-1), limited(false), special(-1), defaultDifficulty(0)
   {
    name = new char[1];
    name[0] = 0;

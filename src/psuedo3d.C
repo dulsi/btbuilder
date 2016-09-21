@@ -296,7 +296,7 @@ SDL_Surface *Psuedo3D::loadImage(const char *file, bool imageWindow)
  imgLoad->loadImageOrAnimation(file, &img, NULL, imageWindow);
  if (NULL == img)
  {
-  printf((std::string("Failed - Loading image/") + file + std::string("\n")).c_str());
+  printf("Failed - Loading image/%s\n", file);
   exit(0);
  }
  return img;

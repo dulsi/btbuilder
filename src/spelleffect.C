@@ -548,7 +548,7 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
   BTParty &party = game->getParty();
   if (BTTARGET_INDIVIDUAL == target)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     if (status == BTSTATUS_LEVELDRAIN)
     {
@@ -587,7 +587,7 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   for (int k = 0; k < grp->individual.size(); ++k)
+   for (size_t k = 0; k < grp->individual.size(); ++k)
    {
     if (status == BTSTATUS_LEVELDRAIN)
     {
@@ -609,7 +609,7 @@ int BTCureStatusEffect::maintain(BTDisplay &d, BTCombat *combat)
   BTMonsterGroup *grp = combat->getMonsterGroup(group - BTTARGET_MONSTER);
   if (BTTARGET_INDIVIDUAL == target)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
+   for (size_t i = 0; i < grp->individual.size(); ++i)
    {
     if (status == BTSTATUS_LEVELDRAIN)
     {
@@ -964,7 +964,7 @@ int BTArmorBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int tr
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->ac += bonus;
    }
@@ -982,7 +982,7 @@ int BTArmorBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int tr
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   for (int k = 0; k < grp->individual.size(); ++k)
+   for (size_t k = 0; k < grp->individual.size(); ++k)
    {
     grp->individual[k].ac += bonus;
    }
@@ -993,7 +993,7 @@ int BTArmorBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int tr
   BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
+   for (size_t i = 0; i < grp->individual.size(); ++i)
    {
     grp->individual[i].ac += bonus;
    }
@@ -1064,7 +1064,7 @@ void BTArmorBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int 
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   for (int k = 0; k < grp->individual.size(); ++k)
+   for (size_t k = 0; k < grp->individual.size(); ++k)
    {
     grp->individual[k].ac -= bonus;
    }
@@ -1075,7 +1075,7 @@ void BTArmorBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int 
   BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
+   for (size_t i = 0; i < grp->individual.size(); ++i)
    {
     grp->individual[i].ac -= bonus;
    }
@@ -1106,7 +1106,7 @@ int BTHitBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->toHit += bonus;
    }
@@ -1124,7 +1124,7 @@ int BTHitBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   for (int k = 0; k < grp->individual.size(); ++k)
+   for (size_t k = 0; k < grp->individual.size(); ++k)
    {
     grp->individual[k].toHit += bonus;
    }
@@ -1135,7 +1135,7 @@ int BTHitBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trgt
   BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
+   for (size_t i = 0; i < grp->individual.size(); ++i)
    {
     grp->individual[i].toHit += bonus;
    }
@@ -1188,7 +1188,7 @@ void BTHitBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int tr
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->toHit -= bonus;
    }
@@ -1206,7 +1206,7 @@ void BTHitBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int tr
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   for (int k = 0; k < grp->individual.size(); ++k)
+   for (size_t k = 0; k < grp->individual.size(); ++k)
    {
     grp->individual[k].toHit -= bonus;
    }
@@ -1217,7 +1217,7 @@ void BTHitBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int tr
   BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
+   for (size_t i = 0; i < grp->individual.size(); ++i)
    {
     grp->individual[i].toHit -= bonus;
    }
@@ -1351,7 +1351,7 @@ int BTRegenSkillEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET
   {
    if (BTTARGET_INDIVIDUAL == trgt2)
    {
-    for (int i = 0; i < party.size(); ++i)
+    for (size_t i = 0; i < party.size(); ++i)
     {
      party[i]->setSkillUnlimited(skill, unlimited);
     }
@@ -1373,7 +1373,7 @@ int BTRegenSkillEffect::maintain(BTDisplay &d, BTCombat *combat)
  {
   if (BTTARGET_INDIVIDUAL == target)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     if (party[i]->isAlive())
     {
@@ -1406,7 +1406,7 @@ void BTRegenSkillEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARG
   {
    if (BTTARGET_INDIVIDUAL == trgt)
    {
-    for (int i = 0; i < party.size(); ++i)
+    for (size_t i = 0; i < party.size(); ++i)
     {
      party[i]->setSkillUnlimited(skill, false);
     }
@@ -1482,7 +1482,7 @@ int BTAttackRateBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, i
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->rateAttacks += bonus;
    }
@@ -1540,7 +1540,7 @@ void BTAttackRateBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g,
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->rateAttacks -= bonus;
    }
@@ -1582,7 +1582,7 @@ int BTRegenManaEffect::maintain(BTDisplay &d, BTCombat *combat)
  {
   if (BTTARGET_INDIVIDUAL == target)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     if (party[i]->isAlive())
     {
@@ -1619,7 +1619,7 @@ int BTSaveBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trg
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->save += bonus;
    }
@@ -1677,7 +1677,7 @@ void BTSaveBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int t
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->save -= bonus;
    }
@@ -1813,7 +1813,7 @@ int BTDamageBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int t
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     party[i]->dmgBonus.push_back(new BTDamageBonus(bonus));
    }
@@ -1831,7 +1831,7 @@ int BTDamageBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int t
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   for (int k = 0; k < grp->individual.size(); ++k)
+   for (size_t k = 0; k < grp->individual.size(); ++k)
    {
     grp->individual[k].dmgBonus.push_back(new BTDamageBonus(bonus));
    }
@@ -1842,7 +1842,7 @@ int BTDamageBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int t
   BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
+   for (size_t i = 0; i < grp->individual.size(); ++i)
    {
     grp->individual[i].dmgBonus.push_back(new BTDamageBonus(bonus));
    }
@@ -1895,7 +1895,7 @@ void BTDamageBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int
  {
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < party.size(); ++i)
+   for (size_t i = 0; i < party.size(); ++i)
    {
     for (int dmgNum = 0; dmgNum < party[i]->dmgBonus.size(); dmgNum++)
     {
@@ -1927,7 +1927,7 @@ void BTDamageBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int
    BTMonsterGroup *grp = combat->getMonsterGroup(i);
    if (NULL == grp)
     break;
-   for (int k = 0; k < grp->individual.size(); ++k)
+   for (size_t k = 0; k < grp->individual.size(); ++k)
    {
     for (int dmgNum = 0; dmgNum < grp->individual[k].dmgBonus.size(); dmgNum++)
     {
@@ -1945,7 +1945,7 @@ void BTDamageBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int
   BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
   if (BTTARGET_INDIVIDUAL == trgt)
   {
-   for (int i = 0; i < grp->individual.size(); ++i)
+   for (size_t i = 0; i < grp->individual.size(); ++i)
    {
     for (int dmgNum = 0; dmgNum < grp->individual[i].dmgBonus.size(); dmgNum++)
     {

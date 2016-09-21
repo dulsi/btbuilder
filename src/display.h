@@ -259,7 +259,7 @@ class BTUIText : public BTUIElement
 class BTUIChoice : public BTUIText
 {
  public:
-  BTUIChoice(const std::string &k, const std::string &t, BTDisplay::alignment a) : keys(k), BTUIText(t, a) {}
+  BTUIChoice(const std::string &k, const std::string &t, BTDisplay::alignment a) : BTUIText(t, a), keys(k) {}
 
   virtual int getType() const { return BTUI_CHOICE; }
 

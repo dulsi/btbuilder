@@ -23,7 +23,7 @@ void BTShop::initDefault()
 
 void BTShop::addItem(int id)
 {
- for (int i = 0; i < goods.size(); ++i)
+ for (size_t i = 0; i < goods.size(); ++i)
  {
   if (goods[i]->id == id)
   {
@@ -42,7 +42,7 @@ void BTShop::addItem(int id)
 
 void BTShop::removeItem(int id)
 {
- for (int i = 0; i < goods.size(); ++i)
+ for (size_t i = 0; i < goods.size(); ++i)
  {
   if (goods[i]->id == id)
   {

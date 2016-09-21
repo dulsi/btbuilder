@@ -26,7 +26,7 @@ class BTFactoryEditor
    d.setConfig(&config);
    BTSortedFactory<item, item1> sortList(&itemList, (sorted ? &compare : NULL));
    BTDisplay::selectItem items[itemList.size() + 1];
-   for (int i = 0; i < itemList.size(); ++i)
+   for (size_t i = 0; i < itemList.size(); ++i)
     items[i].name = sortList[i].getName();
    items[itemList.size()].name = newItem;
    int sortedCurrent = 0;
