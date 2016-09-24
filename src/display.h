@@ -61,6 +61,8 @@
 #define KMOD_GUI 0
 #endif
 
+class BTBackgroundAndScreen;
+
 class BTUIElement
 {
  public:
@@ -81,7 +83,7 @@ class BTLabelWidget
 
   std::string getText() { return text; }
 
-  void render(BTDisplay *d);
+  void render(BTBackgroundAndScreen *d);
 
   void setText(const std::string &t) { text = t; }
 
@@ -90,7 +92,6 @@ class BTLabelWidget
   SDL_Rect location;
   std::string text;
 };
-
 
 class BTMusic
 {
@@ -151,7 +152,7 @@ class BTDisplay : public ImageLoader
   void addReadString(const std::string &prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
   void addSelectImage(int &select);
-  void clear(SDL_Rect &r, bool update = false);
+  void clear(SDL_Surface *scr, SDL_Rect &r);
   void clearElements();
   void clearImage();
   void clearText();
@@ -171,6 +172,8 @@ class BTDisplay : public ImageLoader
   int getCurrentImage();
   std::string getCurrentLabel();
   void getMultiplier(int &x, int &y);
+  Psuedo3D &getPsuedo3D() { return p3d; }
+  SDL_Rect &getText() { return text; }
   SDL_Color &getWhite();
   void playMusic(unsigned int effectID, const char *file, bool physfs = true);
   void playSound(const char *file, bool physfs = true);
@@ -180,7 +183,6 @@ class BTDisplay : public ImageLoader
   void refresh();
   void removeAnimation(MNG_AnimationState *animState);
   int selectImage(int initial);
-  void setBackground(const char *file, bool physfs = true);
   void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(Psuedo3DConfigList *p3dl);
   Psuedo3DConfig *setWallGraphics(int type);
@@ -188,10 +190,12 @@ class BTDisplay : public ImageLoader
   void stopMusic(int id);
   void toggleFullScreen();
 
-  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a);
+  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a, SDL_Surface *scr = NULL);
   bool sizeFont(const char *text, int &w, int &h);
   void drawImage(SDL_Rect &dst, SDL_Surface *img);
-  void drawRect(SDL_Rect &dst, SDL_Color c);
+  void fillRect(SDL_Surface *scr, SDL_Rect &dst, SDL_Color c);
+  SDL_Surface *grabImage(SDL_Surface *scr, SDL_Rect &src);
+  void moveImage(SDL_Rect &src, SDL_Rect &dst);
 
   void loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool imageWindow, bool physfs = true);
 
@@ -205,6 +209,8 @@ class BTDisplay : public ImageLoader
 
  public:
   static const char *allKeys;
+  int textPos;
+  int mapXStart, mapYStart;
 
  private:
   int xFull, yFull;
@@ -215,8 +221,7 @@ class BTDisplay : public ImageLoader
   int xMult, yMult, lockMult;
   std::vector<BTLabelWidget*> widgets;
   SDL_Rect text;
-  BTStatusBar status;
-  int textPos;
+  BTStatusBar *status;
   Psuedo3D p3d;
   Psuedo3DConfigList *p3dConfig;
 #ifdef SDL2LIB
@@ -225,7 +230,7 @@ class BTDisplay : public ImageLoader
   SDL_Texture *mainTexture;
 #endif
   SDL_Surface *mainScreen;
-  SDL_Surface *mainBackground;
+  std::list<BTBackgroundAndScreen*> screen;
   std::list<BTMusic*> music;
   std::list<BTSound*> sound;
   int picture;
@@ -237,11 +242,40 @@ class BTDisplay : public ImageLoader
 #endif
   simpleFont *sfont;
   SDL_Color white, black;
-  std::vector<BTUIElement*> element;
-  int mapXStart, mapYStart;
-  std::list<BTAnimation> activeAnimation;
   std::map<SDL_Keycode, char> key;
   std::map<SDL_Keycode, char> shiftKey;
+};
+
+class BTBackgroundAndScreen
+{
+ public:
+  BTBackgroundAndScreen(BTDisplay *d, SDL_Surface *s);
+  ~BTBackgroundAndScreen();
+
+  void addAnimation(MNG_AnimationState *animState, bool clear = false);
+  void addElement(BTUIElement *elm);
+  void clear();
+  void clear(SDL_Rect &r);
+  void clearElements();
+  SDL_Color &getColor(const std::string &color);
+  BTDisplay *getDisplay() { return display; }
+  std::vector<BTUIElement*>& getElements() { return element; }
+  unsigned long drawAnimationFrame(long ticks);
+  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTDisplay::alignment a);
+  void drawImage(SDL_Surface *img, SDL_Rect &dst);
+  void drawMap(bool knowledge);
+  void fillRect(SDL_Rect &dst, SDL_Color c);
+  void removeAnimation(MNG_AnimationState *animState);
+  void render();
+  void scrollUp(int h);
+  void setBackground(const char *file, bool physfs = true);
+
+ protected:
+  BTDisplay *display;
+  SDL_Surface *screen;
+  SDL_Surface *background;
+  std::vector<BTUIElement*> element;
+  std::list<BTAnimation> activeAnimation;
 };
 
 class BTUIText : public BTUIElement
@@ -295,7 +329,7 @@ class BTUISelect : public BTUIElement
 
   virtual int getType() const { return BTUI_SELECT; }
 
-  void draw(BTDisplay &d);
+  void draw(BTBackgroundAndScreen *d);
 
   void alter(BTDisplay::selectItem *l, int sz);
   void decrement(BTDisplay &d);

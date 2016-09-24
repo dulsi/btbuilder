@@ -23,14 +23,14 @@ BTIcon::~BTIcon()
  }
 }
 
-void BTIcon::draw(BTDisplay &d, unsigned long ticks)
+void BTIcon::draw(BTBackgroundAndScreen &d, unsigned long ticks)
 {
  int xMult, yMult;
  SDL_Rect dst;
- d.getMultiplier(xMult, yMult);
+ d.getDisplay()->getMultiplier(xMult, yMult);
  if ((NULL == img) && (NULL == animation.animation))
  {
-  d.loadImageOrAnimation(image, &img, &animation.animation, false);
+  d.getDisplay()->loadImageOrAnimation(image, &img, &animation.animation, false);
  }
  dst.x = position.x * xMult;
  dst.y = position.y * yMult;
@@ -40,7 +40,7 @@ void BTIcon::draw(BTDisplay &d, unsigned long ticks)
  {
   if (img)
   {
-   d.drawImage(dst, img);
+   d.drawImage(img, dst);
   }
   else
   {
@@ -52,7 +52,7 @@ void BTIcon::draw(BTDisplay &d, unsigned long ticks)
  }
  else if ((!isActive()) && (active))
  {
-  d.clear(dst, true);
+  d.clear(dst);
   if (animation.animation)
    d.removeAnimation(&animation);
   active = false;
@@ -101,7 +101,7 @@ BTFacingIcon::~BTFacingIcon()
  }
 }
 
-void BTFacingIcon::draw(BTDisplay &d, unsigned long ticks)
+void BTFacingIcon::draw(BTBackgroundAndScreen &d, unsigned long ticks)
 {
  bool oldActive = active;
  BTIcon::draw(d, ticks);
@@ -113,19 +113,19 @@ void BTFacingIcon::draw(BTDisplay &d, unsigned long ticks)
   int newFacing = g->getFacing();
   if (newFacing != facing)
   {
-   d.getMultiplier(xMult, yMult);
+   d.getDisplay()->getMultiplier(xMult, yMult);
    dst.x = position.x * xMult;
    dst.y = position.y * yMult;
    dst.w = position.w * xMult;
    dst.h = position.h * yMult;
    if (dirAni[facing].animation)
     d.removeAnimation(&dirAni[facing]);
-   d.clear(dst, true);
+   d.clear(dst);
    if (animation.animation)
-    d.drawImage(animation.dst, animation.animation->frame[animation.frame]);
+    d.drawImage(animation.animation->frame[animation.frame], animation.dst);
    else
    {
-    d.drawImage(dst, img);
+    d.drawImage(img, dst);
    }
    facing = newFacing;
    if ((NULL == dirImg[facing]) && (NULL == dirAni[facing].animation))
@@ -134,10 +134,10 @@ void BTFacingIcon::draw(BTDisplay &d, unsigned long ticks)
     std::string filename(image, period - image);
     filename.append(1, '0' + facing);
     filename += period;
-    d.loadImageOrAnimation(filename.c_str(), &dirImg[facing], &dirAni[facing].animation, false);
+    d.getDisplay()->loadImageOrAnimation(filename.c_str(), &dirImg[facing], &dirAni[facing].animation, false);
    }
    if (dirImg[facing])
-    d.drawImage(dst, dirImg[facing]);
+    d.drawImage(dirImg[facing], dst);
    else
    {
     IMG_SetAnimationState(&dirAni[facing], -1, 0);

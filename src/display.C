@@ -24,7 +24,7 @@ BTLabelWidget::BTLabelWidget(BTLabelConfig *c, int xMult, int yMult)
  location.h = config->location.h * yMult;
 }
 
-void BTLabelWidget::render(BTDisplay *d)
+void BTLabelWidget::render(BTBackgroundAndScreen *d)
 {
  d->clear(location);
  d->drawFont(text.c_str(), location, d->getColor(config->color), BTDisplay::center);
@@ -47,11 +47,11 @@ BTSound::~BTSound()
 }
 
 BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
- : fullScreen(full), softRenderer(softRender), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(*this), textPos(0), p3d(this, 0, 0),
+ : textPos(0), mapXStart(0), mapYStart(0), fullScreen(full), softRenderer(softRender), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(NULL), p3d(this, 0, 0),
 #ifdef SDL2LIB
    mainWindow(0), mainRenderer(0), mainTexture(0),
 #endif
-   mainScreen(0), mainBackground(0), picture(-1), ttffont(0), sfont(&simple8x8), mapXStart(0), mapYStart(0)
+   mainScreen(0), picture(-1), ttffont(0), sfont(&simple8x8)
 {
  animation.animation = 0;
  animation.frame = 0;
@@ -193,7 +193,9 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  black.r = 0;
  black.g = 0;
  black.b = 0;
- setBackground(config->background, physfs);
+ screen.push_back(new BTBackgroundAndScreen(this, NULL));
+ screen.front()->setBackground(config->background, physfs);
+ status = new BTStatusBar(screen.front());
 
 #ifndef SDL2LIB
  SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
@@ -209,33 +211,30 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
 BTDisplay::~BTDisplay()
 {
  stopMusic(true);
- for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
+ for (std::list<BTBackgroundAndScreen*>::iterator itr = screen.begin(); screen.end() != itr; ++itr)
  {
-  delete (*elementItr);
+  delete (*itr);
  }
- if (mainBackground)
- {
-  SDL_FreeSurface(mainBackground);
- }
+ if (status)
+  delete status;
 #ifdef SDL2LIB
  if (mainScreen)
  {
   SDL_FreeSurface(mainScreen);
  }
 #endif
- element.clear();
  Mix_Quit();
  SDL_Quit();
 }
 
 void BTDisplay::addAnimation(MNG_AnimationState *animState, bool clear /*= false*/)
 {
- activeAnimation.push_back(BTAnimation(animState, clear));
+ screen.back()->addAnimation(animState, clear);
 }
 
 void BTDisplay::addBarrier(const char *keys)
 {
- element.push_back(new BTUIBarrier(keys));
+ screen.back()->addElement(new BTUIBarrier(keys));
 }
 
 void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= left*/)
@@ -295,9 +294,9 @@ void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= l
    }
   }
   if (NULL == keys)
-   element.push_back(new BTUIText((end ? tmp : partial), a));
+   screen.back()->addElement(new BTUIText((end ? tmp : partial), a));
   else
-   element.push_back(new BTUIChoice(keys, (end ? tmp : partial), a));
+   screen.back()->addElement(new BTUIChoice(keys, (end ? tmp : partial), a));
   partial = end;
  }
  delete [] tmp;
@@ -310,36 +309,32 @@ void BTDisplay::addText(const char *words, alignment a /*= left*/)
 
 void BTDisplay::addColumns(const std::list<std::string>& c)
 {
- element.push_back(new BTUIMultiColumn(c));
+ screen.back()->addElement(new BTUIMultiColumn(c));
 }
 
 void BTDisplay::addReadString(const std::string &prompt, int maxLen, std::string &response)
 {
- element.push_back(new BTUIReadString(prompt, maxLen, response));
+ screen.back()->addElement(new BTUIReadString(prompt, maxLen, response));
 }
 
 void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select, int num /*= 0*/)
 {
- element.push_back(new BTUISelect(list, size, start, select, num));
+ screen.back()->addElement(new BTUISelect(list, size, start, select, num));
 }
 
 void BTDisplay::addSelectImage(int &select)
 {
- element.push_back(new BTUISelectImage(select));
+ screen.back()->addElement(new BTUISelectImage(select));
 }
 
-void BTDisplay::clear(SDL_Rect &r, bool update /*= false*/)
+void BTDisplay::clear(SDL_Surface *scr, SDL_Rect &r)
 {
- SDL_BlitSurface(mainBackground, &r, mainScreen, &r);
+ SDL_BlitSurface(scr, &r, mainScreen, &r);
 }
 
 void BTDisplay::clearElements()
 {
- for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
- {
-  delete (*elementItr);
- }
- element.clear();
+ screen.back()->clearElements();
 }
 
 void BTDisplay::clearImage()
@@ -349,20 +344,20 @@ void BTDisplay::clearImage()
  {
   IMG_FreeMNG(animation.animation);
   animation.animation = NULL;
-  removeAnimation(&animation);
+  screen.back()->removeAnimation(&animation);
  }
  SDL_Rect dst;
  dst.x = config->x3d * xMult;
  dst.y = config->y3d * yMult;
  dst.w = p3d.config->width * xMult;
  dst.h = p3d.config->height * yMult;
- SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
+ screen.front()->fillRect(dst, black);
 }
 
 void BTDisplay::clearText()
 {
- clearElements();
- SDL_BlitSurface(mainBackground, &text, mainScreen, &text);
+ screen.back()->clearElements();
+ screen.back()->clear(text);
  textPos = 0;
 }
 
@@ -399,7 +394,7 @@ void BTDisplay::drawImage(int pic)
  {
   IMG_FreeMNG(animation.animation);
   animation.animation = NULL;
-  removeAnimation(&animation);
+  screen.front()->removeAnimation(&animation);
  }
  snprintf(filename, 50, "slot%d.ng", pic);
  SDL_Rect src, dst;
@@ -412,7 +407,7 @@ void BTDisplay::drawImage(int pic)
   animation.dst.y = config->y3d * yMult;
   animation.dst.w = p3d.config->width * xMult;
   animation.dst.h = p3d.config->height * yMult;
-  addAnimation(&animation);
+  screen.front()->addAnimation(&animation);
   drawAnimationFrame();
   return;
  }
@@ -456,14 +451,14 @@ void BTDisplay::drawImage(int pic)
  dst.h = p3d.config->height * yMult;
  if (NULL == img)
  {
-  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
+  screen.front()->fillRect(dst, black);
   return;
  }
  src.x = 0;
  src.y = 0;
  src.w = p3d.config->width * xMult;
  src.h = p3d.config->height * yMult;
- SDL_BlitSurface(img, &src, mainScreen, &dst);
+ screen.front()->drawImage(img, dst);
  SDL_FreeSurface(img);
 }
 
@@ -477,7 +472,7 @@ void BTDisplay::drawLabel(const char *name)
   if (widgets[i]->getName() == std::string("main"))
   {
    widgets[i]->setText(name);
-   widgets[i]->render(this);
+   widgets[i]->render(*screen.rbegin());
   }
  }
 }
@@ -492,8 +487,8 @@ void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= le
  dst.y = text.y + text.h - h;
  dst.w = text.w;
  dst.h = h;
- SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
- drawFont(words, dst, black, a);
+ screen.back()->clear(dst);
+ screen.back()->drawFont(words, dst, black, a);
 }
 
 void BTDisplay::drawMessage(const char *words, int *delay)
@@ -518,7 +513,7 @@ void BTDisplay::drawText(const char *words, alignment a /*= left*/)
   }
   if (h + textPos > text.h)
   {
-   scrollUp(h);
+   screen.back()->scrollUp(h);
   }
   const char *end = NULL;
   if (w > text.w)
@@ -557,7 +552,7 @@ void BTDisplay::drawText(const char *words, alignment a /*= left*/)
   dst.y = text.y + textPos;
   dst.w = text.w;
   dst.h = h;
-  drawFont((end ? tmp : partial), dst, black, a);
+  screen.back()->drawFont((end ? tmp : partial), dst, black, a);
   textPos += h;
   partial = end;
  }
@@ -571,20 +566,16 @@ void BTDisplay::drawView()
  {
   IMG_FreeMNG(animation.animation);
   animation.animation = NULL;
-  removeAnimation(&animation);
+  screen.front()->removeAnimation(&animation);
  }
  Psuedo3DMap *m = Psuedo3DMap::getMap();
  p3d.draw(m, m->getX(), m->getY(), m->getFacing());
- SDL_Rect src, dst;
- src.x = 0;
- src.y = 0;
- src.w = p3d.config->width * xMult;
- src.h = p3d.config->height * yMult;
+ SDL_Rect dst;
  dst.x = config->x3d * xMult;
  dst.y = config->y3d * yMult;
  dst.w = p3d.config->width * xMult;
  dst.h = p3d.config->height * yMult;
- SDL_BlitSurface(p3d.getDisplay(), &src, mainScreen, &dst);
+ screen.front()->drawImage(p3d.getDisplay(), dst);
  if ((config->mapDisplayMode == BTMAPDISPLAYMODE_ALWAYS) ||
   ((config->mapDisplayMode == BTMAPDISPLAYMODE_NO3D) && (p3d.getConfig()->wallType.empty())))
   drawMap(false);
@@ -595,198 +586,21 @@ void BTDisplay::drawIcons()
  for (int i = 0; i < config->icon.size(); ++i)
  {
   // Should cache this to not constantly redraw.
-  config->icon[i]->draw(*this, SDL_GetTicks());
+  config->icon[i]->draw(*screen.back(), SDL_GetTicks());
  }
 }
 
 void BTDisplay::drawMap(bool knowledge)
 {
- // Draw black
- Psuedo3DMap *m = Psuedo3DMap::getMap();
- SDL_Rect src, dst;
- dst.x = config->xMap * xMult;
- dst.y = config->yMap * yMult;
- src.w = dst.w = config->widthMap * p3d.config->mapWidth * xMult;
- src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
- src.x = 0;
- src.y = 0;
- SDL_Surface *backup = NULL;
- if (config->mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
- {
-  backup = SDL_CreateRGBSurface(SDL_SWSURFACE, dst.w, dst.h, 32, mainScreen->format->Rmask, mainScreen->format->Gmask, mainScreen->format->Bmask, mainScreen->format->Amask);
-  SDL_BlitSurface(mainScreen, &dst, backup, &src);
- }
- SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, black.r, black.g, black.b));
- if (config->centerMap)
- {
-  mapXStart = m->getX() - (config->widthMap / 2);
-  mapYStart = m->getY() - (config->heightMap / 2);
- }
- else
- {
-  int curX = m->getX();
-  if (mapXStart > curX)
-   mapXStart = curX;
-  if (mapXStart + config->widthMap <= curX)
-   mapXStart = curX - config->widthMap + 1;
-  int curY = m->getY();
-  if (mapYStart > curY)
-   mapYStart = curY;
-  if (mapYStart + config->heightMap <= curY)
-   mapYStart = curY - config->heightMap + 1;
- }
- if (config->coordinatesMap)
- {
-  for (int k = 0; k < config->heightMap; ++k)
-  {
-   char sz[3] = {0, 0, 0};
-   int coordinate = m->getYSize() - (k + mapYStart) - 1;
-   if (coordinate < 100)
-   {
-    if (coordinate < 0)
-    {
-     sz[0] = 0;
-     sz[1] = 0;
-    }
-    else if (coordinate < 10)
-    {
-     sz[0] = '0' + (coordinate);
-     sz[1] = 0;
-    }
-    else
-    {
-     sz[0] = '0' + ((coordinate) / 10);
-     sz[1] = '0' + ((coordinate) % 10);
-     sz[2] = 0;
-    }
-   }
-   SDL_Rect dst;
-   dst.x = (config->xMap - 2 - (2 * p3d.config->mapWidth)) * xMult;
-   dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
-   dst.w = 2 * p3d.config->mapWidth * xMult;
-   dst.h = p3d.config->mapHeight * yMult;
-   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
-   drawFont(sz, dst, black, right);
-  }
-  for (int i = 0; i < config->widthMap; ++i)
-  {
-   char sz[2] = {0, 0};
-   int coordinate = i + mapXStart;
-   if (coordinate < 100)
-   {
-    if (coordinate < 10)
-    {
-     sz[0] = '0' + (coordinate);
-     sz[1] = 0;
-    }
-    else
-    {
-     sz[0] = '0' + ((coordinate) / 10);
-     sz[1] = 0;
-    }
-   }
-   SDL_Rect dst;
-   dst.x = (config->xMap + (i * p3d.config->mapWidth)) * xMult;
-   dst.y = (config->yMap + (config->heightMap * p3d.config->mapHeight) + 2) * yMult;
-   dst.w = p3d.config->mapWidth * xMult;
-   dst.h = p3d.config->mapHeight * yMult;
-   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
-   drawFont(sz, dst, black, right);
-   sz[0] = 0;
-   if (coordinate < 100)
-   {
-    if (coordinate >= 10)
-    {
-     sz[0] = '0' + ((coordinate) % 10);
-     sz[1] = 0;
-    }
-   }
-   dst.y = (config->yMap + ((config->heightMap + 1) * p3d.config->mapHeight) + 2) * yMult;
-   SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
-   if (sz[0])
-    drawFont(sz, dst, black, right);
-  }
- }
- for (int i = 0; i < config->widthMap; ++i)
- {
-  for (int k = 0; k < config->heightMap; ++k)
-  {
-   src.x = 0;
-   src.y = 0;
-   src.w = p3d.config->mapWidth * xMult;
-   src.h = p3d.config->mapHeight * yMult;
-   dst.x = (config->xMap + (i * p3d.config->mapWidth)) * xMult;
-   dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
-   dst.w = p3d.config->mapWidth * xMult;
-   dst.h = p3d.config->mapHeight * yMult;
-   int know = m->getKnowledge(mapXStart + i, mapYStart + k);
-   if ((mapXStart + i < 0) || (mapYStart + k < 0) || (mapXStart + i >= m->getXSize()) || (mapYStart + k >= m->getYSize()) || ((!knowledge) && (know == BTKNOWLEDGE_NO)))
-   {
-    SDL_Surface *unknown = p3d.getMapUnknown();
-    if (unknown)
-    {
-     SDL_BlitSurface(unknown, &src, mainScreen, &dst);
-    }
-   }
-   else
-   {
-    for (int direction = 0; direction < CARDINAL_DIRECTIONS; ++direction)
-    {
-     SDL_Surface *mapWall = p3d.getMapWall(m->getMapType(mapXStart + i, mapYStart + k, direction), direction, knowledge || (know == BTKNOWLEDGE_FULL));
-     if (mapWall)
-     {
-      SDL_BlitSurface(mapWall, &src, mainScreen, &dst);
-     }
-    }
-    if (m->hasSpecial(mapXStart + i, mapYStart + k))
-    {
-     SDL_Surface *special = p3d.getMapSpecial();
-     if (special)
-     {
-      SDL_BlitSurface(special, &src, mainScreen, &dst);
-     }
-    }
-    if ((mapYStart + k == m->getY()) && (mapXStart + i == m->getX()))
-    {
-     SDL_Surface *arrow = p3d.getMapArrow(m->getFacing());
-     if (arrow)
-     {
-      SDL_BlitSurface(arrow, &src, mainScreen, &dst);
-     }
-    }
-   }
-  }
- }
- dst.x = config->xMap * xMult;
- dst.y = config->yMap * yMult;
- src.w = dst.w = config->widthMap * p3d.config->mapWidth * xMult;
- src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
- src.x = 0;
- src.y = 0;
- if (config->mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
- {
-  render();
-  unsigned char response = readChar();
-  SDL_BlitSurface(backup, &src, mainScreen, &dst);
-  SDL_FreeSurface(backup);
- }
+ screen.front()->drawMap(knowledge);
 }
 
 void BTDisplay::drawStats()
 {
  int i;
- SDL_Rect dst;
  if (config->statusInfo.size() == 0)
   return;
- for (i = 0; i < BT_PARTYSIZE; ++i)
- {
-  dst.x = config->status[i].x * xMult;
-  dst.y = config->status[i].y * yMult;
-  dst.w = config->status[i].w * xMult;
-  dst.h = config->status[i].h * yMult;
-  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
- }
- status.draw();
+ status->draw();
 }
 
 SDL_Color &BTDisplay::getBlack()
@@ -902,8 +716,9 @@ void BTDisplay::playSound(const char *file, bool physfs /*= true*/)
 unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /*= 0*/, int delayOveride /*= -1*/)
 {
  unsigned int key;
- std::vector<BTUIElement*>::iterator top = element.begin();
- for (; top != element.end(); ++top)
+ std::vector<BTUIElement*>::iterator elementEnd = screen.back()->getElements().end();
+ std::vector<BTUIElement*>::iterator top = screen.back()->getElements().begin();
+ for (; top != elementEnd; ++top)
  {
   if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()))
   {
@@ -917,7 +732,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
     continue;
    if (maxH + textPos > text.h)
    {
-    scrollUp(maxH);
+    screen.back()->scrollUp(maxH);
    }
    item->draw(text.x, text.y + textPos, text.w, maxH, *this);
    textPos += maxH;
@@ -928,20 +743,20 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
    int maxH = item->maxHeight(*this);
    if (maxH + textPos > text.h)
    {
-    scrollUp(maxH);
+    screen.back()->scrollUp(maxH);
    }
    item->position.x = text.x;
    item->position.y = text.y + textPos;
    item->position.w = text.w;
    item->position.h = maxH;
-   drawFont(item->text.c_str(), item->position, black, item->align);
+   screen.back()->drawFont(item->text.c_str(), item->position, black, item->align);
    textPos += maxH;
   }
  }
  BTUISelect *select = NULL;
- if (top != element.end())
+ if (top != elementEnd)
  {
-  std::vector<BTUIElement*>::iterator bottom = --(element.end());
+  std::vector<BTUIElement*>::iterator bottom = --(screen.back()->getElements().end());
   int bottomPos = text.h;
   for (; bottom != top; --bottom)
   {
@@ -996,7 +811,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
  }
  else if (select->numbered)
  {
-  select->draw(*this);
+  select->draw(screen.back());
   render();
  }
  int start = SDL_GetTicks();
@@ -1005,7 +820,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
  {
   if ((select) && (!select->numbered))
   {
-   select->draw(*this);
+   select->draw(screen.back());
    render();
   }
   key = readChar(delayCurrent);
@@ -1065,7 +880,7 @@ unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /
   // FIXME: Do real utf-8 conversion
   utf8Key[0] = key;
   utf8Key[1] = 0;
-  for (top = element.begin(); top != element.end(); top++)
+  for (top = screen.back()->getElements().begin(); top != elementEnd; top++)
   {
    if (BTUI_CHOICE == (*top)->getType())
    {
@@ -1212,7 +1027,7 @@ std::string BTDisplay::readString(const char *prompt, int max, const std::string
  int w, h;
  sizeFont(s.c_str(), w, h);
  if (h + textPos > text.h)
-  scrollUp(h);
+  screen.back()->scrollUp(h);
  unsigned char key;
  int len = s.length();
  SDL_Rect dst;
@@ -1242,7 +1057,7 @@ std::string BTDisplay::readString(const char *prompt, int max, const std::string
    ++len;
   }
   dst.h = endPos - startPos;
-  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+  screen.back()->clear(dst);
   textPos = startPos;
   drawText(full.c_str());
   if (textPos > endPos)
@@ -1254,14 +1069,20 @@ std::string BTDisplay::readString(const char *prompt, int max, const std::string
 
 void BTDisplay::refresh()
 {
- SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
+ for (std::list<BTBackgroundAndScreen*>::iterator itr = screen.begin(); itr != screen.end(); itr++)
+ {
+  (*itr)->clear();
+ }
  drawStats();
  render();
 }
 
 void BTDisplay::removeAnimation(MNG_AnimationState *animState)
 {
- activeAnimation.remove(BTAnimation(animState, false));
+ for (std::list<BTBackgroundAndScreen*>::iterator itr = screen.begin(); itr != screen.end(); itr++)
+ {
+  (*itr)->removeAnimation(animState);
+ }
 }
 
 int BTDisplay::selectImage(int initial)
@@ -1272,7 +1093,7 @@ int BTDisplay::selectImage(int initial)
  int w, h;
  sizeFont(s.c_str(), w, h);
  if (h + textPos > text.h)
-  scrollUp(h);
+  screen.back()->scrollUp(h);
  unsigned char key;
  int len = s.length();
  SDL_Rect dst;
@@ -1298,7 +1119,7 @@ int BTDisplay::selectImage(int initial)
  select->position.w = text.w;
  select->position.h = bottomPos - textPos;
  select->sanitize(*this);
- select->draw(*this);
+ select->draw(screen.back());
  render();
  while (((key = readChar()) != 13) && (key !=  27))
  {
@@ -1350,28 +1171,17 @@ int BTDisplay::selectImage(int initial)
    select->sanitize(*this);
   }
   dst.h = endPos - startPos;
-  SDL_BlitSurface(mainBackground, &dst, mainScreen, &dst);
+  screen.back()->clear(dst);
   textPos = startPos;
   drawText(full.c_str());
   if (textPos > endPos)
    endPos = textPos;
-  select->draw(*this);
+  select->draw(screen.back());
   drawImage(current);
   render();
  }
  delete select;
  return ((key == 27) ? initial : current);
-}
-
-void BTDisplay::setBackground(const char *file, bool physfs /*= true*/)
-{
- if (mainBackground)
- {
-  SDL_FreeSurface(mainBackground);
-  mainBackground = NULL;
- }
- loadImageOrAnimation(file, &mainBackground, NULL, false, physfs);
- SDL_BlitSurface(mainBackground, NULL, mainScreen, NULL);
 }
 
 void BTDisplay::setConfig(BTDisplayConfig *c)
@@ -1434,6 +1244,11 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
  text.y = c->text.y * newYMult;
  text.w = c->text.w * newXMult;
  text.h = c->text.h * newYMult;
+ for (std::list<BTBackgroundAndScreen*>::iterator itr = ++(screen.begin()); itr != screen.end(); ++itr)
+ {
+  delete *itr;
+ }
+ screen.erase(++(screen.begin()), screen.end());
  if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
  {
 #ifdef SDL2LIB
@@ -1508,7 +1323,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   ttffont = 0;
  }
 #endif
- setBackground(c->background);
+ (*screen.begin())->setBackground(c->background);
 }
 
 void BTDisplay::setPsuedo3DConfig(Psuedo3DConfigList *p3dl)
@@ -1704,7 +1519,7 @@ void BTDisplay::toggleFullScreen()
  render();
 }
 
-void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a)
+void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a, SDL_Surface *screen /*= NULL*/)
 {
  if (0 == *text)
   return;
@@ -1747,7 +1562,10 @@ void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment
    final.h = src.h;
    break;
  }
- SDL_BlitSurface(img, &src, mainScreen, &final);
+ if (screen)
+  SDL_BlitSurface(img, &src, screen, &final);
+ else
+  SDL_BlitSurface(img, &src, mainScreen, &final);
  SDL_FreeSurface(img);
 }
 
@@ -1761,10 +1579,32 @@ void BTDisplay::drawImage(SDL_Rect &dst, SDL_Surface *img)
  SDL_BlitSurface(img, &src, mainScreen, &dst);
 }
 
-void BTDisplay::drawRect(SDL_Rect &dst, SDL_Color c)
+void BTDisplay::fillRect(SDL_Surface *scr, SDL_Rect &dst, SDL_Color c)
 {
- SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, c.r, c.g, c.b));
+ if (scr)
+  SDL_FillRect(scr, &dst, SDL_MapRGB(scr->format, c.r, c.g, c.b));
+ else
+  SDL_FillRect(mainScreen, &dst, SDL_MapRGB(mainScreen->format, c.r, c.g, c.b));
 }
+
+SDL_Surface *BTDisplay::grabImage(SDL_Surface *scr, SDL_Rect &src)
+{
+ if (scr == NULL)
+  scr = mainScreen;
+ SDL_Rect dst;
+ dst.x = 0;
+ dst.y = 0;
+ dst.w = src.w;
+ dst.h = src.h;
+ SDL_Surface *backup = SDL_CreateRGBSurface(SDL_SWSURFACE, src.w, src.h, 32, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
+ SDL_BlitSurface(scr, &src, backup, &dst);
+ return backup;
+}
+
+void BTDisplay::moveImage(SDL_Rect &src, SDL_Rect &dst)
+{
+  SDL_BlitSurface(mainScreen, &src, mainScreen, &dst);
+ }
 
 void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Image **animation, bool imageWindow, bool physfs /*= true*/)
 {
@@ -1873,6 +1713,10 @@ void BTDisplay::loadImageOrAnimation(const char *file, SDL_Surface **img, MNG_Im
 
 void BTDisplay::render()
 {
+ for (std::list<BTBackgroundAndScreen*>::iterator itr = screen.begin(); itr != screen.end(); ++itr)
+ {
+  (*itr)->render();
+ }
 #ifdef SDL2LIB
  if (fullScreen && softRenderer)
  {
@@ -1928,37 +1772,13 @@ unsigned long BTDisplay::drawAnimationFrame()
 {
  unsigned long ticks = SDL_GetTicks();
  unsigned long next = 0;
- for (std::list<BTAnimation>::iterator itr = activeAnimation.begin(); itr != activeAnimation.end(); itr++)
+ for (std::list<BTBackgroundAndScreen*>::iterator itr = screen.begin(); itr != screen.end(); itr++)
  {
-  SDL_Surface *nextImg = IMG_TimeUpdate(itr->animation, ticks);
-  if (nextImg)
-  {
-   if (itr->clear)
-    clear(itr->animation->dst, false);
-   drawImage(itr->animation->dst, nextImg);
-  }
-  unsigned long possible = IMG_TimeToNextFrame(itr->animation, ticks);
+  unsigned long possible = (*itr)->drawAnimationFrame(ticks);
   if ((next == 0) || (possible < next))
    next = possible;
  }
  return next;
-}
-
-void BTDisplay::scrollUp(int h)
-{
- SDL_Rect src, dst;
- src.x = dst.x = text.x;
- src.y = text.y + h;
- src.w = dst.w = text.w;
- src.h = dst.h = text.h - h;
- dst.y = text.y;
- SDL_BlitSurface(mainScreen, &src, mainScreen, &dst);
- src.x = text.x;
- src.y = text.y + text.h - h;
- src.w = text.w;
- src.h = h;
- SDL_BlitSurface(mainBackground, &src, mainScreen, &src);
- textPos -= h;
 }
 
 void BTDisplay::setupKeyMap()
@@ -2123,6 +1943,353 @@ Uint32 BTDisplay::timerCallback(Uint32 interval, void *param)
  return 0;
 }
 
+BTBackgroundAndScreen::BTBackgroundAndScreen(BTDisplay *d, SDL_Surface *s)
+ : display(d), screen(s), background(NULL)
+{
+}
+
+BTBackgroundAndScreen::~BTBackgroundAndScreen()
+{
+ for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
+ {
+  delete (*elementItr);
+ }
+ if (screen)
+ {
+  SDL_FreeSurface(screen);
+ }
+ if (background)
+ {
+  SDL_FreeSurface(background);
+ }
+}
+
+void BTBackgroundAndScreen::addAnimation(MNG_AnimationState *animState, bool clear /*= false*/)
+{
+ activeAnimation.push_back(BTAnimation(animState, clear));
+}
+
+void BTBackgroundAndScreen::addElement(BTUIElement *elm)
+{
+ element.push_back(elm);
+}
+
+void BTBackgroundAndScreen::clear()
+{
+ SDL_Rect r;
+ r.x = 0;
+ r.y = 0;
+ r.h = background->h;
+ 
+ if (screen)
+  SDL_BlitSurface(background, &r, screen, &r);
+ else
+  display->clear(background, r);
+}
+
+void BTBackgroundAndScreen::clear(SDL_Rect &r)
+{
+ if (screen)
+  SDL_BlitSurface(background, &r, screen, &r);
+ else
+  display->clear(background, r);
+}
+
+void BTBackgroundAndScreen::clearElements()
+{
+ for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
+ {
+  delete (*elementItr);
+ }
+ element.clear();
+}
+
+SDL_Color &BTBackgroundAndScreen::getColor(const std::string &color)
+{
+ return display->getColor(color);
+}
+
+unsigned long BTBackgroundAndScreen::drawAnimationFrame(long ticks)
+{
+ unsigned long next = 0;
+ for (std::list<BTAnimation>::iterator itr = activeAnimation.begin(); itr != activeAnimation.end(); itr++)
+ {
+  SDL_Surface *nextImg = IMG_TimeUpdate(itr->animation, ticks);
+  if (nextImg)
+  {
+   if (itr->clear)
+    clear(itr->animation->dst);
+   SDL_Rect src;
+   src.x = 0;
+   src.y = 0;
+   src.w = itr->animation->dst.w;
+   src.h = itr->animation->dst.h;
+   if (screen)
+    SDL_BlitSurface(nextImg, &src, screen, &itr->animation->dst);
+   else
+    display->drawImage(itr->animation->dst, nextImg);
+  }
+  unsigned long possible = IMG_TimeToNextFrame(itr->animation, ticks);
+  if ((next == 0) || (possible < next))
+   next = possible;
+ }
+ return next;
+}
+
+void BTBackgroundAndScreen::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTDisplay::alignment a)
+{
+ display->drawFont(text, dst, c, a, screen);
+}
+
+void BTBackgroundAndScreen::drawImage(SDL_Surface *img, SDL_Rect &dst)
+{
+ SDL_Rect src;
+ src.x = 0;
+ src.y = 0;
+ src.w = dst.w;
+ src.h = dst.h;
+ if (screen)
+  SDL_BlitSurface(img, &src, screen, &dst);
+ else
+  display->drawImage(dst, img);
+}
+void BTBackgroundAndScreen::drawMap(bool knowledge)
+{
+ // Draw black
+ Psuedo3DMap *m = Psuedo3DMap::getMap();
+ Psuedo3D &p3d = display->getPsuedo3D();
+ int xMult, yMult;
+ BTDisplayConfig *config = display->getConfig();
+ display->getMultiplier(xMult, yMult);
+ SDL_Rect src, dst;
+ dst.x = config->xMap * xMult;
+ dst.y = config->yMap * yMult;
+ src.w = dst.w = config->widthMap * p3d.config->mapWidth * xMult;
+ src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
+ src.x = 0;
+ src.y = 0;
+ SDL_Surface *backup = NULL;
+ if (config->mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
+ {
+  backup = display->grabImage(screen, dst);
+ }
+ display->fillRect(screen, dst, display->getBlack());
+ if (config->centerMap)
+ {
+  display->mapXStart = m->getX() - (config->widthMap / 2);
+  display->mapYStart = m->getY() - (config->heightMap / 2);
+ }
+ else
+ {
+  int curX = m->getX();
+  if (display->mapXStart > curX)
+   display->mapXStart = curX;
+  if (display->mapXStart + config->widthMap <= curX)
+   display->mapXStart = curX - config->widthMap + 1;
+  int curY = m->getY();
+  if (display->mapYStart > curY)
+   display->mapYStart = curY;
+  if (display->mapYStart + config->heightMap <= curY)
+   display->mapYStart = curY - config->heightMap + 1;
+ }
+ if (config->coordinatesMap)
+ {
+  for (int k = 0; k < config->heightMap; ++k)
+  {
+   char sz[3] = {0, 0, 0};
+   int coordinate = m->getYSize() - (k + display->mapYStart) - 1;
+   if (coordinate < 100)
+   {
+    if (coordinate < 0)
+    {
+     sz[0] = 0;
+     sz[1] = 0;
+    }
+    else if (coordinate < 10)
+    {
+     sz[0] = '0' + (coordinate);
+     sz[1] = 0;
+    }
+    else
+    {
+     sz[0] = '0' + ((coordinate) / 10);
+     sz[1] = '0' + ((coordinate) % 10);
+     sz[2] = 0;
+    }
+   }
+   SDL_Rect dst;
+   dst.x = (config->xMap - 2 - (2 * p3d.config->mapWidth)) * xMult;
+   dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
+   dst.w = 2 * p3d.config->mapWidth * xMult;
+   dst.h = p3d.config->mapHeight * yMult;
+   clear(dst);
+   drawFont(sz, dst, display->getBlack(), BTDisplay::right);
+  }
+  for (int i = 0; i < config->widthMap; ++i)
+  {
+   char sz[2] = {0, 0};
+   int coordinate = i + display->mapXStart;
+   if (coordinate < 100)
+   {
+    if (coordinate < 10)
+    {
+     sz[0] = '0' + (coordinate);
+     sz[1] = 0;
+    }
+    else
+    {
+     sz[0] = '0' + ((coordinate) / 10);
+     sz[1] = 0;
+    }
+   }
+   SDL_Rect dst;
+   dst.x = (config->xMap + (i * p3d.config->mapWidth)) * xMult;
+   dst.y = (config->yMap + (config->heightMap * p3d.config->mapHeight) + 2) * yMult;
+   dst.w = p3d.config->mapWidth * xMult;
+   dst.h = p3d.config->mapHeight * yMult;
+   clear(dst);
+   drawFont(sz, dst, display->getBlack(), BTDisplay::right);
+   sz[0] = 0;
+   if (coordinate < 100)
+   {
+    if (coordinate >= 10)
+    {
+     sz[0] = '0' + ((coordinate) % 10);
+     sz[1] = 0;
+    }
+   }
+   dst.y = (config->yMap + ((config->heightMap + 1) * p3d.config->mapHeight) + 2) * yMult;
+   clear(dst);
+   if (sz[0])
+    drawFont(sz, dst, display->getBlack(), BTDisplay::right);
+  }
+ }
+ for (int i = 0; i < config->widthMap; ++i)
+ {
+  for (int k = 0; k < config->heightMap; ++k)
+  {
+   dst.x = (config->xMap + (i * p3d.config->mapWidth)) * xMult;
+   dst.y = (config->yMap + (k * p3d.config->mapHeight)) * yMult;
+   dst.w = p3d.config->mapWidth * xMult;
+   dst.h = p3d.config->mapHeight * yMult;
+   int know = m->getKnowledge(display->mapXStart + i, display->mapYStart + k);
+   if ((display->mapXStart + i < 0) || (display->mapYStart + k < 0) || (display->mapXStart + i >= m->getXSize()) || (display->mapYStart + k >= m->getYSize()) || ((!knowledge) && (know == BTKNOWLEDGE_NO)))
+   {
+    SDL_Surface *unknown = p3d.getMapUnknown();
+    if (unknown)
+    {
+     drawImage(unknown, dst);
+    }
+   }
+   else
+   {
+    for (int direction = 0; direction < CARDINAL_DIRECTIONS; ++direction)
+    {
+     SDL_Surface *mapWall = p3d.getMapWall(m->getMapType(display->mapXStart + i, display->mapYStart + k, direction), direction, knowledge || (know == BTKNOWLEDGE_FULL));
+     if (mapWall)
+     {
+      drawImage(mapWall, dst);
+     }
+    }
+    if (m->hasSpecial(display->mapXStart + i, display->mapYStart + k))
+    {
+     SDL_Surface *special = p3d.getMapSpecial();
+     if (special)
+     {
+      drawImage(special, dst);
+     }
+    }
+    if ((display->mapYStart + k == m->getY()) && (display->mapXStart + i == m->getX()))
+    {
+     SDL_Surface *arrow = p3d.getMapArrow(m->getFacing());
+     if (arrow)
+     {
+      drawImage(arrow, dst);
+     }
+    }
+   }
+  }
+ }
+ dst.x = config->xMap * xMult;
+ dst.y = config->yMap * yMult;
+ src.w = dst.w = config->widthMap * p3d.config->mapWidth * xMult;
+ src.h = dst.h = config->heightMap * p3d.config->mapHeight * yMult;
+ src.x = 0;
+ src.y = 0;
+ if (config->mapDisplayMode == BTMAPDISPLAYMODE_REQUEST)
+ {
+  display->render();
+  unsigned char response = display->readChar();
+  drawImage(backup, dst);
+  SDL_FreeSurface(backup);
+ }
+}
+
+void BTBackgroundAndScreen::fillRect(SDL_Rect &dst, SDL_Color c)
+{
+ display->fillRect(screen, dst, c);
+}
+
+void BTBackgroundAndScreen::removeAnimation(MNG_AnimationState *animState)
+{
+ activeAnimation.remove(BTAnimation(animState, false));
+}
+
+void BTBackgroundAndScreen::render()
+{
+ if (screen)
+ {
+  SDL_Rect r;
+  r.x = 0;
+  r.y = 0;
+  r.h = screen->h;
+  r.w = screen->w;
+  drawImage(screen, r);
+ }
+}
+
+void BTBackgroundAndScreen::scrollUp(int h)
+{
+ SDL_Rect src, dst;
+ SDL_Rect &text = display->getText();
+ src.x = dst.x = text.x;
+ src.y = text.y + h;
+ src.w = dst.w = text.w;
+ src.h = dst.h = text.h - h;
+ dst.y = text.y;
+ if (screen)
+  SDL_BlitSurface(screen, &src, screen, &dst);
+ else
+  display->moveImage(src, dst);
+ src.x = text.x;
+ src.y = text.y + text.h - h;
+ src.w = text.w;
+ src.h = h;
+ clear(src);
+ display->textPos -= h;
+}
+
+void BTBackgroundAndScreen::setBackground(const char *file, bool physfs /*= true*/)
+{
+ if (background)
+ {
+  SDL_FreeSurface(background);
+  background = NULL;
+ }
+ display->loadImageOrAnimation(file, &background, NULL, false, physfs);
+ if (screen)
+  SDL_BlitSurface(background, NULL, screen, NULL);
+ else
+ {
+  SDL_Rect r;
+  r.x = 0;
+  r.y = 0;
+  r.h = background->h;
+  r.w = background->w;
+  clear(r);
+ }
+}
+
 int BTUIText::maxHeight(BTDisplay &d)
 {
  int w, h;
@@ -2138,21 +2305,21 @@ BTUISelect::BTUISelect(BTDisplay::selectItem *l, int sz, int &st, int &sel, int 
   numbered = 0;
 }
 
-void BTUISelect::draw(BTDisplay &d)
+void BTUISelect::draw(BTBackgroundAndScreen *d)
 {
  int wFirst, wValue, h, hTmp, lines;
  char tmp[20];
  SDL_Rect dst;
- d.sizeFont("", wFirst, h);
+ d->getDisplay()->sizeFont("", wFirst, h);
  lines = position.h / h;
  if (select >= start + lines)
   start = select - lines - 1;
- d.clear(position);
+ d->clear(position);
  dst.y = position.y;
  dst.h = h;
  if (numbered)
  {
-  d.sizeFont("1) ", wFirst, hTmp);
+  d->getDisplay()->sizeFont("1) ", wFirst, hTmp);
   int i = 0;
   for (; i < size; ++i)
   {
@@ -2162,11 +2329,11 @@ void BTUISelect::draw(BTDisplay &d)
    tmp[1] = ')';
    tmp[2] = list[i].first;
    tmp[3] = 0;
-   d.drawFont(tmp, dst, d.getBlack(), BTDisplay::left);
+   d->drawFont(tmp, dst, d->getDisplay()->getBlack(), BTDisplay::left);
    dst.x += wFirst;
    dst.w = position.w - wFirst;
    if (!list[i].name.empty())
-    d.drawFont(list[i].name.c_str(), dst, d.getBlack(), BTDisplay::left);
+    d->drawFont(list[i].name.c_str(), dst, d->getDisplay()->getBlack(), BTDisplay::left);
    dst.y += h;
   }
   for (; i < numbered; ++i)
@@ -2176,13 +2343,13 @@ void BTUISelect::draw(BTDisplay &d)
    tmp[0] = '1' + i;
    tmp[1] = ')';
    tmp[2] = 0;
-   d.drawFont(tmp, dst, d.getBlack(), BTDisplay::left);
+   d->drawFont(tmp, dst, d->getDisplay()->getBlack(), BTDisplay::left);
    dst.y += h;
   }
  }
  else if (size > 0)
  {
-  d.sizeFont("@", wFirst, hTmp);
+  d->getDisplay()->sizeFont("@", wFirst, hTmp);
   for (int i = start; i < start + lines; ++i)
   {
    if (i >= size)
@@ -2191,26 +2358,26 @@ void BTUISelect::draw(BTDisplay &d)
    {
     dst.x = position.x;
     dst.w = position.w;
-    d.drawRect(dst, d.getBlack());
+    d->fillRect(dst, d->getDisplay()->getBlack());
    }
    dst.x = position.x;
    dst.w = wFirst;
    tmp[0] = list[i].first;
    tmp[1] = 0;
-   d.drawFont(tmp, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
+   d->drawFont(tmp, dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTDisplay::left);
    if (((list[i].value) && (list[i].flags.isSet(BTSELECTFLAG_SHOWVALUE))) || (list[i].flags.isSet(BTSELECTFLAG_NUMBER)))
    {
     snprintf(tmp, 20, "%d", list[i].value);
-    d.sizeFont(tmp, wValue, hTmp);
+    d->getDisplay()->sizeFont(tmp, wValue, hTmp);
     dst.w = position.w;
-    d.drawFont(tmp, dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::right);
+    d->drawFont(tmp, dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTDisplay::right);
    }
    else
     wValue = 0;
    dst.x += wFirst;
    dst.w = position.w - wValue - wFirst;
    if (!list[i].name.empty())
-    d.drawFont(list[i].name.c_str(), dst, ((select != i) ? d.getBlack() : d.getWhite()), BTDisplay::left);
+    d->drawFont(list[i].name.c_str(), dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTDisplay::left);
    dst.y += h;
   }
  }
@@ -2353,4 +2520,3 @@ int BTUIMultiColumn::maxHeight(BTDisplay &d)
  }
  return hFinal;
 }
-

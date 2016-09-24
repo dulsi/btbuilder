@@ -13,7 +13,7 @@
 #include <SDL.h>
 #include <SDL_mng.h>
 
-class BTDisplay;
+class BTBackgroundAndScreen;
 
 class BTIcon : public XMLObject
 {
@@ -21,7 +21,7 @@ class BTIcon : public XMLObject
   BTIcon() : image(0), effect(0), party(false), goodOnly(false), active(false), img(0) { animation.animation = 0; }
   ~BTIcon();
 
-  virtual void draw(BTDisplay &d, unsigned long ticks);
+  virtual void draw(BTBackgroundAndScreen &d, unsigned long ticks);
   bool isActive();
   virtual void serialize(ObjectSerializer* s);
 
@@ -44,7 +44,7 @@ class BTFacingIcon : public BTIcon
   BTFacingIcon();
   ~BTFacingIcon();
 
-  void draw(BTDisplay &d, unsigned long ticks);
+  void draw(BTBackgroundAndScreen &d, unsigned long ticks);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTFacingIcon; }
 

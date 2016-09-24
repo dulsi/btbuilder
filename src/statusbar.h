@@ -9,12 +9,12 @@
 
 #include "xmlserializer.h"
 
-class BTDisplay;
+class BTBackgroundAndScreen;
 
 class BTStatusBar : public ObjectSerializer
 {
  public:
-  BTStatusBar(BTDisplay &d) : display(d) {}
+  BTStatusBar(BTBackgroundAndScreen *d) : display(d) {}
   ~BTStatusBar() {}
 
   void draw();
@@ -22,7 +22,7 @@ class BTStatusBar : public ObjectSerializer
   virtual int getLevel();
 
  private:
-  BTDisplay &display;
+  BTBackgroundAndScreen *display;
 };
 
 #endif

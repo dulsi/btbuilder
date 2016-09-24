@@ -10,14 +10,14 @@
 #include "xmlserializer.h"
 #include "serialrect.h"
 
-class BTDisplay;
+class BTBackgroundAndScreen;
 
 class BTStatusInfo : public XMLObject
 {
  public:
   BTStatusInfo() {}
 
-  virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc) = 0;
+  virtual void draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc) = 0;
 };
 
 class BTStatCompare : public XMLObject
@@ -39,7 +39,7 @@ class BTStatBlock : public BTStatusInfo
   BTStatBlock() : attribute(0), modifier(0), negate(false), maxValue(-1), overflow(0), align(0) {}
   ~BTStatBlock() { if (attribute) delete [] attribute; if (overflow) delete [] overflow; }
 
-  virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
+  virtual void draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTStatBlock; }
@@ -61,7 +61,7 @@ class BTPrint : public BTStatusInfo
   BTPrint() : text(0), align(0), color("black") {}
   ~BTPrint() { if (text) delete [] text; }
 
-  virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
+  virtual void draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPrint; }
@@ -78,7 +78,7 @@ class BTCondition : public XMLObject
  public:
   virtual bool compare(ObjectSerializer *pc) const;
   virtual void serialize(ObjectSerializer* s);
-  void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
+  void draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTCondition; }
 
@@ -107,7 +107,7 @@ class BTConditional : public BTStatusInfo
  public:
   BTConditional() {}
 
-  virtual void draw(BTDisplay &d, int x, int y, ObjectSerializer *pc);
+  virtual void draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc);
   virtual void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTConditional; }

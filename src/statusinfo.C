@@ -27,12 +27,12 @@ void BTStatBlock::serialize(ObjectSerializer* s)
  s->add("compare", &compare);
 }
 
-void BTStatBlock::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
+void BTStatBlock::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
 {
  int xMult, yMult;
  SDL_Rect dst;
  std::string color("black");
- d.getMultiplier(xMult, yMult);
+ d.getDisplay()->getMultiplier(xMult, yMult);
  dst.x = (x + position.x) * xMult;
  dst.y = (y + position.y) * yMult;
  dst.w = position.w * xMult;
@@ -108,11 +108,11 @@ void BTPrint::serialize(ObjectSerializer* s)
  s->add("color", &color);
 }
 
-void BTPrint::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
+void BTPrint::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
 {
  int xMult, yMult;
  SDL_Rect dst;
- d.getMultiplier(xMult, yMult);
+ d.getDisplay()->getMultiplier(xMult, yMult);
  dst.x = (x + position.x) * xMult;
  dst.y = (y + position.y) * yMult;
  dst.w = position.w * xMult;
@@ -125,7 +125,7 @@ bool BTCondition::compare(ObjectSerializer *pc) const
  return true;
 }
 
-void BTCondition::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
+void BTCondition::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
 {
  for (int i = 0; i < info.size(); ++i)
  {
@@ -157,7 +157,7 @@ void BTCheckBit::serialize(ObjectSerializer* s)
  BTCondition::serialize(s);
 }
 
-void BTConditional::draw(BTDisplay &d, int x, int y, ObjectSerializer *pc)
+void BTConditional::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
 {
  for (int i = 0; i < condition.size(); ++i)
  {
