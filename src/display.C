@@ -229,12 +229,31 @@ BTDisplay::~BTDisplay()
 
 void BTDisplay::addAnimation(MNG_AnimationState *animState, bool clear /*= false*/)
 {
- screen.back()->addAnimation(animState, clear);
+ getVisibleScreen()->addAnimation(animState, clear);
+}
+
+void BTDisplay::addBackground(const char *file)
+{
+ if (screen.size() == 1)
+  screen.front()->dupeScreen(mainScreen);
+ SDL_Surface * scr = SDL_CreateRGBSurface(0, config->width * xMult, config->height * yMult, 32,
+                                        0x00FF0000,
+                                        0x0000FF00,
+                                        0x000000FF,
+                                        0xFF000000);
+ if (scr == NULL)
+ {
+  printf("Failed - SDL_CreateRGBSurface\n");
+  exit(0);
+ }
+ BTBackgroundAndScreen *newScreen = new BTBackgroundAndScreen(this, scr);
+ screen.push_back(newScreen);
+ newScreen->setBackground(file);
 }
 
 void BTDisplay::addBarrier(const char *keys)
 {
- screen.back()->addElement(new BTUIBarrier(keys));
+ getVisibleScreen()->addElement(new BTUIBarrier(keys));
 }
 
 void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= left*/)
@@ -294,9 +313,9 @@ void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= l
    }
   }
   if (NULL == keys)
-   screen.back()->addElement(new BTUIText((end ? tmp : partial), a));
+   getVisibleScreen()->addElement(new BTUIText((end ? tmp : partial), a));
   else
-   screen.back()->addElement(new BTUIChoice(keys, (end ? tmp : partial), a));
+   getVisibleScreen()->addElement(new BTUIChoice(keys, (end ? tmp : partial), a));
   partial = end;
  }
  delete [] tmp;
@@ -309,22 +328,22 @@ void BTDisplay::addText(const char *words, alignment a /*= left*/)
 
 void BTDisplay::addColumns(const std::list<std::string>& c)
 {
- screen.back()->addElement(new BTUIMultiColumn(c));
+ getVisibleScreen()->addElement(new BTUIMultiColumn(c));
 }
 
 void BTDisplay::addReadString(const std::string &prompt, int maxLen, std::string &response)
 {
- screen.back()->addElement(new BTUIReadString(prompt, maxLen, response));
+ getVisibleScreen()->addElement(new BTUIReadString(prompt, maxLen, response));
 }
 
 void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select, int num /*= 0*/)
 {
- screen.back()->addElement(new BTUISelect(list, size, start, select, num));
+ getVisibleScreen()->addElement(new BTUISelect(list, size, start, select, num));
 }
 
 void BTDisplay::addSelectImage(int &select)
 {
- screen.back()->addElement(new BTUISelectImage(select));
+ getVisibleScreen()->addElement(new BTUISelectImage(select));
 }
 
 void BTDisplay::clear(SDL_Surface *scr, SDL_Rect &r)
@@ -344,7 +363,7 @@ void BTDisplay::clearImage()
  {
   IMG_FreeMNG(animation.animation);
   animation.animation = NULL;
-  screen.back()->removeAnimation(&animation);
+  getVisibleScreen()->removeAnimation(&animation);
  }
  SDL_Rect dst;
  dst.x = config->x3d * xMult;
@@ -356,8 +375,8 @@ void BTDisplay::clearImage()
 
 void BTDisplay::clearText()
 {
- screen.back()->clearElements();
- screen.back()->clear(text);
+ getVisibleScreen()->clearElements();
+ getVisibleScreen()->clear(text);
  textPos = 0;
 }
 
@@ -462,17 +481,22 @@ void BTDisplay::drawImage(int pic)
  SDL_FreeSurface(img);
 }
 
-void BTDisplay::drawLabel(const char *name)
+void BTDisplay::drawLabel(const char *value)
+{
+ drawLabel("main", value);
+}
+
+void BTDisplay::drawLabel(const char *name, const char *value)
 {
  int w, h;
  if (!sizeFont(name, w, h))
   return;
  for (int i = 0; i < widgets.size(); i++)
  {
-  if (widgets[i]->getName() == std::string("main"))
+  if (widgets[i]->getName() == std::string(name))
   {
-   widgets[i]->setText(name);
-   widgets[i]->render(*screen.rbegin());
+   widgets[i]->setText(value);
+   widgets[i]->render(getVisibleScreen());
   }
  }
 }
@@ -487,8 +511,8 @@ void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= le
  dst.y = text.y + text.h - h;
  dst.w = text.w;
  dst.h = h;
- screen.back()->clear(dst);
- screen.back()->drawFont(words, dst, black, a);
+ getVisibleScreen()->clear(dst);
+ getVisibleScreen()->drawFont(words, dst, black, a);
 }
 
 void BTDisplay::drawMessage(const char *words, int *delay)
@@ -552,7 +576,7 @@ void BTDisplay::drawText(const char *words, alignment a /*= left*/)
   dst.y = text.y + textPos;
   dst.w = text.w;
   dst.h = h;
-  screen.back()->drawFont((end ? tmp : partial), dst, black, a);
+  getVisibleScreen()->drawFont((end ? tmp : partial), dst, black, a);
   textPos += h;
   partial = end;
  }
@@ -643,6 +667,17 @@ void BTDisplay::getMultiplier(int &x, int &y)
 {
  x = xMult;
  y = yMult;
+}
+
+BTBackgroundAndScreen *BTDisplay::getScreen(int i)
+{
+ for (std::list<BTBackgroundAndScreen *>::iterator itr(screen.begin()); itr != screen.end(); ++itr)
+ {
+  if (i == 0)
+   return *itr;
+  --i;
+ }
+ return NULL;
 }
 
 SDL_Color &BTDisplay::getWhite()
@@ -1249,6 +1284,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   delete *itr;
  }
  screen.erase(++(screen.begin()), screen.end());
+ screen.front()->dropScreen();
  if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
  {
 #ifdef SDL2LIB
@@ -1781,6 +1817,17 @@ unsigned long BTDisplay::drawAnimationFrame()
  return next;
 }
 
+BTBackgroundAndScreen *BTDisplay::getVisibleScreen()
+{
+ BTBackgroundAndScreen *answer = NULL;
+ for (std::list<BTBackgroundAndScreen *>::iterator itr = screen.begin(); itr != screen.end(); ++itr)
+ {
+  if ((*itr)->isVisable())
+   answer = *itr;
+ }
+ return answer;
+}
+
 void BTDisplay::setupKeyMap()
 {
  key.insert(std::pair<SDL_Keycode, char>(SDLK_BACKSPACE, '\b'));
@@ -1944,7 +1991,7 @@ Uint32 BTDisplay::timerCallback(Uint32 interval, void *param)
 }
 
 BTBackgroundAndScreen::BTBackgroundAndScreen(BTDisplay *d, SDL_Surface *s)
- : display(d), screen(s), background(NULL)
+ : display(d), screen(s), background(NULL), visible(true)
 {
 }
 
@@ -2225,6 +2272,29 @@ void BTBackgroundAndScreen::drawMap(bool knowledge)
  }
 }
 
+void BTBackgroundAndScreen::dropScreen()
+{
+ if (screen)
+ {
+  SDL_FreeSurface(screen);
+  screen = NULL;
+ }
+}
+
+void BTBackgroundAndScreen::dupeScreen(SDL_Surface *scr)
+{
+ if (screen == NULL)
+ {
+  screen = SDL_CreateRGBSurface(SDL_SWSURFACE, scr->w, scr->h, 32, scr->format->Rmask, scr->format->Gmask, scr->format->Bmask, scr->format->Amask);
+  if (screen == NULL)
+  {
+   printf("Failed - SDL_CreateRGBSurface\n");
+   exit(0);
+  }
+  SDL_BlitSurface(scr, NULL, screen, NULL);
+ }
+}
+
 void BTBackgroundAndScreen::fillRect(SDL_Rect &dst, SDL_Color c)
 {
  display->fillRect(screen, dst, c);
@@ -2237,14 +2307,14 @@ void BTBackgroundAndScreen::removeAnimation(MNG_AnimationState *animState)
 
 void BTBackgroundAndScreen::render()
 {
- if (screen)
+ if ((screen) && (visible))
  {
   SDL_Rect r;
   r.x = 0;
   r.y = 0;
   r.h = screen->h;
   r.w = screen->w;
-  drawImage(screen, r);
+  display->drawImage(r, screen);
  }
 }
 

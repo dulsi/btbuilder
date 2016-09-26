@@ -5,8 +5,10 @@
 	<background>ui/mapedit.png</background>
 	<x3d>4</x3d>
 	<y3d>4</y3d>
-	<text><x>4</x><y>107</y><w>100</w><h>90</h></text>
-	<label><name>main</name><location><x>4</x><y>93</y><w>112</w><h>13</h></location></label>
+	<text><x>6</x><y>9</y><w>128</w><h>186</h></text>
+	<label><name>wall</name><location><x>4</x><y>100</y><w>112</w><h>13</h></location></label>
+	<label><name>main</name><location><x>4</x><y>120</y><w>112</w><h>13</h></location></label>
+	<label><name>street</name><location><x>4</x><y>140</y><w>112</w><h>13</h></location></label>
 	<xMap>141</xMap>
 	<yMap>4</yMap>
 	<widthMap>22</widthMap>
