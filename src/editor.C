@@ -272,6 +272,10 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     break;
    case 'r':
    {
+    if (NULL == d.getScreen(1))
+     d.addBackground("ui/mapedit_select.png");
+    else
+     d.getScreen(1)->setVisibility(true);
     std::string tmp = d.readString("X Size?", 3, "");
     int newXSize = atol(tmp.c_str());
     if (newXSize < 1)
@@ -281,6 +285,8 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     if (newYSize < 1)
      break;
     levelMap->resize(newXSize, newYSize);
+    d.clearText();
+    d.getScreen(1)->setVisibility(false);
     break;
    }
    case 'c':
