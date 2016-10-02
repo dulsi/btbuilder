@@ -14,6 +14,7 @@
 #include "boost/filesystem/operations.hpp"
 
 const char *BTDisplay::allKeys = "allKeys";
+std::string BTDisplay::displayDir;
 
 BTLabelWidget::BTLabelWidget(BTLabelConfig *c, int xMult, int yMult)
  : config(c)
@@ -1901,6 +1902,22 @@ void BTDisplay::render()
 #else
  SDL_UpdateRect(mainScreen, 0, 0, 0, 0);
 #endif
+}
+
+std::string BTDisplay::applyDisplayDir(const std::string &filename)
+{
+ std::string answer;
+ if (0 == strncmp("data/", filename.c_str(), 5))
+ {
+  answer = "data/";
+  answer += displayDir;
+  answer += (filename.c_str() + 5);
+ }
+ else
+ {
+  answer = displayDir + filename;
+ }
+ return answer;
 }
 
 void BTDisplay::clearScreens()

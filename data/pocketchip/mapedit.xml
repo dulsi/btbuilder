@@ -1,0 +1,24 @@
+<display>
+	<width>430</width>
+	<height>200</height>
+	<x3d>5</x3d>
+	<y3d>1</y3d>
+	<layout>
+		<background>ui/pocketchip/mapedit.png</background>
+		<label><name>wall</name><location><x>5</x><y>177</y><w>224</w><h>13</h></location></label>
+		<label><name>main</name><location><x>5</x><y>190</y><w>112</w><h>13</h></location><color>black</color></label>
+		<label><name>street</name><location><x>117</x><y>190</y><w>112</w><h>13</h></location><color>black</color></label>
+	</layout>
+	<layout>
+		<background>ui/pocketchip/mapedit_select.png</background>
+		<visible>false</visible>
+		<text><name>text</name><location><x>6</x><y>9</y><w>128</w><h>186</h></location></text>
+	</layout>
+	<xMap>251</xMap>
+	<yMap>4</yMap>
+	<widthMap>22</widthMap>
+	<heightMap>22</heightMap>
+	<mapDisplayMode>always</mapDisplayMode>
+	<centerMap>false</centerMap>
+	<coordinatesMap>true</coordinatesMap>
+</display>

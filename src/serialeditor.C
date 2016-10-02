@@ -34,7 +34,7 @@ void BTSerializedEditor::edit(BTDisplay &d, ObjectSerializer &serial)
  BTDisplayConfig config;
  XMLSerializer parser;
  config.serialize(&parser);
- parser.parse("data/specialedit.xml", true);
+ parser.parse(BTDisplay::applyDisplayDir("data/specialedit.xml").c_str(), true);
  d.setConfig(&config);
  int start(0);
  int current(0);
@@ -403,7 +403,7 @@ void BTSerializedEditor::editField(BTDisplay &d, ObjectSerializer &serial, const
    BTDisplayConfig config;
    XMLSerializer parser;
    config.serialize(&parser);
-   parser.parse("data/pictureselect.xml", true);
+   parser.parse(BTDisplay::applyDisplayDir("data/pictureselect.xml").c_str(), true);
    d.setConfig(&config);
    d.clearText();
    d.addText(text);

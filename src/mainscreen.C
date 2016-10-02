@@ -20,9 +20,10 @@
 
 namespace fs = boost::filesystem;
 
-BTMainScreen::BTMainScreen(const char *a0, std::string lDir, int mult /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
+BTMainScreen::BTMainScreen(const char *a0, std::string lDir, std::string dDir, int mult /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
  : argv0(a0), libDir(lDir), mainConfig(0), display(0), multiplier(mult), fullScreen(full), softRenderer(softRender)
 {
+ BTDisplay::setDisplayDir(dDir);
 }
 
 BTMainScreen::~BTMainScreen()
@@ -94,7 +95,7 @@ void BTMainScreen::runModule(std::string moduleFile)
  BTDisplayConfig config;
  XMLSerializer parser;
  config.serialize(&parser);
- parser.parse("data/display.xml", true);
+ parser.parse(BTDisplay::applyDisplayDir("data/display.xml").c_str(), true);
  if (display)
  {
   display->setConfig(&config);
@@ -219,6 +220,6 @@ void BTMainScreen::loadMainConfig()
  mainConfig = new BTDisplayConfig;
  XMLSerializer parser;
  mainConfig->serialize(&parser);
- parser.parse("data/mainscreen.xml", true);
+ parser.parse(BTDisplay::applyDisplayDir("data/mainscreen.xml").c_str(), true);
 }
 

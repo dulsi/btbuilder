@@ -17,7 +17,7 @@ class physfsException : public std::exception
 class BTMainScreen
 {
  public:
-  BTMainScreen(const char *a0, std::string lDir, int mult = 0, bool full = false, bool softRender = false);
+  BTMainScreen(const char *a0, std::string lDir, std::string dDir, int mult = 0, bool full = false, bool softRender = false);
   ~BTMainScreen();
 
   void run();

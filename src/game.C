@@ -30,7 +30,7 @@ BTCore::BTCore(BTModule *m)
  itemList.load(m->item);
  monsterList.load(m->monster);
  BTSong::readXML(m->song, songList);
- Psuedo3DConfig::readXML(m->wall, p3dConfigList);
+ Psuedo3DConfig::readXML(BTDisplay::applyDisplayDir(m->wall).c_str(), p3dConfigList);
  BTImageTag::readXML("data/imagetag.xml", tagList);
 }
 

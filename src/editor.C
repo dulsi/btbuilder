@@ -181,7 +181,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
  BTDisplayConfig config;
  XMLSerializer parser;
  config.serialize(&parser);
- parser.parse("data/mapedit.xml", true);
+ parser.parse(BTDisplay::applyDisplayDir("data/mapedit.xml").c_str(), true);
  d.setConfig(&config);
  loadMap(filename);
  xPos = 0; yPos = 0; facing = 0;
@@ -466,7 +466,7 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  BTDisplayConfig config;
  XMLSerializer parser;
  config.serialize(&parser);
- parser.parse("data/specialedit.xml", true);
+ parser.parse(BTDisplay::applyDisplayDir("data/specialedit.xml").c_str(), true);
  d.setConfig(&config);
  int start(0);
  int current(0);
@@ -807,7 +807,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
      BTDisplayConfig config;
      XMLSerializer parser;
      config.serialize(&parser);
-     parser.parse("data/mapedit.xml", true);
+     parser.parse(BTDisplay::applyDisplayDir("data/mapedit.xml").c_str(), true);
      d.setConfig(&config);
      xPos = number[count] % levelMap->getXSize(); yPos = levelMap->getYSize() - 1 - (number[count + 1] % levelMap->getYSize()); facing = number[count + 2];
      p3dConfig = d.setWallGraphics(levelMap->getType());
@@ -1001,7 +1001,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     BTDisplayConfig config;
     XMLSerializer parser;
     config.serialize(&parser);
-    parser.parse("data/pictureselect.xml", true);
+    parser.parse(BTDisplay::applyDisplayDir("data/pictureselect.xml").c_str(), true);
     d.setConfig(&config);
     d.clearText();
     d.addText("Select Image");

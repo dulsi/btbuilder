@@ -22,7 +22,7 @@ class BTFactoryEditor
    BTDisplayConfig config;
    XMLSerializer parser;
    config.serialize(&parser);
-   parser.parse("data/specialedit.xml", true);
+   parser.parse(BTDisplay::applyDisplayDir("data/specialedit.xml").c_str(), true);
    d.setConfig(&config);
    BTSortedFactory<item, item1> sortList(&itemList, (sorted ? &compare : NULL));
    BTDisplay::selectItem items[itemList.size() + 1];

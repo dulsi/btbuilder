@@ -1,0 +1,10 @@
+<display>
+	<width>430</width>
+	<height>200</height>
+	<x3d>5</x3d>
+	<y3d>5</y3d>
+	<layout>
+		<background>ui/pocketchip/specialedit.png</background>
+		<text><name>text</name><location><x>234</x><y>5</y><w>191</w><h>185</h></location></text>
+	</layout>
+</display>

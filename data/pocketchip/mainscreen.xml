@@ -1,0 +1,9 @@
+<display>
+	<width>320</width>
+	<height>200</height>
+	<expanded><xMult>2</xMult><yMult>2</yMult><directory>640x400</directory></expanded>
+	<layout>
+		<background>ui/mainscreen.png</background>
+		<text><name>text</name><location><x>165</x><y>24</y><w>120</w><h>133</h></location></text>
+	</layout>
+</display>

@@ -251,6 +251,10 @@ class BTDisplay : public ImageLoader
 
   void render();
 
+  static std::string applyDisplayDir(const std::string &filename);
+  static const std::string &getDisplayDir() { return displayDir; }
+  static void setDisplayDir(const std::string &dDir) { displayDir = dDir; }
+
  private:
   void clearScreens();
   unsigned long drawAnimationFrame();
@@ -293,6 +297,8 @@ class BTDisplay : public ImageLoader
   SDL_Color white, black;
   std::map<SDL_Keycode, char> key;
   std::map<SDL_Keycode, char> shiftKey;
+
+  static std::string displayDir;
 };
 
 class BTBackgroundAndScreen
