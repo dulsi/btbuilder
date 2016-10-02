@@ -14,15 +14,12 @@ class BTBackgroundAndScreen;
 class BTStatusBar : public ObjectSerializer
 {
  public:
-  BTStatusBar(BTBackgroundAndScreen *d) : display(d) {}
+  BTStatusBar() {}
   ~BTStatusBar() {}
 
-  void draw();
+  void draw(BTBackgroundAndScreen *d);
 
   virtual int getLevel();
-
- private:
-  BTBackgroundAndScreen *display;
 };
 
 #endif

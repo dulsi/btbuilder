@@ -2,8 +2,10 @@
 	<width>320</width>
 	<height>200</height>
 	<expanded><xMult>2</xMult><yMult>2</yMult><directory>640x400</directory></expanded>
-	<background>ui/specialedit.png</background>
 	<x3d>103</x3d>
 	<y3d>55</y3d>
-	<text><x>10</x><y>10</y><w>310</w><h>180</h></text>
+	<layout>
+		<background>ui/specialedit.png</background>
+		<text><name>text</name><location><x>10</x><y>10</y><w>310</w><h>180</h></location></text>
+	</layout>
 </display>

@@ -294,7 +294,7 @@ BTLine::~BTLine()
 
 void BTLine::setAlignment(std::string a)
 {
- align = (BTDisplay::alignment)BTAlignmentLookup::lookup.getIndex(a);
+ align = (BTAlignment::alignment)BTAlignmentLookup::lookup.getIndex(a);
 }
 
 void BTLine::draw(BTDisplay &d, ObjectSerializer *obj)

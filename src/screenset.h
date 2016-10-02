@@ -140,7 +140,7 @@ class BTBarrier : public BTScreenItem
 class BTLine : public BTScreenItem
 {
  public:
-  BTLine() : align(BTDisplay::left) {}
+  BTLine() : align(BTAlignment::left) {}
   ~BTLine();
 
   void setAlignment(std::string a);
@@ -155,7 +155,7 @@ class BTLine : public BTScreenItem
 
  protected:
   XMLVector<BTSimpleElement*> element;
-  BTDisplay::alignment align;
+  BTAlignment::alignment align;
 };
 
 class BTChoice : public BTLine

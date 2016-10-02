@@ -36,7 +36,7 @@ BTMainScreen::~BTMainScreen()
 void BTMainScreen::run()
 {
  loadMainConfig();
- display = new BTDisplay(mainConfig, true, multiplier, fullScreen, softRenderer);
+ display = new BTDisplay(mainConfig, multiplier, fullScreen, softRenderer);
  std::vector<std::string> fileModule;
  XMLVector<BTModule*> module;
  fs::directory_iterator end_iter;
@@ -124,7 +124,7 @@ void BTMainScreen::editModule(std::string moduleFile, std::string mapFile /*= st
  if (!display)
  {
   loadMainConfig();
-  display = new BTDisplay(mainConfig, true, multiplier, fullScreen, softRenderer);
+  display = new BTDisplay(mainConfig, multiplier, fullScreen, softRenderer);
  }
  if (mapFile.empty())
   editor.edit(*display);

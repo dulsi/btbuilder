@@ -63,6 +63,12 @@
 
 class BTBackgroundAndScreen;
 
+class BTAlignment
+{
+ public:
+  enum alignment { left, center, right };
+};
+
 class BTUIElement
 {
  public:
@@ -73,7 +79,18 @@ class BTUIElement
   SDL_Rect position;
 };
 
-class BTLabelWidget
+class BTWidget
+{
+ public:
+  BTWidget() {}
+  virtual ~BTWidget() {}
+
+  virtual std::string getName() = 0;
+
+  virtual void render(BTBackgroundAndScreen *d, bool refresh = false) = 0;
+};
+
+class BTLabelWidget : public BTWidget
 {
  public:
   BTLabelWidget(BTLabelConfig *c, int xMult, int yMult);
@@ -83,14 +100,46 @@ class BTLabelWidget
 
   std::string getText() { return text; }
 
-  void render(BTBackgroundAndScreen *d);
+  void render(BTBackgroundAndScreen *d, bool refresh = false);
 
-  void setText(const std::string &t) { text = t; }
+  void setText(const std::string &t) { text = t; modified = true; }
 
  protected:
   BTLabelConfig *config;
   SDL_Rect location;
   std::string text;
+  bool modified;
+};
+
+class BTTextWidget : public BTWidget
+{
+ public:
+  BTTextWidget(BTTextConfig *c, int xMult, int yMult);
+  virtual ~BTTextWidget() { clearElements(); }
+
+  void addElement(BTUIElement *elm);
+  void clear(BTBackgroundAndScreen *d);
+  void clearElements();
+  void drawLast(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a = BTAlignment::left);
+  void drawText(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a = BTAlignment::left);
+  std::vector<BTUIElement*>& getElements() { return element; }
+  std::string getName() { return config->name; }
+  SDL_Rect &getLocation() { return location; }
+
+  unsigned int process(BTBackgroundAndScreen *d, const char *specialKeys = NULL, int *delay = 0, int delayOveride = -1);
+  std::string readString(BTBackgroundAndScreen *d, const char *prompt, int max, const std::string &initial);
+  void render(BTBackgroundAndScreen *d, bool refresh = false);
+  int selectImage(BTBackgroundAndScreen *d, int initial);
+
+ public:
+  int textPos;
+
+ protected:
+  BTTextConfig *config;
+  SDL_Rect location;
+  std::vector<BTUIElement*> element;
+  BTUIElement *processor;
+  bool modified;
 };
 
 class BTMusic
@@ -127,10 +176,9 @@ class BTAnimation
 class BTDisplay : public ImageLoader
 {
  public:
-  BTDisplay(BTDisplayConfig *c, bool physfs = true, int multiplier = 0, bool full = false, bool softRender = false);
+  BTDisplay(BTDisplayConfig *c, int multiplier = 0, bool full = false, bool softRender = false);
   ~BTDisplay();
 
-  enum alignment { left, center, right };
   struct selectItem
   {
    selectItem() : first(0), value(0) {}
@@ -147,8 +195,8 @@ class BTDisplay : public ImageLoader
   void addAnimation(MNG_AnimationState *animState, bool clear = false);
   void addBackground(const char *file);
   void addBarrier(const char *keys);
-  void addChoice(const char *keys, const char *words, alignment a = left);
-  void addText(const char *words, alignment a = left);
+  void addChoice(const char *keys, const char *words, BTAlignment::alignment a = BTAlignment::left);
+  void addText(const char *words, BTAlignment::alignment a = BTAlignment::left);
   void addColumns(const std::list<std::string>& c);
   void addReadString(const std::string &prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
@@ -161,9 +209,9 @@ class BTDisplay : public ImageLoader
   void drawImage(int pic);
   void drawLabel(const char *value);
   void drawLabel(const char *name, const char *value);
-  void drawLast(const char *keys, const char *words, alignment a = left);
+  void drawLast(const char *keys, const char *words, BTAlignment::alignment a = BTAlignment::left);
   void drawMessage(const char *words, int *delay);
-  void drawText(const char *words, alignment a = left);
+  void drawText(const char *words, BTAlignment::alignment a = BTAlignment::left);
   void drawView();
   void drawIcons();
   void drawMap(bool knowledge);
@@ -176,8 +224,8 @@ class BTDisplay : public ImageLoader
   void getMultiplier(int &x, int &y);
   Psuedo3D &getPsuedo3D() { return p3d; }
   BTBackgroundAndScreen *getScreen(int i);
-  SDL_Rect &getText() { return text; }
   SDL_Color &getWhite();
+  BTWidget *getWidget(const std::string &name);
   void playMusic(unsigned int effectID, const char *file, bool physfs = true);
   void playSound(const char *file, bool physfs = true);
   unsigned int process(const char *specialKeys = NULL, int *delay = 0, int delayOveride = -1);
@@ -185,7 +233,6 @@ class BTDisplay : public ImageLoader
   std::string readString(const char *prompt, int max, const std::string &initial);
   void refresh();
   void removeAnimation(MNG_AnimationState *animState);
-  int selectImage(int initial);
   void setConfig(BTDisplayConfig *c);
   void setPsuedo3DConfig(Psuedo3DConfigList *p3dl);
   Psuedo3DConfig *setWallGraphics(int type);
@@ -193,7 +240,7 @@ class BTDisplay : public ImageLoader
   void stopMusic(int id);
   void toggleFullScreen();
 
-  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a, SDL_Surface *scr = NULL);
+  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTAlignment::alignment a, SDL_Surface *scr = NULL);
   bool sizeFont(const char *text, int &w, int &h);
   void drawImage(SDL_Rect &dst, SDL_Surface *img);
   void fillRect(SDL_Surface *scr, SDL_Rect &dst, SDL_Color c);
@@ -205,14 +252,15 @@ class BTDisplay : public ImageLoader
   void render();
 
  private:
+  void clearScreens();
   unsigned long drawAnimationFrame();
   BTBackgroundAndScreen *getVisibleScreen();
   void setupKeyMap();
   static Uint32 timerCallback(Uint32 interval, void *param);
+  void setupScreens(BTDisplayConfig *c, int xMult, int yMult);
 
  public:
   static const char *allKeys;
-  int textPos;
   int mapXStart, mapYStart;
 
  private:
@@ -222,8 +270,6 @@ class BTDisplay : public ImageLoader
   BTDisplayConfig *config;
   BTDisplayExpanded *expanded;
   int xMult, yMult, lockMult;
-  std::vector<BTLabelWidget*> widgets;
-  SDL_Rect text;
   BTStatusBar *status;
   Psuedo3D p3d;
   Psuedo3DConfigList *p3dConfig;
@@ -252,28 +298,28 @@ class BTDisplay : public ImageLoader
 class BTBackgroundAndScreen
 {
  public:
-  BTBackgroundAndScreen(BTDisplay *d, SDL_Surface *s);
+  BTBackgroundAndScreen(BTDisplay *d, SDL_Surface *s, bool v);
   ~BTBackgroundAndScreen();
 
   void addAnimation(MNG_AnimationState *animState, bool clear = false);
-  void addElement(BTUIElement *elm);
+  void addWidget(BTWidget *w);
   void clear();
   void clear(SDL_Rect &r);
-  void clearElements();
+  void clearWidgets();
   unsigned long drawAnimationFrame(long ticks);
-  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTDisplay::alignment a);
+  void drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTAlignment::alignment a);
   void drawImage(SDL_Surface *img, SDL_Rect &dst);
   void drawMap(bool knowledge);
   void dropScreen();
   void dupeScreen(SDL_Surface *scr);
   SDL_Color &getColor(const std::string &color);
   BTDisplay *getDisplay() { return display; }
-  std::vector<BTUIElement*>& getElements() { return element; }
+  BTWidget *getWidget(const std::string &name);
   void fillRect(SDL_Rect &dst, SDL_Color c);
   bool isVisable() { return visible; }
   void removeAnimation(MNG_AnimationState *animState);
   void render();
-  void scrollUp(int h);
+  void scrollUp(const SDL_Rect &text, int h);
   void setBackground(const char *file, bool physfs = true);
   void setVisibility(bool v) { visible = v; }
 
@@ -281,7 +327,7 @@ class BTBackgroundAndScreen
   BTDisplay *display;
   SDL_Surface *screen;
   SDL_Surface *background;
-  std::vector<BTUIElement*> element;
+  std::vector<BTWidget*> widgets;
   std::list<BTAnimation> activeAnimation;
   bool visible;
 };
@@ -289,19 +335,19 @@ class BTBackgroundAndScreen
 class BTUIText : public BTUIElement
 {
  public:
-  BTUIText(const std::string &t, BTDisplay::alignment a) : text(t), align(a) {}
+  BTUIText(const std::string &t, BTAlignment::alignment a) : text(t), align(a) {}
 
   virtual int getType() const { return BTUI_TEXT; }
   int maxHeight(BTDisplay &d);
 
   std::string text;
-  BTDisplay::alignment align;
+  BTAlignment::alignment align;
 };
 
 class BTUIChoice : public BTUIText
 {
  public:
-  BTUIChoice(const std::string &k, const std::string &t, BTDisplay::alignment a) : BTUIText(t, a), keys(k) {}
+  BTUIChoice(const std::string &k, const std::string &t, BTAlignment::alignment a) : BTUIText(t, a), keys(k) {}
 
   virtual int getType() const { return BTUI_CHOICE; }
 

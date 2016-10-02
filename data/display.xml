@@ -2,11 +2,13 @@
 	<width>320</width>
 	<height>200</height>
 	<expanded><xMult>2</xMult><yMult>2</yMult><directory>640x400</directory></expanded>
-	<background>ui/gamescreen.png</background>
 	<x3d>16</x3d>
 	<y3d>15</y3d>
-	<label><name>main</name><location><x>16</x><y>103</y><w>112</w><h>13</h></location></label>
-	<text><x>168</x><y>14</y><w>136</w><h>96</h></text>
+	<layout>
+		<background>ui/gamescreen.png</background>
+		<label><name>main</name><location><x>16</x><y>103</y><w>112</w><h>13</h></location></label>
+		<text><name>text</name><location><x>168</x><y>14</y><w>136</w><h>96</h></location></text>
+	</layout>
 	<status number="1"><x>10</x><y>144</y><w>302</w><h>8</h></status>
 	<status number="2"><x>10</x><y>152</y><w>302</w><h>8</h></status>
 	<status number="3"><x>10</x><y>160</y><w>302</w><h>8</h></status>

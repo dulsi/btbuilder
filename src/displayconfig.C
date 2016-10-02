@@ -46,6 +46,19 @@ void BTDisplayColor::serialize(ObjectSerializer* s)
  s->add("b", &rgb.b);
 }
 
+BTWidgetConfig::BTWidgetConfig()
+{
+}
+
+BTWidgetConfig::~BTWidgetConfig()
+{
+}
+
+void BTWidgetConfig::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+}
+
 BTLabelConfig::BTLabelConfig()
  : color("white")
 {
@@ -57,9 +70,41 @@ BTLabelConfig::~BTLabelConfig()
 
 void BTLabelConfig::serialize(ObjectSerializer* s)
 {
- s->add("name", &name);
+ BTWidgetConfig::serialize(s);
  s->add("location", &location);
  s->add("color", &color);
+}
+
+BTTextConfig::BTTextConfig()
+{
+}
+
+BTTextConfig::~BTTextConfig()
+{
+}
+
+void BTTextConfig::serialize(ObjectSerializer* s)
+{
+ BTWidgetConfig::serialize(s);
+ s->add("location", &location);
+}
+
+BTLayoutConfig::BTLayoutConfig()
+ : visible(true)
+{
+}
+
+BTLayoutConfig::~BTLayoutConfig()
+{
+}
+
+void BTLayoutConfig::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("background", &background);
+ s->add("label", &widgets, &BTLabelConfig::create);
+ s->add("text", &widgets, &BTTextConfig::create);
+ s->add("visible", &visible);
 }
 
 BTDisplayConfig::BTDisplayConfig()
@@ -86,8 +131,7 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("x3d", &x3d);
  s->add("y3d", &y3d);
  s->add("color", &color, &BTDisplayColor::create);
- s->add("label", &widgets, &BTLabelConfig::create);
- s->add("text", &text);
+ s->add("layout", &layout, &BTLayoutConfig::create);
  for (int i = 0; i < BT_PARTYSIZE; ++i)
  {
   std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;

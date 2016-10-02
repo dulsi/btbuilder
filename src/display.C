@@ -24,10 +24,508 @@ BTLabelWidget::BTLabelWidget(BTLabelConfig *c, int xMult, int yMult)
  location.h = config->location.h * yMult;
 }
 
-void BTLabelWidget::render(BTBackgroundAndScreen *d)
+void BTLabelWidget::render(BTBackgroundAndScreen *d, bool refresh /*= false*/)
+{
+ if (modified || refresh)
+ {
+  modified = false;
+  d->clear(location);
+  d->drawFont(text.c_str(), location, d->getColor(config->color), BTAlignment::center);
+ }
+}
+
+BTTextWidget::BTTextWidget(BTTextConfig *c, int xMult, int yMult)
+ : textPos(0), config(c), processor(NULL), modified(false)
+{
+ location.x = config->location.x * xMult;
+ location.y = config->location.y * yMult;
+ location.w = config->location.w * xMult;
+ location.h = config->location.h * yMult;
+}
+
+void BTTextWidget::addElement(BTUIElement *elm)
+{
+ modified = true;
+ processor = NULL;
+ element.push_back(elm);
+}
+
+void BTTextWidget::clear(BTBackgroundAndScreen *d)
 {
  d->clear(location);
- d->drawFont(text.c_str(), location, d->getColor(config->color), BTDisplay::center);
+ textPos = 0;
+}
+
+void BTTextWidget::clearElements()
+{
+ modified = true;
+ processor = NULL;
+ for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
+ {
+  delete (*elementItr);
+ }
+ element.clear();
+}
+
+void BTTextWidget::drawLast(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a /*= left*/)
+{
+ int w, h;
+ if (!d->getDisplay()->sizeFont(words, w, h))
+  return;
+ SDL_Rect dst;
+ dst.x = location.x;
+ dst.y = location.y + location.h - h;
+ dst.w = location.w;
+ dst.h = h;
+ d->clear(dst);
+ d->drawFont(words, dst, d->getColor("black"), a);
+}
+
+void BTTextWidget::drawText(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a /*= left*/)
+{
+ int w, h;
+ char *tmp = new char[strlen(words)];
+ const char *partial = words;
+ while (partial)
+ {
+  if (!d->getDisplay()->sizeFont(partial, w, h))
+  {
+   delete [] tmp;
+   return;
+  }
+  if (h + textPos > location.h)
+  {
+   d->scrollUp(location, h);
+   textPos -= h;
+  }
+  const char *end = NULL;
+  if (w > location.w)
+  {
+   const char *sp = partial;
+   for (end = partial; *end; ++end)
+   {
+    if (isspace(*end))
+    {
+     memcpy(tmp + (sp - partial), sp, end - sp);
+     tmp[end - partial] = 0;
+     d->getDisplay()->sizeFont(tmp, w, h);
+     if (w > location.w)
+     {
+      end = sp;
+      break;
+     }
+     sp = end;
+    }
+   }
+   if (!(*end))
+    end = sp;
+   if (end == partial)
+    end = NULL;
+   else
+   {
+    tmp[end - partial] = 0;
+    while (isspace(*end))
+     ++end;
+    if (!(*end))
+     end = NULL;
+   }
+  }
+  SDL_Rect dst;
+  dst.x = location.x;
+  dst.y = location.y + textPos;
+  dst.w = location.w;
+  dst.h = h;
+  d->drawFont((end ? tmp : partial), dst, d->getColor("black"), a);
+  textPos += h;
+  partial = end;
+ }
+ delete [] tmp;
+}
+
+unsigned int BTTextWidget::process(BTBackgroundAndScreen *d, const char *specialKeys /*= NULL*/, int *delay /*= 0*/, int delayOveride /*= -1*/)
+{
+ unsigned int key;
+ d->getDisplay()->render();
+ BTUISelect *select = NULL;
+ if (processor)
+ {
+  if (BTUI_READSTRING == processor->getType())
+  {
+   BTUIReadString *item = static_cast<BTUIReadString*>(processor);
+   item->response = readString(d, item->prompt.c_str(), item->maxLen, item->response);
+   return 13;
+  }
+  else if (BTUI_SELECTIMAGE == processor->getType())
+  {
+   BTUISelectImage *item = static_cast<BTUISelectImage*>(processor);
+   item->select = selectImage(d, item->select);
+   return 13;
+  }
+  else if (BTUI_SELECT == processor->getType())
+  {
+   select = static_cast<BTUISelect*>(processor);
+  }
+ }
+ int start = SDL_GetTicks();
+ int delayCurrent = ((delayOveride != -1) ? delayOveride : (delay ? *delay : 0));
+ while (true)
+ {
+  d->getDisplay()->render();
+  key = d->getDisplay()->readChar(delayCurrent);
+  if ((key == 0) || (key == 27))
+   break;
+  if (select)
+  {
+   if ((key >= '1') && (key <= '9'))
+   {
+    int offset = key - '1';
+    if ((select->size > 0) && (select->start + offset < select->size))
+    {
+     select->select = select->start + offset;
+     key = 13;
+     break;
+    }
+    else
+     key = 1;
+   }
+   else if (!select->numbered)
+   {
+    if (key == BTKEY_UP)
+    {
+     select->moveUp(*d->getDisplay());
+     continue;
+    }
+    else if (key == BTKEY_DOWN)
+    {
+     select->moveDown(*d->getDisplay());
+     continue;
+    }
+    else if (key == BTKEY_PGUP)
+    {
+     select->pageUp(*d->getDisplay());
+     continue;
+    }
+    else if (key == BTKEY_PGDN)
+    {
+     select->pageDown(*d->getDisplay());
+     continue;
+    }
+    else if (key == BTKEY_LEFT)
+    {
+     select->decrement(*d->getDisplay());
+     continue;
+    }
+    else if (key == BTKEY_RIGHT)
+    {
+     select->increment(*d->getDisplay());
+     continue;
+    }
+    else if ((key == 13) && (select->select >= 0))
+     break;
+   }
+  }
+  char utf8Key[5];
+  // FIXME: Do real utf-8 conversion
+  utf8Key[0] = key;
+  utf8Key[1] = 0;
+  for (std::vector<BTUIElement*>::iterator top = element.begin(); top != element.end(); top++)
+  {
+   if (BTUI_CHOICE == (*top)->getType())
+   {
+    BTUIChoice *item = static_cast<BTUIChoice*>(*top);
+    if (item->keys.find(utf8Key) != std::string::npos)
+     return key;
+   }
+   else if (BTUI_BARRIER == (*top)->getType())
+   {
+    BTUIBarrier *item = static_cast<BTUIBarrier*>(*top);
+    if (item->keys.find(utf8Key) != std::string::npos)
+     return key;
+   }
+  }
+  if ((key == '+') || (key == '-'))
+  {
+   if (key == '+')
+   {
+    if ((delay) && ((*delay) > 100))
+     *delay = (*delay) - 300;
+   }
+   if (key == '-')
+   {
+    if ((delay) && ((*delay) < 4000))
+     *delay = (*delay) + 300;
+   }
+   int end = SDL_GetTicks();
+   if (delayCurrent)
+   {
+    if (end - start > delayCurrent)
+     return 0;
+    else
+     delayCurrent -= end - start;
+   }
+  }
+  else if (specialKeys == BTDisplay::allKeys)
+   return key;
+  else if (specialKeys)
+  {
+   for (int i = 0; specialKeys[i]; ++i)
+   {
+    if (specialKeys[i] == key)
+     return key;
+   }
+  }
+ }
+ return key;
+}
+
+std::string BTTextWidget::readString(BTBackgroundAndScreen *d, const char *prompt, int max, const std::string &initial)
+{
+ std::string s = initial;
+ int w, h;
+ d->getDisplay()->sizeFont(s.c_str(), w, h);
+ if (h + textPos > location.h)
+ {
+  d->scrollUp(location, h);
+  textPos -= h;
+ }
+ unsigned char key;
+ int len = s.length();
+ SDL_Rect dst;
+ dst.h = h;
+ int startPos = textPos;
+ std::string full = prompt;
+ full += s;
+ dst.x = location.x;
+ dst.y = location.y + textPos;
+ dst.w = location.w;
+ d->getDisplay()->drawText(full.c_str());
+ int endPos = textPos;
+ while (((key = d->getDisplay()->readChar()) != 13) && (key !=  27))
+ {
+  if (key == 8)
+  {
+   if (len > 0)
+   {
+    s.erase(--len);
+    full.erase(full.length() - 1);
+   }
+  }
+  else if ((len < max) && (key >= ' ') && (key <= '~'))
+  {
+   s.push_back(key);
+   full.push_back(key);
+   ++len;
+  }
+  dst.h = endPos - startPos;
+  d->clear(dst);
+  textPos = startPos;
+  d->getDisplay()->drawText(full.c_str());
+  if (textPos > endPos)
+   endPos = textPos;
+  d->getDisplay()->render();
+ }
+ return s;
+}
+
+void BTTextWidget::render(BTBackgroundAndScreen *d, bool refresh /*= false*/)
+{
+ if (modified || refresh)
+ {
+  modified = false;
+  std::vector<BTUIElement*>::iterator elementEnd = element.end();
+  std::vector<BTUIElement*>::iterator top = element.begin();
+  for (; top != elementEnd; ++top)
+  {
+   if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()))
+   {
+    break;
+   }
+   else if (BTUI_MULTICOLUMN == (*top)->getType())
+   {
+    BTUIMultiColumn *item = static_cast<BTUIMultiColumn*>(*top);
+    int maxH = item->maxHeight(*d->getDisplay());
+    if (0 == maxH)
+     continue;
+    if (maxH + textPos > location.h)
+    {
+     d->scrollUp(location, maxH);
+     textPos -= maxH;
+    }
+    item->draw(location.x, location.y + textPos, location.w, maxH, *d->getDisplay());
+    textPos += maxH;
+   }
+   else if ((BTUI_TEXT == (*top)->getType()) || (BTUI_CHOICE == (*top)->getType()))
+   {
+    BTUIText *item = static_cast<BTUIText*>(*top);
+    int maxH = item->maxHeight(*d->getDisplay());
+    if (maxH + textPos > location.h)
+    {
+     d->scrollUp(location, maxH);
+     textPos -= maxH;
+    }
+    item->position.x = location.x;
+    item->position.y = location.y + textPos;
+    item->position.w = location.w;
+    item->position.h = maxH;
+    d->drawFont(item->text.c_str(), item->position, d->getColor("black"), item->align);
+    textPos += maxH;
+   }
+  }
+  if (top != elementEnd)
+  {
+   std::vector<BTUIElement*>::iterator bottom = --(element.end());
+   int bottomPos = location.h;
+   for (; bottom != top; --bottom)
+   {
+    if (BTUI_MULTICOLUMN == (*bottom)->getType())
+    {
+     BTUIMultiColumn* item = static_cast<BTUIMultiColumn*>(*bottom);
+     int maxH = item->maxHeight(*d->getDisplay());
+     if (0 == maxH)
+      continue;
+     bottomPos -= maxH;
+     item->draw(location.x, location.y + bottomPos, location.w, maxH, *d->getDisplay());
+    }
+    else if ((BTUI_TEXT == (*bottom)->getType()) || (BTUI_CHOICE == (*bottom)->getType()))
+    {
+     BTUIText *item = static_cast<BTUIText*>(*bottom);
+     int maxH = item->maxHeight(*d->getDisplay());
+     bottomPos -= maxH;
+     item->position.x = location.x;
+     item->position.y = location.y + bottomPos;
+     item->position.w = location.w;
+     item->position.h = maxH;
+     d->drawFont(item->text.c_str(), item->position, d->getColor("black"), item->align);
+    }
+   }
+   if ((BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()))
+   {
+    processor = *top;
+    return;
+   }
+   else if (BTUI_SELECT == (*top)->getType())
+   {
+    BTUISelect *select = static_cast<BTUISelect*>(*top);
+    select->position.x = location.x;
+    select->position.y = location.y + textPos;
+    select->position.w = location.w;
+    select->position.h = bottomPos - textPos;
+    select->sanitize(*d->getDisplay());
+    select->draw(d);
+    processor = *top;
+   }
+  }
+ }
+ if ((processor) && (BTUI_SELECT == processor->getType()))
+ {
+  BTUISelect *select = static_cast<BTUISelect*>(processor);
+  if (!select->numbered)
+  {
+   select->draw(d);
+  }
+ }
+}
+
+int BTTextWidget::selectImage(BTBackgroundAndScreen *d, int initial)
+{
+ BTImageTagList &tagList = BTCore::getCore()->getImageTagList();
+ bool blank = true;
+ std::string s;
+ int w, h;
+ d->getDisplay()->sizeFont(s.c_str(), w, h);
+ if (h + textPos > location.h)
+ {
+  d->scrollUp(location, h);
+  textPos -= h;
+ }
+ unsigned char key;
+ int len = s.length();
+ SDL_Rect dst;
+ dst.h = h;
+ int startPos = textPos;
+ std::string full;
+ full += s;
+ dst.x = location.x;
+ dst.y = location.y + textPos;
+ dst.w = location.w;
+ d->getDisplay()->drawText(full.c_str());
+ int endPos = textPos;
+ int bottomPos = location.h;
+ int current = initial;
+ int selected = current;
+ d->getDisplay()->drawImage(current);
+ int sz = 0;
+ int st = 0;
+ BTDisplay::selectItem *sl = tagList.search(s, blank, current, sz, selected);
+ BTUISelect *select = new BTUISelect(sl, sz, st, selected);
+ select->position.x = location.x;
+ select->position.y = location.y + textPos;
+ select->position.w = location.w;
+ select->position.h = bottomPos - textPos;
+ select->sanitize(*d->getDisplay());
+ select->draw(d);
+ d->getDisplay()->render();
+ while (((key = d->getDisplay()->readChar()) != 13) && (key !=  27))
+ {
+  bool searchChange = false;
+  if (key == 8)
+  {
+   if (len > 0)
+   {
+    s.erase(--len);
+    full.erase(full.length() - 1);
+    searchChange = true;
+   }
+  }
+  else if ((key == '+') || (key == BTKEY_UP))
+  {
+   select->moveUp(*d->getDisplay());
+  }
+  else if ((key == '-') || (key == BTKEY_DOWN))
+  {
+   select->moveDown(*d->getDisplay());
+  }
+  else if (key == BTKEY_PGUP)
+  {
+   select->pageUp(*d->getDisplay());
+  }
+  else if (key == BTKEY_PGDN)
+  {
+   select->pageDown(*d->getDisplay());
+  }
+  else if (key == BTKEY_F1)
+  {
+   blank = !blank;
+   searchChange = true;
+  }
+  else if ((len < 50) && (key >= ' ') && (key <= '~'))
+  {
+   s.push_back(key);
+   full.push_back(key);
+   ++len;
+   searchChange = true;
+  }
+  else
+   continue;
+  current = sl[selected].value;
+  if (searchChange)
+  {
+   BTDisplay::selectItem *sl = tagList.search(s, blank, current, sz, selected);
+   select->alter(sl, sz);
+   select->sanitize(*d->getDisplay());
+  }
+  dst.h = endPos - startPos;
+  d->clear(dst);
+  textPos = startPos;
+  d->getDisplay()->drawText(full.c_str());
+  if (textPos > endPos)
+   endPos = textPos;
+  select->draw(d);
+  d->getDisplay()->drawImage(current);
+  d->getDisplay()->render();
+ }
+ delete select;
+ return ((key == 27) ? initial : current);
 }
 
 BTMusic::~BTMusic()
@@ -46,8 +544,8 @@ BTSound::~BTSound()
  }
 }
 
-BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
- : textPos(0), mapXStart(0), mapYStart(0), fullScreen(full), softRenderer(softRender), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(NULL), p3d(this, 0, 0),
+BTDisplay::BTDisplay(BTDisplayConfig *c, int multiplier /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
+ : mapXStart(0), mapYStart(0), fullScreen(full), softRenderer(softRender), config(c), expanded(0), xMult(multiplier), yMult(multiplier), lockMult(multiplier), status(NULL), p3d(this, 0, 0),
 #ifdef SDL2LIB
    mainWindow(0), mainRenderer(0), mainTexture(0),
 #endif
@@ -116,14 +614,6 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
   xMult = yMult = 1;
  }
  p3d.setMultiplier(xMult, yMult);
- for (int i = 0; i < config->widgets.size(); ++i)
- {
-  widgets.push_back(new BTLabelWidget(config->widgets[i], xMult, yMult));
- }
- text.x = config->text.x * xMult;
- text.y = config->text.y * yMult;
- text.w = config->text.w * xMult;
- text.h = config->text.h * yMult;
 #ifndef BTBUILDER_NOTTF
  if (TTF_Init() == -1)
  {
@@ -193,9 +683,8 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, bool physfs /*= true*/, int multiplier 
  black.r = 0;
  black.g = 0;
  black.b = 0;
- screen.push_back(new BTBackgroundAndScreen(this, NULL));
- screen.front()->setBackground(config->background, physfs);
- status = new BTStatusBar(screen.front());
+ setupScreens(config, xMult, yMult);
+ status = new BTStatusBar;
 
 #ifndef SDL2LIB
  SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
@@ -246,19 +735,23 @@ void BTDisplay::addBackground(const char *file)
   printf("Failed - SDL_CreateRGBSurface\n");
   exit(0);
  }
- BTBackgroundAndScreen *newScreen = new BTBackgroundAndScreen(this, scr);
+ BTBackgroundAndScreen *newScreen = new BTBackgroundAndScreen(this, scr, true);
  screen.push_back(newScreen);
  newScreen->setBackground(file);
 }
 
 void BTDisplay::addBarrier(const char *keys)
 {
- getVisibleScreen()->addElement(new BTUIBarrier(keys));
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->addElement(new BTUIBarrier(keys));
 }
 
-void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= left*/)
+void BTDisplay::addChoice(const char *keys, const char *words, BTAlignment::alignment a /*= left*/)
 {
  int w, h;
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ SDL_Rect &text = widget->getLocation();
  char *tmp = new char[strlen(words)];
  const char *partial;
  if (partial = strchr(words, '\n'))
@@ -312,38 +805,49 @@ void BTDisplay::addChoice(const char *keys, const char *words, alignment a /*= l
      end = NULL;
    }
   }
-  if (NULL == keys)
-   getVisibleScreen()->addElement(new BTUIText((end ? tmp : partial), a));
-  else
-   getVisibleScreen()->addElement(new BTUIChoice(keys, (end ? tmp : partial), a));
+  if (widget)
+  {
+   if (NULL == keys)
+    widget->addElement(new BTUIText((end ? tmp : partial), a));
+   else
+    widget->addElement(new BTUIChoice(keys, (end ? tmp : partial), a));
+  }
   partial = end;
  }
  delete [] tmp;
 }
 
-void BTDisplay::addText(const char *words, alignment a /*= left*/)
+void BTDisplay::addText(const char *words, BTAlignment::alignment a /*= left*/)
 {
  addChoice(NULL, words, a);
 }
 
 void BTDisplay::addColumns(const std::list<std::string>& c)
 {
- getVisibleScreen()->addElement(new BTUIMultiColumn(c));
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->addElement(new BTUIMultiColumn(c));
 }
 
 void BTDisplay::addReadString(const std::string &prompt, int maxLen, std::string &response)
 {
- getVisibleScreen()->addElement(new BTUIReadString(prompt, maxLen, response));
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->addElement(new BTUIReadString(prompt, maxLen, response));
 }
 
 void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select, int num /*= 0*/)
 {
- getVisibleScreen()->addElement(new BTUISelect(list, size, start, select, num));
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->addElement(new BTUISelect(list, size, start, select, num));
 }
 
 void BTDisplay::addSelectImage(int &select)
 {
- getVisibleScreen()->addElement(new BTUISelectImage(select));
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->addElement(new BTUISelectImage(select));
 }
 
 void BTDisplay::clear(SDL_Surface *scr, SDL_Rect &r)
@@ -353,7 +857,9 @@ void BTDisplay::clear(SDL_Surface *scr, SDL_Rect &r)
 
 void BTDisplay::clearElements()
 {
- screen.back()->clearElements();
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->clearElements();
 }
 
 void BTDisplay::clearImage()
@@ -375,9 +881,12 @@ void BTDisplay::clearImage()
 
 void BTDisplay::clearText()
 {
- getVisibleScreen()->clearElements();
- getVisibleScreen()->clear(text);
- textPos = 0;
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+ {
+  widget->clearElements();
+  widget->clear(getVisibleScreen());
+ }
 }
 
 void BTDisplay::drawFullScreen(const char *file, int delay)
@@ -491,28 +1000,19 @@ void BTDisplay::drawLabel(const char *name, const char *value)
  int w, h;
  if (!sizeFont(name, w, h))
   return;
- for (int i = 0; i < widgets.size(); i++)
+ BTLabelWidget *widget = dynamic_cast<BTLabelWidget*>(getWidget(name));
+ if (widget)
  {
-  if (widgets[i]->getName() == std::string(name))
-  {
-   widgets[i]->setText(value);
-   widgets[i]->render(getVisibleScreen());
-  }
+  widget->setText(value);
+  widget->render(getVisibleScreen());
  }
 }
 
-void BTDisplay::drawLast(const char *keys, const char *words, alignment a /*= left*/)
+void BTDisplay::drawLast(const char *keys, const char *words, BTAlignment::alignment a /*= left*/)
 {
- int w, h;
- if (!sizeFont(words, w, h))
-  return;
- SDL_Rect dst;
- dst.x = text.x;
- dst.y = text.y + text.h - h;
- dst.w = text.w;
- dst.h = h;
- getVisibleScreen()->clear(dst);
- getVisibleScreen()->drawFont(words, dst, black, a);
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->drawLast(getVisibleScreen(), words, a);
 }
 
 void BTDisplay::drawMessage(const char *words, int *delay)
@@ -523,64 +1023,11 @@ void BTDisplay::drawMessage(const char *words, int *delay)
  clearElements();
 }
 
-void BTDisplay::drawText(const char *words, alignment a /*= left*/)
+void BTDisplay::drawText(const char *words, BTAlignment::alignment a /*= left*/)
 {
- int w, h;
- char *tmp = new char[strlen(words)];
- const char *partial = words;
- while (partial)
- {
-  if (!sizeFont(partial, w, h))
-  {
-   delete [] tmp;
-   return;
-  }
-  if (h + textPos > text.h)
-  {
-   screen.back()->scrollUp(h);
-  }
-  const char *end = NULL;
-  if (w > text.w)
-  {
-   const char *sp = partial;
-   for (end = partial; *end; ++end)
-   {
-    if (isspace(*end))
-    {
-     memcpy(tmp + (sp - partial), sp, end - sp);
-     tmp[end - partial] = 0;
-     sizeFont(tmp, w, h);
-     if (w > text.w)
-     {
-      end = sp;
-      break;
-     }
-     sp = end;
-    }
-   }
-   if (!(*end))
-    end = sp;
-   if (end == partial)
-    end = NULL;
-   else
-   {
-    tmp[end - partial] = 0;
-    while (isspace(*end))
-     ++end;
-    if (!(*end))
-     end = NULL;
-   }
-  }
-  SDL_Rect dst;
-  dst.x = text.x;
-  dst.y = text.y + textPos;
-  dst.w = text.w;
-  dst.h = h;
-  getVisibleScreen()->drawFont((end ? tmp : partial), dst, black, a);
-  textPos += h;
-  partial = end;
- }
- delete [] tmp;
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->drawText(getVisibleScreen(), words, a);
 }
 
 void BTDisplay::drawView()
@@ -624,7 +1071,7 @@ void BTDisplay::drawStats()
  int i;
  if (config->statusInfo.size() == 0)
   return;
- status->draw();
+ status->draw(screen.front());
 }
 
 SDL_Color &BTDisplay::getBlack()
@@ -654,12 +1101,10 @@ int BTDisplay::getCurrentImage()
 
 std::string BTDisplay::getCurrentLabel()
 {
- for (int i = 0; i < widgets.size(); i++)
+ BTLabelWidget *widget = dynamic_cast<BTLabelWidget*>(getWidget("main"));
+ if (widget)
  {
-  if (widgets[i]->getName() == "main")
-  {
-   return widgets[i]->getText();
-  }
+  return widget->getText();
  }
 }
 
@@ -683,6 +1128,18 @@ BTBackgroundAndScreen *BTDisplay::getScreen(int i)
 SDL_Color &BTDisplay::getWhite()
 {
  return white;
+}
+
+BTWidget *BTDisplay::getWidget(const std::string &name)
+{
+ BTWidget *w = NULL;
+ for (std::list<BTBackgroundAndScreen *>::iterator itr(screen.begin()); itr != screen.end(); ++itr)
+ {
+  w = (*itr)->getWidget(name);
+  if (NULL != w)
+   return w;
+ }
+ return w;
 }
 
 void BTDisplay::playMusic(unsigned int effectID, const char *file, bool physfs /*= true*/)
@@ -750,219 +1207,10 @@ void BTDisplay::playSound(const char *file, bool physfs /*= true*/)
 
 unsigned int BTDisplay::process(const char *specialKeys /*= NULL*/, int *delay /*= 0*/, int delayOveride /*= -1*/)
 {
- unsigned int key;
- std::vector<BTUIElement*>::iterator elementEnd = screen.back()->getElements().end();
- std::vector<BTUIElement*>::iterator top = screen.back()->getElements().begin();
- for (; top != elementEnd; ++top)
- {
-  if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()))
-  {
-   break;
-  }
-  else if (BTUI_MULTICOLUMN == (*top)->getType())
-  {
-   BTUIMultiColumn *item = static_cast<BTUIMultiColumn*>(*top);
-   int maxH = item->maxHeight(*this);
-   if (0 == maxH)
-    continue;
-   if (maxH + textPos > text.h)
-   {
-    screen.back()->scrollUp(maxH);
-   }
-   item->draw(text.x, text.y + textPos, text.w, maxH, *this);
-   textPos += maxH;
-  }
-  else if ((BTUI_TEXT == (*top)->getType()) || (BTUI_CHOICE == (*top)->getType()))
-  {
-   BTUIText *item = static_cast<BTUIText*>(*top);
-   int maxH = item->maxHeight(*this);
-   if (maxH + textPos > text.h)
-   {
-    screen.back()->scrollUp(maxH);
-   }
-   item->position.x = text.x;
-   item->position.y = text.y + textPos;
-   item->position.w = text.w;
-   item->position.h = maxH;
-   screen.back()->drawFont(item->text.c_str(), item->position, black, item->align);
-   textPos += maxH;
-  }
- }
- BTUISelect *select = NULL;
- if (top != elementEnd)
- {
-  std::vector<BTUIElement*>::iterator bottom = --(screen.back()->getElements().end());
-  int bottomPos = text.h;
-  for (; bottom != top; --bottom)
-  {
-   if (BTUI_MULTICOLUMN == (*bottom)->getType())
-   {
-    BTUIMultiColumn* item = static_cast<BTUIMultiColumn*>(*bottom);
-    int maxH = item->maxHeight(*this);
-    if (0 == maxH)
-     continue;
-    bottomPos -= maxH;
-    item->draw(text.x, text.y + bottomPos, text.w, maxH, *this);
-   }
-   else if ((BTUI_TEXT == (*bottom)->getType()) || (BTUI_CHOICE == (*bottom)->getType()))
-   {
-    BTUIText *item = static_cast<BTUIText*>(*bottom);
-    int maxH = item->maxHeight(*this);
-    bottomPos -= maxH;
-    item->position.x = text.x;
-    item->position.y = text.y + bottomPos;
-    item->position.w = text.w;
-    item->position.h = maxH;
-    drawFont(item->text.c_str(), item->position, black, item->align);
-   }
-  }
-  if (BTUI_READSTRING == (*top)->getType())
-  {
-   BTUIReadString *item = static_cast<BTUIReadString*>(*top);
-   render();
-   item->response = readString(item->prompt.c_str(), item->maxLen, item->response);
-   return 13;
-  }
-  else if (BTUI_SELECTIMAGE == (*top)->getType())
-  {
-   BTUISelectImage *item = static_cast<BTUISelectImage*>(*top);
-   render();
-   item->select = selectImage(item->select);
-   return 13;
-  }
-  else if (BTUI_SELECT == (*top)->getType())
-  {
-   select = static_cast<BTUISelect*>(*top);
-   select->position.x = text.x;
-   select->position.y = text.y + textPos;
-   select->position.w = text.w;
-   select->position.h = bottomPos - textPos;
-   select->sanitize(*this);
-  }
- }
- if (!select)
- {
-  render();
- }
- else if (select->numbered)
- {
-  select->draw(screen.back());
-  render();
- }
- int start = SDL_GetTicks();
- int delayCurrent = ((delayOveride != -1) ? delayOveride : (delay ? *delay : 0));
- while (true)
- {
-  if ((select) && (!select->numbered))
-  {
-   select->draw(screen.back());
-   render();
-  }
-  key = readChar(delayCurrent);
-  if ((key == 0) || (key == 27))
-   break;
-  if (select)
-  {
-   if ((key >= '1') && (key <= '9'))
-   {
-    int offset = key - '1';
-    if ((select->size > 0) && (select->start + offset < select->size))
-    {
-     select->select = select->start + offset;
-     key = 13;
-     break;
-    }
-    else
-     key = 1;
-   }
-   else if (!select->numbered)
-   {
-    if (key == BTKEY_UP)
-    {
-     select->moveUp(*this);
-     continue;
-    }
-    else if (key == BTKEY_DOWN)
-    {
-     select->moveDown(*this);
-     continue;
-    }
-    else if (key == BTKEY_PGUP)
-    {
-     select->pageUp(*this);
-     continue;
-    }
-    else if (key == BTKEY_PGDN)
-    {
-     select->pageDown(*this);
-     continue;
-    }
-    else if (key == BTKEY_LEFT)
-    {
-     select->decrement(*this);
-     continue;
-    }
-    else if (key == BTKEY_RIGHT)
-    {
-     select->increment(*this);
-     continue;
-    }
-    else if ((key == 13) && (select->select >= 0))
-     break;
-   }
-  }
-  char utf8Key[5];
-  // FIXME: Do real utf-8 conversion
-  utf8Key[0] = key;
-  utf8Key[1] = 0;
-  for (top = screen.back()->getElements().begin(); top != elementEnd; top++)
-  {
-   if (BTUI_CHOICE == (*top)->getType())
-   {
-    BTUIChoice *item = static_cast<BTUIChoice*>(*top);
-    if (item->keys.find(utf8Key) != std::string::npos)
-     return key;
-   }
-   else if (BTUI_BARRIER == (*top)->getType())
-   {
-    BTUIBarrier *item = static_cast<BTUIBarrier*>(*top);
-    if (item->keys.find(utf8Key) != std::string::npos)
-     return key;
-   }
-  }
-  if ((key == '+') || (key == '-'))
-  {
-   if (key == '+')
-   {
-    if ((delay) && ((*delay) > 100))
-     *delay = (*delay) - 300;
-   }
-   if (key == '-')
-   {
-    if ((delay) && ((*delay) < 4000))
-     *delay = (*delay) + 300;
-   }
-   int end = SDL_GetTicks();
-   if (delayCurrent)
-   {
-    if (end - start > delayCurrent)
-     return 0;
-    else
-     delayCurrent -= end - start;
-   }
-  }
-  else if (specialKeys == allKeys)
-   return key;
-  else if (specialKeys)
-  {
-   for (int i = 0; specialKeys[i]; ++i)
-   {
-    if (specialKeys[i] == key)
-     return key;
-   }
-  }
- }
- return key;
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  return widget->process(screen.back(), specialKeys, delay, delayOveride);
+ return 13;
 }
 
 unsigned int BTDisplay::readChar(int delay /*= 0*/)
@@ -1058,48 +1306,10 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
 
 std::string BTDisplay::readString(const char *prompt, int max, const std::string &initial)
 {
- std::string s = initial;
- int w, h;
- sizeFont(s.c_str(), w, h);
- if (h + textPos > text.h)
-  screen.back()->scrollUp(h);
- unsigned char key;
- int len = s.length();
- SDL_Rect dst;
- dst.h = h;
- int startPos = textPos;
- std::string full = prompt;
- full += s;
- dst.x = text.x;
- dst.y = text.y + textPos;
- dst.w = text.w;
- drawText(full.c_str());
- int endPos = textPos;
- while (((key = readChar()) != 13) && (key !=  27))
- {
-  if (key == 8)
-  {
-   if (len > 0)
-   {
-    s.erase(--len);
-    full.erase(full.length() - 1);
-   }
-  }
-  else if ((len < max) && (key >= ' ') && (key <= '~'))
-  {
-   s.push_back(key);
-   full.push_back(key);
-   ++len;
-  }
-  dst.h = endPos - startPos;
-  screen.back()->clear(dst);
-  textPos = startPos;
-  drawText(full.c_str());
-  if (textPos > endPos)
-   endPos = textPos;
-  render();
- }
- return s;
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  return widget->readString(getVisibleScreen(), prompt, max, initial);
+ return "";
 }
 
 void BTDisplay::refresh()
@@ -1118,105 +1328,6 @@ void BTDisplay::removeAnimation(MNG_AnimationState *animState)
  {
   (*itr)->removeAnimation(animState);
  }
-}
-
-int BTDisplay::selectImage(int initial)
-{
- BTImageTagList &tagList = BTCore::getCore()->getImageTagList();
- bool blank = true;
- std::string s;
- int w, h;
- sizeFont(s.c_str(), w, h);
- if (h + textPos > text.h)
-  screen.back()->scrollUp(h);
- unsigned char key;
- int len = s.length();
- SDL_Rect dst;
- dst.h = h;
- int startPos = textPos;
- std::string full;
- full += s;
- dst.x = text.x;
- dst.y = text.y + textPos;
- dst.w = text.w;
- drawText(full.c_str());
- int endPos = textPos;
- int bottomPos = text.h;
- int current = initial;
- int selected = current;
- drawImage(current);
- int sz = 0;
- int st = 0;
- BTDisplay::selectItem *sl = tagList.search(s, blank, current, sz, selected);
- BTUISelect *select = new BTUISelect(sl, sz, st, selected);
- select->position.x = text.x;
- select->position.y = text.y + textPos;
- select->position.w = text.w;
- select->position.h = bottomPos - textPos;
- select->sanitize(*this);
- select->draw(screen.back());
- render();
- while (((key = readChar()) != 13) && (key !=  27))
- {
-  bool searchChange = false;
-  if (key == 8)
-  {
-   if (len > 0)
-   {
-    s.erase(--len);
-    full.erase(full.length() - 1);
-    searchChange = true;
-   }
-  }
-  else if ((key == '+') || (key == BTKEY_UP))
-  {
-   select->moveUp(*this);
-  }
-  else if ((key == '-') || (key == BTKEY_DOWN))
-  {
-   select->moveDown(*this);
-  }
-  else if (key == BTKEY_PGUP)
-  {
-   select->pageUp(*this);
-  }
-  else if (key == BTKEY_PGDN)
-  {
-   select->pageDown(*this);
-  }
-  else if (key == BTKEY_F1)
-  {
-   blank = !blank;
-   searchChange = true;
-  }
-  else if ((len < 50) && (key >= ' ') && (key <= '~'))
-  {
-   s.push_back(key);
-   full.push_back(key);
-   ++len;
-   searchChange = true;
-  }
-  else
-   continue;
-  current = sl[selected].value;
-  if (searchChange)
-  {
-   BTDisplay::selectItem *sl = tagList.search(s, blank, current, sz, selected);
-   select->alter(sl, sz);
-   select->sanitize(*this);
-  }
-  dst.h = endPos - startPos;
-  screen.back()->clear(dst);
-  textPos = startPos;
-  drawText(full.c_str());
-  if (textPos > endPos)
-   endPos = textPos;
-  select->draw(screen.back());
-  drawImage(current);
-  render();
- }
- delete select;
- return ((key == 27) ? initial : current);
 }
 
 void BTDisplay::setConfig(BTDisplayConfig *c)
@@ -1270,21 +1381,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   newXMult = newYMult = 1;
  }
  p3d.setMultiplier(newXMult, newYMult);
- widgets.clear();
- for (int i = 0; i < c->widgets.size(); ++i)
- {
-  widgets.push_back(new BTLabelWidget(c->widgets[i], xMult, yMult));
- }
- text.x = c->text.x * newXMult;
- text.y = c->text.y * newYMult;
- text.w = c->text.w * newXMult;
- text.h = c->text.h * newYMult;
- for (std::list<BTBackgroundAndScreen*>::iterator itr = ++(screen.begin()); itr != screen.end(); ++itr)
- {
-  delete *itr;
- }
- screen.erase(++(screen.begin()), screen.end());
- screen.front()->dropScreen();
+ clearScreens();
  if ((config->width * xMult != c->width * newXMult) || (config->height * yMult != c->height * newYMult))
  {
 #ifdef SDL2LIB
@@ -1359,7 +1456,7 @@ void BTDisplay::setConfig(BTDisplayConfig *c)
   ttffont = 0;
  }
 #endif
- (*screen.begin())->setBackground(c->background);
+ setupScreens(config, xMult, yMult);
 }
 
 void BTDisplay::setPsuedo3DConfig(Psuedo3DConfigList *p3dl)
@@ -1407,6 +1504,8 @@ bool BTDisplay::sizeFont(const char *text, int &w, int &h)
 
 void BTDisplay::splitText(const char *words, const std::string &prefix, std::vector<std::string> &lines)
 {
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ SDL_Rect &text = widget->getLocation();
  int w, h, prefixW;
  char *tmp = new char[strlen(words)];
  const char *partial = words;
@@ -1555,7 +1654,7 @@ void BTDisplay::toggleFullScreen()
  render();
 }
 
-void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment a, SDL_Surface *screen /*= NULL*/)
+void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTAlignment::alignment a, SDL_Surface *screen /*= NULL*/)
 {
  if (0 == *text)
   return;
@@ -1579,19 +1678,19 @@ void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, alignment
  src.h = ((img->h > dst.h) ? dst.h : img->h);
  switch (a)
  {
-  case left:
+  case BTAlignment::left:
    final.x = dst.x;
    final.y = dst.y;
    final.w = src.w;
    final.h = src.h;
    break;
-  case center:
+  case BTAlignment::center:
    final.x = ((img->w > dst.w) ? dst.x : dst.x + (dst.w / 2) - (img->w / 2));
    final.y = ((img->h > dst.h) ? dst.y : dst.y + (dst.h / 2) - (img->h / 2));
    final.w = src.w;
    final.h = src.h;
    break;
-  case right:
+  case BTAlignment::right:
    final.x = dst.x + dst.w - src.w;
    final.y = dst.y + dst.h - src.h;
    final.w = src.w;
@@ -1804,6 +1903,15 @@ void BTDisplay::render()
 #endif
 }
 
+void BTDisplay::clearScreens()
+{
+ for (std::list<BTBackgroundAndScreen*>::iterator itr = screen.begin(); itr != screen.end(); ++itr)
+ {
+  delete *itr;
+ }
+ screen.clear();
+}
+
 unsigned long BTDisplay::drawAnimationFrame()
 {
  unsigned long ticks = SDL_GetTicks();
@@ -1973,6 +2081,35 @@ void BTDisplay::setupKeyMap()
  shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_z, 'Z'));
 }
 
+void BTDisplay::setupScreens(BTDisplayConfig *c, int xMult, int yMult)
+{
+ for (int w = 0; w < c->layout.size(); ++w)
+ {
+  SDL_Surface *scr = NULL;
+  if (c->layout.size() > 1)
+  {
+   scr = SDL_CreateRGBSurface(0, c->width * xMult, c->height * yMult, 32,
+                              0x00FF0000,
+                              0x0000FF00,
+                              0x000000FF,
+                              0xFF000000);
+  }
+  screen.push_back(new BTBackgroundAndScreen(this, scr, c->layout[w]->visible));
+  screen.back()->setBackground(c->layout[w]->background.c_str(), true);
+  for (int i = 0; i < c->layout[w]->widgets.size(); ++i)
+  {
+   if (dynamic_cast<BTLabelConfig*>(c->layout[w]->widgets[i]))
+   {
+    screen.back()->addWidget(new BTLabelWidget(dynamic_cast<BTLabelConfig*>(c->layout[w]->widgets[i]), xMult, yMult));
+   }
+   else if (dynamic_cast<BTTextConfig*>(c->layout[w]->widgets[i]))
+   {
+    screen.back()->addWidget(new BTTextWidget(dynamic_cast<BTTextConfig*>(c->layout[w]->widgets[i]), xMult, yMult));
+   }
+  }
+ }
+}
+
 Uint32 BTDisplay::timerCallback(Uint32 interval, void *param)
 {
  SDL_Event event;
@@ -1990,17 +2127,14 @@ Uint32 BTDisplay::timerCallback(Uint32 interval, void *param)
  return 0;
 }
 
-BTBackgroundAndScreen::BTBackgroundAndScreen(BTDisplay *d, SDL_Surface *s)
- : display(d), screen(s), background(NULL), visible(true)
+BTBackgroundAndScreen::BTBackgroundAndScreen(BTDisplay *d, SDL_Surface *s, bool v)
+ : display(d), screen(s), background(NULL), visible(v)
 {
 }
 
 BTBackgroundAndScreen::~BTBackgroundAndScreen()
 {
- for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
- {
-  delete (*elementItr);
- }
+ clearWidgets();
  if (screen)
  {
   SDL_FreeSurface(screen);
@@ -2016,9 +2150,9 @@ void BTBackgroundAndScreen::addAnimation(MNG_AnimationState *animState, bool cle
  activeAnimation.push_back(BTAnimation(animState, clear));
 }
 
-void BTBackgroundAndScreen::addElement(BTUIElement *elm)
+void BTBackgroundAndScreen::addWidget(BTWidget *w)
 {
- element.push_back(elm);
+ widgets.push_back(w);
 }
 
 void BTBackgroundAndScreen::clear()
@@ -2042,13 +2176,13 @@ void BTBackgroundAndScreen::clear(SDL_Rect &r)
   display->clear(background, r);
 }
 
-void BTBackgroundAndScreen::clearElements()
+void BTBackgroundAndScreen::clearWidgets()
 {
- for (std::vector<BTUIElement*>::iterator elementItr = element.begin(); element.end() != elementItr; ++elementItr)
+ for (std::vector<BTWidget*>::iterator widgetItr = widgets.begin(); widgets.end() != widgetItr; ++widgetItr)
  {
-  delete (*elementItr);
+  delete (*widgetItr);
  }
- element.clear();
+ widgets.clear();
 }
 
 SDL_Color &BTBackgroundAndScreen::getColor(const std::string &color)
@@ -2083,7 +2217,7 @@ unsigned long BTBackgroundAndScreen::drawAnimationFrame(long ticks)
  return next;
 }
 
-void BTBackgroundAndScreen::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTDisplay::alignment a)
+void BTBackgroundAndScreen::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTAlignment::alignment a)
 {
  display->drawFont(text, dst, c, a, screen);
 }
@@ -2100,6 +2234,7 @@ void BTBackgroundAndScreen::drawImage(SDL_Surface *img, SDL_Rect &dst)
  else
   display->drawImage(dst, img);
 }
+
 void BTBackgroundAndScreen::drawMap(bool knowledge)
 {
  // Draw black
@@ -2170,7 +2305,7 @@ void BTBackgroundAndScreen::drawMap(bool knowledge)
    dst.w = 2 * p3d.config->mapWidth * xMult;
    dst.h = p3d.config->mapHeight * yMult;
    clear(dst);
-   drawFont(sz, dst, display->getBlack(), BTDisplay::right);
+   drawFont(sz, dst, display->getBlack(), BTAlignment::right);
   }
   for (int i = 0; i < config->widthMap; ++i)
   {
@@ -2195,7 +2330,7 @@ void BTBackgroundAndScreen::drawMap(bool knowledge)
    dst.w = p3d.config->mapWidth * xMult;
    dst.h = p3d.config->mapHeight * yMult;
    clear(dst);
-   drawFont(sz, dst, display->getBlack(), BTDisplay::right);
+   drawFont(sz, dst, display->getBlack(), BTAlignment::right);
    sz[0] = 0;
    if (coordinate < 100)
    {
@@ -2208,7 +2343,7 @@ void BTBackgroundAndScreen::drawMap(bool knowledge)
    dst.y = (config->yMap + ((config->heightMap + 1) * p3d.config->mapHeight) + 2) * yMult;
    clear(dst);
    if (sz[0])
-    drawFont(sz, dst, display->getBlack(), BTDisplay::right);
+    drawFont(sz, dst, display->getBlack(), BTAlignment::right);
   }
  }
  for (int i = 0; i < config->widthMap; ++i)
@@ -2300,6 +2435,16 @@ void BTBackgroundAndScreen::fillRect(SDL_Rect &dst, SDL_Color c)
  display->fillRect(screen, dst, c);
 }
 
+BTWidget *BTBackgroundAndScreen::getWidget(const std::string &name)
+{
+ for (std::vector<BTWidget*>::iterator itr(widgets.begin()); itr != widgets.end(); ++itr)
+ {
+  if (name == (*itr)->getName())
+   return *itr;
+ }
+ return NULL;
+}
+
 void BTBackgroundAndScreen::removeAnimation(MNG_AnimationState *animState)
 {
  activeAnimation.remove(BTAnimation(animState, false));
@@ -2307,6 +2452,12 @@ void BTBackgroundAndScreen::removeAnimation(MNG_AnimationState *animState)
 
 void BTBackgroundAndScreen::render()
 {
+ if (!visible)
+  return;
+ for (std::vector<BTWidget*>::iterator itr(widgets.begin()); itr != widgets.end(); ++itr)
+ {
+  (*itr)->render(this);
+ }
  if ((screen) && (visible))
  {
   SDL_Rect r;
@@ -2318,10 +2469,9 @@ void BTBackgroundAndScreen::render()
  }
 }
 
-void BTBackgroundAndScreen::scrollUp(int h)
+void BTBackgroundAndScreen::scrollUp(const SDL_Rect &text, int h)
 {
  SDL_Rect src, dst;
- SDL_Rect &text = display->getText();
  src.x = dst.x = text.x;
  src.y = text.y + h;
  src.w = dst.w = text.w;
@@ -2336,7 +2486,6 @@ void BTBackgroundAndScreen::scrollUp(int h)
  src.w = text.w;
  src.h = h;
  clear(src);
- display->textPos -= h;
 }
 
 void BTBackgroundAndScreen::setBackground(const char *file, bool physfs /*= true*/)
@@ -2399,11 +2548,11 @@ void BTUISelect::draw(BTBackgroundAndScreen *d)
    tmp[1] = ')';
    tmp[2] = list[i].first;
    tmp[3] = 0;
-   d->drawFont(tmp, dst, d->getDisplay()->getBlack(), BTDisplay::left);
+   d->drawFont(tmp, dst, d->getDisplay()->getBlack(), BTAlignment::left);
    dst.x += wFirst;
    dst.w = position.w - wFirst;
    if (!list[i].name.empty())
-    d->drawFont(list[i].name.c_str(), dst, d->getDisplay()->getBlack(), BTDisplay::left);
+    d->drawFont(list[i].name.c_str(), dst, d->getDisplay()->getBlack(), BTAlignment::left);
    dst.y += h;
   }
   for (; i < numbered; ++i)
@@ -2413,7 +2562,7 @@ void BTUISelect::draw(BTBackgroundAndScreen *d)
    tmp[0] = '1' + i;
    tmp[1] = ')';
    tmp[2] = 0;
-   d->drawFont(tmp, dst, d->getDisplay()->getBlack(), BTDisplay::left);
+   d->drawFont(tmp, dst, d->getDisplay()->getBlack(), BTAlignment::left);
    dst.y += h;
   }
  }
@@ -2434,20 +2583,20 @@ void BTUISelect::draw(BTBackgroundAndScreen *d)
    dst.w = wFirst;
    tmp[0] = list[i].first;
    tmp[1] = 0;
-   d->drawFont(tmp, dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTDisplay::left);
+   d->drawFont(tmp, dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTAlignment::left);
    if (((list[i].value) && (list[i].flags.isSet(BTSELECTFLAG_SHOWVALUE))) || (list[i].flags.isSet(BTSELECTFLAG_NUMBER)))
    {
     snprintf(tmp, 20, "%d", list[i].value);
     d->getDisplay()->sizeFont(tmp, wValue, hTmp);
     dst.w = position.w;
-    d->drawFont(tmp, dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTDisplay::right);
+    d->drawFont(tmp, dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTAlignment::right);
    }
    else
     wValue = 0;
    dst.x += wFirst;
    dst.w = position.w - wValue - wFirst;
    if (!list[i].name.empty())
-    d->drawFont(list[i].name.c_str(), dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTDisplay::left);
+    d->drawFont(list[i].name.c_str(), dst, ((select != i) ? d->getDisplay()->getBlack() : d->getDisplay()->getWhite()), BTAlignment::left);
    dst.y += h;
   }
  }
@@ -2574,7 +2723,7 @@ void BTUIMultiColumn::draw(int x, int y, int w, int h, BTDisplay& d)
  dst.h = h;
  for (std::list<std::string>::iterator itr = col.begin(); itr != col.end(); ++itr)
  {
-  d.drawFont(itr->c_str(), dst, d.getBlack(), BTDisplay::left);
+  d.drawFont(itr->c_str(), dst, d.getBlack(), BTAlignment::left);
   dst.x += w / col.size();
  }
 }

@@ -44,9 +44,9 @@ void BTStatBlock::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer 
   {
    case XMLTYPE_BOOL:
     if (*(reinterpret_cast<bool*>(state->object)))
-     d.drawFont("true", dst, d.getColor(color), (BTDisplay::alignment)align);
+     d.drawFont("true", dst, d.getColor(color), (BTAlignment::alignment)align);
     else
-     d.drawFont("false", dst, d.getColor(color), (BTDisplay::alignment)align);
+     d.drawFont("false", dst, d.getColor(color), (BTAlignment::alignment)align);
     break;
    case XMLTYPE_INT:
     if (compare.attribute != "")
@@ -64,7 +64,7 @@ void BTStatBlock::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer 
     }
     if (state->data)
     {
-     d.drawFont(reinterpret_cast<ValueLookup*>(state->data)->getName(*(reinterpret_cast<int*>(state->object))).c_str(), dst, d.getColor(color), (BTDisplay::alignment)align);
+     d.drawFont(reinterpret_cast<ValueLookup*>(state->data)->getName(*(reinterpret_cast<int*>(state->object))).c_str(), dst, d.getColor(color), (BTAlignment::alignment)align);
     }
     else
     {
@@ -73,13 +73,13 @@ void BTStatBlock::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer 
       val *= -1;
      if ((maxValue != -1) && (maxValue < val))
      {
-      d.drawFont(overflow, dst, d.getColor(color), (BTDisplay::alignment)align);
+      d.drawFont(overflow, dst, d.getColor(color), (BTAlignment::alignment)align);
      }
      else
      {
       char tmp[40];
       snprintf(tmp, 40, "%d", val);
-      d.drawFont(tmp, dst, d.getColor(color), (BTDisplay::alignment)align);
+      d.drawFont(tmp, dst, d.getColor(color), (BTAlignment::alignment)align);
      }
     }
     break;
@@ -91,7 +91,7 @@ void BTStatBlock::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer 
     break;
    }
    case XMLTYPE_STRING:
-    d.drawFont(*(reinterpret_cast<char**>(state->object)), dst, d.getColor(color), (BTDisplay::alignment)align);
+    d.drawFont(*(reinterpret_cast<char**>(state->object)), dst, d.getColor(color), (BTAlignment::alignment)align);
     break;
    case XMLTYPE_BITFIELD:
    default:
@@ -117,7 +117,7 @@ void BTPrint::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
  dst.y = (y + position.y) * yMult;
  dst.w = position.w * xMult;
  dst.h = position.h * yMult;
- d.drawFont(text, dst, d.getColor(color), (BTDisplay::alignment)align);
+ d.drawFont(text, dst, d.getColor(color), (BTAlignment::alignment)align);
 }
 
 bool BTCondition::compare(ObjectSerializer *pc) const

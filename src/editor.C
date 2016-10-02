@@ -272,21 +272,30 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     break;
    case 'r':
    {
-    if (NULL == d.getScreen(1))
-     d.addBackground("ui/mapedit_select.png");
-    else
+    if (d.getScreen(1))
      d.getScreen(1)->setVisibility(true);
     std::string tmp = d.readString("X Size?", 3, "");
     int newXSize = atol(tmp.c_str());
     if (newXSize < 1)
+    {
+     d.clearText();
+     if (d.getScreen(1))
+      d.getScreen(1)->setVisibility(false);
      break;
+    }
     tmp = d.readString("Y Size?", 3, "");
     int newYSize = atol(tmp.c_str());
     if (newYSize < 1)
+    {
+     d.clearText();
+     if (d.getScreen(1))
+      d.getScreen(1)->setVisibility(false);
      break;
+    }
     levelMap->resize(newXSize, newYSize);
     d.clearText();
-    d.getScreen(1)->setVisibility(false);
+    if (d.getScreen(1))
+     d.getScreen(1)->setVisibility(false);
     break;
    }
    case 'c':
@@ -295,9 +304,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    case 's':
    {
     d.clearText();
-    if (NULL == d.getScreen(1))
-     d.addBackground("ui/mapedit_select.png");
-    else
+    if (d.getScreen(1))
      d.getScreen(1)->setVisibility(true);
     int len = levelMap->getNumOfSpecials();
     BTDisplay::selectItem list[len + 1];
@@ -309,7 +316,8 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     d.addSelection(list, len + 1, startSpecial, currentSpecial);
     int key = d.process("ce");
     d.clearText();
-    d.getScreen(1)->setVisibility(false);
+    if (d.getScreen(1))
+     d.getScreen(1)->setVisibility(false);
     if ((key == 'e') || ((currentSpecial == len) && ((key == '\r') || (key == 'c'))))
     {
      editSpecial(d, levelMap->getSpecial(currentSpecial));
@@ -342,9 +350,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    case 'n':
    {
     d.clearText();
-    if (NULL == d.getScreen(1))
-     d.addBackground("ui/mapedit_select.png");
-    else
+    if (d.getScreen(1))
      d.getScreen(1)->setVisibility(true);
     int len = levelMap->getNumOfStreets();
     BTDisplay::selectItem list[len + 1];
@@ -377,7 +383,8 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
      levelMap->getSquare(yPos, xPos).setStreet(currentStreet);
     }
     d.clearText();
-    d.getScreen(1)->setVisibility(false);
+    if (d.getScreen(1))
+     d.getScreen(1)->setVisibility(false);
     if (currentWall < p3dConfig->mapType.size())
      d.drawLabel("wall", p3dConfig->mapType[currentWall]->name.c_str());
     else
@@ -398,20 +405,18 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
     {
      p3dConfig = d.setWallGraphics(levelMap->getType());
      currentWall = 0;
-     if (currentWall < p3dConfig->mapType.size())
-      d.drawLabel("wall", p3dConfig->mapType[currentWall]->name.c_str());
-     else
-      d.drawLabel("wall", "Clear");
     }
+    if (currentWall < p3dConfig->mapType.size())
+     d.drawLabel("wall", p3dConfig->mapType[currentWall]->name.c_str());
+    else
+     d.drawLabel("wall", "Clear");
     break;
    }
    default:
     break;
   }
  }
- if (NULL == d.getScreen(1))
-  d.addBackground("ui/mapedit_select.png");
- else
+ if (d.getScreen(1))
   d.getScreen(1)->setVisibility(true);
  d.drawText("Save?");
  while ((key != 'y') && (key != 'n'))

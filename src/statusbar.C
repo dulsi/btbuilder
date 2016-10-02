@@ -8,7 +8,7 @@
 #include "statusbar.h"
 #include "game.h"
 
-void BTStatusBar::draw()
+void BTStatusBar::draw(BTBackgroundAndScreen *display)
 {
  XMLVector<BTPc*> &party = BTGame::getGame()->getParty();
  XMLVector<BTStatusInfo*> &statusInfo = display->getDisplay()->getConfig()->statusInfo;
