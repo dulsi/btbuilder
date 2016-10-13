@@ -68,18 +68,14 @@ void BTTextWidget::clearElements()
  element.clear();
 }
 
-void BTTextWidget::drawLast(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a /*= left*/)
+void BTTextWidget::clearLast()
 {
- int w, h;
- if (!d->getDisplay()->sizeFont(words, w, h))
-  return;
- SDL_Rect dst;
- dst.x = location.x;
- dst.y = location.y + location.h - h;
- dst.w = location.w;
- dst.h = h;
- d->clear(dst);
- d->drawFont(words, dst, d->getColor("black"), a);
+ last = "";
+}
+
+void BTTextWidget::drawLast(BTBackgroundAndScreen *d, const char *words)
+{
+ last = words;
 }
 
 void BTTextWidget::drawText(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a /*= left*/)
@@ -424,6 +420,19 @@ void BTTextWidget::render(BTBackgroundAndScreen *d, bool refresh /*= false*/)
   {
    select->draw(d);
   }
+ }
+ if (last != "")
+ {
+  int w, h;
+  if (!d->getDisplay()->sizeFont(last.c_str(), w, h))
+   return;
+  SDL_Rect dst;
+  dst.x = location.x;
+  dst.y = location.y + location.h - h;
+  dst.w = location.w;
+  dst.h = h;
+  d->clear(dst);
+  d->drawFont(last.c_str(), dst, d->getColor("black"), BTAlignment::left);
  }
 }
 
@@ -880,6 +889,13 @@ void BTDisplay::clearImage()
  screen.front()->fillRect(dst, black);
 }
 
+void BTDisplay::clearLast()
+{
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+  widget->clearLast();
+}
+
 void BTDisplay::clearText()
 {
  BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
@@ -1009,11 +1025,11 @@ void BTDisplay::drawLabel(const char *name, const char *value)
  }
 }
 
-void BTDisplay::drawLast(const char *keys, const char *words, BTAlignment::alignment a /*= left*/)
+void BTDisplay::drawLast(const char *keys, const char *words)
 {
  BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
  if (widget)
-  widget->drawLast(getVisibleScreen(), words, a);
+  widget->drawLast(getVisibleScreen(), words);
 }
 
 void BTDisplay::drawMessage(const char *words, int *delay)
@@ -1672,7 +1688,7 @@ void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTAlignme
   SDL_FreeSurface(img);
   img = img2;
  }
- SDL_Rect src, final;
+ SDL_Rect src, f;
  src.x = 0;
  src.y = 0;
  src.w = ((img->w > dst.w) ? dst.w : img->w);
@@ -1680,28 +1696,28 @@ void BTDisplay::drawFont(const char *text, SDL_Rect &dst, SDL_Color c, BTAlignme
  switch (a)
  {
   case BTAlignment::left:
-   final.x = dst.x;
-   final.y = dst.y;
-   final.w = src.w;
-   final.h = src.h;
+   f.x = dst.x;
+   f.y = dst.y;
+   f.w = src.w;
+   f.h = src.h;
    break;
   case BTAlignment::center:
-   final.x = ((img->w > dst.w) ? dst.x : dst.x + (dst.w / 2) - (img->w / 2));
-   final.y = ((img->h > dst.h) ? dst.y : dst.y + (dst.h / 2) - (img->h / 2));
-   final.w = src.w;
-   final.h = src.h;
+   f.x = ((img->w > dst.w) ? dst.x : dst.x + (dst.w / 2) - (img->w / 2));
+   f.y = ((img->h > dst.h) ? dst.y : dst.y + (dst.h / 2) - (img->h / 2));
+   f.w = src.w;
+   f.h = src.h;
    break;
   case BTAlignment::right:
-   final.x = dst.x + dst.w - src.w;
-   final.y = dst.y + dst.h - src.h;
-   final.w = src.w;
-   final.h = src.h;
+   f.x = dst.x + dst.w - src.w;
+   f.y = dst.y + dst.h - src.h;
+   f.w = src.w;
+   f.h = src.h;
    break;
  }
  if (screen)
-  SDL_BlitSurface(img, &src, screen, &final);
+  SDL_BlitSurface(img, &src, screen, &f);
  else
-  SDL_BlitSurface(img, &src, mainScreen, &final);
+  SDL_BlitSurface(img, &src, mainScreen, &f);
  SDL_FreeSurface(img);
 }
 

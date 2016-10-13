@@ -120,7 +120,8 @@ class BTTextWidget : public BTWidget
   void addElement(BTUIElement *elm);
   void clear(BTBackgroundAndScreen *d);
   void clearElements();
-  void drawLast(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a = BTAlignment::left);
+  void clearLast();
+  void drawLast(BTBackgroundAndScreen *d, const char *words);
   void drawText(BTBackgroundAndScreen *d, const char *words, BTAlignment::alignment a = BTAlignment::left);
   std::vector<BTUIElement*>& getElements() { return element; }
   std::string getName() { return config->name; }
@@ -139,6 +140,7 @@ class BTTextWidget : public BTWidget
   SDL_Rect location;
   std::vector<BTUIElement*> element;
   BTUIElement *processor;
+  std::string last;
   bool modified;
 };
 
@@ -204,12 +206,13 @@ class BTDisplay : public ImageLoader
   void clear(SDL_Surface *scr, SDL_Rect &r);
   void clearElements();
   void clearImage();
+  void clearLast();
   void clearText();
   void drawFullScreen(const char *file, int delay);
   void drawImage(int pic);
   void drawLabel(const char *value);
   void drawLabel(const char *name, const char *value);
-  void drawLast(const char *keys, const char *words, BTAlignment::alignment a = BTAlignment::left);
+  void drawLast(const char *keys, const char *words);
   void drawMessage(const char *words, int *delay);
   void drawText(const char *words, BTAlignment::alignment a = BTAlignment::left);
   void drawView();

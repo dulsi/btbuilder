@@ -1712,6 +1712,7 @@ int BTScreenSet::buy(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  {
   d.drawLast(0, "Done!");
   d.readChar();
+  d.clearLast();
   b.pc[0]->takeGold(itemList[shop->goods[select->select]->id].getPrice());
   b.pc[0]->giveItem(shop->goods[select->select]->id, true, itemList[shop->goods[select->select]->id].getTimesUsable());
   shop->removeItem(shop->goods[select->select]->id);
