@@ -198,7 +198,7 @@ void BTItem::serialize(ObjectSerializer* s)
  s->add("hitPlus", &hitPlus);
  s->add("xSpecial", &xSpecial, NULL, &extraDamageLookup);
  s->add("chanceXSpecial", &chanceXSpecial);
- s->add("type", &type, NULL, &itemTypesLookup);
+ s->add("type", &type, NULL, &BTCore::getCore()->getItemTypeList());
  s->add("spellCast", &spellCast);
  s->add("spell", &spellCast, NULL, &BTCore::getCore()->getSpellList(), -1, "(none)");
  s->add("allowedJob", &classAllowed, &BTCore::getCore()->getJobList());
@@ -227,3 +227,36 @@ int BTItemListCompare::Compare(const BTItem &a, const BTItem &b) const
  return strcmp(a.getName().c_str(), b.getName().c_str());
 }
 
+void BTItemType::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("mustEquip", &mustEquip);
+}
+
+void BTItemType::readXML(const char *filename, XMLVector<BTItemType*> &it)
+{
+ XMLSerializer parser;
+ parser.add("itemType", &it, &BTItemType::create);
+ parser.parse(filename, true);
+}
+
+std::string BTItemTypeList::getName(int index)
+{
+ if (size() > index)
+  return operator[](index)->name;
+ else
+  return "";
+}
+
+int BTItemTypeList::getIndex(std::string name)
+{
+ for (int i = 0; i < size(); ++i)
+  if (strcmp(name.c_str(), operator[](i)->name.c_str()) == 0)
+   return i;
+ return -1;
+}
+
+size_t BTItemTypeList::size()
+{
+ return XMLVector<BTItemType*>::size();
+}

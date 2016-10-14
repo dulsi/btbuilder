@@ -131,8 +131,6 @@ extern ArrayLookup combatActionLookup;
 #define BTITEM_BOW          10
 #define BTITEM_ARROW        11
 #define BTITEM_THROWNWEAPON 12
-extern const char *itemTypes[];
-extern ArrayLookup itemTypesLookup;
 
 #define BTITEMCAST_NONE -1
 

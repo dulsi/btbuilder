@@ -2382,6 +2382,7 @@ int BTScreenSet::unequip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int k
 int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTParty &party = BTGame::getGame()->getParty();
+ BTItemTypeList &itemTypeList = BTGame::getGame()->getItemTypeList();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
@@ -2392,10 +2393,12 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  }
  if (b.pc[0]->item[select->select].charges == 0)
   throw BTSpecialError("notusable");
+ else if (BTITEM_CANNOTEQUIP == b.pc[0]->item[select->select].equipped)
+  throw BTSpecialError("notbyyou");
+ else if ((BTITEM_EQUIPPED != b.pc[0]->item[select->select].equipped) && (itemTypeList[itemList[b.pc[0]->item[select->select].id].getType()]->mustEquip))
+  throw BTSpecialError("notequipped");
  else if (BTITEM_ARROW == itemList[b.pc[0]->item[select->select].id].getType())
  {
-  if (BTITEM_CANNOTEQUIP == b.pc[0]->item[select->select].equipped)
-   throw BTSpecialError("notbyyou");
   // Determine if you have a bow equipped.
   bool found = false;
   for (int i = 0; i < BT_ITEMS; ++i)
@@ -2413,12 +2416,7 @@ int BTScreenSet::useNow(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int ke
  }
  else if (BTITEM_THROWNWEAPON == itemList[b.pc[0]->item[select->select].id].getType())
  {
-  // Allow even if not equipped
-  if (BTITEM_CANNOTEQUIP == b.pc[0]->item[select->select].equipped)
-   throw BTSpecialError("notbyyou");
  }
- else if (BTITEM_EQUIPPED != b.pc[0]->item[select->select].equipped)
-  throw BTSpecialError("notequipped");
  else if (BTITEM_BOW == itemList[b.pc[0]->item[select->select].id].getType())
   throw BTSpecialError("notarrow");
  else

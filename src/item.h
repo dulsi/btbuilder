@@ -90,5 +90,28 @@ class BTItemListCompare : public BTSortCompare<BTItem>
   int Compare(const BTItem &a, const BTItem &b) const;
 };
 
+class BTItemType : public XMLObject
+{
+ public:
+  BTItemType() : mustEquip(true) {}
+
+  void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTItemType; }
+  static void readXML(const char *filename, XMLVector<BTItemType*> &it);
+
+ public:
+  std::string name;
+  bool mustEquip;
+};
+
+class BTItemTypeList : public ValueLookup, public XMLVector<BTItemType*>
+{
+ public:
+  virtual std::string getName(int index);
+  virtual int getIndex(std::string name);
+  virtual size_t size();
+};
+
 #endif
 

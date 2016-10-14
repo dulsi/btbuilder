@@ -1,0 +1,44 @@
+<data>
+	<itemType>
+		<name>miscellaneous item</name>
+ </itemType>
+ <itemType>
+		<name>hand weapon</name>
+ </itemType>
+ <itemType>
+		<name>shield</name>
+ </itemType>
+ <itemType>
+		<name>armor</name>
+ </itemType>
+ <itemType>
+		<name>helm</name>
+ </itemType>
+ <itemType>
+		<name>gloves</name>
+ </itemType>
+ <itemType>
+		<name>instrument</name>
+ </itemType>
+ <itemType>
+		<name>figurine</name>
+ </itemType>
+ <itemType>
+		<name>ring</name>
+ </itemType>
+ <itemType>
+		<name>wand</name>
+ </itemType>
+ <itemType>
+		<name>bow</name>
+ </itemType>
+ <itemType>
+		<name>arrow</name>
+  <mustEquip>false</mustEquip>
+ </itemType>
+ <itemType>
+		<name>thrown weapon</name>
+  <mustEquip>false</mustEquip>
+ </itemType>
+</data>
+

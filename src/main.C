@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
    {
     BTItem &mon(itmList[i]);
     printf("Name: %s\n", mon.getName().c_str());
-    printf("Type: %s\n", itemTypes[mon.getType()]);
+    printf("Type: %s\n", game.getItemTypeList()[mon.getType()]);
     printf("Price: %d   User class: Multiple\n", mon.getPrice());
     printf("Armor bonus: %d   Hit bonus: %d\n", mon.getArmorPlus(),
       mon.getHitPlus());

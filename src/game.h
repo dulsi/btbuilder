@@ -45,6 +45,7 @@ class BTCore : public Psuedo3DMap
 
   std::string descendMap(int depth);
   BTImageTagList &getImageTagList();
+  BTItemTypeList &getItemTypeList();
   BTFactory<BTItem> &getItemList();
   BTJobList &getJobList();
   BTLevel *getLevel();
@@ -71,6 +72,7 @@ class BTCore : public Psuedo3DMap
 
  protected:
   BTModule *module;
+  BTItemTypeList itemTypeList;
   BTFactory<BTItem> itemList;
   BTJobList jobList;
   BTFactory<BTMonster> monsterList;

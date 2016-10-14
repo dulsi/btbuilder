@@ -19,6 +19,7 @@ BTCore::BTCore(BTModule *m)
  {
   core = this;
  }
+ BTItemType::readXML(m->itemType, itemTypeList);
  BTSpecialFlag::readXML(m->specialFlag, specialFlagList);
  BTRace::readXML(m->race, raceList);
  BTSkill::readXML(m->skill, skillList);
@@ -59,6 +60,11 @@ std::string BTCore::descendMap(int depth)
 BTImageTagList &BTCore::getImageTagList()
 {
  return tagList;
+}
+
+BTItemTypeList &BTCore::getItemTypeList()
+{
+ return itemTypeList;
 }
 
 BTFactory<BTItem> &BTCore::getItemList()

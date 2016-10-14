@@ -1458,6 +1458,7 @@ int BTCombat::target(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 int BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTCombat &c = static_cast<BTCombat&>(b);
+ BTItemTypeList &itemTypeList = BTGame::getGame()->getItemTypeList();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTFactory<BTSpell, BTSpell1> &spellList = BTGame::getGame()->getSpellList();
  BTSelectInventory *select = static_cast<BTSelectInventory*>(item);
@@ -1465,10 +1466,12 @@ int BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  {
   return 2; // Should never get here.
  }
+ if (BTITEM_CANNOTEQUIP == b.getPc()->item[select->select].equipped)
+  throw BTSpecialError("notbyyou");
+ else if ((BTITEM_EQUIPPED != b.getPc()->item[select->select].equipped) && (itemTypeList[itemList[b.getPc()->item[select->select].id].getType()]->mustEquip))
+  throw BTSpecialError("notequipped");
  if (BTITEM_ARROW == itemList[b.getPc()->item[select->select].id].getType())
  {
-  if (BTITEM_CANNOTEQUIP == b.getPc()->item[select->select].equipped)
-   throw BTSpecialError("notbyyou");
   // Determine if you have a bow equipped.
   bool found = false;
   for (int i = 0; i < BT_ITEMS; ++i)
@@ -1487,13 +1490,8 @@ int BTCombat::useItem(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
  }
  else if (BTITEM_THROWNWEAPON == itemList[b.getPc()->item[select->select].id].getType())
  {
-  // Allow even if not equipped
-  if (BTITEM_CANNOTEQUIP == b.getPc()->item[select->select].equipped)
-   throw BTSpecialError("notbyyou");
   b.add("range", new unsigned int(BTDISTANCE_MAX), NULL, true);
  }
- else if (BTITEM_EQUIPPED != b.getPc()->item[select->select].equipped)
-  throw BTSpecialError("notequipped");
  else if (BTITEM_BOW == itemList[b.getPc()->item[select->select].id].getType())
   throw BTSpecialError("notarrow");
  else

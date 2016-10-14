@@ -132,24 +132,6 @@ const char *combatActions[] =
 };
 ArrayLookup combatActionLookup(BT_COMBATACTIONS, combatActions);
 
-const char *itemTypes[] =
-{
- "miscellaneous item",
- "hand weapon",
- "shield",
- "armor",
- "helm",
- "gloves",
- "instrument",
- "figurine",
- "ring",
- "wand",
- "bow",
- "arrow",
- "thrown weapon"
-};
-ArrayLookup itemTypesLookup(BT_ITEMTYPES, itemTypes);
-
 /*
  * $A or $M - monster
  * $C - class
