@@ -35,6 +35,7 @@
  <itemType>
 		<name>arrow</name>
   <mustEquip>false</mustEquip>
+  <showCharges>true</showCharges>
  </itemType>
  <itemType>
 		<name>thrown weapon</name>

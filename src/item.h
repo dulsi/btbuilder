@@ -93,7 +93,7 @@ class BTItemListCompare : public BTSortCompare<BTItem>
 class BTItemType : public XMLObject
 {
  public:
-  BTItemType() : mustEquip(true) {}
+  BTItemType() : mustEquip(true), showCharges(false) {}
 
   void serialize(ObjectSerializer* s);
 
@@ -103,6 +103,7 @@ class BTItemType : public XMLObject
  public:
   std::string name;
   bool mustEquip;
+  bool showCharges;
 };
 
 class BTItemTypeList : public ValueLookup, public XMLVector<BTItemType*>

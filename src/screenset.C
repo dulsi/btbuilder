@@ -725,6 +725,7 @@ BTSelectInventory::BTSelectInventory()
 
 int BTSelectInventory::buildList(ObjectSerializer *obj)
 {
+ BTItemTypeList &itemTypeList = BTGame::getGame()->getItemTypeList();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  XMLAction *act = obj->find("pc", NULL);
  BTPc *pc = static_cast<BTPc*>(reinterpret_cast<XMLObject*>(act->object));
@@ -744,7 +745,7 @@ int BTSelectInventory::buildList(ObjectSerializer *obj)
    list[i].first = '*';
   else if (!itemList[id].canUse(pc))
    list[i].first = '@';
-  if (BTITEM_ARROW == itemList[id].getType())
+  if (itemTypeList[itemList[pc->item[i].id].getType()]->showCharges)
   {
    char tmp[20];
    snprintf(tmp, 20, "%d", pc->item[i].charges);
