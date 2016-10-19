@@ -232,6 +232,7 @@ void BTItemType::serialize(ObjectSerializer* s)
  s->add("name", &name);
  s->add("mustEquip", &mustEquip);
  s->add("showCharges", &showCharges);
+ s->add("toHitBonus", &toHitBonus, NULL, &toHitBonusLookup);
 }
 
 void BTItemType::readXML(const char *filename, XMLVector<BTItemType*> &it)

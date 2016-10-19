@@ -21,7 +21,7 @@ class BTCombatant
   virtual ~BTCombatant() {}
 
   virtual bool age();
-  std::string attack(BTCombatant *defender, bool melee, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum);
+  std::string attack(BTCombatant *defender, bool melee, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum, int toHitBonus = 0);
   virtual void deactivate(int &activeNum);
   virtual bool drainItem(int amount);
   virtual bool drainLevel();

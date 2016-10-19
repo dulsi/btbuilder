@@ -12,6 +12,7 @@
 #include "dice.h"
 #include "bitfield.h"
 #include "factory.h"
+#include "btconst.h"
 
 class BTPc;
 
@@ -93,7 +94,7 @@ class BTItemListCompare : public BTSortCompare<BTItem>
 class BTItemType : public XMLObject
 {
  public:
-  BTItemType() : mustEquip(true), showCharges(false) {}
+  BTItemType() : mustEquip(true), showCharges(false), toHitBonus(BTTOHITBONUS_ALWAYS) {}
 
   void serialize(ObjectSerializer* s);
 
@@ -104,6 +105,7 @@ class BTItemType : public XMLObject
   std::string name;
   bool mustEquip;
   bool showCharges;
+  int toHitBonus;
 };
 
 class BTItemTypeList : public ValueLookup, public XMLVector<BTItemType*>

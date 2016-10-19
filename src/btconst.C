@@ -330,3 +330,9 @@ const char *mapDisplayMode[] =
 };
 ArrayLookup mapDisplayModeLookup(BT_MAPDISPLAYMODES, mapDisplayMode);
 
+const char *toHitBonus[] =
+{
+ "always",
+ "mustUse"
+};
+ArrayLookup toHitBonusLookup(BT_TOHITBONUS, toHitBonus);

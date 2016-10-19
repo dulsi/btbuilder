@@ -33,7 +33,7 @@ bool BTCombatant::age()
  return drainLevel();
 }
 
-std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum)
+std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::string &cause, const std::string &effect, const BTDice &damageDice, IShort chanceXSpecial, IShort xSpecial, int &numAttacksLeft, int &activeNum, int toHitBonus /*= 0*/)
 {
  int hits = 0;
  int totalDamage = 0;
@@ -43,7 +43,7 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
  while ((defender->isAlive()) && (numAttacksLeft > 0))
  {
   int roll = BTDice(1, 20).roll();
-  if ((1 != roll) && ((20 == roll) || (roll + toHit >= defender->ac)))
+  if ((1 != roll) && ((20 == roll) || (roll + toHit + toHitBonus >= defender->ac)))
   {
    ++hits;
    int damage = 0;

@@ -4,6 +4,7 @@
  </itemType>
  <itemType>
 		<name>hand weapon</name>
+		<toHitBonus>mustUse</toHitBonus>
  </itemType>
  <itemType>
 		<name>shield</name>
@@ -31,15 +32,18 @@
  </itemType>
  <itemType>
 		<name>bow</name>
+		<toHitBonus>mustUse</toHitBonus>
  </itemType>
  <itemType>
 		<name>arrow</name>
-  <mustEquip>false</mustEquip>
-  <showCharges>true</showCharges>
+		<mustEquip>false</mustEquip>
+		<showCharges>true</showCharges>
+		<toHitBonus>mustUse</toHitBonus>
  </itemType>
  <itemType>
 		<name>thrown weapon</name>
-  <mustEquip>false</mustEquip>
+		<mustEquip>false</mustEquip>
+		<toHitBonus>mustUse</toHitBonus>
  </itemType>
 </data>
 

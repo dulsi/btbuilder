@@ -361,5 +361,11 @@ extern ArrayLookup mapDisplayModeLookup;
 #define BTINITIATIVE_INACTIVE -99
 #define BTINITIATIVE_ACTIVE 0
 
+#define BT_TOHITBONUS 2
+#define BTTOHITBONUS_ALWAYS 0
+#define BTTOHITBONUS_USE    1
+extern const char *toHitBonus[];
+extern ArrayLookup toHitBonusLookup;
+
 #endif
 

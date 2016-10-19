@@ -206,6 +206,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
  BTGame *game = BTGame::getGame();
  BTFactory<BTItem> &itemList = game->getItemList();
  BTFactory<BTMonster> &monList = game->getMonsterList();
+ int toHitBonus = 0;
  BTDice damageDice(1, 2);
  IShort chanceXSpecial(0);
  IShort xSpecial(BTEXTRADAMAGE_NONE);
@@ -235,11 +236,29 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
  }
  else
  {
+  BTItemTypeList &itemTypeList = BTGame::getGame()->getItemTypeList();
   BTItem &itemWeapon = itemList[weapon];
+  if (itemTypeList[itemWeapon.getType()]->toHitBonus != BTTOHITBONUS_ALWAYS)
+   toHitBonus += itemWeapon.getHitPlus();
   damageDice = itemWeapon.getDamage();
   chanceXSpecial = itemWeapon.getChanceXSpecial();
   xSpecial = itemWeapon.getXSpecial();
-  if ((BTITEM_ARROW == itemWeapon.getType()) || (BTITEM_THROWNWEAPON == itemWeapon.getType()))
+  if (BTITEM_ARROW == itemWeapon.getType())
+  {
+   melee = false;
+   for (int i = 0; i < BT_ITEMS; ++i)
+   {
+    if (BTITEM_NONE == item[i].id)
+     break;
+    if ((BTITEM_EQUIPPED == item[i].equipped) && (BTITEM_BOW == itemList[item[i].id].getType()))
+    {
+     if (itemTypeList[itemList[item[i].id].getType()]->toHitBonus != BTTOHITBONUS_ALWAYS)
+      toHitBonus += itemList[item[i].id].getHitPlus();
+     break;
+    }
+   }
+  }
+  else if (BTITEM_THROWNWEAPON == itemWeapon.getType())
    melee = false;
  }
  if (stat[BTSTAT_ST] > 14)
@@ -267,7 +286,7 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
   if ((effect.length() >= 4) && (0 == strcmp(effect.c_str() + effect.length() - 4, " for")))
    effect.resize(effect.length() - 4);
  }
- return BTCombatant::attack(defender, melee, cause, effect, damageDice, chanceXSpecial, xSpecial, numAttacksLeft, activeNum);
+ return BTCombatant::attack(defender, melee, cause, effect, damageDice, chanceXSpecial, xSpecial, numAttacksLeft, activeNum, toHitBonus);
 }
 
 void BTPc::changeJob(int newJob)
@@ -411,6 +430,7 @@ bool BTPc::drainLevel()
 
 void BTPc::equip(BTDisplay &d, int index)
 {
+ BTItemTypeList &itemTypeList = BTGame::getGame()->getItemTypeList();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTParty &party = BTGame::getGame()->getParty();
  int pc = party.find(this);
@@ -425,7 +445,8 @@ void BTPc::equip(BTDisplay &d, int index)
   }
  }
  ac += itemList[item[index].id].getArmorPlus();
- toHit += itemList[item[index].id].getHitPlus();
+ if (itemTypeList[itemList[item[index].id].getType()]->toHitBonus == BTTOHITBONUS_ALWAYS)
+  toHit += itemList[item[index].id].getHitPlus();
  item[index].equipped = BTITEM_EQUIPPED;
  if (BTTIMESUSABLE_CONTINUOUS == item[index].charges)
  {
@@ -933,9 +954,11 @@ void BTPc::unequip(BTDisplay &d, int index)
   BTGame::getGame()->clearEffectsByEffectID(d, item[index].effectID);
   item[index].effectID = BTEFFECTID_NONE;
  }
+ BTItemTypeList &itemTypeList = BTGame::getGame()->getItemTypeList();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  ac -= itemList[item[index].id].getArmorPlus();
- toHit -= itemList[item[index].id].getHitPlus();
+ if (itemTypeList[itemList[item[index].id].getType()]->toHitBonus == BTTOHITBONUS_ALWAYS)
+  toHit -= itemList[item[index].id].getHitPlus();
  item[index].equipped = BTITEM_NOTEQUIPPED;
 }
 
