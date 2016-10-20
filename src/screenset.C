@@ -2026,6 +2026,7 @@ int BTScreenSet::requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
   BTJobSkillPurchase *purchase = job[b.pc[0]->job]->skill[sk]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[sk]->skill));
   if ((purchase) && (b.pc[0]->level >= purchase->minimumLevel))
   {
+   b.add("skillName", &skill[sk]->name);
    b.add("num", &purchase->value);
    b.add("cost", &purchase->cost);
    return 0;
