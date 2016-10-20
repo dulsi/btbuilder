@@ -313,6 +313,16 @@ class BTSelectParty : public BTScreenItem
   BitField disallow;
 };
 
+class BTSelectSkill : public BTSelectCommon
+{
+ public:
+  BTSelectSkill();
+
+  virtual int buildList(ObjectSerializer *obj);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts);
+};
+
 class BTSelectSong : public BTSelectCommon
 {
  public:
@@ -463,6 +473,7 @@ class BTScreenSet : public ObjectSerializer, public BTSpecialContext
   static int poolGold(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int quit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
+  static int requestSpecificSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);
   static int removeRoster(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key);

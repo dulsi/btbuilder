@@ -12,7 +12,7 @@
 		<line>Wouldst thou like to be reviewed for:</line>
 		<choice keys="aA" action="advanceLevel">Advancement</choice>
 		<choice keys="sS" action="requestSkill" screen="5">Spell Acquiring</choice>
-		<choice keys="cC" action="requestJob" screen="6">Class Change</choice>
+		<choice keys="cC" action="requestJob" screen="7">Class Change</choice>
 		<choice keys="dD" screen="1">Done</choice>
 	</screen>
 	<screen number="3" escapeScreen="2" timeout="1000">
@@ -25,12 +25,16 @@
 		<choice keys="cC" screen="2" align="center">(CONTINUE)</choice>
 	</screen>
 	<screen number="5" escapeScreen="2">
+		<line>What skill do you wish to improve?</line>
+		<selectSkill action="requestSpecificSkill" screen="6" />
+	</screen>
+	<screen number="6" escapeScreen="2">
 		<line><skillName /> level <num /> will cost thee <cost />.  Wilt thou pay?</line>
 		<line></line>
 		<choice keys="yY" action="buySkill" screen="2">Yes</choice>
 		<choice keys="nN" screen="2">No</choice>
 	</screen>
-	<screen number="6" escapeScreen="2">
+	<screen number="7" escapeScreen="2">
 		<line><name /> can become:</line>
 		<selectJob action="changeJob" screen="2" />
 		<line>Change to?</line>

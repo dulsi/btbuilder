@@ -893,6 +893,51 @@ XMLObject *BTSelectParty::create(const XML_Char *name, const XML_Char **atts)
  return new BTSelectParty(act, s, w, d);
 }
 
+BTSelectSkill::BTSelectSkill()
+{
+}
+
+int BTSelectSkill::buildList(ObjectSerializer *obj)
+{
+ XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
+ BTSkillList &skill = BTGame::getGame()->getSkillList();
+ XMLAction *act = obj->find("pc", NULL);
+ BTPc *pc = static_cast<BTPc*>(reinterpret_cast<XMLObject*>(act->object));
+ list = new BTDisplay::selectItem[job[pc->job]->skill.size()];
+ int len = 0;
+ for (int sk = 0; sk < job[pc->job]->skill.size(); ++sk)
+ {
+  BTJobSkillPurchase *purchase = job[pc->job]->skill[sk]->findNextPurchase(pc->getSkill(job[pc->job]->skill[sk]->skill));
+  if ((NULL != purchase) && (pc->level >= purchase->minimumLevel))
+  {
+   list[len].name = skill[job[pc->job]->skill[sk]->skill]->name;
+   list[len].value = sk;
+   ++len;
+  }
+ }
+ return len;
+}
+
+XMLObject *BTSelectSkill::create(const XML_Char *name, const XML_Char **atts)
+{
+ BTSelectSkill *obj = new BTSelectSkill();
+ for (const char **att = atts; *att; att += 2)
+ {
+  if (0 == strcmp(*att, "action"))
+   obj->setAction(att[1]);
+  else if (0 == strcmp(*att, "screen"))
+  {
+   if (0 == strcmp(att[1], "exit"))
+    obj->setScreen(BTSCREEN_EXIT);
+   else
+    obj->setScreen(atoi(att[1]));
+  }
+  else if (0 == strcmp(*att, "numbered"))
+   obj->numbered = atoi(att[1]);
+ }
+ return obj;
+}
+
 BTSelectSong::BTSelectSong()
 {
 }
@@ -1157,6 +1202,7 @@ void BTScreenSetScreen::serialize(ObjectSerializer* s)
  s->add("selectGoods", typeid(BTSelectGoods).name(), &items, &BTSelectGoods::create);
  s->add("selectInventory", typeid(BTSelectInventory).name(), &items, &BTSelectInventory::create);
  s->add("selectParty", typeid(BTSelectParty).name(), &items, &BTSelectParty::create);
+ s->add("selectSkill", typeid(BTSelectSkill).name(), &items, &BTSelectSkill::create);
  s->add("selectSong", typeid(BTSelectSong).name(), &items, &BTSelectSong::create);
  s->add("can", typeid(BTCan).name(), &items, &BTCan::create);
 }
@@ -1289,6 +1335,7 @@ BTScreenSet::BTScreenSet()
  actionList["poolGold"] = &poolGold;
  actionList["quit"] = &quit;
  actionList["requestSkill"] = &requestSkill;
+ actionList["requestSpecificSkill"] = &requestSpecificSkill;
  actionList["requestJob"] = &requestJob;
  actionList["removeFromParty"] = &removeFromParty;
  actionList["removeRoster"] = &removeRoster;
@@ -1728,22 +1775,25 @@ int BTScreenSet::buySkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int 
  bool bFound(false);
  for (int sk = 0; sk < job[b.pc[0]->job]->skill.size(); ++sk)
  {
-  BTJobSkillPurchase *purchase = job[b.pc[0]->job]->skill[sk]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[sk]->skill));
-  if ((NULL != purchase) && (b.pc[0]->level >= purchase->minimumLevel))
+  if (job[b.pc[0]->job]->skill[sk]->skill == b.pc[0]->combat.object)
   {
-   if (b.pc[0]->getGold() < purchase->cost)
+   BTJobSkillPurchase *purchase = job[b.pc[0]->job]->skill[sk]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[sk]->skill));
+   if ((NULL != purchase) && (b.pc[0]->level >= purchase->minimumLevel))
    {
-    throw BTSpecialError("notenoughgold");
+    if (b.pc[0]->getGold() < purchase->cost)
+    {
+     throw BTSpecialError("notenoughgold");
+    }
+    else
+    {
+     b.pc[0]->takeGold(purchase->cost);
+     b.pc[0]->setSkill(job[b.pc[0]->job]->skill[sk]->skill, purchase->value, purchase->value);
+    }
+    return 0;
    }
-   else
-   {
-    b.pc[0]->takeGold(purchase->cost);
-    b.pc[0]->setSkill(job[b.pc[0]->job]->skill[sk]->skill, purchase->value, purchase->value);
-   }
-   return 0;
+   else if (NULL != purchase)
+    bFound = true;
   }
-  else if (NULL != purchase)
-   bFound = true;
  }
  if (bFound)
   throw BTSpecialError("notminimumlevel");
@@ -2021,23 +2071,57 @@ int BTScreenSet::requestSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, 
  XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
  BTSkillList &skill = BTGame::getGame()->getSkillList();
  bool bFound(false);
+ BTJobSkill *purchaseSkill = NULL;
+ BTJobSkillPurchase *purchase = NULL;
  for (int sk = 0; sk < job[b.pc[0]->job]->skill.size(); ++sk)
  {
-  BTJobSkillPurchase *purchase = job[b.pc[0]->job]->skill[sk]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[sk]->skill));
-  if ((purchase) && (b.pc[0]->level >= purchase->minimumLevel))
+  BTJobSkillPurchase *purchaseOption = job[b.pc[0]->job]->skill[sk]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[sk]->skill));
+  if ((purchaseOption) && (b.pc[0]->level >= purchaseOption->minimumLevel))
   {
-   b.add("skillName", &skill[sk]->name);
-   b.add("num", &purchase->value);
-   b.add("cost", &purchase->cost);
-   return 0;
+   if (purchaseSkill != NULL)
+    return item->getScreen(b.pc[0]);
+   else
+   {
+    purchaseSkill = job[b.pc[0]->job]->skill[sk];
+    purchase = purchaseOption;
+   }
   }
   else
    bFound = true;
+ }
+ if (purchaseSkill)
+ {
+  b.pc[0]->combat.object = purchaseSkill->skill;
+  b.add("skillName", &skill[purchaseSkill->skill]->name);
+  b.add("num", &purchase->value);
+  b.add("cost", &purchase->cost);
+  return item->getScreen(b.pc[0]) + 1;
  }
  if (bFound)
   throw BTSpecialError("notminimumlevel");
  else
   throw BTSpecialError("noskill");
+}
+
+int BTScreenSet::requestSpecificSkill(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
+{
+ BTSelectSkill *select = static_cast<BTSelectSkill*>(item);
+ XMLVector<BTJob*> &job = BTGame::getGame()->getJobList();
+ BTSkillList &skill = BTGame::getGame()->getSkillList();
+ bool bFound(false);
+ if (select->select >= job[b.pc[0]->job]->skill.size())
+  throw BTSpecialError("noskill");
+ BTJobSkillPurchase *purchase = job[b.pc[0]->job]->skill[select->select]->findNextPurchase(b.pc[0]->getSkill(job[b.pc[0]->job]->skill[select->select]->skill));
+ if ((purchase) && (b.pc[0]->level >= purchase->minimumLevel))
+ {
+  b.pc[0]->combat.object = job[b.pc[0]->job]->skill[select->select]->skill;
+  b.add("skillName", &skill[job[b.pc[0]->job]->skill[select->select]->skill]->name);
+  b.add("num", &purchase->value);
+  b.add("cost", &purchase->cost);
+  return 0;
+ }
+ else
+  throw BTSpecialError("notminimumlevel");
 }
 
 int BTScreenSet::requestJob(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
