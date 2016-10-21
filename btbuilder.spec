@@ -71,6 +71,9 @@ fi
 %{_datadir}/btbuilder
 
 %changelog
+* Wed Oct 19 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.13-1
+- New version of btbuilder released.
+
 * Wed Sep 21 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.12-1
 - New version of btbuilder released.
 - Add validation of appdata file.
