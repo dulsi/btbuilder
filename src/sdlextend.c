@@ -390,3 +390,38 @@ void simpleZoomAnimation(MNG_Image *animation, int xMult, int yMult)
  }
 }
 
+#ifdef SDLLIB
+void simpleBlitSurface(SDL_Surface *src, SDL_Rect *srcRect, SDL_Surface *dst, SDL_Rect *dstRect)
+{
+ int h = srcRect->h + srcRect->y;
+ int w = srcRect->w + srcRect->x;
+ SDL_LockSurface(src);
+ SDL_LockSurface(dst);
+ Uint32 *pixelSource = (Uint32*)src->pixels;
+ Uint32 *pixelDest = (Uint32*)dst->pixels;
+ SDL_PixelFormat *srcFmt = src->format;
+ SDL_PixelFormat *dstFmt = dst->format;
+ for (int cy = srcRect->y; cy < h; cy++)
+ {
+  for (int cx = srcRect->x; cx < w; cx++)
+  {
+   int pos = cy * (src->pitch / 4) + cx;
+   int r = ((pixelSource[pos] & srcFmt->Rmask) >> srcFmt->Rshift) << srcFmt->Rloss;
+   int g = ((pixelSource[pos] & srcFmt->Gmask) >> srcFmt->Gshift) << srcFmt->Gloss;
+   int b = ((pixelSource[pos] & srcFmt->Bmask) >> srcFmt->Bshift) << srcFmt->Bloss;
+   int a = ((pixelSource[pos] & srcFmt->Amask) >> srcFmt->Ashift) << srcFmt->Aloss;
+   if (a != SDL_ALPHA_TRANSPARENT)
+   {
+    r = ((r >> dstFmt->Rloss) << dstFmt->Rshift) & dstFmt->Rmask;
+    g = ((g >> dstFmt->Gloss) << dstFmt->Gshift) & dstFmt->Gmask;
+    b = ((b >> dstFmt->Bloss) << dstFmt->Bshift) & dstFmt->Bmask;
+    a = ((a >> dstFmt->Aloss) << dstFmt->Ashift) & dstFmt->Amask;
+    int dstPos = (cy - srcRect->y + dstRect->y) * (dst->pitch / 4) + (cx - srcRect->x + dstRect->x);
+    pixelDest[dstPos] = r + g + b + a;
+   }
+  }
+ }
+ SDL_UnlockSurface(dst);
+ SDL_UnlockSurface(src);
+}
+#endif

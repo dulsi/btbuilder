@@ -25,6 +25,12 @@ extern SDL_Surface *simpleZoomSurface(SDL_Surface *src, int xMult, int yMult);
 extern SDL_Surface *simpleRender_Solid(simpleFont *font, const char *text, SDL_Color c);
 extern void simpleZoomAnimation(MNG_Image *animation, int xMult, int yMult);
 
+#ifdef SDLLIB
+extern void simpleBlitSurface(SDL_Surface *src, SDL_Rect *srcRect, SDL_Surface *dst, SDL_Rect *dstRect);
+#else
+#define simpleBlitSurface(w,x,y,z) SDL_BlitSurface(w,x,y,z)
+#endif
+
 #ifdef __cplusplus
 }
 #endif

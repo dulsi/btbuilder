@@ -1728,7 +1728,7 @@ void BTDisplay::drawImage(SDL_Rect &dst, SDL_Surface *img)
  src.y = 0;
  src.w = dst.w;
  src.h = dst.h;
- SDL_BlitSurface(img, &src, mainScreen, &dst);
+ simpleBlitSurface(img, &src, mainScreen, &dst);
 }
 
 void BTDisplay::fillRect(SDL_Surface *scr, SDL_Rect &dst, SDL_Color c)
@@ -2194,17 +2194,15 @@ void BTBackgroundAndScreen::clear()
  r.x = 0;
  r.y = 0;
  r.h = background->h;
- 
- if (screen)
-  SDL_BlitSurface(background, &r, screen, &r);
- else
-  display->clear(background, r);
+ r.w = background->w;
+
+ clear(r);
 }
 
 void BTBackgroundAndScreen::clear(SDL_Rect &r)
 {
  if (screen)
-  SDL_BlitSurface(background, &r, screen, &r);
+  simpleBlitSurface(background, &r, screen, &r);
  else
   display->clear(background, r);
 }
@@ -2529,17 +2527,29 @@ void BTBackgroundAndScreen::setBackground(const char *file, bool physfs /*= true
   background = NULL;
  }
  display->loadImageOrAnimation(file, &background, NULL, false, physfs);
- if (screen)
-  SDL_BlitSurface(background, NULL, screen, NULL);
- else
+#ifdef SDLLIB
+ if (background->format->BitsPerPixel != 32)
  {
-  SDL_Rect r;
-  r.x = 0;
-  r.y = 0;
-  r.h = background->h;
-  r.w = background->w;
-  clear(r);
+  SDL_Surface *src32;
+  Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+  rmask = 0xff000000;
+  gmask = 0x00ff0000;
+  bmask = 0x0000ff00;
+  amask = 0x000000ff;
+#else
+  rmask = 0x000000ff;
+  gmask = 0x0000ff00;
+  bmask = 0x00ff0000;
+  amask = 0xff000000;
+#endif
+  src32 = SDL_CreateRGBSurface(SDL_SWSURFACE, background->w, background->h, 32, rmask, gmask, bmask, amask);
+  SDL_BlitSurface(background, NULL, src32, NULL);
+  SDL_FreeSurface(background);
+  background = src32;
  }
+#endif
+ clear();
 }
 
 int BTUIText::maxHeight(BTDisplay &d)
