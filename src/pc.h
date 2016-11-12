@@ -56,7 +56,7 @@ class BTPc : public XMLObject, public BTCombatant
   void deactivateItems(BTDisplay &d);
   bool drainItem(BTDisplay &d, int amount);
   bool drainLevel();
-  void equip(BTDisplay &d, int index);
+  bool equip(BTDisplay &d, int index);
   int hiddenTime() const;
   int incrementStat();
   bool isEquipped(int index) const;

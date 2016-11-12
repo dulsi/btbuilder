@@ -1,49 +1,101 @@
 <data>
+ <itemSlot>
+  <name>miscellaneous item</name>
+ </itemSlot>
+ <itemSlot>
+		<name>hand weapon</name>
+ </itemSlot>
+ <itemSlot>
+		<name>shield</name>
+ </itemSlot>
+ <itemSlot>
+		<name>armor</name>
+ </itemSlot>
+ <itemSlot>
+		<name>helm</name>
+ </itemSlot>
+ <itemSlot>
+		<name>gloves</name>
+ </itemSlot>
+ <itemSlot>
+		<name>instrument</name>
+ </itemSlot>
+ <itemSlot>
+		<name>figurine</name>
+ </itemSlot>
+ <itemSlot>
+		<name>ring</name>
+ </itemSlot>
+ <itemSlot>
+		<name>wand</name>
+ </itemSlot>
+ <itemSlot>
+		<name>bow</name>
+ </itemSlot>
+ <itemSlot>
+		<name>arrow</name>
+ </itemSlot>
+ <itemSlot>
+		<name>thrown weapon</name>
+ </itemSlot>
 	<itemType>
 		<name>miscellaneous item</name>
+		<slot>miscellaneous item</slot>
  </itemType>
  <itemType>
 		<name>hand weapon</name>
 		<toHitBonus>mustUse</toHitBonus>
+		<slot>hand weapon</slot>
  </itemType>
  <itemType>
 		<name>shield</name>
+		<slot>shield</slot>
  </itemType>
  <itemType>
 		<name>armor</name>
+		<slot>armor</slot>
  </itemType>
  <itemType>
 		<name>helm</name>
+		<slot>helm</slot>
  </itemType>
  <itemType>
 		<name>gloves</name>
+		<slot>gloves</slot>
  </itemType>
  <itemType>
 		<name>instrument</name>
+		<slot>instrument</slot>
  </itemType>
  <itemType>
 		<name>figurine</name>
+		<slot>figurine</slot>
  </itemType>
  <itemType>
 		<name>ring</name>
+		<slot>ring</slot>
  </itemType>
  <itemType>
 		<name>wand</name>
+		<slot>wand</slot>
  </itemType>
  <itemType>
 		<name>bow</name>
 		<toHitBonus>mustUse</toHitBonus>
+		<slot>bow</slot>
  </itemType>
  <itemType>
 		<name>arrow</name>
 		<mustEquip>false</mustEquip>
 		<showCharges>true</showCharges>
 		<toHitBonus>mustUse</toHitBonus>
+		<slot>arrow</slot>
  </itemType>
  <itemType>
 		<name>thrown weapon</name>
 		<mustEquip>false</mustEquip>
 		<toHitBonus>mustUse</toHitBonus>
+		<slot>thrown weapon</slot>
  </itemType>
 </data>
 

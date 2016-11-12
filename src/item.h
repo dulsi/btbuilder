@@ -91,21 +91,44 @@ class BTItemListCompare : public BTSortCompare<BTItem>
   int Compare(const BTItem &a, const BTItem &b) const;
 };
 
+class BTItemSlot : public XMLObject
+{
+ public:
+  BTItemSlot() : number(1) {}
+
+  void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTItemSlot; }
+
+ public:
+  std::string name;
+  int number;
+};
+
 class BTItemType : public XMLObject
 {
  public:
-  BTItemType() : mustEquip(true), showCharges(false), toHitBonus(BTTOHITBONUS_ALWAYS) {}
+  BTItemType() : mustEquip(true), showCharges(false), toHitBonus(BTTOHITBONUS_ALWAYS), itemSlot(0) {}
 
   void serialize(ObjectSerializer* s);
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTItemType; }
-  static void readXML(const char *filename, XMLVector<BTItemType*> &it);
+  static void readXML(const char *filename, XMLVector<BTItemSlot*> &sl, XMLVector<BTItemType*> &it);
 
  public:
   std::string name;
   bool mustEquip;
   bool showCharges;
   int toHitBonus;
+  int itemSlot;
+};
+
+class BTItemSlotList : public ValueLookup, public XMLVector<BTItemSlot*>
+{
+ public:
+  virtual std::string getName(int index);
+  virtual int getIndex(std::string name);
+  virtual size_t size();
 };
 
 class BTItemTypeList : public ValueLookup, public XMLVector<BTItemType*>

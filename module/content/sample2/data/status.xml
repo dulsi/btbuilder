@@ -49,4 +49,5 @@
 	</screen>
 	<error type="fullinventory"><name /> has no room for that item!</error>
 	<error type="notenoughgold">Not enough gold.</error>
+	<error type="mustunequip"><name /> must unequip a similar item first.</error>
 </screenset>

@@ -1917,10 +1917,18 @@ int BTScreenSet::dropFromParty(BTScreenSet &b, BTDisplay &d, BTScreenItem *item,
 
 int BTScreenSet::equip(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
- b.pc[0]->equip(d, b.pc[0]->combat.object);
- b.pc[0]->combat.object = -1;
- b.pc[0]->combat.type = BTPc::BTPcAction::none;
- d.drawStats();
+ if (b.pc[0]->equip(d, b.pc[0]->combat.object))
+ {
+  b.pc[0]->combat.object = -1;
+  b.pc[0]->combat.type = BTPc::BTPcAction::none;
+  d.drawStats();
+ }
+ else
+ {
+  b.pc[0]->combat.object = -1;
+  b.pc[0]->combat.type = BTPc::BTPcAction::none;
+  throw BTSpecialError("mustunequip");
+ }
  return 0;
 }
 

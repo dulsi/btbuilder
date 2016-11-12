@@ -428,22 +428,31 @@ bool BTPc::drainLevel()
  return answer;
 }
 
-void BTPc::equip(BTDisplay &d, int index)
+bool BTPc::equip(BTDisplay &d, int index)
 {
+ BTItemSlotList &itemSlotList = BTGame::getGame()->getItemSlotList();
  BTItemTypeList &itemTypeList = BTGame::getGame()->getItemTypeList();
  BTFactory<BTItem> &itemList = BTGame::getGame()->getItemList();
  BTParty &party = BTGame::getGame()->getParty();
  int pc = party.find(this);
  int type = itemList[item[index].id].getType();
+ int itemSlot = itemTypeList[type]->itemSlot;
+ int numberSlots = itemSlotList[itemSlot]->number;
+ int usedSlots = 0;
  for (int i = 0; i < BT_ITEMS; ++i)
  {
   if (BTITEM_NONE == item[i].id)
    break;
-  if ((item[i].equipped == BTITEM_EQUIPPED) && (type == itemList[item[i].id].getType()))
+  if ((item[i].equipped == BTITEM_EQUIPPED) && (itemSlot == itemTypeList[itemList[item[i].id].getType()]->itemSlot))
   {
-   unequip(d, i);
+   if (numberSlots == 1)
+    unequip(d, i);
+   else
+    usedSlots++;
   }
  }
+ if (usedSlots >= numberSlots)
+  return false;
  ac += itemList[item[index].id].getArmorPlus();
  if (itemTypeList[itemList[item[index].id].getType()]->toHitBonus == BTTOHITBONUS_ALWAYS)
   toHit += itemList[item[index].id].getHitPlus();
@@ -462,6 +471,7 @@ void BTPc::equip(BTDisplay &d, int index)
    spellList[spellCast].silentActivate(d, pc, effectID, level);
   }
  }
+ return true;
 }
 
 int BTPc::hiddenTime() const
