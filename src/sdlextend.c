@@ -393,6 +393,11 @@ void simpleZoomAnimation(MNG_Image *animation, int xMult, int yMult)
 #ifdef SDLLIB
 void simpleBlitSurface(SDL_Surface *src, SDL_Rect *srcRect, SDL_Surface *dst, SDL_Rect *dstRect)
 {
+ if (src->format->BitsPerPixel != 32)
+ {
+  SDL_BlitSurface(src, srcRect, dst, dstRect);
+  return;
+ }
  int h = srcRect->h + srcRect->y;
  int w = srcRect->w + srcRect->x;
  SDL_LockSurface(src);
