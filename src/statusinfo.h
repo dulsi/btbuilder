@@ -73,6 +73,23 @@ class BTPrint : public BTStatusInfo
   std::string color;
 };
 
+class BTStatusIcon : public BTStatusInfo
+{
+ public:
+  BTStatusIcon() : img(NULL) {}
+  ~BTStatusIcon();
+
+  virtual void draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc);
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTStatusIcon; }
+
+ private:
+  std::string image;
+  SerialRect position;
+  SDL_Surface *img;
+};
+
 class BTCondition : public XMLObject
 {
  public:

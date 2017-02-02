@@ -100,14 +100,6 @@ void BTStatBlock::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer 
  }
 }
 
-void BTPrint::serialize(ObjectSerializer* s)
-{
- s->add("text", &text);
- s->add("position", &position);
- s->add("align", &align, NULL, &BTAlignmentLookup::lookup);
- s->add("color", &color);
-}
-
 void BTPrint::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
 {
  int xMult, yMult;
@@ -118,6 +110,47 @@ void BTPrint::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
  dst.w = position.w * xMult;
  dst.h = position.h * yMult;
  d.drawFont(text, dst, d.getColor(color), (BTAlignment::alignment)align);
+}
+
+void BTPrint::serialize(ObjectSerializer* s)
+{
+ s->add("text", &text);
+ s->add("position", &position);
+ s->add("align", &align, NULL, &BTAlignmentLookup::lookup);
+ s->add("color", &color);
+}
+
+BTStatusIcon::~BTStatusIcon()
+{
+ if (img)
+ {
+  SDL_FreeSurface(img);
+ }
+}
+
+void BTStatusIcon::draw(BTBackgroundAndScreen &d, int x, int y, ObjectSerializer *pc)
+{
+ int xMult, yMult;
+ SDL_Rect dst;
+ d.getDisplay()->getMultiplier(xMult, yMult);
+ if (NULL == img)
+ {
+  d.getDisplay()->loadImageOrAnimation(image.c_str(), &img, NULL, false);
+ }
+ dst.x = (x + position.x) * xMult;
+ dst.y = (y + position.y) * yMult;
+ dst.w = position.w * xMult;
+ dst.h = position.h * yMult;
+ if (img)
+ {
+  d.drawImage(img, dst);
+ }
+}
+
+void BTStatusIcon::serialize(ObjectSerializer* s)
+{
+ s->add("image", &image);
+ s->add("position", &position);
 }
 
 bool BTCondition::compare(ObjectSerializer *pc) const
@@ -138,6 +171,7 @@ void BTCondition::serialize(ObjectSerializer* s)
  s->add("statBlock", &info, &BTStatBlock::create);
  s->add("conditional", &info, &BTConditional::create);
  s->add("print", &info, &BTPrint::create);
+ s->add("statusIcon", &info, &BTStatusIcon::create);
 }
 
 bool BTCheckBit::compare(ObjectSerializer *pc) const
