@@ -21,7 +21,7 @@
 namespace fs = boost::filesystem;
 
 BTMainScreen::BTMainScreen(const char *a0, std::string lDir, std::string dDir, int mult /*= 0*/, bool full /*= false*/, bool softRender /*= false*/)
- : argv0(a0), libDir(lDir), mainConfig(0), display(0), multiplier(mult), fullScreen(full), softRenderer(softRender)
+ : argv0(a0), libDir(lDir), mainConfig(0), display(0), multiplier(mult), fullScreen(full), softRenderer(softRender), development(false)
 {
  BTDisplay::setDisplayDir(dDir);
 }
@@ -44,6 +44,7 @@ void BTMainScreen::run()
  XMLSerializer parser;
  std::string moduleDir("module/");
  char **files = PHYSFS_enumerateFiles(moduleDir.c_str());
+ int devModules = 0;
  for (char **i = files; *i != NULL; i++)
  {
   int len = strlen(*i);
@@ -56,13 +57,22 @@ void BTMainScreen::run()
    parser.removeLevel();
    current->serialize(&parser);
    parser.parse(fullName.c_str(), true);
+   if (current->development)
+   {
+    devModules++;
+   }
   }
  }
  PHYSFS_freeList(files);
  BTDisplay::selectItem *list = new BTDisplay::selectItem[module.size()];
+ int moduleSize = 0;
  for (int i = 0; i < module.size(); ++i)
  {
-  list[i].name = module[i]->name;
+  if (!module[i]->development)
+  {
+   list[moduleSize].name = module[i]->name;
+   moduleSize++;
+  }
  }
  PHYSFS_deinit();
  int start(0);
@@ -71,8 +81,8 @@ void BTMainScreen::run()
  while ((key != 'q') && (key != 27))
  {
   display->clearText();
-  display->addSelection(list, module.size(), start, select);
-  key = display->process("eq");
+  display->addSelection(list, moduleSize, start, select);
+  key = display->process("eq~");
   if (key == 13)
   {
    runModule(fileModule[select]);
@@ -80,6 +90,26 @@ void BTMainScreen::run()
   else if (key == 'e')
   {
    editModule(fileModule[select]);
+  }
+  else if (key == '~')
+  {
+   if (devModules > 0)
+   {
+    bool dev = false;
+    if (moduleSize != module.size())
+    {
+     dev = true;
+    }
+    moduleSize = 0;
+    for (int i = 0; i < module.size(); ++i)
+    {
+     if ((dev) || (!module[i]->development))
+     {
+      list[moduleSize].name = module[i]->name;
+      moduleSize++;
+     }
+    }
+   }
   }
  }
  delete [] list;

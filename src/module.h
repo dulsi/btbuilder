@@ -41,6 +41,7 @@ class BTModule : public XMLObject
   unsigned int maxTime;
   unsigned int nightTime;
   bool bonusStacking;
+  bool development;
 };
 
 #endif

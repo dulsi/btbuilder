@@ -38,6 +38,7 @@ class BTMainScreen
   int multiplier;
   bool fullScreen;
   bool softRenderer;
+  bool development;
 };
 
 #endif
