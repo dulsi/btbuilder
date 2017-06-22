@@ -5,9 +5,7 @@
  </imageTag>
  <imageTag> <!--001-->
   <name>Wizard</name>
-  <artist>Santiago Iborra</artist>
-  <originalName>Aldriel's Defiance</originalName>
-  <url>http://opengameart.org/content/aldriels-defiance</url>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--002-->
   <name>Lizard/Dragon</name>
@@ -60,6 +58,7 @@
  </imageTag>
  <imageTag> <!--015-->
   <name>Sorcerer</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--016-->
   <name>Rat</name>
@@ -282,6 +281,7 @@
  </imageTag>
  <imageTag> <!--081-->
   <name>Female Magician/Sorcerer</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--082-->
   <name>Female Conjurer/Wizard/Archmage</name>
@@ -317,6 +317,7 @@
  </imageTag>
  <imageTag> <!--092-->
   <name>Roscoe</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--093-->
   <name>Bedders</name>
@@ -340,7 +341,8 @@
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--099-->
-  <name></name>
+  <name>Doppleganger</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--100-->
   <name>Cursed Lord</name>
@@ -362,6 +364,7 @@
  </imageTag>
  <imageTag> <!--106-->
   <name>Master Wizard Assassin</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--107-->
   <name>Older Lord</name>
@@ -410,6 +413,7 @@
  </imageTag>
  <imageTag> <!--121-->
   <name>Male Elf Warrior</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--122-->
   <name>Male Elf Ranger 01</name>
@@ -444,6 +448,7 @@
  </imageTag>
  <imageTag> <!--131-->
   <name>Female Elf Thief</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--132-->
   <name></name>
@@ -574,6 +579,7 @@
  </imageTag>
  <imageTag> <!--172-->
   <name>Warrior 03</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--173-->
   <name>Templar</name>
@@ -615,6 +621,7 @@
  </imageTag>
  <imageTag> <!--185-->
   <name>Wizard 02</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--186-->
   <name>Wizard 03</name>
@@ -1008,7 +1015,8 @@
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--309-->
-  <name>Ice Dragon</name>
+  <name>Grey Dragon</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--310-->
   <name>Eastern Dragon</name>
@@ -1103,6 +1111,7 @@
  </imageTag>
  <imageTag> <!--339-->
   <name>Female Druid 3</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--340-->
   <name>Druid 6</name>
