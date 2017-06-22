@@ -6,7 +6,7 @@ ifndef CFLAGS
 endif
 CXX = g++
 CC = gcc
-CXXFLAGS = $(CFLAGS) -DSDL2LIB $(SDL_CFLAGS) -Isrc/ --std=c++11
+CXXFLAGS = $(CFLAGS) -DSDL2LIB $(SDL_CFLAGS) -Isrc/ --std=gnu++11
 LIBS = $(SDL_LDFLAGS) --std=c++11 -lexpat -lphysfs \
 	-lboost_filesystem -lboost_system -lpng -lSDL_mng
 
