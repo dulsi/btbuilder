@@ -1,12 +1,11 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.5.14
-Release: 3%{?dist}
+Version: 0.5.15
+Release: 1%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
 Group: Amusements/Games
 Source: http://www.identicalsoftware.com/btbuilder/%{name}-%{version}.tgz
-Patch0: btbuilder-gnustd.patch
 BuildRequires: boost-devel
 BuildRequires: expat-devel
 BuildRequires: libpng-devel
@@ -38,7 +37,6 @@ This package contains the data files for Bt Builder.
 
 %prep
 %setup -q
-%patch0
 
 %build
 %make_build CFLAGS="%{optflags}"
@@ -73,6 +71,9 @@ fi
 %{_datadir}/btbuilder
 
 %changelog
+* Thu Jul 13 2017 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.15-1
+- New version of btbuilder released.
+
 * Thu Mar 02 2017 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.14-3
 - Switching to gnu++11 instead of std++11 for powerpc support.
 
