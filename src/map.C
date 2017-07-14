@@ -1309,6 +1309,7 @@ void BTSpecialConditional::run(BTDisplay &d, BTSpecialContext *context) const
   case BTCONDITION_EFFECTACTIVE:
   {
    truth = BTGame::getGame()->hasEffectOfType(number[0]);
+   break;
   }
   case BTCONDITION_PARTYSKILLCHECK:
   {
