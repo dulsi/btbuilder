@@ -279,7 +279,7 @@ extern const char *genderPronouns[];
 #define BTMONSTER_NONE -1
 
 #define BT_ITEMS (BTGame::getGame()->getModule()->maxItems)
-#define BT_PARTYSIZE 7
+#define BT_PARTYSIZE (BTGame::getGame()->getModule()->maxParty)
 #define BTPARTY_REMOVE -1
 #define BT_BACK 4
 

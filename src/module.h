@@ -38,6 +38,7 @@ class BTModule : public XMLObject
   int startY;
   int startFace;
   unsigned int maxItems;
+  unsigned int maxParty;
   unsigned int maxTime;
   unsigned int nightTime;
   bool bonusStacking;

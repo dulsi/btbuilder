@@ -402,7 +402,7 @@ bool BTCombat::findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target
  return false;
 }
 
-bool BTCombat::findTargetPC(int range, int &target, int ignore /*= BT_PARTYSIZE*/)
+bool BTCombat::findTargetPC(int range, int &target, int ignore /*= -1*/)
 {
  BTParty &party = BTGame::getGame()->getParty();
  int alive = 0;

@@ -11,7 +11,7 @@
 #include <string.h>
 
 BTModule::BTModule()
- : name(NULL), author(NULL), content(NULL), startX(0), startY(0), startFace(0), maxItems(8), maxTime(14400), nightTime(7200), bonusStacking(true), development(false)
+ : name(NULL), author(NULL), content(NULL), startX(0), startY(0), startFace(0), maxItems(8), maxParty(7), maxTime(14400), nightTime(7200), bonusStacking(true), development(false)
 {
  itemType = new char[strlen("data/itemtype.xml") + 1];
  strcpy(itemType, "data/itemtype.xml");
@@ -100,6 +100,7 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("startY", &startY);
  s->add("startFace", &startFace, NULL, &directionsLookup);
  s->add("maxItems", &maxItems);
+ s->add("maxParty", &maxParty);
  s->add("maxTime", &maxTime);
  s->add("nightTime", &nightTime);
  s->add("bonusStacking", &bonusStacking);

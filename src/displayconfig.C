@@ -132,14 +132,7 @@ void BTDisplayConfig::serialize(ObjectSerializer* s)
  s->add("y3d", &y3d);
  s->add("color", &color, &BTDisplayColor::create);
  s->add("layout", &layout, &BTLayoutConfig::create);
- for (int i = 0; i < BT_PARTYSIZE; ++i)
- {
-  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
-  char tmp[10];
-  snprintf(tmp, 10, "%d", i + 1);
-  attrib->push_back(XMLAttribute("number", tmp));
-  s->add("status", &status[i], attrib);
- }
+ s->add("status", &status, &SerialRect::create);
  s->add("statBlock", &statusInfo, &BTStatBlock::create);
  s->add("conditional", &statusInfo, &BTConditional::create);
  s->add("print", &statusInfo, &BTPrint::create);

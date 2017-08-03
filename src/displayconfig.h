@@ -120,7 +120,7 @@ class BTDisplayConfig : public XMLObject
   int x3d, y3d;
   XMLVector<BTDisplayColor*> color;
   XMLVector<BTLayoutConfig*> layout;
-  SerialRect status[BT_PARTYSIZE];
+  XMLVector<SerialRect*> status;
   char *background;
   char *font;
   int fontsize;

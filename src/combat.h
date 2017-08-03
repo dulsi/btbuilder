@@ -86,7 +86,7 @@ class BTCombat : public BTScreenSet, public BTEffectGroup
   bool findNextInitiative(int &group, int &individual);
   int findScreen(int num);
   bool findTarget(BTPc &pc, int range, BTMonsterGroup *&grp, int &target);
-  bool findTargetPC(int range, int &target, int ignore = BT_PARTYSIZE);
+  bool findTargetPC(int range, int &target, int ignore = -1);
   BTMonsterGroup *getMonsterGroup(int group);
   void initScreen(BTDisplay &d);
   bool isWinner() { return won; }

@@ -14,6 +14,8 @@ class SerialRect : public SDL_Rect, public XMLObject
 {
  public:
   virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new SerialRect; }
 };
 
 #endif
