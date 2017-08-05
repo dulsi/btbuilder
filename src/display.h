@@ -300,6 +300,7 @@ class BTDisplay : public ImageLoader
   SDL_Color white, black;
   std::map<SDL_Keycode, char> key;
   std::map<SDL_Keycode, char> shiftKey;
+  std::map<SDL_Keycode, char> rightAltKey;
 
   static std::string displayDir;
 };

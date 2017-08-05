@@ -1272,7 +1272,15 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
     toggleFullScreen();
    else
    {
-    if ((sdlevent.key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI)) != 0)
+    if ((sdlevent.key.keysym.mod & KMOD_RALT) != 0)
+    {
+     auto itr = rightAltKey.find(sdlevent.key.keysym.sym);
+     if (itr != key.end())
+     {
+      return itr->second;
+     }
+    }
+    else if ((sdlevent.key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI)) != 0)
     {
     }
     else if ((((sdlevent.key.keysym.mod & KMOD_CAPS) != 0) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) == 0)) || (((sdlevent.key.keysym.mod & KMOD_CAPS) == 0) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) != 0)))
@@ -2112,6 +2120,8 @@ void BTDisplay::setupKeyMap()
  shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_x, 'X'));
  shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_y, 'Y'));
  shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_z, 'Z'));
+
+ rightAltKey.insert(std::pair<SDL_Keycode, char>(SDLK_n, '~'));
 }
 
 void BTDisplay::setupScreens(BTDisplayConfig *c, int xMult, int yMult)
