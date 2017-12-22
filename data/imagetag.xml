@@ -12,11 +12,11 @@
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--003-->
-  <name>Red Dragon</name>
+  <name>Red Dragon 02</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--004-->
-  <name>Black Dragon</name>
+  <name>Black Dragon 02</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--005-->
@@ -40,6 +40,7 @@
  </imageTag>
  <imageTag> <!--010-->
   <name>Kobold</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--011-->
   <name>Female Rogue</name>
@@ -47,6 +48,7 @@
  </imageTag>
  <imageTag> <!--012-->
   <name>Barbarian</name>
+   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--013-->
   <name>Gryphon</name>
@@ -66,6 +68,7 @@
  </imageTag>
  <imageTag> <!--017-->
   <name>Minotaur</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--018-->
   <name>Gnome</name>
@@ -89,6 +92,7 @@
  </imageTag>
  <imageTag> <!--023-->
   <name>Sorceress</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--024-->
   <name>Skeleton</name>
@@ -103,7 +107,7 @@
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--027-->
-  <name>Dwarf/Nomad</name>
+  <name>Nomad</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--028-->
@@ -112,6 +116,7 @@
  </imageTag>
  <imageTag> <!--029-->
   <name>Female Wizard</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--030-->
   <name>Male Warrior</name>
@@ -139,9 +144,11 @@
  </imageTag>
  <imageTag> <!--036-->
   <name>Wizard</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--037-->
   <name>Conjurer</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--038-->
   <name>City Gates</name>
@@ -149,9 +156,11 @@
  </imageTag>
  <imageTag> <!--039-->
   <name>Garth's</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--040-->
   <name>Adventurer's Guild</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--041-->
   <name>Tavern</name>
@@ -167,6 +176,7 @@
  </imageTag>
  <imageTag> <!--044-->
   <name>Review Board</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--045-->
   <name>Custom</name>
@@ -264,9 +274,11 @@
  </imageTag>
  <imageTag> <!--076-->
   <name>Female Paladin</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--077-->
   <name>Female Hunter</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--078-->
   <name>Female Monk</name>
@@ -278,6 +290,7 @@
  </imageTag>
  <imageTag> <!--080-->
   <name>Female Barbarian</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--081-->
   <name>Female Magician/Sorcerer</name>
@@ -306,7 +319,7 @@
   <name>Shopkeep</name>
  </imageTag>
  <imageTag> <!--089-->
-  <name>Bar</name>
+  <name>Tavern Maid</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--090-->
@@ -335,6 +348,7 @@
  </imageTag>
  <imageTag> <!--097-->
   <name>Chest</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--098-->
   <name>Female Rogue 01</name>
@@ -345,13 +359,14 @@
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--100-->
-  <name>Cursed Lord</name>
+  <name>Evil Lord</name>
  </imageTag>
  <imageTag> <!--101-->
   <name>Sergeant at Arms</name>
  </imageTag>
  <imageTag> <!--102-->
   <name>Young Lord</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--103-->
   <name>Spy</name>
@@ -368,9 +383,7 @@
  </imageTag>
  <imageTag> <!--107-->
   <name>Older Lord</name>
-  <artist>Santiago Iborra</artist>
-  <originalName>Wrong Move</originalName>
-  <url>http://opengameart.org/content/wrong-move</url>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--108-->
   <name>Good Lord</name>
@@ -386,12 +399,15 @@
  </imageTag>
  <imageTag> <!--112-->
   <name>Dwarf 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--113-->
   <name>Dwarf 02</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--114-->
   <name>Dwarf 03</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--115-->
   <name>Dwarf 04</name>
@@ -410,6 +426,7 @@
  </imageTag>
  <imageTag> <!--120-->
   <name>Dwarf Berserker</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--121-->
   <name>Male Elf Warrior</name>
@@ -433,28 +450,35 @@
  </imageTag>
  <imageTag> <!--126-->
   <name>Female Elf Warrior 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--127-->
   <name>Female Elf Warrior 02</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--128-->
   <name>Female Elf Warrior 03</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--129-->
   <name>Female Elf Archer 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--130-->
   <name>Female Elf Archer 02</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--131-->
   <name>Female Elf Thief</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--132-->
-  <name></name>
+  <name>Pixie</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--133-->
   <name>Female Elf Ranger 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--134-->
   <name>Female Elf Ranger 02</name>
@@ -482,6 +506,7 @@
  </imageTag>
  <imageTag> <!--142-->
   <name>Female Drow Ranger 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--143-->
   <name>Female Drow Ranger 02</name>
@@ -504,6 +529,7 @@
  </imageTag>
  <imageTag> <!--149-->
   <name>Halfling Thief</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--150-->
   <name>Halfling</name>
@@ -513,6 +539,7 @@
  </imageTag>
  <imageTag> <!--152-->
   <name>Huntress</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--153-->
   <name>Wizard Assassin</name>
@@ -523,30 +550,36 @@
  </imageTag>
  <imageTag> <!--155-->
   <name>Nomad</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--156-->
   <name>Sailor</name>
  </imageTag>
  <imageTag> <!--157-->
   <name>Pirate</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--158-->
   <name></name>
  </imageTag>
  <imageTag> <!--159-->
   <name>Swashbuckler</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--160-->
-  <name>Thief</name>
+  <name>Master Thief</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--161-->
   <name>Samurai</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--162-->
   <name>Death Knight</name>
  </imageTag>
  <imageTag> <!--163-->
   <name>Berserker</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--164-->
   <name>Chaos Warrior</name>
@@ -587,12 +620,14 @@
  </imageTag>
  <imageTag> <!--174-->
   <name>Beastman</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--175-->
   <name>Female Paladin 01</name>
  </imageTag>
  <imageTag> <!--176-->
   <name>Female Nomad</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--177-->
   <name>Valkyrie</name>
@@ -603,18 +638,22 @@
  </imageTag>
  <imageTag> <!--179-->
   <name>Female Paladin 02</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--180-->
   <name>Dark Sorcerer</name>
  </imageTag>
  <imageTag> <!--181-->
   <name>Sorceror 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--182-->
   <name>Conjurer 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--183-->
   <name>Wizard 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--184-->
   <name>Ice Wizard</name>
@@ -628,9 +667,11 @@
  </imageTag>
  <imageTag> <!--187-->
   <name>Wizard 04</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--188-->
   <name>Sorceress 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--189-->
   <name>Female Magician</name>
@@ -649,21 +690,27 @@
  </imageTag>
  <imageTag> <!--194-->
   <name>Satyr</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--195-->
-  <name>Lynx Beastman</name>
+  <name>Jaguar Beastman</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--196-->
   <name>Blue Tiger Beastman</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--197-->
   <name>Tiger Beastman</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--198-->
   <name>White Tiger Beastman</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--199-->
-  <name>Beastman Lord</name>
+  <name>Beastman Shaman</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--200-->
   <name>Dryad</name>
@@ -691,15 +738,18 @@
  </imageTag>
  <imageTag> <!--208-->
   <name>Cyclops</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--209-->
   <name>Ettin</name>
  </imageTag>
  <imageTag> <!--210-->
   <name>Goblin Thief</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--211-->
   <name>Bugbear</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--212-->
   <name>Orc Chieftain</name>
@@ -709,6 +759,7 @@
  </imageTag>
  <imageTag> <!--214-->
   <name>Medusa 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--215-->
   <name>Medusa 02</name>
@@ -745,15 +796,18 @@
  </imageTag>
  <imageTag> <!--226-->
   <name>Undead Archer 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--227-->
   <name>Undead Archer 02</name>
  </imageTag>
  <imageTag> <!--228-->
   <name>Undead Pirate</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--229-->
   <name>Undead Pirate Captain</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--230-->
   <name>Zombie</name>
@@ -768,25 +822,32 @@
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--233-->
-  <name>Shadow Lord</name>
+  <name>Shadow</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--234-->
   <name>Wraith</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--235-->
-  <name>Ghost 01</name>
+  <name>Ghost Warrior</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--236-->
-  <name>Ghost 02</name>
+  <name>Bean Sidhe (Banshee)</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--237-->
   <name>Mummy 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--238-->
   <name>Mummy 02</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--239-->
   <name>Lich</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--240-->
   <name>Imp 01</name>
@@ -814,12 +875,15 @@
  </imageTag>
  <imageTag> <!--247-->
   <name>Succubus</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--248-->
   <name>Daemonic Monk</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--249-->
   <name>Daemonic Champion</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--250-->
   <name>Daemon Lord 01</name>
@@ -843,6 +907,7 @@
  </imageTag>
  <imageTag> <!--256-->
   <name>Giant Wasp</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--257-->
   <name>Spider</name>
@@ -869,6 +934,7 @@
  </imageTag>
  <imageTag> <!--264-->
   <name>Hydra</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--265-->
   <name>Water Hydra</name>
@@ -891,7 +957,8 @@
   <name>Rhino</name>
  </imageTag>
  <imageTag> <!--271-->
-  <name>Bats</name>
+  <name>Sprite</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--272-->
   <name>Elephant</name>
@@ -902,6 +969,7 @@
  </imageTag>
  <imageTag> <!--274-->
   <name>Chimera</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--275-->
   <name>Simildon</name>
@@ -909,43 +977,54 @@
  </imageTag>
  <imageTag> <!--276-->
   <name>Scorpion</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--277-->
-  <name></name>
+  <name>Sting-Ray</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--278-->
-  <name></name>
+  <name>Ixitachitl (Demon Ray)</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--279-->
-  <name></name>
+  <name>Armor Fish</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--280-->
-  <name></name>
+  <name>Moray Eel</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--281-->
-  <name></name>
+  <name>Leviathan Whale</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--282-->
-  <name></name>
+  <name>Sea Serpent</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--283-->
-  <name></name>
+  <name>Sea Turtle</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--284-->
-  <name></name>
+  <name>Hippocampus</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--285-->
-  <name></name>
+  <name>Eye of the Deep</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--286-->
   <name></name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--287-->
-  <name>Shark 01</name>
+  <name>Great White Shark</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--288-->
-  <name>Shark 02</name>
+  <name>Hammerhead Shark</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--289-->
@@ -954,6 +1033,7 @@
  </imageTag>
  <imageTag> <!--290-->
   <name>Dolphin</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--291-->
   <name>Octopus</name>
@@ -968,16 +1048,19 @@
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--294-->
-  <name>Siren</name>
+  <name>Siren (Mermaid)</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--295-->
   <name>Triton</name>
  </imageTag>
  <imageTag> <!--296-->
   <name>Giant Crab</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--297-->
   <name>Kraken</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--298-->
   <name>Sea Hag</name>
@@ -993,29 +1076,33 @@
  </imageTag>
  <imageTag> <!--302-->
   <name>Dragon Turtle 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--303-->
   <name>Dragon Turtle 02</name>
  </imageTag>
  <imageTag> <!--304-->
   <name>Water Dragon 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--305-->
   <name>Water Dragon 02</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--306-->
   <name>Sea Dragon</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--307-->
-  <name>Blue Dragon</name>
+  <name>Blue Dragon 01</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--308-->
-  <name>Green Dragon</name>
+  <name>Green Dragon 01</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--309-->
-  <name>Grey Dragon</name>
+  <name>Silver Dragon 01</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--310-->
@@ -1023,9 +1110,11 @@
  </imageTag>
  <imageTag> <!--311-->
   <name>Dracolich</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--312-->
-  <name>Fire Dragon 01</name>
+  <name>Copper Dragon 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--313-->
   <name>Fire Dragon 02</name>
@@ -1043,20 +1132,23 @@
   <name>Shadow Dragon 02</name>
  </imageTag>
  <imageTag> <!--318-->
-  <name>Chained Dragon 01</name>
+  <name>Bronze Dragon 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--319-->
-  <name>Chained Dragon 02</name>
+  <name>Fork Tail Dragon</name>
  </imageTag>
  <imageTag> <!--320-->
   <name>Pseudodragon</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--321-->
-  <name>Dragon 02</name>
+  <name>Grey Dragon 01</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--322-->
-  <name>Dragon 03</name>
+  <name>Gold Dragon</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--323-->
   <name>Dragon Lord</name>
@@ -1081,12 +1173,14 @@
  </imageTag>
  <imageTag> <!--329-->
   <name>Giant Centipede</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--330-->
   <name>Giant Worm</name>
  </imageTag>
  <imageTag> <!--331-->
   <name>Vampire Warrior</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--332-->
   <name>Druid 1</name>
@@ -1102,9 +1196,11 @@
  </imageTag>
  <imageTag> <!--336-->
   <name>Female Druid 2</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--337-->
   <name>Druid 4</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--338-->
   <name>Druid 5</name>
@@ -1121,6 +1217,7 @@
  </imageTag>
  <imageTag> <!--342-->
   <name>Female Druid 4</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--343-->
   <name>Female Druid 5</name>
@@ -1163,9 +1260,11 @@
  </imageTag>
  <imageTag> <!--355-->
   <name>Male Barkeep</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--356-->
   <name>Halfling Archer</name>
+  <artist>MaDin Tolifen</artist>
  </imageTag>
  <imageTag> <!--357-->
   <name>Raider</name>
@@ -1271,16 +1370,28 @@
   <name>Paladin Chapter Master 01</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
- <imageTag> <!--382-->
+ <imageTag> <!--384-->
   <name>Paladin Chapter Master 02</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
- <imageTag> <!--382-->
+ <imageTag> <!--385-->
   <name>Paladin Chapter Master 03</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
- <imageTag> <!--382-->
-  <name>Paladin Chapter Master 01</name>
+ <imageTag> <!--386-->
+  <name>Paladin Chapter Master 04</name>
   <artist>MaDin Tolifen</artist>
  </imageTag>
-</data>
+ <imageTag> <!--387-->
+  <name>Erinyes</name>
+  <artist>MaDin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--388-->
+  <name>Yeti</name>
+  <artist>MaDin Tolifen</artist>
+ </imageTag>
+ <imageTag> <!--389-->
+  <name>Goblin Shaman</name>
+  <artist>MaDin Tolifen</artist>
+ </imageTag>
+ </data>
