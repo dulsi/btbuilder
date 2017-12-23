@@ -71,6 +71,7 @@ void BTMainScreen::run()
   if (!module[i]->development)
   {
    list[moduleSize].name = module[i]->name;
+   list[moduleSize].value = i;
    moduleSize++;
   }
  }
@@ -85,11 +86,11 @@ void BTMainScreen::run()
   key = display->process("eq~");
   if (key == 13)
   {
-   runModule(fileModule[select]);
+   runModule(fileModule[list[select].value]);
   }
   else if (key == 'e')
   {
-   editModule(fileModule[select]);
+   editModule(fileModule[list[select].value]);
   }
   else if (key == '~')
   {
@@ -106,6 +107,7 @@ void BTMainScreen::run()
      if ((dev) || (!module[i]->development))
      {
       list[moduleSize].name = module[i]->name;
+      list[moduleSize].value = i;
       moduleSize++;
      }
     }
