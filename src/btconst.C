@@ -108,7 +108,8 @@ const char *extraDamage[] =
  "Paralysis",
  "Critical hit",
  "Item-zot",
- "Point Phaze"
+ "Point Phaze",
+ "Good possession"
 };
 ArrayLookup extraDamageLookup(BT_MONSTEREXTRADAMAGE, extraDamage);
 
@@ -292,7 +293,8 @@ int statusValue[] =
  BTSTATUS_AGED,
  BTSTATUS_POSSESSED,
  BTSTATUS_STONED,
- BTSTATUS_PARALYZED
+ BTSTATUS_PARALYZED,
+ BTSTATUS_GOODPOSSESSED
 };
 const char *statusNames[] =
 {
@@ -302,7 +304,8 @@ const char *statusNames[] =
  "Aged",
  "Possessed",
  "Stoned",
- "Paralyzed"
+ "Paralyzed",
+ "Good possessed"
 };
 PairLookup statusLookup(7, statusValue, statusNames);
 

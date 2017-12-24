@@ -676,7 +676,7 @@ void BTCombat::runMonsterAction(BTDisplay &d, int &active, int monGroup, int mon
  {
   // Let the monster move.
  }
- else if ((mon.status.isSet(BTSTATUS_INSANE)) || (mon.status.isSet(BTSTATUS_POSSESSED)))
+ else if ((mon.status.isSet(BTSTATUS_INSANE)) || (mon.status.isSet(BTSTATUS_POSSESSED)) || (mon.status.isSet(BTSTATUS_GOODPOSSESSED)))
  {
   action = BTCOMBATACTION_ATTACK;
  }
@@ -885,11 +885,36 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
   {
    return;
   }
- if (pc.status.isSet(BTSTATUS_DEAD))
-  return;
- if (pc.status.isSet(BTSTATUS_STONED))
-  return;
-  if ((pc.status.isSet(BTSTATUS_INSANE)) || (pc.status.isSet(BTSTATUS_POSSESSED)))
+  if (pc.status.isSet(BTSTATUS_DEAD))
+   return;
+  if (pc.status.isSet(BTSTATUS_STONED))
+   return;
+  if (pc.status.isSet(BTSTATUS_GOODPOSSESSED))
+  {
+   int group;
+   int target;
+   int opponents = 0;
+   std::list<BTMonsterGroup>::iterator itr(monsters.begin());
+   for (; itr != monsters.end(); ++itr)
+    if (itr->distance == 1)
+     ++opponents;
+   if (0 == opponents)
+    pc.combat.action = BTPc::BTPcAction::defend;
+   else
+   {
+    opponents = BTDice(1, opponents, 0).roll();
+    group = BTTARGET_MONSTER;
+    for (itr = monsters.begin(); itr != monsters.end(); ++itr, ++group)
+    {
+     if ((itr->distance == 1) && (--opponents == 0))
+      break;
+    }
+   }
+   target = BTTARGET_INDIVIDUAL;
+   pc.combat.action = BTPc::BTPcAction::attack;
+   pc.combat.setTarget(group);
+  }
+  else if ((pc.status.isSet(BTSTATUS_INSANE)) || (pc.status.isSet(BTSTATUS_POSSESSED)))
   {
    int group;
    int target;
@@ -941,7 +966,7 @@ void BTCombat::runPcAction(BTDisplay &d, int &active, int pcNumber, BTPc &pc)
     pc.combat.setTarget(group);
    }
   }
-  if (BTPc::BTPcAction::npc == pc.combat.action)
+  else if (BTPc::BTPcAction::npc == pc.combat.action)
   {
    pc.combat.action = BTPc::BTPcAction::defend;
    for (int i = 0; i < party.size(); ++i)

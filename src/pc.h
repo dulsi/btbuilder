@@ -170,12 +170,12 @@ class BTParty : public XMLVector<BTPc*>, public BTCombatantCollection
 class BTStatusLookup : public ArrayLookup
 {
  public:
-  BTStatusLookup() : ArrayLookup(8, value) {}
+  BTStatusLookup() : ArrayLookup(9, value) {}
 
   static BTStatusLookup lookup;
 
  private:
-  static const char *value[8];
+  static const char *value[9];
 };
 
 #endif

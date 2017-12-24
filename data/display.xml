@@ -68,6 +68,15 @@
 				</checkBit>
 				<checkBit>
 					<attribute>status</attribute>
+					<bit>8</bit>
+					<print>
+						<text>POS</text>
+						<position><x>142</x><y>0</y><w>40</w><h>8</h></position>
+						<align>right</align>
+					</print>
+				</checkBit>
+				<checkBit>
+					<attribute>status</attribute>
 					<bit>3</bit>
 					<print>
 						<text>OLD</text>

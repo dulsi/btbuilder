@@ -92,7 +92,7 @@ extern ArrayLookup areaLookup;
 extern const char *durations[];
 extern ArrayLookup durationLookup;
 
-#define BT_MONSTEREXTRADAMAGE 11
+#define BT_MONSTEREXTRADAMAGE 12
 #define BTEXTRADAMAGE_NONE        0
 #define BTEXTRADAMAGE_POISON      1
 #define BTEXTRADAMAGE_LEVELDRAIN  2
@@ -104,6 +104,7 @@ extern ArrayLookup durationLookup;
 #define BTEXTRADAMAGE_CRITICALHIT 8
 #define BTEXTRADAMAGE_ITEMZOT     9
 #define BTEXTRADAMAGE_POINTPHAZE 10
+#define BTEXTRADAMAGE_GOODPOSSESSION  11
 extern const char *extraDamage[];
 extern ArrayLookup extraDamageLookup;
 
@@ -306,6 +307,7 @@ extern const char *genderPronouns[];
 #define BTSTATUS_STONED     5
 #define BTSTATUS_PARALYZED  6
 #define BTSTATUS_NPC        7
+#define BTSTATUS_GOODPOSSESSED  8
 extern PairLookup statusLookup;
 
 #define BTCOMBAT_MAXENCOUNTERS 4

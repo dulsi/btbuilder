@@ -1282,4 +1282,4 @@ size_t BTParty::size()
 }
 
 BTStatusLookup BTStatusLookup::lookup;
-const char *BTStatusLookup::value[8] = { "dead", "poisoned", "insane", "aged", "possessed", "stoned", "paralyzed", "npc" };
+const char *BTStatusLookup::value[9] = { "dead", "poisoned", "insane", "aged", "possessed", "stoned", "paralyzed", "npc", "goodPossessed" };

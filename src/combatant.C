@@ -100,6 +100,7 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
         break;
        case BTEXTRADAMAGE_POSSESSION:
         defender->status.set(BTSTATUS_POSSESSED);
+        defender->status.clear(BTSTATUS_GOODPOSSESSED);
         break;
        case BTEXTRADAMAGE_PARALYSIS:
         defender->status.set(BTSTATUS_PARALYZED);
@@ -123,6 +124,10 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
         {
          special.clear(BTEXTRADAMAGE_POINTPHAZE);
         }
+        break;
+       case BTEXTRADAMAGE_GOODPOSSESSION:
+        defender->status.set(BTSTATUS_GOODPOSSESSED);
+        defender->status.clear(BTSTATUS_POSSESSED);
         break;
        default:
         break;
@@ -197,6 +202,7 @@ std::string BTCombatant::attack(BTCombatant *defender, bool melee, const std::st
         specialText += genderPronouns[defender->getGender()];
        break;
       case BTEXTRADAMAGE_POSSESSION:
+      case BTEXTRADAMAGE_GOODPOSSESSION:
        specialText += " possesses";
        break;
       case BTEXTRADAMAGE_PARALYSIS:
@@ -371,6 +377,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
       break;
      case BTEXTRADAMAGE_POSSESSION:
       defender->status.set(BTSTATUS_POSSESSED);
+      defender->status.clear(BTSTATUS_GOODPOSSESSED);
       break;
      case BTEXTRADAMAGE_PARALYSIS:
       defender->status.set(BTSTATUS_PARALYZED);
@@ -394,6 +401,10 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
       {
        special.clear(BTEXTRADAMAGE_POINTPHAZE);
       }
+      break;
+     case BTEXTRADAMAGE_GOODPOSSESSION:
+      defender->status.set(BTSTATUS_GOODPOSSESSED);
+      defender->status.clear(BTSTATUS_POSSESSED);
       break;
      default:
       break;
@@ -456,6 +467,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
        specialText += " withers";
        break;
       case BTEXTRADAMAGE_POSSESSION:
+      case BTEXTRADAMAGE_GOODPOSSESSION:
        specialText += " is possessed";
        break;
       case BTEXTRADAMAGE_PARALYSIS:
