@@ -1,6 +1,6 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.5.15
+Version: 0.5.16
 Release: 1%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
@@ -47,18 +47,6 @@ make prefix=%{buildroot} install
 %check
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata.xml
 
-%post
-/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-
-%postun
-if [ $1 -eq 0 ] ; then
-    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-
-%posttrans
-/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-
 %files
 %doc README
 %{_bindir}/*
@@ -71,6 +59,10 @@ fi
 %{_datadir}/btbuilder
 
 %changelog
+* Sat Feb 10 2018 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.16-1
+- New version of btbuilder released.
+- Removed obsolete scriptlets.
+
 * Thu Jul 13 2017 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.15-1
 - New version of btbuilder released.
 
