@@ -1,11 +1,13 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
 Version: 0.5.16
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
 Group: Amusements/Games
 Source: http://www.identicalsoftware.com/btbuilder/%{name}-%{version}.tgz
+BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: boost-devel
 BuildRequires: expat-devel
 BuildRequires: libpng-devel
@@ -59,6 +61,9 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata
 %{_datadir}/btbuilder
 
 %changelog
+* Sun Feb 18 2018 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.16-2
+- Add build requirement of gcc-c++.
+
 * Sat Feb 10 2018 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.16-1
 - New version of btbuilder released.
 - Removed obsolete scriptlets.
@@ -72,7 +77,7 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.5.14-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
-* Wed Nov 11 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.14-1
+* Fri Nov 11 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.14-1
 - New version of btbuilder released.
 
 * Wed Oct 19 2016 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.13-1
