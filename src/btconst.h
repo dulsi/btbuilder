@@ -80,17 +80,14 @@ extern const char *effectiveRanges[];
 extern const char *areaEffect[];
 extern ArrayLookup areaLookup;
 
-#define BT_DURATION 8
-#define BTDURATION_ONE        0
-#define BTDURATION_SHORT      1
-#define BTDURATION_MEDIUM     2
-#define BTDURATION_LONG       3
-#define BTDURATION_COMBAT     4
-#define BTDURATION_PERMANENT  5
-#define BTDURATION_CONTINUOUS 6
-#define BTDURATION_INDEFINITE 7
-extern const char *durations[];
-extern ArrayLookup durationLookup;
+#define BT_DURATIONTYPE 5
+#define BTDURATIONTYPE_DICE       0
+#define BTDURATIONTYPE_COMBAT     1
+#define BTDURATIONTYPE_PERMANENT  2
+#define BTDURATIONTYPE_CONTINUOUS 3
+#define BTDURATIONTYPE_INDEFINITE 4
+extern const char *durationType[];
+extern ArrayLookup durationTypeLookup;
 
 #define BT_MONSTEREXTRADAMAGE 12
 #define BTEXTRADAMAGE_NONE        0

@@ -15,8 +15,8 @@ class BTFactoryEditor
   BTFactoryEditor(bool s = false);
   virtual ~BTFactoryEditor();
 
-  template<typename item, typename item1 = item>
-  int editFactoryList(BTDisplay &d, BTFactory<item, item1> &itemList, const BTSortCompare<item> &compare, const std::string &newItem)
+  template<typename item>
+  int editFactoryList(BTDisplay &d, XMLVector<item*> &itemList, const BTSortCompare<item> &compare, const std::string &newItem)
   {
    BTDisplayConfig *oldConfig = d.getConfig();
    BTDisplayConfig config;
@@ -24,7 +24,7 @@ class BTFactoryEditor
    config.serialize(&parser);
    parser.parse(BTDisplay::applyDisplayDir("data/specialedit.xml").c_str(), true);
    d.setConfig(&config);
-   BTSortedFactory<item, item1> sortList(&itemList, (sorted ? &compare : NULL));
+   BTSortedFactory<item> sortList(&itemList, (sorted ? &compare : NULL));
    BTDisplay::selectItem items[itemList.size() + 1];
    for (size_t i = 0; i < itemList.size(); ++i)
     items[i].name = sortList[i].getName();
@@ -46,11 +46,24 @@ class BTFactoryEditor
     return -1;
    else if (('c' == key) && (current != itemList.size()))
    {
-    current = itemList.copy(current);
+    itemList.push_back(new item(*itemList[current]));
+    current = itemList.size() - 1;
     return current;
    }
    else
+   {
+    if (current == itemList.size())
+    {
+     itemList.push_back(new item);
+    }
     return current;
+   }
+  }
+
+  template<typename item, typename item1 = item>
+  int editFactoryList(BTDisplay &d, BTFactory<item, item1> &itemList, const BTSortCompare<item> &compare, const std::string &newItem)
+  {
+   return editFactoryList<item>(d, *itemList.getInternal(), compare, newItem);
   }
 
  protected:
@@ -173,6 +186,18 @@ class BTSpellEditor : public BTSerializedEditor
   static spellType spellTypes[BT_SPELLTYPES_USED];
   static const char *spellDescription[FIELDS_SPELL];
   static const char *spellField[FIELDS_SPELL];
+};
+
+#define FIELDS_DURATION 5
+
+class BTDurationEditor : public BTSerializedEditor
+{
+ public:
+  BTDurationEditor();
+
+ private:
+  static const char *durationDescription[FIELDS_DURATION];
+  static const char *durationField[FIELDS_DURATION];
 };
 
 #endif

@@ -20,6 +20,7 @@ class BTModule : public XMLObject
   char *name;
   char *author;
   char *content;
+  char *duration;
   char *itemType;
   char *item;
   char *monster;

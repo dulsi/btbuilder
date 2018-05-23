@@ -13,6 +13,8 @@
 BTModule::BTModule()
  : name(NULL), author(NULL), content(NULL), startX(0), startY(0), startFace(0), maxItems(8), maxParty(7), maxTime(14400), nightTime(7200), bonusStacking(true), development(false)
 {
+ duration = new char[strlen("data/duration.xml") + 1];
+ strcpy(duration, "data/duration.xml");
  itemType = new char[strlen("data/itemtype.xml") + 1];
  strcpy(itemType, "data/itemtype.xml");
  item = new char[strlen("DEFAULT.ITM") + 1];

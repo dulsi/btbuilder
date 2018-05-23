@@ -31,6 +31,8 @@ class BTFactory : public ValueLookup
   size_t size();
   item &operator[](IShort num);
 
+  XMLVector<item*> *getInternal();
+
  private:
   std::string extension;
   XMLVector<item*> items;
@@ -43,11 +45,19 @@ class BTSortCompare
   virtual int Compare(const item &a, const item &b) const = 0;
 };
 
-template<typename item, typename item1 = item>
+template<typename item>
 class BTSortedFactory
 {
  public:
-  BTSortedFactory(BTFactory<item, item1> *fact, const BTSortCompare<item> *comp);
+  BTSortedFactory(XMLVector<item*> *fact, const BTSortCompare<item> *comp);
+
+  template<typename item1>
+  BTSortedFactory(BTFactory<item, item1> *fact, const BTSortCompare<item> *comp)
+   : factory(fact->getInternal()), compare(comp)
+  {
+   resort();
+  }
+
   int getSortedIndex(int index);
   int getUnsortedIndex(int index);
   void resort();
@@ -55,7 +65,7 @@ class BTSortedFactory
   item &operator[](IShort num);
 
  private:
-  BTFactory<item, item1> *factory;
+  XMLVector<item*> *factory;
   const BTSortCompare<item> *compare;
   std::vector<IUShort> sortedItems;
 };
@@ -185,14 +195,20 @@ item &BTFactory<item, item1>::operator[](IShort num)
 }
 
 template <typename item, typename item1>
-BTSortedFactory<item, item1>::BTSortedFactory(BTFactory<item, item1> *fact, const BTSortCompare<item> *comp)
+XMLVector<item*> *BTFactory<item, item1>::getInternal()
+{
+ return &items;
+}
+
+template <typename item>
+BTSortedFactory<item>::BTSortedFactory(XMLVector<item*> *fact, const BTSortCompare<item> *comp)
  : factory(fact), compare(comp)
 {
  resort();
 }
 
-template <typename item, typename item1>
-int BTSortedFactory<item, item1>::getSortedIndex(int index)
+template <typename item>
+int BTSortedFactory<item>::getSortedIndex(int index)
 {
  for (size_t i = 0; i < sortedItems.size(); ++i)
  {
@@ -204,8 +220,8 @@ int BTSortedFactory<item, item1>::getSortedIndex(int index)
  throw BTArrayBoundsException();
 }
 
-template <typename item, typename item1>
-int BTSortedFactory<item, item1>::getUnsortedIndex(int index)
+template <typename item>
+int BTSortedFactory<item>::getUnsortedIndex(int index)
 {
  if (index < sortedItems.size())
  {
@@ -214,8 +230,8 @@ int BTSortedFactory<item, item1>::getUnsortedIndex(int index)
  return sortedItems.size();
 }
 
-template <typename item, typename item1>
-void BTSortedFactory<item, item1>::resort()
+template <typename item>
+void BTSortedFactory<item>::resort()
 {
  IUShort where;
  sortedItems.clear();
@@ -224,7 +240,7 @@ void BTSortedFactory<item, item1>::resort()
   if (compare)
   {
    for (where = 0;
-     (where < sortedItems.size()) && (compare->Compare((*factory)[i], (*factory)[sortedItems[where]]) >= 0);
+     (where < sortedItems.size()) && (compare->Compare(*(*factory)[i], *(*factory)[sortedItems[where]]) >= 0);
      where++)
    {
    }
@@ -245,20 +261,20 @@ void BTSortedFactory<item, item1>::resort()
  }
 }
 
-template <typename item, typename item1>
-size_t BTSortedFactory<item, item1>::size()
+template <typename item>
+size_t BTSortedFactory<item>::size()
 {
  return sortedItems.size();
 }
 
-template <typename item, typename item1>
-item &BTSortedFactory<item, item1>::operator[](IShort num)
+template <typename item>
+item &BTSortedFactory<item>::operator[](IShort num)
 {
  if (num >= sortedItems.size())
  {
   throw BTArrayBoundsException();
  }
- return (*factory)[sortedItems[num]];
+ return *(*factory)[sortedItems[num]];
 }
 
 #endif

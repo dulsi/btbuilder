@@ -11,7 +11,7 @@
 int BTSpell::version(1);
 
 BTSpell::BTSpell()
- : caster(0), level(1), effectType(BTEFFECTTYPE_MAGIC), sp(1), range(0), effectiveRange(0), area(BTAREAEFFECT_NONE), duration(BTDURATION_ONE)
+ : caster(0), level(1), effectType(BTEFFECTTYPE_MAGIC), sp(1), range(0), effectiveRange(0), area(BTAREAEFFECT_NONE), duration(0)
 {
  code = new char[1];
  code[0] = 0;
@@ -148,36 +148,7 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
  int killed = 0;
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
- unsigned int expire = 0;
- switch(duration)
- {
-  case BTDURATION_ONE:
-   expire = game->getExpiration(1);
-   break;
-  case BTDURATION_SHORT:
-   expire = game->getExpiration(BTDice(1, 121, 119).roll());
-   break;
-  case BTDURATION_MEDIUM:
-   expire = game->getExpiration(BTDice(1, 181, 179).roll());
-   break;
-  case BTDURATION_LONG:
-   expire = game->getExpiration(BTDice(1, 241, 239).roll());
-   break;
-  case BTDURATION_COMBAT:
-   expire = BTTIME_COMBAT;
-   break;
-  case BTDURATION_PERMANENT:
-   expire = BTTIME_PERMANENT;
-   break;
-  case BTDURATION_CONTINUOUS:
-   expire = BTTIME_CONTINUOUS;
-   break;
-  case BTDURATION_INDEFINITE:
-   expire = BTTIME_INDEFINITE;
-   break;
-  default:
-   break;
- }
+ unsigned int expire = game->getDurationList()[duration]->duration(casterLevel);
  std::string text = activation;
  if (text.length() > 0)
   text += " ";
@@ -310,7 +281,7 @@ void BTSpell::serialize(ObjectSerializer* s)
  s->add("range", &range);
  s->add("effectiveRange", &effectiveRange);
  s->add("area", &area, NULL, &areaLookup);
- s->add("duration", &duration, NULL, &durationLookup);
+ s->add("duration", &duration, NULL, &BTCore::getCore()->getDurationList());
  s->add("effect", &effect);
  BTManifest::serializeSetup(s, manifest);
 }

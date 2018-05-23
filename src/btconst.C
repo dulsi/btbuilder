@@ -83,18 +83,15 @@ const char *areaEffect[] =
 };
 ArrayLookup areaLookup(BT_AREAEFFECT, areaEffect);
 
-const char *durations[] =
+const char *durationType[] =
 {
- "One Turn",
- "Short",
- "Medium",
- "Long",
+ "Dice",
  "Combat",
  "Permanent",
  "Continuous",
  "Indefinite"
 };
-ArrayLookup durationLookup(BT_DURATION, durations);
+ArrayLookup durationTypeLookup(BT_DURATIONTYPE, durationType);
 
 const char *extraDamage[] =
 {

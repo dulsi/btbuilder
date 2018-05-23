@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
   else
   {
    BTSpellListCompare compare;
-   BTSortedFactory<BTSpell, BTSpell1> sortedSplList(&splList, &compare);
+   BTSortedFactory<BTSpell> sortedSplList(&splList, &compare);
    IShort caster = -1;
    IShort level = -1;
    for (i = 0; i < sortedSplList.size(); i++)
@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
       mon.getRange() * 10, effectiveRanges[mon.getEffectiveRange()]);
     printf("Target: %s\n", areaEffect[mon.getArea()]);
     printf("Effect: %s <target>\n", mon.getEffect());
-    printf("Duration: %s\n", durations[mon.getDuration()]);
+    printf("Duration: %s\n", BTGame::getGame()->getDurationList()[mon.getDuration()]);
     printf("%s", mon.describeManifest().data());
 /*    printf("Type: %s", spellTypes[mon.getType()]);
     switch (mon.getType())

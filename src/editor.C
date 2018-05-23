@@ -58,7 +58,7 @@ void BTEditor::edit(BTDisplay &d)
 {
  char **files = PHYSFS_enumerateFiles("");
  char **i;
- int count(4);
+ int count(5);
 
  d.setPsuedo3DConfig(&getPsuedo3DConfigList());
  d.setWallGraphics(0);
@@ -86,7 +86,8 @@ void BTEditor::edit(BTDisplay &d)
  list[0].name = module->item;
  list[1].name = module->spell;
  list[2].name = module->monster;
- int current = 3;
+ list[3].name = module->duration;
+ int current = 4;
  for (i = files; *i != NULL; i++)
  {
   if (checkSkipFiles(*i))
@@ -160,6 +161,20 @@ void BTEditor::edit(BTDisplay &d)
     itemEditor.edit(d, serial);
    }
    itemList.save(module->item);
+  }
+  else if (list[select].name == module->duration)
+  {
+   XMLVector<BTDuration*> &durationList = getDurationList();
+   BTDurationListCompare compare;
+   int item = 0;
+   BTDurationEditor durEditor;
+   while (-1 != (item = durEditor.editFactoryList<BTDuration>(d, durationList, compare, "<New Duration>")))
+   {
+    ObjectSerializer serial;
+    durationList[item]->serialize(&serial);
+    durEditor.edit(d, serial);
+   }
+   BTDuration::writeXML(module->duration, durationList);
   }
   else if (count - 1 == select)
   {

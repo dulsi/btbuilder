@@ -11,6 +11,7 @@
 #include "chest.h"
 #include "combat.h"
 #include "display.h"
+#include "duration.h"
 #include "factory.h"
 #include "imagetag.h"
 #include "item.h"
@@ -44,6 +45,7 @@ class BTCore : public Psuedo3DMap
   ~BTCore();
 
   std::string descendMap(int depth);
+  BTDurationList &getDurationList();
   BTImageTagList &getImageTagList();
   BTItemSlotList &getItemSlotList();
   BTItemTypeList &getItemTypeList();
@@ -83,6 +85,7 @@ class BTCore : public Psuedo3DMap
   BTSkillList skillList;
   BTSpecialFlagList specialFlagList;
   XMLVector<BTSong*> songList;
+  BTDurationList durationList;
   BTFactory<BTSpell, BTSpell1> spellList;
   BTXpChartList xpChartList;
   XMLVector<BTLevel*> levelList;

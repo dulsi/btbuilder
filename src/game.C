@@ -19,6 +19,7 @@ BTCore::BTCore(BTModule *m)
  {
   core = this;
  }
+ BTDuration::readXML(m->duration, durationList);
  BTItemType::readXML(m->itemType, itemSlotList, itemTypeList);
  BTSpecialFlag::readXML(m->specialFlag, specialFlagList);
  BTRace::readXML(m->race, raceList);
@@ -55,6 +56,11 @@ std::string BTCore::descendMap(int depth)
   return curLevel->deeper(levelMap->getFilename(), depth);
  }
  return "";
+}
+
+BTDurationList &BTCore::getDurationList()
+{
+ return durationList;
 }
 
 BTImageTagList &BTCore::getImageTagList()
