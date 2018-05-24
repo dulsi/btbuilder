@@ -1126,10 +1126,11 @@ void BTGame::save()
  BTShop::writeXML("shops.xml", shops);
 }
 
-void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, std::string &startMap)
+void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, XMLVector<BTPc*> &extra, std::string &startMap)
 {
  s->add("party", &getGroup(), &BTGroup::create);
  s->add("pc", &getRoster(), &BTPc::create);
+ s->add("pcExtra", &extra, &BTPc::create);
  s->add("startMap", &startMap);
  s->add("xPos", &xPos);
  s->add("yPos", &yPos);
@@ -1175,23 +1176,33 @@ void BTGame::readSaveXML(const char *filename)
 {
  std::string startMap;
  BTGroup curParty;
+ XMLVector<BTPc*> extra(false);
  XMLSerializer parser;
  party.erase(party.begin(), party.end());
  group.erase(group.begin(), group.end());
  roster.erase(roster.begin(), roster.end());
- serialize(&parser, curParty, startMap);
+ serialize(&parser, curParty, extra, startMap);
  parser.parse(filename, true);
  for (int i = 0; i < getRoster().size(); ++i)
   getRoster()[i]->updateSkills();
  loadMap(startMap.c_str(), false);
+ int extraPos(0);
  for (int i = 0; i < curParty.member.size(); ++i)
  {
+  bool found = false;
   for (int k = 0; k < roster.size(); ++k)
   {
    if (0 == strcmp(roster[k]->name, curParty.member[i].c_str()))
    {
     party.push_back(roster[k]);
+    found = true;
+    break;
    }
+  }
+  if ((!found) && (extraPos < extra.size()))
+  {
+   party.push_back(extra[extraPos]);
+   ++extraPos;
   }
  }
 }
@@ -1199,12 +1210,26 @@ void BTGame::readSaveXML(const char *filename)
 void BTGame::writeSaveXML(const char *filename)
 {
  std::string startMap = levelMap->getFilename();
+ XMLVector<BTPc*> extra(false);
  BTGroup curParty;
  curParty.name = "Current Party";
  for (int i = 0; i < party.size(); ++i)
+ {
   curParty.member.push_back(party[i]->name);
+  bool found = false;
+  for (int k = 0; k < roster.size(); ++k)
+  {
+   if (0 == strcmp(roster[k]->name, party[i]->name))
+   {
+    found = true;
+    break;
+   }
+  }
+  if (!found)
+   extra.push_back(party[i]);
+ }
  XMLSerializer parser;
- serialize(&parser, curParty, startMap);
+ serialize(&parser, curParty, extra, startMap);
  parser.write(filename, true);
 }
 

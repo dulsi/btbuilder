@@ -171,7 +171,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
 
   void save();
 
-  void serialize(ObjectSerializer *s, BTGroup &curParty, std::string &startMap);
+  void serialize(ObjectSerializer *s, BTGroup &curParty, XMLVector<BTPc*> &extra, std::string &startMap);
   void readSaveXML(const char *filename);
   void writeSaveXML(const char *filename);
 
