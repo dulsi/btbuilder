@@ -634,6 +634,15 @@ void XMLSerializer::write(const char *filename, bool physfs)
  }
  else if (physfs)
  {
+  const char *lastDir = strrchr(filename, '/');
+  if (lastDir != NULL)
+  {
+   char *fullDir = new char[lastDir - filename + 1];
+   strncpy(fullDir, filename, lastDir - filename);
+   fullDir[lastDir - filename] = 0;
+   PHYSFS_mkdir(fullDir);
+   delete [] fullDir;
+  }
   physFile = PHYSFS_openWrite(filename);
  }
  else
