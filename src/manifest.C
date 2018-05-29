@@ -232,6 +232,12 @@ BTManifest *BTAttackManifest::clone()
 std::string BTAttackManifest::createString()
 {
  std::string answer = BTManifest::createString();
+ if (saveDifficulty != BTSAVE_DIFFICULTY)
+ {
+  char s[50];
+  sprintf(s, "   Save Difficulty: %d", saveDifficulty);
+  answer += std::string(s);
+ }
  if (damage.getMax() > 0)
  {
   answer += std::string("   Damage: ") + damage.createString();
@@ -283,13 +289,14 @@ std::list<BTBaseEffect*> BTAttackManifest::manifest(bool partySpell, BTCombat *c
   value.setNumber(value.getNumber() * (casterLevel / level));
  if ((0 != maximum) && (value.getNumber() > maximum))
   value.setNumber(maximum);
- effect.push_back(new BTAttackEffect(type, expire, source, range, effectiveRange, 0, group, target, value, xSpecial, tagOnly));
+ effect.push_back(new BTAttackEffect(type, expire, source, range, effectiveRange, 0, group, target, saveDifficulty, value, xSpecial, tagOnly));
  return effect;
 }
 
 void BTAttackManifest::serialize(ObjectSerializer* s)
 {
  BTRangedManifest::serialize(s);
+ s->add("saveDifficulty", &saveDifficulty);
  s->add("damage", &damage);
  s->add("xSpecial", &xSpecial, NULL, &extraDamageLookup);
  s->add("level", &level);
@@ -347,9 +354,9 @@ void BTAttackManifest::supportOldFormat(IShort &t, BTDice &d, IShort &ex)
  d = damage;
 }
 
-const int BTAttackManifest::entries = 5;
-const char *BTAttackManifest::description[] = {"Damage", "Extra Damage", "Level Increment", "Maximum", "Effect Only"};
-const char *BTAttackManifest::field[] = {"damage", "xSpecial", "level", "maximum", "tagOnly"};
+const int BTAttackManifest::entries = 6;
+const char *BTAttackManifest::description[] = {"Save Difficulty", "Damage", "Extra Damage", "Level Increment", "Maximum", "Effect Only"};
+const char *BTAttackManifest::field[] = {"saveDifficulty", "damage", "xSpecial", "level", "maximum", "tagOnly"};
 
 BTManifest *BTCureStatusManifest::clone()
 {

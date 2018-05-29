@@ -318,7 +318,7 @@ void BTCombatant::youth()
  restoreLevel();
 }
 
-std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &damageDice, IShort xSpecial, bool farRange, int &activeNum, bool *saved /*= NULL*/)
+std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &damageDice, IShort xSpecial, bool farRange, int &activeNum, int saveDifficulty /*= BTSAVE_DIFFICULTY*/, bool *saved /*= NULL*/)
 {
  int totalDamage = 0;
  bool dead = false;
@@ -331,7 +331,7 @@ std::string BTCombatant::specialAttack(BTCombatant *defender, const BTDice &dama
  if (saved)
   saveResult = *saved;
  else
-  saveResult = defender->savingThrow(BTSAVE_DIFFICULTY);
+  saveResult = defender->savingThrow(saveDifficulty);
  if (saveResult)
  {
   totalDamage = totalDamage / 2;

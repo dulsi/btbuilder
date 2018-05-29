@@ -27,6 +27,10 @@ BTSpell::BTSpell(const BTSpell &copy)
  strcpy(code, copy.code);
  effect = new char[strlen(copy.effect) + 1];
  strcpy(effect, copy.effect);
+ for (int i = 0; i < copy.manifest.size(); i++)
+ {
+  manifest.push_back(copy.manifest[i]->clone());
+ }
 }
 
 BTSpell::~BTSpell()
@@ -413,34 +417,34 @@ void BTSpell1::upgrade()
     manifest.push_back(new BTBonusManifest(type, getExtra()));
     break;
    case BTSPELLTYPE_DAMAGE:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), dice, BTEXTRADAMAGE_NONE, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, dice, BTEXTRADAMAGE_NONE, 0));
     break;
    case BTSPELLTYPE_KILL:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_CRITICALHIT, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_CRITICALHIT, 0));
     break;
    case BTSPELLTYPE_POISON:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_POISON, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_POISON, 0));
     break;
    case BTSPELLTYPE_CAUSEINSANITY:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_INSANITY, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_INSANITY, 0));
     break;
    case BTSPELLTYPE_POSSESS:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_POSSESSION, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_POSSESSION, 0));
     break;
    case BTSPELLTYPE_FLESHTOSTONE:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_STONED, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_STONED, 0));
     break;
    case BTSPELLTYPE_PARALYZE:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_PARALYSIS, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_PARALYSIS, 0));
     break;
    case BTSPELLTYPE_DRAINLEVEL:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_LEVELDRAIN, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_LEVELDRAIN, 0));
     break;
    case BTSPELLTYPE_AGE:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTDice(0, 2), BTEXTRADAMAGE_AGED, 0));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, BTDice(0, 2), BTEXTRADAMAGE_AGED, 0));
     break;
    case BTSPELLTYPE_DAMAGEBYLEVEL:
-    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), dice, BTEXTRADAMAGE_NONE, 1));
+    manifest.push_back(new BTAttackManifest(range, getEffectiveRange(), BTSAVE_DIFFICULTY, dice, BTEXTRADAMAGE_NONE, 1));
     break;
    case BTSPELLTYPE_CUREPOISON:
     manifest.push_back(new BTCureStatusManifest(BTSTATUS_POISONED));

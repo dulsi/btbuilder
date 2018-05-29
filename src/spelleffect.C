@@ -286,13 +286,14 @@ bool BTResistedEffect::checkResists(BTCombat *combat, int g /*= BTTARGET_NONE*/,
  return false;
 }
 
-BTAttackEffect::BTAttackEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const std::string& tOnly)
- : BTResistedEffect(t, x, s, g, trgt), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts), tagOnly(tOnly)
+BTAttackEffect::BTAttackEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt, int sd, const BTDice &dam, int sts, const std::string& tOnly)
+ : BTResistedEffect(t, x, s, g, trgt), saveDifficulty(sd), range(rng), effectiveRange(erng), distance(d), damage(dam), status(sts), tagOnly(tOnly)
 {
 }
 
 void BTAttackEffect::serialize(ObjectSerializer *s)
 {
+ s->add("saveDifficulty", &saveDifficulty);
  s->add("range", &range);
  s->add("effectiveRange", &effectiveRange);
  s->add("distance", &distance);
@@ -339,7 +340,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
    if ((party[target]->isAlive()) && ((tagOnly.empty()) || (party[target]->hasTag(tagOnly))))
    {
     int activeNum = 0;
-    std::string text = BTCombatant::specialAttack(party[target], damage, status, (distance > range), activeNum);
+    std::string text = BTCombatant::specialAttack(party[target], damage, status, (distance > range), activeNum, saveDifficulty);
     killed += abs(activeNum);
     d.drawMessage(text.c_str(), game->getDelay());
    }
@@ -371,7 +372,7 @@ int BTAttackEffect::maintain(BTDisplay &d, BTCombat *combat)
    if ((grp->individual[target].isAlive()) && ((tagOnly.empty()) || (grp->individual[target].hasTag(tagOnly))))
    {
     int activeNum = 0;
-    std::string text = BTCombatant::specialAttack(&(grp->individual[target]), damage, status, (abs(grp->distance - distance) > range), activeNum);
+    std::string text = BTCombatant::specialAttack(&(grp->individual[target]), damage, status, (abs(grp->distance - distance) > range), activeNum, saveDifficulty);
     killed += abs(activeNum);
     d.drawMessage(text.c_str(), game->getDelay());
    }
@@ -394,7 +395,7 @@ int BTAttackEffect::applyToGroup(BTDisplay &d, BTCombatantCollection *grp, int r
   int activeNum = 0;
   if ((grp->at(i)->isAlive()) && ((first) || (!saved)) && ((tagOnly.empty()) || (grp->at(i)->hasTag(tagOnly))))
   {
-   std::string text = BTCombatant::specialAttack(grp->at(i), damage, status, (abs(grp->getDistance() - distance) > range), activeNum, (first ? &saved : NULL));
+   std::string text = BTCombatant::specialAttack(grp->at(i), damage, status, (abs(grp->getDistance() - distance) > range), activeNum, saveDifficulty, (first ? &saved : NULL));
    killed += abs(activeNum);
    d.drawMessage(text.c_str(), game->getDelay());
   }

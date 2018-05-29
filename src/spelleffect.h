@@ -119,7 +119,7 @@ class BTResistedEffect : public BTTargetedEffect
 class BTAttackEffect : public BTResistedEffect
 {
  public:
-  BTAttackEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt, const BTDice &dam, int sts, const std::string& tOnly);
+  BTAttackEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt, int sd, const BTDice &dam, int sts, const std::string& tOnly);
 
   virtual void serialize(ObjectSerializer *s);
 
@@ -132,8 +132,9 @@ class BTAttackEffect : public BTResistedEffect
   void displayResists(BTDisplay &d, BTCombat *combat);
   int applyToGroup(BTDisplay &d, BTCombatantCollection *grp, int resistOffset = 0);
 
-  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackEffect(0, 0, BTEffectSource(), 0, 0, 0, BTTARGET_NONE, BTTARGET_NONE, BTDice(), BTEXTRADAMAGE_NONE, ""); }
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackEffect(0, 0, BTEffectSource(), 0, 0, 0, BTTARGET_NONE, BTTARGET_NONE, BTSAVE_DIFFICULTY, BTDice(), BTEXTRADAMAGE_NONE, ""); }
 
+  int saveDifficulty;
   int range;
   int effectiveRange;
   int distance;

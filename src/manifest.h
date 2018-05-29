@@ -94,8 +94,8 @@ class BTBonusManifest : public BTManifest
 class BTAttackManifest : public BTRangedManifest
 {
  public:
-  BTAttackManifest() : xSpecial(BTEXTRADAMAGE_NONE), level(0), maximum(0) {}
-  BTAttackManifest(int r, int eR, const BTDice &d, int xS, int l) : BTRangedManifest(BTSPELLTYPE_DAMAGE, r, eR), damage(d), xSpecial(xS), level(l), maximum(0) {}
+  BTAttackManifest() : xSpecial(BTEXTRADAMAGE_NONE), saveDifficulty(BTSAVE_DIFFICULTY), level(0), maximum(0) {}
+  BTAttackManifest(int r, int eR, int sd, const BTDice &d, int xS, int l) : BTRangedManifest(BTSPELLTYPE_DAMAGE, r, eR), saveDifficulty(sd), damage(d), xSpecial(xS), level(l), maximum(0) {}
 
   virtual BTManifest *clone();
   std::string createString();
@@ -108,6 +108,7 @@ class BTAttackManifest : public BTRangedManifest
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTAttackManifest; }
 
+  int saveDifficulty;
   BTDice damage;
   int xSpecial;
   int level;

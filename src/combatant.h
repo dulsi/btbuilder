@@ -38,7 +38,7 @@ class BTCombatant
   virtual void useAutoCombatSkill(bool melee, BitField &special);
   virtual void youth();
 
-  static std::string specialAttack(BTCombatant *defender, const BTDice &damageDice, IShort xSpecial, bool farRange, int &activeNum, bool *saved = NULL);
+  static std::string specialAttack(BTCombatant *defender, const BTDice &damageDice, IShort xSpecial, bool farRange, int &activeNum, int saveDifficulty = BTSAVE_DIFFICULTY, bool *saved = NULL);
 
   int maxLevel;
   int level;
