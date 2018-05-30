@@ -1,7 +1,7 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.5.16
-Release: 2%{?dist}
+Version: 0.5.17
+Release: 1%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
 Group: Amusements/Games
@@ -61,6 +61,9 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata
 %{_datadir}/btbuilder
 
 %changelog
+* Wed May 30 2018 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.17-1
+- New version of btbuilder released.
+
 * Sun Feb 18 2018 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.16-2
 - Add build requirement of gcc-c++.
 
