@@ -29,7 +29,7 @@ class BTMonsterGroup;
 class BTMonsterCombatant : public BTCombatant
 {
  public:
-  BTMonsterCombatant(BTMonsterGroup *grp, int startLevel, int startJob, int startAc, int startToHit, int startHp) : BTCombatant(startLevel, startJob, startAc, startToHit, startHp), group(grp) {}
+  BTMonsterCombatant(BTMonsterGroup *grp, int startLevel, int startJob, int startAc, int startToHit, int startHp) : BTCombatant(startLevel, startJob, startAc, startToHit, startHp), group(grp), save(0) {}
 
   void deactivate(int &activeNum);
   int getGender() const;
@@ -37,6 +37,8 @@ class BTMonsterCombatant : public BTCombatant
   bool hasTag(const std::string &t) const;
   bool isIllusion() const;
   bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
+
+  int save;
 
  protected:
   BTMonsterGroup *group;

@@ -251,11 +251,11 @@ bool BTMonster::isWandering() const
  return wandering;
 }
 
-bool BTMonster::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
+bool BTMonster::savingThrow(int saveBonus, int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  BTJobList &jobList = BTGame::getGame()->getJobList();
  int job = (isIllusion() ? BTJOB_ILLUSION : BTJOB_MONSTER);
- int save = jobList[job]->calcSave(level);
+ int save = jobList[job]->calcSave(level) + saveBonus;
  int roll = BTDice(1, 20, save).roll();
  if (roll == 20 + save)
   return true;

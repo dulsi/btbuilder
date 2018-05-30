@@ -78,7 +78,7 @@ class BTMonster : public XMLObject
   bool hasTag(const std::string &t) const;
   IBool isIllusion() const;
   bool isWandering() const;
-  bool savingThrow(int difficulty = BTSAVE_DIFFICULTY) const;
+  bool savingThrow(int saveBonus, int difficulty = BTSAVE_DIFFICULTY) const;
   void setName(const std::string &nm);
   void setPluralName(const std::string &nm);
   void setLevel(IShort l);

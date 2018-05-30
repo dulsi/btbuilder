@@ -1631,9 +1631,33 @@ int BTSaveBonusEffect::applyBonus(BTDisplay &d, BTCombat *combat, int g, int trg
   }
   d.drawStats();
  }
- else
+ else if (BTTARGET_ALLMONSTERS == g)
  {
-  // Doesn't work on monsters
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   for (size_t k = 0; k < grp->individual.size(); ++k)
+   {
+    grp->individual[k].save += bonus;
+   }
+  }
+ }
+ else if (g >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (size_t i = 0; i < grp->individual.size(); ++i)
+   {
+    grp->individual[i].save += bonus;
+   }
+  }
+  else
+  {
+   grp->individual[trgt].save += bonus;
+  }
  }
  return 0;
 }
@@ -1689,9 +1713,33 @@ void BTSaveBonusEffect::finishBonus(BTDisplay &d, BTCombat *combat, int g, int t
   }
   d.drawStats();
  }
- else
+ else if (BTTARGET_ALLMONSTERS == g)
  {
-  // Doesn't work on monsters
+  for (int i = 0; i < BTCOMBAT_MAXENCOUNTERS; ++i)
+  {
+   BTMonsterGroup *grp = combat->getMonsterGroup(i);
+   if (NULL == grp)
+    break;
+   for (size_t k = 0; k < grp->individual.size(); ++k)
+   {
+    grp->individual[k].save -= bonus;
+   }
+  }
+ }
+ else if (g >= BTTARGET_MONSTER)
+ {
+  BTMonsterGroup *grp = combat->getMonsterGroup(g - BTTARGET_MONSTER);
+  if (BTTARGET_INDIVIDUAL == trgt)
+  {
+   for (size_t i = 0; i < grp->individual.size(); ++i)
+   {
+    grp->individual[i].save -= bonus;
+   }
+  }
+  else
+  {
+   grp->individual[trgt].save -= bonus;
+  }
  }
 }
 
