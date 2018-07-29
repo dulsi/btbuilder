@@ -7,6 +7,7 @@
 
 #include "pc.h"
 #include "game.h"
+#include "log.h"
 #include <algorithm>
 
 void BTEquipment::serialize(ObjectSerializer* s)
@@ -762,6 +763,7 @@ void BTPc::rollInitiative()
 bool BTPc::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  int roll = BTDice(1, 20, save).roll();
+ LOG(Log::trace, std::string(name) + " saving throw bonus " + std::to_string(save) + " total " + std::to_string(roll) + " vs. " + std::to_string(difficulty));
  if (roll == 20 + save)
   return true;
  else if (roll == 1 + save)
