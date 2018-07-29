@@ -7,6 +7,7 @@
 
 #include "spell.h"
 #include "game.h"
+#include "log.h"
 
 int BTSpell::version(1);
 
@@ -153,6 +154,9 @@ int BTSpell::activate(BTDisplay &d, const char *activation, bool partySpell, BTC
  BTGame *game = BTGame::getGame();
  BTParty &party = game->getParty();
  unsigned int expire = game->getDurationList()[duration]->duration(casterLevel);
+ LOG(Log::trace, std::string("Casting ") + name + ", duration " + std::to_string(expire));
+ if ((expire != BTTIME_COMBAT) && (expire != BTTIME_PERMANENT) && (expire != BTTIME_CONTINUOUS) && (expire != BTTIME_INDEFINITE))
+  expire = game->getExpiration(expire);
  std::string text = activation;
  if (text.length() > 0)
   text += " ";

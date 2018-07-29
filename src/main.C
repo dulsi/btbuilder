@@ -9,8 +9,10 @@
 #include "game.h"
 #include "psuedo3d.h"
 #include "job.h"
+#include "log.h"
 #include <getopt.h>
 #include <SDL.h>
+#include <memory>
 #include <iostream>
 #include <physfs.h>
 
@@ -96,6 +98,7 @@ int main(int argc, char *argv[])
   {"xml", 1, 0, 'x'},
   {"multiplier", 1, 0, 'u'},
   {"display",  1, 0, 'd'},
+  {"debug",  0, 0, 'g'},
   {0, 0, 0, 0}
  };
 
@@ -106,9 +109,11 @@ int main(int argc, char *argv[])
  int multiplier = 0;
  std::string libDir(TOSTRING(BTBUILDERDIR));
  std::string displayDir;
+ std::string logFile("btbuilder-log.txt");
  bool full = false;
  bool softRender = false;
- while ((opt = getopt_long(argc,argv,"imsap:x:e:l:u:fwd:", long_options, NULL)) != -1)
+ std::unique_ptr<Log> logger;
+ while ((opt = getopt_long(argc,argv,"imsap:x:e:l:u:fwd:g", long_options, NULL)) != -1)
  {
   switch (opt)
   {
@@ -168,6 +173,12 @@ int main(int argc, char *argv[])
    case 'w':
     softRender = true;
     break;
+   case 'g':
+   {
+    std::unique_ptr<Log> lg(new Log(Log::trace, logFile));
+    logger = std::move(lg);
+    break;
+   }
    default:
     break;
   }
