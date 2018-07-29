@@ -60,7 +60,7 @@ bool BTMonsterCombatant::isIllusion() const
 bool BTMonsterCombatant::savingThrow(int difficulty /*= BTSAVE_DIFFICULTY*/) const
 {
  BTFactory<BTMonster> &monList = BTGame::getGame()->getMonsterList();
- return monList[group->monsterType].savingThrow(save, BTSAVE_DIFFICULTY);
+ return monList[group->monsterType].savingThrow(save, difficulty);
 }
 
 BTMonsterGroup::~BTMonsterGroup()
