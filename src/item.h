@@ -51,7 +51,7 @@ class BTItem : public XMLObject
   const BTDice &getDamage() const;
   const char *getEffect() const;
   IShort getHitPlus() const;
-  IShort getPrice() const;
+  int getPrice() const;
   IShort getSpellCast() const;
   IShort getTimesUsable() const;
   IShort getType() const;
@@ -77,7 +77,7 @@ class BTItem : public XMLObject
   int type;
   int spellCast;
   BitField classAllowed;
-  IShort price;
+  int price;
   char *cause;
   char *effect;
   bool consume;

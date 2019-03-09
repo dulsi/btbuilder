@@ -40,7 +40,8 @@ BTItem::BTItem(BinaryReadFile &f)
   if (jobAllowed & compatJobAllowed[i])
    classAllowed.set(i);
  }
- f.readShort(price);
+ f.readShort(num);
+ price = num;
  f.readUByteArray(24, (IUByte *)tmp);
  tmp[24] = 0;
  cause = new char[strlen(tmp) + 1];
@@ -124,7 +125,7 @@ IShort BTItem::getHitPlus() const
  return hitPlus;
 }
 
-IShort BTItem::getPrice() const
+int BTItem::getPrice() const
 {
  return price;
 }
@@ -182,7 +183,10 @@ void BTItem::write(BinaryWriteFile &f)
    jobAllowed |= compatJobAllowed[i];
  }
  f.writeShort(jobAllowed);
- f.writeShort(price);
+ num = price;
+ if (((int)num) != price)
+  throw FileException("Price of item beyond supported range in older file format.");
+ f.writeShort(num);
  strncpy(tmp, cause, 24);
  f.writeUByteArray(24, (IUByte *)tmp);
  strncpy(tmp, effect, 24);
