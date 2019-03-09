@@ -210,6 +210,7 @@ bool BTOperator::check(ObjectSerializer *obj) const
   }
   return true;
  }
+ return false;
 }
 
 void BTOperator::serialize(ObjectSerializer* s)
@@ -1954,7 +1955,7 @@ int BTScreenSet::exit(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 int BTScreenSet::exitAndSave(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
 {
  BTGame::getGame()->save();
- exit(b, d, item, key);
+ return exit(b, d, item, key);
 }
 
 int BTScreenSet::findTraps(BTScreenSet &b, BTDisplay &d, BTScreenItem *item, int key)
