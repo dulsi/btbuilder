@@ -32,73 +32,67 @@
 		<checkBit>
 			<attribute>status</attribute>
 			<bit>0</bit>
-			<print>
-				<text>-DEAD-</text>
-				<position><x>8</x><y>0</y><w>48</w><h>8</h></position>
-				<align>center</align>
-    <color>red</color>
-			</print>
+			<statusIcon>
+				<image>ui/pocketchip/icons/death.png</image>
+				<position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+   </statusIcon>
 		</checkBit>
 		<checkBit>
 			<attribute>status</attribute>
 			<bit>5</bit>
-			<print>
-				<text>-STONE-</text>
-				<position><x>8</x><y>0</y><w>48</w><h>8</h></position>
-				<align>right</align>
-    <color>red</color>
-			</print>
+			<statusIcon>
+				<image>ui/pocketchip/icons/stone.png</image>
+				<position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+   </statusIcon>
 		</checkBit>
   <conditional>
    <checkBit>
     <attribute>status</attribute>
     <bit>1</bit>
-    <print>
-     <text>PSN</text>
-     <position><x>12</x><y>0</y><w>40</w><h>8</h></position>
-     <align>right</align>
-     <color>red</color>
-    </print>
+    <statusIcon>
+     <image>ui/pocketchip/icons/poison.png</image>
+     <position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+    </statusIcon>
    </checkBit>
    <checkBit>
     <attribute>status</attribute>
     <bit>4</bit>
-    <print>
-     <text>POS</text>
-     <position><x>12</x><y>0</y><w>40</w><h>8</h></position>
-     <align>right</align>
-     <color>red</color>
-    </print>
+    <statusIcon>
+     <image>ui/pocketchip/icons/possessed.png</image>
+     <position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+    </statusIcon>
+   </checkBit>
+   <checkBit>
+    <attribute>status</attribute>
+    <bit>8</bit>
+    <statusIcon>
+     <image>ui/pocketchip/icons/possessed.png</image>
+     <position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+    </statusIcon>
    </checkBit>
    <checkBit>
     <attribute>status</attribute>
     <bit>3</bit>
-    <print>
-     <text>OLD</text>
-     <position><x>12</x><y>0</y><w>40</w><h>8</h></position>
-     <align>right</align>
-     <color>red</color>
-    </print>
+    <statusIcon>
+     <image>ui/pocketchip/icons/old.png</image>
+     <position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+    </statusIcon>
    </checkBit>
    <checkBit>
     <attribute>status</attribute>
     <bit>2</bit>
-    <print>
-     <text>NUT</text>
-     <position><x>12</x><y>0</y><w>40</w><h>8</h></position>
-     <align>right</align>
-     <color>red</color>
-    </print>
+    <statusIcon>
+     <image>ui/pocketchip/icons/nuts.png</image>
+     <position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+    </statusIcon>
    </checkBit>
    <checkBit>
     <attribute>status</attribute>
     <bit>6</bit>
-    <print>
-     <text>PAR</text>
-     <position><x>12</x><y>0</y><w>40</w><h>8</h></position>
-     <align>right</align>
-     <color>red</color>
-    </print>
+    <statusIcon>
+     <image>ui/pocketchip/icons/paralyzed.png</image>
+     <position><x>48</x><y>0</y><w>16</w><h>8</h></position>
+    </statusIcon>
    </checkBit>
   </conditional>
 	</conditional>
