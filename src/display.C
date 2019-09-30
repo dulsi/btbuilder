@@ -1093,7 +1093,7 @@ void BTDisplay::drawStats()
 
 SDL_Color &BTDisplay::getBlack()
 {
- return black;
+ return getColor("black");
 }
 
 SDL_Color &BTDisplay::getColor(const std::string &color)
@@ -1123,6 +1123,7 @@ std::string BTDisplay::getCurrentLabel()
  {
   return widget->getText();
  }
+ return "";
 }
 
 void BTDisplay::getMultiplier(int &x, int &y)
