@@ -204,6 +204,7 @@ int BTSpecialBody::numOfOperations(bool recursive) const
     }
    }
   }
+  return count;
  }
  else
   return ops.size();
@@ -996,6 +997,19 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
    {
     context->setPc(party[key - '1']);
    }
+   break;
+  }
+  case BTSPECIALCOMMAND_SETRACE:
+   if (number[0] == 65535)
+    context->getPc()->race = atol(game->getLastInput().c_str());
+   else
+    context->getPc()->race = number[0];
+   break;
+  case BTSPECIALCOMMAND_ROLLABILITIES:
+  {
+   XMLVector<BTRace*> &race = BTGame::getGame()->getRaceList();
+   for (int i = 0; i < BT_STATS; ++i)
+    context->getPc()->stat[i] = context->getPc()->statMax[i] = race[context->getPc()->race]->stat[i].roll();
    break;
   }
   default:

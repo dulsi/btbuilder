@@ -1573,6 +1573,13 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
      BTAction *a = findAction(item->getAction());
      if (a)
      {
+      BTSelectCommon *commonSel = dynamic_cast<BTSelectCommon*>(item);
+      if (commonSel)
+      {
+       char tmp[50];
+       sprintf(tmp, "%d", commonSel->select);
+       game->setLastInput(tmp);
+      }
       next = a->run(d, this);
      }
      else

@@ -246,7 +246,9 @@ const char *specialCommands[] =
  "selected PC gains tag $$",
  "selected PC removes tag $$",
  "run xml file $$",
- "answer to \"$$\" is selected PC"
+ "answer to \"$$\" is selected PC",
+ "set race to $R",
+ "reroll abilities"
 };
 
 const char *directions[] =

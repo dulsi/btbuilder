@@ -321,7 +321,7 @@ BTMap *BTGame::loadMap(const char *filename, bool clearState /*= true*/)
   clearTimedSpecial();
   clearMapEffects();
  }
- BTCore::loadMap(filename);
+ return BTCore::loadMap(filename);
 }
 
 void BTGame::loadStart()
