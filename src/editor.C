@@ -487,9 +487,15 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
  int current(0);
  BTSpecialBody *body = special->getBody();
  std::vector<operationList> ops;
- std::vector<BTDisplay::selectItem> list(2);
+ std::vector<BTDisplay::selectItem> list(3);
  list[0].name = std::string("Name: ") + special->getName();
  list[1].name = "Flags: " + special->printFlags(false);
+ list[2].name = "Decoration: ";
+ if (special->getDecoration() > 0)
+ {
+  Psuedo3DConfig *p3dc = d.getPsuedo3D().getConfig();
+  list[2].name += p3dc->decorType[p3dc->findDecorationType(special->getDecoration()) - 1]->name;
+ }
  buildOperationList(d, body, list, ops);
  d.addSelection(list.data(), list.size(), start, current);
  int key;
@@ -532,6 +538,38 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
    special->setFlag(bits);
    d.clearText();
    list[1].name = "Flags: " + special->printFlags(false);
+  }
+  else if (current == 2)
+  {
+   Psuedo3DConfig *p3dc = d.getPsuedo3D().getConfig();
+   BTDisplay::selectItem lookupItem[p3dc->decorType.size() + 1];
+   int i = 0;
+   lookupItem[0].name = "";
+   lookupItem[0].value = 0;
+   ++i;
+   int lookupCurrent(0);
+   int valIndex(special->getDecoration());
+   for (int curIndex = 0; curIndex != p3dc->decorType.size(); curIndex++)
+   {
+    lookupItem[i].name = p3dc->decorType[curIndex]->name;
+    lookupItem[i].value = p3dc->decorType[curIndex]->type;
+    if (p3dc->decorType[curIndex]->type == valIndex)
+     lookupCurrent = i;
+    ++i;
+   }
+   int lookupStart(0);
+   d.addSelection(lookupItem, p3dc->decorType.size() + 1, lookupStart, lookupCurrent);
+   if (27 != d.process())
+   {
+    special->setDecoration(lookupItem[lookupCurrent].value);
+   }
+   d.clearText();
+   list[2].name = "Decoration: ";
+   if (special->getDecoration() > 0)
+   {
+    Psuedo3DConfig *p3dc = d.getPsuedo3D().getConfig();
+    list[2].name += p3dc->decorType[p3dc->findDecorationType(special->getDecoration()) - 1]->name;
+   }
   }
   else
   {
@@ -591,7 +629,7 @@ void BTEditor::editSpecial(BTDisplay &d, BTSpecial *special)
    }
   }
   ops.clear();
-  list.resize(2);
+  list.resize(3);
   buildOperationList(d, body, list, ops);
   d.addSelection(list.data(), list.size(), start, current);
  }

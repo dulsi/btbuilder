@@ -24,6 +24,20 @@ void Psuedo3DWallType::serialize(ObjectSerializer* s)
  }
 }
 
+void Psuedo3DDecorType::serialize(ObjectSerializer* s)
+{
+ s->add("type", &type);
+ s->add("name", &name);
+ for (int i = 0; i < DECOR_DIRECTIONS; ++i)
+ {
+  std::vector<XMLAttribute> *attrib = new std::vector<XMLAttribute>;
+  char tmp[10];
+  sprintf(tmp, "%d", i);
+  attrib->push_back(XMLAttribute("direction", tmp));
+  s->add("decoration", &decors[i], attrib);
+ }
+}
+
 void Psuedo3DMapType::serialize(ObjectSerializer* s)
 {
  s->add("type", &type);
@@ -85,6 +99,21 @@ int Psuedo3DConfig::findMapType(int type, bool complete)
  return 0;
 }
 
+int Psuedo3DConfig::findDecorationType(int type)
+{
+ if (type)
+ {
+  for (int i = 0; i < decorType.size(); ++i)
+  {
+   if (decorType[i]->type == type)
+   {
+    return i + 1;
+   }
+  }
+ }
+ return 0;
+}
+
 void Psuedo3DConfig::serialize(ObjectSerializer* s)
 {
  s->add("name", &name);
@@ -94,6 +123,7 @@ void Psuedo3DConfig::serialize(ObjectSerializer* s)
  s->add("background", &background);
  s->add("divide", &divide);
  s->add("walltype", &wallType, &Psuedo3DWallType::create);
+ s->add("decortype", &decorType, &Psuedo3DDecorType::create);
  s->add("mapHeight", &mapHeight);
  s->add("mapWidth", &mapWidth);
  s->add("maptype", &mapType, &Psuedo3DMapType::create);
@@ -182,4 +212,3 @@ size_t Psuedo3DConfigList::size()
 {
  return XMLVector<Psuedo3DConfig*>::size();
 }
-

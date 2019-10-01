@@ -82,6 +82,24 @@ void Psuedo3D::clear()
   delete [] walls;
   walls = NULL;
  }
+ if (decors)
+ {
+  for (int i = 0; i < config->decorType.size(); ++i)
+  {
+   for (int j = 0; j < DECOR_DIRECTIONS; ++j)
+   {
+    if (decors[i][j])
+    {
+     SDL_FreeSurface(decors[i][j]);
+     decors[i][j] = NULL;
+    }
+   }
+   delete [] decors[i];
+   decors[i] = NULL;
+  }
+  delete [] decors;
+  decors = NULL;
+ }
  if (background)
  {
   SDL_FreeSurface(background);
@@ -109,23 +127,28 @@ void Psuedo3D::draw(Psuedo3DMap *map, int x, int y, int direction)
  }
  if (light >= 4)
  {
+//  drawDecoration(map, x + (changeXY[direction][0] * 4), y + (changeXY[direction][1] * 4), direction, DECOR_FRONT4, 4);
   drawEdge(map, x + (changeXY[direction][0] * 4), y + (changeXY[direction][1] * 4), direction, WALL_EDGE_LEFT5_1, 2);
   drawFront(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_FRONT4, 3);
  }
  if (light >= 3)
  {
+  drawDecoration(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, DECOR_FRONT3, 2);
   drawEdge(map, x + (changeXY[direction][0] * 3), y + (changeXY[direction][1] * 3), direction, WALL_EDGE_LEFT4_1, 2);
   drawFront(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_FRONT3, 2);
  }
  if (light >= 2)
  {
+  drawDecoration(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, DECOR_FRONT2, 2);
   drawEdge(map, x + (changeXY[direction][0] * 2), y + (changeXY[direction][1] * 2), direction, WALL_EDGE_LEFT3_1, 1);
   drawFront(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_FRONT2, 1);
  }
  if (light >= 1)
  {
+  drawDecoration(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, DECOR_FRONT1, 1);
   drawEdge(map, x + changeXY[direction][0], y + changeXY[direction][1], direction, WALL_EDGE_LEFT2, 0);
   drawFront(map, x, y, direction, WALL_FRONT1, 1);
+  drawDecoration(map, x, y, direction, DECOR_FRONT0, 1);
   drawEdge(map, x, y, direction, WALL_EDGE_LEFT1, 0);
  }
 }
@@ -170,6 +193,20 @@ void Psuedo3D::setConfig(Psuedo3DConfig *configNew)
     }
     else
      walls[i][j] = NULL;
+   }
+  }
+  decors = new SDL_Surface_ary[config->decorType.size()];
+  for (int i = 0; i < config->decorType.size(); ++i)
+  {
+   decors[i] = new SDL_Surface_ptr[DECOR_DIRECTIONS];
+   for (int j = 0; j < DECOR_DIRECTIONS; ++j)
+   {
+    if (config->decorType[i]->decors[j])
+    {
+     decors[i][j] = loadImage(config->decorType[i]->decors[j], true);
+    }
+    else
+     decors[i][j] = NULL;
    }
   }
   mapWalls = new SDL_Surface_ary[config->mapType.size()];
@@ -286,6 +323,44 @@ void Psuedo3D::drawFront(Psuedo3DMap *map, int x, int y, int direction, int imag
    src.h = walls[type - 1][image]->h;
    dest.y = 0;
    SDL_BlitSurface(walls[type - 1][image], &src, display, &dest);
+  }
+ }
+}
+
+void Psuedo3D::drawDecoration(Psuedo3DMap *map, int x, int y, int direction, int image, int radius)
+{
+ SDL_Rect src, dest;
+ int type;
+ int curX, curY;
+ for (int i = -1 * radius; i <= radius; ++i)
+ {
+  curX = x + (changeXY[(direction + 1) % 4][0] * i);
+  curY = y + (changeXY[(direction + 1) % 4][1] * i);
+  map->rationalize(curX, curY);
+  type = config->findDecorationType(map->getDecorType(curX, curY));
+  if ((type > 0) && (decors[type - 1][image]))
+  {
+   int w = ((config->width * xMult) - walls[type - 1][image]->w) / 2;
+   int xPos = w + (decors[type - 1][image]->w * i);
+   if (xPos >= 0)
+   {
+    src.x = 0;
+    dest.x = xPos;
+    if (xPos + decors[type - 1][image]->w <= (config->width * xMult))
+     src.w = decors[type - 1][image]->w;
+    else
+     src.w = (config->width * xMult) - xPos;
+   }
+   else
+   {
+    src.x = xPos * -1;
+    dest.x = 0;
+    src.w = decors[type - 1][image]->w + xPos;
+   }
+   src.y = 0;
+   src.h = decors[type - 1][image]->h;
+   dest.y = 0;
+   SDL_BlitSurface(decors[type - 1][image], &src, display, &dest);
   }
  }
 }

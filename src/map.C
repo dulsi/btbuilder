@@ -1452,19 +1452,21 @@ void BTSpecialConditional::write(BinaryWriteFile &f)
 }
 
 BTSpecial::BTSpecial()
+ : decoration(0)
 {
  name = new char[1];
  name[0] = 0;
 }
 
 BTSpecial::BTSpecial(const BTSpecial &copy)
- : flags(copy.flags), body(copy.body)
+ : flags(copy.flags), body(copy.body), decoration(copy.decoration)
 {
  name = new char[strlen(copy.name) + 1];
  strcpy(name, copy.name);
 }
 
 BTSpecial::BTSpecial(BinaryReadFile &f)
+ : decoration(0)
 {
  char tmp[26];
  IUByte unknown;
@@ -1575,6 +1577,11 @@ BTSpecialBody *BTSpecial::getBody()
  return &body;
 }
 
+int BTSpecial::getDecoration() const 
+{
+ return decoration;
+}
+
 const BitField &BTSpecial::getFlag() const
 {
  return flags;
@@ -1642,12 +1649,18 @@ void BTSpecial::serialize(ObjectSerializer* s)
  BTSpecialFlagList &flagList = game->getSpecialFlagList();
  s->add("name", &name);
  s->add("flag", &flags, &flagList);
+ s->add("decoration", &decoration);
  s->add("body", &body);
 }
 
 void BTSpecial::setFlag(const BitField &f)
 {
  flags = f;
+}
+
+void BTSpecial::setDecoration(int d)
+{
+ decoration = d;
 }
 
 void BTSpecial::setName(const std::string &nm)

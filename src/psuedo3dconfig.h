@@ -36,6 +36,13 @@
 #define WALL_EDGE_RIGHT5_2 22
 #define WALL_EDGE_RIGHT5_3 23
 
+#define DECOR_DIRECTIONS 5
+#define DECOR_FRONT0 0
+#define DECOR_FRONT1 1
+#define DECOR_FRONT2 2
+#define DECOR_FRONT3 3
+#define DECOR_FRONT4 4
+
 #define CARDINAL_DIRECTIONS 4
 
 class Psuedo3DWallType : public XMLObject
@@ -62,6 +69,32 @@ class Psuedo3DWallType : public XMLObject
   int type;
   std::vector<unsigned int> modulus;
   char *walls[WALL_DIRECTIONS];
+};
+
+class Psuedo3DDecorType : public XMLObject
+{
+ public:
+  Psuedo3DDecorType()
+   : type(-1)
+  {
+   for (int i = 0; i < DECOR_DIRECTIONS; ++i)
+    decors[i] = 0;
+  }
+
+  ~Psuedo3DDecorType()
+  {
+   for (int i = 0; i < DECOR_DIRECTIONS; ++i)
+     if (decors[i])
+      delete [] decors[i];
+  }
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new Psuedo3DDecorType; }
+
+  int type;
+  std::string name;
+  char *decors[DECOR_DIRECTIONS];
 };
 
 class Psuedo3DMapType : public XMLObject
@@ -112,6 +145,7 @@ class Psuedo3DConfig : public XMLObject
 
   int findWallType(int type, int position);
   int findMapType(int type, bool complete);
+  int findDecorationType(int type);
   virtual void serialize(ObjectSerializer* s);
   bool validate();
 
@@ -124,6 +158,7 @@ class Psuedo3DConfig : public XMLObject
   int divide;
   char *background;
   XMLVector<Psuedo3DWallType*> wallType;
+  XMLVector<Psuedo3DDecorType*> decorType;
   int mapHeight, mapWidth;
   XMLVector<Psuedo3DMapType*> mapType;
   char *mapSpecial;

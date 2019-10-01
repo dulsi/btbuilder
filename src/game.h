@@ -67,6 +67,7 @@ class BTCore : public Psuedo3DMap
   BTMap *readMap(const std::string &filename);
 
   int getMapType(int x, int y, int direction);
+  int getDecorType(int x, int y);
   int getXSize() const;
   int getYSize() const;
   bool hasSpecial(int x, int y);

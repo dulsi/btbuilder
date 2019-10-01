@@ -238,6 +238,17 @@ int BTCore::getMapType(int x, int y, int direction)
  return getMap()->getSquare(y, x).getWall(direction);
 }
 
+int BTCore::getDecorType(int x, int y)
+{
+ int sp = getMap()->getSquare(y, x).getSpecial();
+ if (sp != -1)
+ {
+  BTSpecial *spc = getMap()->getSpecial(sp);
+  return spc->getDecoration();
+ }
+ return 0;
+}
+
 int BTCore::getXSize() const
 {
  return levelMap->getXSize();

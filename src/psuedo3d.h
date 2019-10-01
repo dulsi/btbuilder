@@ -38,6 +38,7 @@ class Psuedo3D
  protected:
   void drawEdge(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
   void drawFront(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
+  void drawDecoration(Psuedo3DMap *map, int x, int y, int direction, int image, int radius);
   SDL_Surface *loadImage(const char *file, bool imageWindow);
 
  public:
@@ -49,6 +50,7 @@ class Psuedo3D
   SDL_Surface *display;
   SDL_Surface *background;
   SDL_Surface ***walls;
+  SDL_Surface ***decors;
   SDL_Surface ***mapWalls;
   SDL_Surface *mapSpecial;
   SDL_Surface *mapUnknown;

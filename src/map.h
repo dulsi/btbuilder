@@ -263,6 +263,7 @@ class BTSpecial : public XMLObject
   ~BTSpecial();
 
   BTSpecialBody *getBody();
+  int getDecoration() const;
   const BitField &getFlag() const;
   const char *getName() const;
   std::string printFlags(bool all = true) const;
@@ -270,6 +271,7 @@ class BTSpecial : public XMLObject
   void run(BTDisplay &d, BTSpecialContext *context) const;
   void serialize(ObjectSerializer* s);
   void setFlag(const BitField &f);
+  void setDecoration(int d);
   void setName(const std::string &nm);
   void write(BinaryWriteFile &f);
   void upgrade();
@@ -279,6 +281,7 @@ class BTSpecial : public XMLObject
  private:
   char *name;
   BitField flags;
+  int decoration;
   BTSpecialBody body;
 };
 
