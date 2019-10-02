@@ -13,6 +13,21 @@
 #include "group.h"
 #include "xmlserializer.h"
 
+class BTGameKnowledge : public XMLObject
+{
+ public:
+  BTGameKnowledge(const std::string &s) : name(s) { }
+  BTGameKnowledge() { }
+
+  virtual void serialize(ObjectSerializer* s);
+
+  static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTGameKnowledge; }
+
+  std::string name;
+  BitField flags;
+  BitField knowledge;
+};
+
 class BTEquipment : public XMLObject
 {
  public:
@@ -101,8 +116,8 @@ class BTPc : public XMLObject, public BTCombatant
   void youth();
 
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTPc; }
-  static void readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc);
-  static void writeXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc);
+  static void readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc, XMLVector<BTGameKnowledge*> &info);
+  static void writeXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc, XMLVector<BTGameKnowledge*> &info);
 
   char *name;
   int race;

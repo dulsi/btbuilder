@@ -277,7 +277,7 @@ BTGame::BTGame(BTModule *m)
  {
   game = this;
  }
- BTPc::readXML("roster.xml", group, roster);
+ BTPc::readXML("roster.xml", group, roster, info);
  loadStart();
  combat.open("data/combat.xml");
  status.open("data/status.xml");
@@ -327,8 +327,17 @@ BTMap *BTGame::loadMap(const char *filename, bool clearState /*= true*/)
  }
  if (clearState)
  {
-  local.clearAll();
-  knowledge.clearAll();
+  if (!module->knowledgeSaved)
+  {
+   auto itr = info.begin();
+   while (itr != info.end())
+   {
+    if ((*itr)->name != "")
+     itr = info.erase(itr);
+    else
+     itr++;
+   }
+  }
   clearTimedSpecial();
   clearMapEffects();
  }
@@ -558,13 +567,15 @@ BTStatus &BTGame::getStatus()
 
 bool BTGame::getLocalFlag(int index)
 {
- return local.isSet(index);
+ BTGameKnowledge *k = getGameKnowledge(levelMap->getFilename());
+ return k->flags.isSet(index);
 }
 
 int BTGame::getKnowledge(int x, int y)
 {
+ BTGameKnowledge *k = getGameKnowledge(levelMap->getFilename());
  int index = y * levelMap->getXSize() + x;
- if (knowledge.isSet(index))
+ if (k->knowledge.isSet(index))
   return BTKNOWLEDGE_YES;
  else
   return BTKNOWLEDGE_NO;
@@ -572,32 +583,36 @@ int BTGame::getKnowledge(int x, int y)
 
 bool BTGame::getGlobalFlag(int index)
 {
- return global.isSet(index);
+ BTGameKnowledge *k = getGameKnowledge("");
+ return k->flags.isSet(index);
 }
 
 void BTGame::setLocalFlag(int index, bool value)
 {
+ BTGameKnowledge *k = getGameKnowledge(levelMap->getFilename());
  if (value)
-  local.set(index);
+  k->flags.set(index);
  else
-  local.clear(index);
+  k->flags.clear(index);
 }
 
 void BTGame::setKnowledge(int x, int y, bool value)
 {
+ BTGameKnowledge *k = getGameKnowledge(levelMap->getFilename());
  int index = y * levelMap->getXSize() + x;
  if (value)
-  knowledge.set(index);
+  k->knowledge.set(index);
  else
-  knowledge.clear(index);
+  k->knowledge.clear(index);
 }
 
 void BTGame::setGlobalFlag(int index, bool value)
 {
+ BTGameKnowledge *k = getGameKnowledge("");
  if (value)
-  global.set(index);
+  k->flags.set(index);
  else
-  global.clear(index);
+  k->flags.clear(index);
 }
 
 void BTGame::setRunSpecial()
@@ -1138,7 +1153,7 @@ int *BTGame::getDelay()
 
 void BTGame::save()
 {
- BTPc::writeXML("roster.xml", getGroup(), getRoster());
+ BTPc::writeXML("roster.xml", getGroup(), getRoster(), info);
  BTShop::writeXML("shops.xml", shops);
 }
 
@@ -1155,9 +1170,7 @@ void BTGame::serialize(ObjectSerializer *s, BTGroup &curParty, XMLVector<BTPc*> 
  s->add("counter", &counter);
  s->add("effectID", &effectID);
  s->add("gameTime", &gameTime);
- s->add("global", &global, NULL);
- s->add("local", &local, NULL);
- s->add("knowledge", &knowledge, NULL);
+ s->add("info", &info, &BTGameKnowledge::create);
  s->add("timedExpiration", &timedExpiration);
  s->add("timedSpecial", &timedSpecial);
  s->add("baseeffect", typeid(BTBaseEffect).name(), &effect, &BTBaseEffect::create);
@@ -1254,3 +1267,16 @@ BTGame *BTGame::getGame()
  return game;
 }
 
+BTGameKnowledge *BTGame::getGameKnowledge(const std::string &s)
+{
+ for (auto itr = info.begin(); itr != info.end(); itr++)
+ {
+  if ((*itr)->name == s)
+  {
+   return *itr;
+  }
+ }
+ BTGameKnowledge *ans = new BTGameKnowledge(s);
+ info.push_back(ans);
+ return ans;
+}

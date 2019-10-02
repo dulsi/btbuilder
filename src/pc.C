@@ -10,6 +10,13 @@
 #include "log.h"
 #include <algorithm>
 
+void BTGameKnowledge::serialize(ObjectSerializer* s)
+{
+ s->add("name", &name);
+ s->add("flags", &flags, NULL);
+ s->add("knowledge", &knowledge, NULL);
+}
+
 void BTEquipment::serialize(ObjectSerializer* s)
 {
  s->add("id", &id);
@@ -1082,21 +1089,24 @@ void BTPc::youth()
  status.clear(BTSTATUS_AGED);
 }
 
-void BTPc::readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc)
+void BTPc::readXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc, XMLVector<BTGameKnowledge*> &info)
 {
  XMLSerializer parser;
  parser.add("party", &group, &BTGroup::create);
  parser.add("pc", &pc, &BTPc::create);
+ parser.add("info", &info, &BTGameKnowledge::create);
  parser.parse(filename, true);
  for (int i = 0; i < pc.size(); ++i)
   pc[i]->updateSkills();
 }
 
-void BTPc::writeXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc)
+void BTPc::writeXML(const char *filename, XMLVector<BTGroup*> &group, XMLVector<BTPc*> &pc, XMLVector<BTGameKnowledge*> &info)
 {
  XMLSerializer parser;
  parser.add("party", &group, &BTGroup::create);
  parser.add("pc", &pc, &BTPc::create);
+ if (BTGame::getGame()->getModule()->knowledgeSaved)
+  parser.add("info", &info, &BTGameKnowledge::create);
  parser.write(filename, true);
 }
 

@@ -179,6 +179,9 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   static BTGame *getGame();
 
  private:
+  BTGameKnowledge *getGameKnowledge(const std::string &s);
+
+ private:
   BTJobAbbrevList jobAbbrevList;
   XMLVector<BTGroup*> group;
   XMLVector<BTPc*> roster;
@@ -190,9 +193,7 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   BTChest chest;
   BTCombat combat;
   BTStatus status;
-  BitField local;
-  BitField global;
-  BitField knowledge;
+  XMLVector<BTGameKnowledge*> info;
   unsigned int gameTime;
   unsigned int timedExpiration;
   IShort timedSpecial;

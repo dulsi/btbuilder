@@ -11,7 +11,7 @@
 #include <string.h>
 
 BTModule::BTModule()
- : name(NULL), author(NULL), content(NULL), startX(0), startY(0), startFace(0), maxItems(8), maxParty(7), maxTime(14400), nightTime(7200), bonusStacking(true), development(false)
+ : name(NULL), author(NULL), content(NULL), startX(0), startY(0), startFace(0), maxItems(8), maxParty(7), maxTime(14400), nightTime(7200), bonusStacking(true), knowledgeSaved(false), development(false)
 {
  duration = new char[strlen("data/duration.xml") + 1];
  strcpy(duration, "data/duration.xml");
@@ -106,5 +106,6 @@ void BTModule::serialize(ObjectSerializer* s)
  s->add("maxTime", &maxTime);
  s->add("nightTime", &nightTime);
  s->add("bonusStacking", &bonusStacking);
+ s->add("knowledgeSaved", &knowledgeSaved);
  s->add("development", &development);
 }
