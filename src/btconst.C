@@ -248,7 +248,8 @@ const char *specialCommands[] =
  "run xml file $$",
  "answer to \"$$\" is selected PC",
  "set race to $R",
- "reroll abilities"
+ "reroll abilities",
+ "save the roster"
 };
 
 const char *directions[] =

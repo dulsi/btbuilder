@@ -1012,6 +1012,11 @@ void BTSpecialCommand::run(BTDisplay &d, BTSpecialContext *context) const
     context->getPc()->stat[i] = context->getPc()->statMax[i] = race[context->getPc()->race]->stat[i].roll();
    break;
   }
+  case BTSPECIALCOMMAND_SAVEROSTER:
+  {
+   BTGame::getGame()->save();
+   break;
+  }
   default:
    break;
  }

@@ -642,6 +642,11 @@ void BTGame::run(BTDisplay &d)
     turnAround(d);
     activateSpecial = move(d, facing);
    }
+   catch (const BTSpecialTeleport &t)
+   {
+    teleport(d, t.map, t.x, t.y, t.facing);
+    activateSpecial = t.activate;
+   }
   }
   for (int i = 0; i < party.size(); ++i)
   {

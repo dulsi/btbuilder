@@ -163,7 +163,7 @@ extern ArrayLookup combatActionLookup;
 #define BTCONDITION_EVERYONESKILLCHECK 24
 extern const char *conditionalCommands[];
 
-#define BT_SPECIALCOMMANDS 68
+#define BT_SPECIALCOMMANDS 69
 #define BTSPECIALCOMMAND_NOTHING          0
 #define BTSPECIALCOMMAND_STOP             1
 #define BTSPECIALCOMMAND_SPIN             2
@@ -232,6 +232,7 @@ extern const char *conditionalCommands[];
 #define BTSPECIALCOMMAND_SELECTPERSON     65
 #define BTSPECIALCOMMAND_SETRACE          66
 #define BTSPECIALCOMMAND_ROLLABILITIES    67
+#define BTSPECIALCOMMAND_SAVEROSTER       68
 extern const char *specialCommands[];
 
 #define BTSPECIAL_NONE -1
