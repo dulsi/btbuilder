@@ -325,7 +325,7 @@ BTMap *BTGame::loadMap(const char *filename, bool clearState /*= true*/)
    }
   }
  }
- if (clearState == false)
+ if (clearState)
  {
   local.clearAll();
   knowledge.clearAll();
