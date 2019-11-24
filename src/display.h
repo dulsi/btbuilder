@@ -301,6 +301,7 @@ class BTDisplay : public ImageLoader
   std::map<SDL_Keycode, char> key;
   std::map<SDL_Keycode, char> shiftKey;
   std::map<SDL_Keycode, char> rightAltKey;
+  std::map<SDL_Keycode, char> ctrlKey;
 
   static std::string displayDir;
 };

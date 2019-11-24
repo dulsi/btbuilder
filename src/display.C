@@ -1281,7 +1281,15 @@ unsigned int BTDisplay::readChar(int delay /*= 0*/)
       return itr->second;
      }
     }
-    else if ((sdlevent.key.keysym.mod & (KMOD_CTRL | KMOD_ALT | KMOD_GUI)) != 0)
+    else if ((sdlevent.key.keysym.mod & (KMOD_CTRL)) != 0)
+    {
+     auto itr = ctrlKey.find(sdlevent.key.keysym.sym);
+     if (itr != ctrlKey.end())
+     {
+      return itr->second;
+     }
+    }
+    else if ((sdlevent.key.keysym.mod & (KMOD_ALT | KMOD_GUI)) != 0)
     {
     }
     else if ((((sdlevent.key.keysym.mod & KMOD_CAPS) != 0) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) == 0)) || (((sdlevent.key.keysym.mod & KMOD_CAPS) == 0) && ((sdlevent.key.keysym.mod & KMOD_SHIFT) != 0)))
@@ -2123,6 +2131,10 @@ void BTDisplay::setupKeyMap()
  shiftKey.insert(std::pair<SDL_Keycode, char>(SDLK_z, 'Z'));
 
  rightAltKey.insert(std::pair<SDL_Keycode, char>(SDLK_n, '~'));
+
+ ctrlKey.insert(std::pair<SDL_Keycode, char>(SDLK_c, BTKEY_CTRL_C));
+ ctrlKey.insert(std::pair<SDL_Keycode, char>(SDLK_v, BTKEY_CTRL_V));
+ ctrlKey.insert(std::pair<SDL_Keycode, char>(SDLK_x, BTKEY_CTRL_X));
 }
 
 void BTDisplay::setupScreens(BTDisplayConfig *c, int xMult, int yMult)
