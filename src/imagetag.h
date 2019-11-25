@@ -23,6 +23,7 @@ class BTImageTag : public XMLObject
   static XMLObject *create(const XML_Char *name, const XML_Char **atts) { return new BTImageTag; }
   static void readXML(const char *filename, XMLVector<BTImageTag*> &tag);
 
+  int slot;
   std::string name;
   std::string artist;
   std::string matchString;

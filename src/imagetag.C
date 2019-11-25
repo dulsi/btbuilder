@@ -9,6 +9,7 @@
 #include <sstream>
 
 BTImageTag::BTImageTag()
+ : slot(-1)
 {
 }
 
@@ -34,6 +35,7 @@ bool BTImageTag::match(std::vector<std::string> words)
 
 void BTImageTag::serialize(ObjectSerializer* s)
 {
+ s->add("slot", &slot);
  s->add("name", &name);
  s->add("artist", &artist);
 }
@@ -41,8 +43,34 @@ void BTImageTag::serialize(ObjectSerializer* s)
 void BTImageTag::readXML(const char *filename, XMLVector<BTImageTag*> &tag)
 {
  XMLSerializer parser;
- parser.add("imageTag", &tag, &BTImageTag::create);
+ XMLVector<BTImageTag*> tagNew(false);
+ parser.add("imageTag", &tagNew, &BTImageTag::create);
  parser.parse(filename, true);
+ for (auto itr : tagNew)
+ {
+  if (itr->slot == -1)
+  {
+   itr->slot = tag.size();
+   tag.push_back(itr);
+  }
+  else
+  {
+   if (tag.size() <= itr->slot)
+   {
+    while (tag.size() < itr->slot)
+    {
+     tag.push_back(new BTImageTag);
+     tag.back()->slot = tag.size()-1;
+    }
+    tag.push_back(itr);
+   }
+   else
+   {
+    delete tag[itr->slot];
+    tag[itr->slot] = itr;
+   }
+  }
+ }
  for (size_t i = 0; i < tag.size(); i++)
   tag[i]->buildMatchString();
 }

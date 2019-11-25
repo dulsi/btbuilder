@@ -34,6 +34,8 @@ BTCore::BTCore(BTModule *m)
  BTSong::readXML(m->song, songList);
  Psuedo3DConfig::readXML(BTDisplay::applyDisplayDir(m->wall).c_str(), p3dConfigList);
  BTImageTag::readXML("data/imagetag.xml", tagList);
+ if (PHYSFS_exists("data/imagemodtag.xml"))
+  BTImageTag::readXML("data/imagemodtag.xml", tagList);
 }
 
 BTCore::~BTCore()
