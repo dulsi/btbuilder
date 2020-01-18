@@ -36,6 +36,7 @@ BTCore::BTCore(BTModule *m)
  BTImageTag::readXML("data/imagetag.xml", tagList);
  if (PHYSFS_exists("data/imagemodtag.xml"))
   BTImageTag::readXML("data/imagemodtag.xml", tagList);
+ BTFlagName::readXML("data/flag.xml", flagName);
 }
 
 BTCore::~BTCore()
@@ -63,6 +64,11 @@ std::string BTCore::descendMap(int depth)
 BTDurationList &BTCore::getDurationList()
 {
  return durationList;
+}
+
+BTFlagNameList &BTCore::getFlagNameList()
+{
+ return flagName;
 }
 
 BTImageTagList &BTCore::getImageTagList()

@@ -13,6 +13,7 @@
 #include "display.h"
 #include "duration.h"
 #include "factory.h"
+#include "flagname.h"
 #include "imagetag.h"
 #include "item.h"
 #include "job.h"
@@ -46,6 +47,7 @@ class BTCore : public Psuedo3DMap
 
   std::string descendMap(int depth);
   BTDurationList &getDurationList();
+  BTFlagNameList &getFlagNameList();
   BTImageTagList &getImageTagList();
   BTItemSlotList &getItemSlotList();
   BTItemTypeList &getItemTypeList();
@@ -94,6 +96,7 @@ class BTCore : public Psuedo3DMap
   Psuedo3DConfigList p3dConfigList;
   Psuedo3DConfig *p3dConfig;
   BTImageTagList tagList;
+  BTFlagNameList flagName;
 
   static BTCore *core;
 };

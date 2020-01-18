@@ -1928,6 +1928,11 @@ const BitField &BTMap::getFlag() const
 {
  return flags;
 }
+
+BTFlagNameList &BTMap::getFlagNameList()
+{
+ return flagName;
+}
  
 IShort BTMap::getLevel() const
 {
@@ -2114,6 +2119,7 @@ void BTMap::serialize(ObjectSerializer* s)
  s->add("square", &square, &BTMapSquare::create);
  s->add("special", &specials, &BTSpecial::create);
  s->add("streetName", &streetName);
+ s->add("flag", &flagName, &BTFlagName::create);
 }
 
 void BTMap::write(BinaryWriteFile &f)
@@ -2179,6 +2185,8 @@ void BTMap::upgrade()
    specials[i]->upgrade();
   }
  }
+ for (size_t i = 0; i < flagName.size(); i++)
+  flagName[i]->buildMatchString();
  version = 2;
 }
 

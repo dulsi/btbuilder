@@ -135,7 +135,8 @@ ArrayLookup combatActionLookup(BT_COMBATACTIONS, combatActions);
  * $C - class
  * $D - direction
  * $E - spell type
- * $F - flag number
+ * $F - local flag number
+ * $G - global flag number
  * $I - item
  * $K - skill
  * $L - location
@@ -146,7 +147,7 @@ ArrayLookup combatActionLookup(BT_COMBATACTIONS, combatActions);
  * $S - special
  * $T - trap special attack
  * $X - spell
- * $# or $G - number
+ * $# - number
  * $$ - text
  * $! - sound
  */
@@ -165,9 +166,9 @@ const char *conditionalCommands[] =
  "counter > $#",
  "counter = $#",
  "party won last combat",
- "global flag $F is set",
- "global flag $F is clear",
- "random percent <= $G",
+ "global flag $G is set",
+ "global flag $G is clear",
+ "random percent <= $#",
  "race $R is in party",
  "can take $# gold from party",
  "$E is active",
@@ -219,11 +220,11 @@ const char *specialCommands[] =
  "set counter to $#",
  "add $# to counter",
  "set encounter: $M",
- "set encounter: $G $M",
+ "set encounter: $# $M",
  "begin combat",
  "chest holding $I,trap $T,damage $#,message $$",
- "set global flag $F",
- "clear global flag $F",
+ "set global flag $G",
+ "clear global flag $G",
  "give party $# gold",
  "give party $# experience",
  "press any key",

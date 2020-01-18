@@ -158,6 +158,12 @@ unsigned int BTTextWidget::process(BTBackgroundAndScreen *d, const char *special
    item->select = selectImage(d, item->select);
    return 13;
   }
+  else if (BTUI_SELECTFLAG == processor->getType())
+  {
+   BTUISelectFlag *item = static_cast<BTUISelectFlag*>(processor);
+   item->select = selectFlag(d, item->select, item->flagName);
+   return 13;
+  }
   else if (BTUI_SELECT == processor->getType())
   {
    select = static_cast<BTUISelect*>(processor);
@@ -333,7 +339,7 @@ void BTTextWidget::render(BTBackgroundAndScreen *d, bool refresh /*= false*/)
   std::vector<BTUIElement*>::iterator top = element.begin();
   for (; top != elementEnd; ++top)
   {
-   if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()))
+   if ((BTUI_SELECT == (*top)->getType()) || (BTUI_BARRIER == (*top)->getType()) || (BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()) || (BTUI_SELECTFLAG == (*top)->getType()))
    {
     break;
    }
@@ -395,7 +401,7 @@ void BTTextWidget::render(BTBackgroundAndScreen *d, bool refresh /*= false*/)
      d->drawFont(item->text.c_str(), item->position, d->getColor("black"), item->align);
     }
    }
-   if ((BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()))
+   if ((BTUI_READSTRING == (*top)->getType()) || (BTUI_SELECTIMAGE == (*top)->getType()) || (BTUI_SELECTFLAG == (*top)->getType()))
    {
     processor = *top;
     return;
@@ -434,6 +440,147 @@ void BTTextWidget::render(BTBackgroundAndScreen *d, bool refresh /*= false*/)
   d->clear(dst);
   d->drawFont(last.c_str(), dst, d->getColor("black"), BTAlignment::left);
  }
+}
+
+int BTTextWidget::selectFlag(BTBackgroundAndScreen *d, int initial, BTFlagNameList *f)
+{
+ bool blank = true;
+ bool enterMode = false;
+ std::string s;
+ int w, h;
+ d->getDisplay()->sizeFont(s.c_str(), w, h);
+ if (h + textPos > location.h)
+ {
+  d->scrollUp(location, h);
+  textPos -= h;
+ }
+ while (f->size() <= initial)
+ {
+  f->push_back(new BTFlagName);
+  f->back()->slot = f->size()-1;
+ }
+ unsigned char key;
+ int len = s.length();
+ SDL_Rect dst;
+ dst.h = h;
+ int startPos = textPos;
+ std::string full;
+ full += s;
+ dst.x = location.x;
+ dst.y = location.y + textPos;
+ dst.w = location.w;
+ d->getDisplay()->drawText(full.c_str());
+ int endPos = textPos;
+ int bottomPos = location.h;
+ int current = initial;
+ int selected = current;
+ int sz = 0;
+ int st = 0;
+ BTDisplay::selectItem *sl = f->search(s, blank, current, sz, selected);
+ BTUISelect *select = new BTUISelect(sl, sz, st, selected);
+ select->position.x = location.x;
+ select->position.y = location.y + textPos;
+ select->position.w = location.w;
+ select->position.h = bottomPos - textPos;
+ select->sanitize(*d->getDisplay());
+ select->draw(d);
+ d->getDisplay()->render();
+ while ((((key = d->getDisplay()->readChar()) != 13) && (key !=  27)) || enterMode)
+ {
+  bool searchChange = false;
+  if (enterMode)
+  {
+   if ((key == '\t') || (key == 13))
+   {
+    (*f)[current]->name = sl[selected].name;
+    (*f)[current]->buildMatchString();
+    enterMode = false;
+   }
+   else if (key == 8)
+   {
+    if (sl[selected].name.length() > 0)
+    {
+     sl[selected].name.erase(sl[selected].name.length() - 1);
+    }
+   }
+   else if ((sl[selected].name.length() < 50) && (key >= ' ') && (key <= '~'))
+   {
+    sl[selected].name.push_back(key);
+   }
+  }
+  else
+  {
+   if (key == 8)
+   {
+    if (len > 0)
+    {
+     s.erase(--len);
+     full.erase(full.length() - 1);
+     searchChange = true;
+    }
+   }
+   else if (key == '\t')
+   {
+    enterMode = true;
+   }
+   else if ((key == '+') || (key == BTKEY_UP))
+   {
+    select->moveUp(*d->getDisplay());
+   }
+   else if ((key == '-') || (key == BTKEY_DOWN))
+   {
+    if ((f->size() - 1 == selected) && (s == ""))
+    {
+     f->push_back(new BTFlagName);
+     f->back()->slot = f->size()-1;
+     current = selected;
+     sl = f->search(s, blank, current, sz, selected);
+     select->alter(sl, sz);
+     select->sanitize(*d->getDisplay());
+    }
+    select->moveDown(*d->getDisplay());
+   }
+   else if (key == BTKEY_PGUP)
+   {
+    select->pageUp(*d->getDisplay());
+   }
+   else if (key == BTKEY_PGDN)
+   {
+    select->pageDown(*d->getDisplay());
+   }
+   else if (key == BTKEY_F1)
+   {
+    blank = !blank;
+    searchChange = true;
+   }
+   else if ((len < 50) && (key >= ' ') && (key <= '~'))
+   {
+    s.push_back(key);
+    full.push_back(key);
+    ++len;
+    searchChange = true;
+   }
+   else
+    continue;
+  }
+  current = sl[selected].value;
+  if (searchChange)
+  {
+   sl = f->search(s, blank, current, sz, selected);
+   select->alter(sl, sz);
+   select->sanitize(*d->getDisplay());
+  }
+  dst.h = endPos - startPos;
+  d->clear(dst);
+  textPos = startPos;
+  d->getDisplay()->drawText(full.c_str());
+  if (textPos > endPos)
+   endPos = textPos;
+  select->draw(d);
+  d->getDisplay()->render();
+ }
+ delete select;
+ return ((key == 27) ? initial : current);
 }
 
 int BTTextWidget::selectImage(BTBackgroundAndScreen *d, int initial)
@@ -520,7 +667,7 @@ int BTTextWidget::selectImage(BTBackgroundAndScreen *d, int initial)
   current = sl[selected].value;
   if (searchChange)
   {
-   BTDisplay::selectItem *sl = tagList.search(s, blank, current, sz, selected);
+   sl = tagList.search(s, blank, current, sz, selected);
    select->alter(sl, sz);
    select->sanitize(*d->getDisplay());
   }
@@ -851,6 +998,15 @@ void BTDisplay::addSelection(selectItem *list, int size, int &start, int &select
  BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
  if (widget)
   widget->addElement(new BTUISelect(list, size, start, select, num));
+}
+
+void BTDisplay::addSelectFlag(int &select, BTFlagNameList *f)
+{
+ BTTextWidget *widget = dynamic_cast<BTTextWidget*>(getWidget("text"));
+ if (widget)
+ {
+  widget->addElement(new BTUISelectFlag(select, f));
+ }
 }
 
 void BTDisplay::addSelectImage(int &select)

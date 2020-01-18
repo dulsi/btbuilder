@@ -25,6 +25,7 @@
 #define BTUI_READSTRING 5
 #define BTUI_BARRIER 6
 #define BTUI_SELECTIMAGE 7
+#define BTUI_SELECTFLAG 8
 
 #define BTKEY_UP 1
 #define BTKEY_DOWN 2
@@ -62,6 +63,7 @@
 #endif
 
 class BTBackgroundAndScreen;
+class BTFlagNameList;
 
 class BTAlignment
 {
@@ -130,6 +132,7 @@ class BTTextWidget : public BTWidget
   unsigned int process(BTBackgroundAndScreen *d, const char *specialKeys = NULL, int *delay = 0, int delayOveride = -1);
   std::string readString(BTBackgroundAndScreen *d, const char *prompt, int max, const std::string &initial);
   void render(BTBackgroundAndScreen *d, bool refresh = false);
+  int selectFlag(BTBackgroundAndScreen *d, int initial, BTFlagNameList *f);
   int selectImage(BTBackgroundAndScreen *d, int initial);
 
  public:
@@ -202,6 +205,7 @@ class BTDisplay : public ImageLoader
   void addColumns(const std::list<std::string>& c);
   void addReadString(const std::string &prompt, int maxLen, std::string &response);
   void addSelection(selectItem *list, int size, int &start, int &select, int num = 0);
+  void addSelectFlag(int &select, BTFlagNameList *f);
   void addSelectImage(int &select);
   void clear(SDL_Surface *scr, SDL_Rect &r);
   void clearElements();
@@ -410,6 +414,17 @@ class BTUISelect : public BTUIElement
   int &start;
   int &select;
   int numbered;
+};
+
+class BTUISelectFlag : public BTUIElement
+{
+ public:
+  BTUISelectFlag(int &sel, BTFlagNameList *f) : select(sel), flagName(f) {}
+
+  virtual int getType() const { return BTUI_SELECTFLAG; }
+
+  int &select;
+  BTFlagNameList *flagName;
 };
 
 class BTUISelectImage : public BTUIElement

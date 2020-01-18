@@ -466,6 +466,7 @@ void BTEditor::editMap(BTDisplay &d, const char *filename)
    parser.add("map", levelMap);
    parser.write(levelMap->getFilename(), true);
   }
+  BTFlagName::writeXML("data/flag.xml", flagName);
  }
  d.setConfig(oldConfig);
 }
@@ -1028,8 +1029,6 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     break;
    }
    case '#':
-   case 'G':
-   case 'F':
    case '!':
    case 'J':
    {
@@ -1046,6 +1045,18 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
     if (27 == key)
      return NULL;
     number[count++] = atol(val.c_str());
+    break;
+   }
+   case 'F':
+   case 'G':
+   {
+    int val(number[count]);
+    d.addSelectFlag(val, ((dollarSign[1] == 'F') ? &levelMap->getFlagNameList() : &getFlagNameList()));
+    key = d.process();
+    d.clearText();
+    if (27 == key)
+     return NULL;
+    number[count++] = val;
     break;
    }
    case 'P':

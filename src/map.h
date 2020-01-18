@@ -10,6 +10,7 @@
 #include "istdlib.h"
 #include <file.h>
 #include "display.h"
+#include "flagname.h"
 #include "specialcontext.h"
 #include <typeinfo>
 
@@ -316,6 +317,7 @@ class BTMap : public XMLObject
   void checkRandomEncounter(BTDisplay &d) const;
   const char *getFilename() const;
   const BitField &getFlag() const;
+  BTFlagNameList &getFlagNameList();
   IShort getLevel() const;
   int getLight() const;
   int getMonsterChance() const;
@@ -354,6 +356,7 @@ class BTMap : public XMLObject
   XMLVector<BTMapSquare*> square;
   XMLVector<BTSpecial*> specials;
   std::vector<std::string> streetName;
+  BTFlagNameList flagName;
 };
 
 class BTLevel : public XMLObject
