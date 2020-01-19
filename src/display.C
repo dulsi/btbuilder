@@ -454,7 +454,7 @@ int BTTextWidget::selectFlag(BTBackgroundAndScreen *d, int initial, BTFlagNameLi
   d->scrollUp(location, h);
   textPos -= h;
  }
- while (f->size() <= initial)
+ while ((f->size() <= initial) || (f->size() < 16))
  {
   f->push_back(new BTFlagName);
   f->back()->slot = f->size()-1;

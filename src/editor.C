@@ -1051,6 +1051,7 @@ BTSpecialOperation *BTEditor::editSpecialOperation(BTDisplay &d, BTSpecialOperat
    case 'G':
    {
     int val(number[count]);
+    d.addText("Type to search flags. Tab to edit flag.");
     d.addSelectFlag(val, ((dollarSign[1] == 'F') ? &levelMap->getFlagNameList() : &getFlagNameList()));
     key = d.process();
     d.clearText();
