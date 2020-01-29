@@ -24,6 +24,7 @@ class BTMainScreen
   void runModule(std::string moduleFile);
   void editModule(std::string moduleFile, std::string mapFile = std::string());
 
+  bool hasModule(std::string moduleFile);
   void loadModule(std::string moduleFile, BTModule &module);
 
  protected:

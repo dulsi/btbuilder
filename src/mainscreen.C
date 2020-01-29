@@ -175,6 +175,21 @@ void BTMainScreen::editModule(std::string moduleFile, std::string mapFile /*= st
  PHYSFS_deinit();
 }
 
+bool BTMainScreen::hasModule(std::string moduleFile)
+{
+ init();
+ if (!PHYSFS_exists(moduleFile.c_str()))
+ {
+  PHYSFS_deinit();
+  return false;
+ }
+ else
+ {
+  PHYSFS_deinit();
+  return true;
+ }
+}
+
 void BTMainScreen::loadModule(std::string moduleFile, BTModule &module)
 {
  init();

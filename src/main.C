@@ -15,6 +15,10 @@
 #include <memory>
 #include <iostream>
 #include <physfs.h>
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
+
+namespace fs = boost::filesystem;
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
@@ -185,7 +189,19 @@ int main(int argc, char *argv[])
  }
 
  BTMainScreen mainScreen(argv[0], libDir, displayDir, multiplier, full, softRender);
- if (optind >= argc)
+ fs::path exeName(argv[0]);
+ std::string moduleFile = exeName.stem().string();
+ if (optind < argc)
+  moduleFile = argv[optind];
+ if (moduleFile != "btbuilder")
+ {
+  moduleFile = "module/" + moduleFile + ".xml";
+  if ((!mainScreen.hasModule(moduleFile)) && (optind >= argc))
+   moduleFile = "";
+ }
+ else
+  moduleFile = "";
+ if (moduleFile.empty())
  {
   if (mode != MODE_STANDARD)
    return 0;
@@ -194,23 +210,14 @@ int main(int argc, char *argv[])
  }
  else if (mode == MODE_STANDARD)
  {
-  std::string moduleFile("module/");
-  moduleFile += argv[optind];
-  moduleFile += ".xml";
   mainScreen.runModule(moduleFile);
   return 0;
  }
  else if (mode == MODE_EDITMAP)
  {
-  std::string moduleFile("module/");
-  moduleFile += argv[optind];
-  moduleFile += ".xml";
   mainScreen.editModule(moduleFile, mapFile);
   return 0;
  }
- std::string moduleFile("module/");
- moduleFile += argv[optind];
- moduleFile += ".xml";
  BTModule module;
  mainScreen.loadModule(moduleFile, module);
  BTGame game(&module);
