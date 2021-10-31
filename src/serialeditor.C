@@ -558,7 +558,6 @@ BTMonsterEditor::BTMonsterEditor()
 {
 }
 
-
 void BTMonsterEditor::initActive(ObjectSerializer &serial, BitField &active)
 {
  BTFactory<BTMonster> &monsterList = BTCore::getCore()->getMonsterList();

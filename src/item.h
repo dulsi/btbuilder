@@ -108,7 +108,7 @@ class BTItemSlot : public XMLObject
 class BTItemType : public XMLObject
 {
  public:
-  BTItemType() : mustEquip(true), showCharges(false), toHitBonus(BTTOHITBONUS_ALWAYS), itemSlot(0) {}
+  BTItemType() : mustEquip(true), showCharges(false), toHitBonus(BTTOHITBONUS_ALWAYS), itemSlot(0), bowDamage(BTBOWDAMAGE_ARROW) {}
 
   void serialize(ObjectSerializer* s);
 
@@ -120,6 +120,7 @@ class BTItemType : public XMLObject
   bool mustEquip;
   bool showCharges;
   int toHitBonus;
+  int bowDamage;
   int itemSlot;
 };
 

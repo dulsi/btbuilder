@@ -369,5 +369,11 @@ extern ArrayLookup mapDisplayModeLookup;
 extern const char *toHitBonus[];
 extern ArrayLookup toHitBonusLookup;
 
+#define BT_BOWDAMAGE 2
+#define BTBOWDAMAGE_ARROW 0
+#define BTBOWDAMAGE_BOW   1
+extern const char *bowDamage[];
+extern ArrayLookup bowDamageLookup;
+
 #endif
 

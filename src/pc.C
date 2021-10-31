@@ -248,9 +248,27 @@ std::string BTPc::attack(BTCombatant *defender, int weapon, int &numAttacksLeft,
   BTItem &itemWeapon = itemList[weapon];
   if (itemTypeList[itemWeapon.getType()]->toHitBonus != BTTOHITBONUS_ALWAYS)
    toHitBonus += itemWeapon.getHitPlus();
-  damageDice = itemWeapon.getDamage();
-  chanceXSpecial = itemWeapon.getChanceXSpecial();
-  xSpecial = itemWeapon.getXSpecial();
+  if ((BTITEM_ARROW == itemWeapon.getType()) && (itemTypeList[itemWeapon.getType()]->bowDamage == BTBOWDAMAGE_BOW))
+  {
+   for (int i = 0; i < BT_ITEMS; ++i)
+   {
+    if (BTITEM_NONE == item[i].id)
+     break;
+    if ((BTITEM_EQUIPPED == item[i].equipped) && (BTITEM_BOW == itemList[item[i].id].getType()))
+    {
+     damageDice = itemList[item[i].id].getDamage();
+     chanceXSpecial = itemList[item[i].id].getChanceXSpecial();
+     xSpecial = itemList[item[i].id].getXSpecial();
+     break;
+    }
+   }
+  }
+  else
+  {
+   damageDice = itemWeapon.getDamage();
+   chanceXSpecial = itemWeapon.getChanceXSpecial();
+   xSpecial = itemWeapon.getXSpecial();
+  }
   if (BTITEM_ARROW == itemWeapon.getType())
   {
    melee = false;

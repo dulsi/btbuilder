@@ -712,7 +712,7 @@ BTDisplay::BTDisplay(BTDisplayConfig *c, int multiplier /*= 0*/, bool full /*= f
  animation.frame = 0;
  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
  {
-  printf("Failed - SDL_Init\n");
+  printf("Failed - SDL_Init: %s\n", SDL_GetError());
   exit(0);
  }
  Mix_Init(MIX_INIT_FLAC | MIX_INIT_OGG);

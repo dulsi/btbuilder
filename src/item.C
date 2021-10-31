@@ -243,7 +243,7 @@ void BTItemType::serialize(ObjectSerializer* s)
  s->add("mustEquip", &mustEquip);
  s->add("showCharges", &showCharges);
  s->add("toHitBonus", &toHitBonus, NULL, &toHitBonusLookup);
- s->add("toHitBonus", &toHitBonus, NULL, &toHitBonusLookup);
+ s->add("bowDamage", &bowDamage, NULL, &bowDamageLookup);
  s->add("slot", &itemSlot, NULL, &BTCore::getCore()->getItemSlotList());
 }
 

@@ -340,3 +340,10 @@ const char *toHitBonus[] =
  "mustUse"
 };
 ArrayLookup toHitBonusLookup(BT_TOHITBONUS, toHitBonus);
+
+const char *bowDamage[] =
+{
+ "arrow",
+ "bow"
+};
+ArrayLookup bowDamageLookup(BT_BOWDAMAGE, bowDamage);
