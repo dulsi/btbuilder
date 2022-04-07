@@ -1,6 +1,6 @@
 Summary: Turn based role-playing game builder and engine
 Name: btbuilder
-Version: 0.5.18
+Version: 0.5.19
 Release: 1%{?dist}
 License: GPLv3+
 Url: http://www.identicalsoftware.com/btbuilder
@@ -60,6 +60,9 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/appdata/*.appdata
 %{_datadir}/btbuilder
 
 %changelog
+* Thu Apr 07 2022 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.19-1
+- New version of btbuilder released.
+
 * Sun Jan 26 2020 Dennis Payne <dulsi@identicalsoftware.com> - 0.5.18-1
 - New version of btbuilder released.
 
