@@ -99,6 +99,39 @@ int BitField::getMaxSet() const
  return -1;
 }
 
+int BitField::getMinSet() const
+{
+ if (bits)
+ {
+  for (int i = 0; i < size; ++i)
+  {
+   if (0 != bits[i])
+   {
+    int k = 0;
+    unsigned int value = bits[i];
+    while ((value  & 1) == 0)
+    {
+     ++k;
+     value >>= 1;
+    }
+    return k + (i * (sizeof(unsigned int) << 3));
+   }
+  }
+ }
+ else if (size != 0)
+ {
+  int i = 0;
+  unsigned int value = size;
+  while ((value & 1) == 0)
+  {
+   ++i;
+   value >>= 1;
+  }
+  return i;
+ }
+ return -1;
+}
+
 bool BitField::isSet(int index) const
 {
  if (bits)
