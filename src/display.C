@@ -1091,6 +1091,7 @@ void BTDisplay::drawImage(int pic)
 {
  picture = pic;
  char filename[50];
+ drawView();
  if (animation.animation)
  {
   IMG_FreeMNG(animation.animation);
@@ -1213,16 +1214,19 @@ void BTDisplay::drawView()
   screen.front()->removeAnimation(&animation);
  }
  Psuedo3DMap *m = Psuedo3DMap::getMap();
- p3d.draw(m, m->getX(), m->getY(), m->getFacing());
- SDL_Rect dst;
- dst.x = config->x3d * xMult;
- dst.y = config->y3d * yMult;
- dst.w = p3d.config->width * xMult;
- dst.h = p3d.config->height * yMult;
- screen.front()->drawImage(p3d.getDisplay(), dst);
- if ((config->mapDisplayMode == BTMAPDISPLAYMODE_ALWAYS) ||
-  ((config->mapDisplayMode == BTMAPDISPLAYMODE_NO3D) && (p3d.getConfig()->wallType.empty())))
-  drawMap(false);
+ if (0 != m->getXSize())
+ {
+  p3d.draw(m, m->getX(), m->getY(), m->getFacing());
+  SDL_Rect dst;
+  dst.x = config->x3d * xMult;
+  dst.y = config->y3d * yMult;
+  dst.w = p3d.config->width * xMult;
+  dst.h = p3d.config->height * yMult;
+  screen.front()->drawImage(p3d.getDisplay(), dst);
+  if ((config->mapDisplayMode == BTMAPDISPLAYMODE_ALWAYS) ||
+   ((config->mapDisplayMode == BTMAPDISPLAYMODE_NO3D) && (p3d.getConfig()->wallType.empty())))
+   drawMap(false);
+ }
 }
 
 void BTDisplay::drawIcons()
@@ -2415,6 +2419,15 @@ unsigned long BTBackgroundAndScreen::drawAnimationFrame(long ticks)
    src.y = 0;
    src.w = itr->animation->dst.w;
    src.h = itr->animation->dst.h;
+   int xMult, yMult;
+   display->getMultiplier(xMult, yMult);
+   if ((itr->animation->dst.x == display->getConfig()->x3d * xMult) && (itr->animation->dst.y == display->getConfig()->y3d * yMult))
+   {
+    if (screen)
+     SDL_BlitSurface(display->getPsuedo3D().getDisplay(), &src, screen, &itr->animation->dst);
+    else
+     display->drawImage(itr->animation->dst, display->getPsuedo3D().getDisplay());
+   }
    if (screen)
     SDL_BlitSurface(nextImg, &src, screen, &itr->animation->dst);
    else

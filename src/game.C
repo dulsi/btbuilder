@@ -259,12 +259,12 @@ int BTCore::getDecorType(int x, int y)
 
 int BTCore::getXSize() const
 {
- return levelMap->getXSize();
+ return (levelMap ? levelMap->getXSize() : 0);
 }
 
 int BTCore::getYSize() const
 {
- return levelMap->getYSize();
+ return (levelMap ? levelMap->getYSize() : 0);
 }
 
 bool BTCore::hasSpecial(int x, int y)
