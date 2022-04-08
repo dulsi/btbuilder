@@ -18,6 +18,7 @@ BuildRequires: SDL_mng-devel
 BuildRequires: SDL2_ttf-devel
 BuildRequires: desktop-file-utils
 BuildRequires: libappstream-glib
+BuildRequires: make
 Requires:       %{name}-data = %{version}
 Requires: hicolor-icon-theme
 
