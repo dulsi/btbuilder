@@ -17,6 +17,7 @@
 #include "imagetag.h"
 #include "item.h"
 #include "job.h"
+#include "keycommand.h"
 #include "module.h"
 #include "monster.h"
 #include "race.h"
@@ -97,6 +98,7 @@ class BTCore : public Psuedo3DMap
   Psuedo3DConfig *p3dConfig;
   BTImageTagList tagList;
   BTFlagNameList flagName;
+  XMLVector<BTKeyCommand*> keyList;
 
   static BTCore *core;
 };
@@ -179,10 +181,9 @@ class BTGame : public BTCore, public BTEffectGroup, BTSpecialContext
   void readSaveXML(const char *filename);
   void writeSaveXML(const char *filename);
 
-  static BTGame *getGame();
-
- private:
   BTGameKnowledge *getGameKnowledge(const std::string &s);
+
+  static BTGame *getGame();
 
  private:
   BTJobAbbrevList jobAbbrevList;

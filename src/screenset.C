@@ -1098,6 +1098,15 @@ void BTCan::draw(BTDisplay &d, ObjectSerializer *obj)
     break;
    }
    case XMLTYPE_BITFIELD:
+   {
+    if (checkValue)
+    {
+     unsigned int v = atoi(value.c_str());
+     if (!reinterpret_cast<BitField*>(state->object)->isSet(v))
+      return;
+    }
+    break;
+   }
    default:
     return;
     break;
@@ -1509,6 +1518,8 @@ void BTScreenSet::run(BTDisplay &d, int start /*= 0*/, bool status /*= true*/)
      add("party", grp);
      grp->serialize(this);
     }
+    add("global", game->getGameKnowledge(""));
+    add("local", game->getGameKnowledge(game->getMap()->getFilename()));
     if (pc[0])
     {
      add("pc", pc[0]);

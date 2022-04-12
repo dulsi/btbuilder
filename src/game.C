@@ -37,6 +37,7 @@ BTCore::BTCore(BTModule *m)
  if (PHYSFS_exists("data/imagemodtag.xml"))
   BTImageTag::readXML("data/imagemodtag.xml", tagList);
  BTFlagName::readXML("data/flag.xml", flagName);
+ BTKeyCommand::readXML("data/keycommand.xml", keyList);
 }
 
 BTCore::~BTCore()
@@ -769,13 +770,13 @@ void BTGame::run(BTDisplay &d)
        combat.clearEncounters();
        combat.run(d, true);
        break;
-      case 'c':
+/*      case 'c':
       {
        BTScreenSet cast;
        cast.open("data/cast.xml");
        cast.run(d);
        break;
-      }
+      }*/
       case 'd':
       {
        BTScreenSet drop;
@@ -864,6 +865,14 @@ void BTGame::run(BTDisplay &d)
        break;
       }
       default:
+       for (auto itr: keyList)
+       {
+        if (key == itr->key)
+        {
+         itr->run(d, this);
+         break;
+        }
+       }
        break;
      }
     }

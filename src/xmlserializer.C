@@ -364,6 +364,27 @@ void ObjectSerializer::addLevel(XMLLevel *newLevel)
 
 XMLAction* ObjectSerializer::find(const char *name, const char **atts)
 {
+ int levels = 0;
+ for (const char *period = strchr(name, '.'); period != NULL; period = strchr(period + 1, '.'))
+ {
+  XMLAction *found = find(std::string(name, period - name).c_str(), NULL);
+  if ((found == NULL) || (found->type != XMLTYPE_OBJECT))
+  {
+   while (levels > 0)
+   {
+    removeLevel();
+    levels--;
+   }
+   return NULL;
+  }
+  XMLObject *x = reinterpret_cast<XMLObject*>(found->object);
+  XMLLevel *lvl = new XMLLevel;
+  lvl->state = found;
+  lvl->object = x;
+  addLevel(lvl);
+  levels++;
+  name = period + 1;
+ }
  int curLevel = getLevel();
  for (std::vector<XMLAction*>::reverse_iterator itr(action.rbegin()); (action.rend() != itr) && ((*itr)->level == curLevel); itr++)
  {
@@ -393,9 +414,21 @@ XMLAction* ObjectSerializer::find(const char *name, const char **atts)
      }
     }
     if (found)
+    {
+     while (levels > 0)
+     {
+      removeLevel();
+      levels--;
+     }
      return act;
+    }
    }
   }
+ }
+ while (levels > 0)
+ {
+  removeLevel();
+  levels--;
  }
  return NULL;
 }
