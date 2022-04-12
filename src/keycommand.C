@@ -40,6 +40,6 @@ void BTKeyCommand::serialize(ObjectSerializer* s)
 void BTKeyCommand::readXML(const char *filename, XMLVector<BTKeyCommand*> &keyList)
 {
  XMLSerializer parser;
- parser.add("command", &keyList, &BTKeyCommand::create);
+ parser.add("keycommand", &keyList, &BTKeyCommand::create);
  parser.parse(filename, true);
 }

@@ -770,48 +770,6 @@ void BTGame::run(BTDisplay &d)
        combat.clearEncounters();
        combat.run(d, true);
        break;
-/*      case 'c':
-      {
-       BTScreenSet cast;
-       cast.open("data/cast.xml");
-       cast.run(d);
-       break;
-      }*/
-      case 'd':
-      {
-       BTScreenSet drop;
-       drop.open("data/dismiss.xml");
-       drop.run(d);
-       break;
-      }
-      case 'u':
-      {
-       BTScreenSet useItem;
-       useItem.open("data/use.xml");
-       useItem.run(d);
-       break;
-      }
-      case 'b':
-      {
-       BTScreenSet cast;
-       cast.open("data/play.xml");
-       cast.run(d);
-       break;
-      }
-      case 'n':
-      {
-       BTScreenSet moveTo;
-       moveTo.open("data/moveTo.xml");
-       moveTo.run(d);
-       break;
-      }
-      case 's':
-      {
-       BTScreenSet saveGame;
-       saveGame.open("data/savegame.xml");
-       saveGame.run(d);
-       break;
-      }
       case '?':
       {
        int street = levelMap->getSquare(yPos, xPos).getStreet();

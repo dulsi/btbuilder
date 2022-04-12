@@ -1,8 +1,38 @@
 <data>
- <command>
+ <keycommand>
   <key>99</key>
   <body>
    <command><type>64</type><text>data/cast.xml</text><number index="1">0</number><number index="2">0</number><number index="3">0</number></command>
   </body>
- </command>
+ </keycommand>
+ <keycommand>
+  <key>100</key>
+  <body>
+   <command><type>64</type><text>data/dismiss.xml</text><number index="1">0</number><number index="2">0</number><number index="3">0</number></command>
+  </body>
+ </keycommand>
+ <keycommand>
+  <key>117</key>
+  <body>
+   <command><type>64</type><text>data/use.xml</text><number index="1">0</number><number index="2">0</number><number index="3">0</number></command>
+  </body>
+ </keycommand>
+ <keycommand>
+  <key>98</key>
+  <body>
+   <command><type>64</type><text>data/play.xml</text><number index="1">0</number><number index="2">0</number><number index="3">0</number></command>
+  </body>
+ </keycommand>
+ <keycommand>
+  <key>110</key>
+  <body>
+   <command><type>64</type><text>data/moveTo.xml</text><number index="1">0</number><number index="2">0</number><number index="3">0</number></command>
+  </body>
+ </keycommand>
+ <keycommand>
+  <key>115</key>
+  <body>
+   <command><type>64</type><text>data/savegame.xml</text><number index="1">0</number><number index="2">0</number><number index="3">0</number></command>
+  </body>
+ </keycommand>
 </data>
