@@ -918,6 +918,7 @@ int BTNonStackingBonusEffect::apply(BTDisplay &d, BTCombat *combat, int g /*= BT
    active = true;
   }
  }
+ return 0;
 }
 
 void BTNonStackingBonusEffect::finish(BTDisplay &d, BTCombat *combat, int g /*= BTTARGET_NONE*/, int trgt /*= BTTARGET_INDIVIDUAL*/)
@@ -1261,6 +1262,7 @@ int BTResurrectEffect::maintain(BTDisplay &d, BTCombat *combat)
    // BTCS either cancels spells on death or doesn't implement this
   }
  }
+ return 0;
 }
 
 BTDispellMagicEffect::BTDispellMagicEffect(int t, int x, const BTEffectSource &s, int rng, int erng, int d, int g, int trgt)
@@ -1752,6 +1754,7 @@ int BTScrySightEffect::maintain(BTDisplay &d, BTCombat *combat)
 {
  d.drawView();
  d.drawMap(true);
+ return 0;
 }
 
 BTSpellBindEffect::BTSpellBindEffect(int t, int x, const BTEffectSource &s, int g, int trgt)
