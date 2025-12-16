@@ -2060,6 +2060,7 @@ int BTDetectEffect::maintain(BTDisplay &d, BTCombat *combat)
    }
   }
  }
+ return 0;
 }
 
 void BTDetectEffect::serialize(ObjectSerializer* s)
@@ -2107,4 +2108,5 @@ int BTLocationEffect::maintain(BTDisplay &d, BTCombat *combat)
   }
   d.drawText(text.c_str());
  }
+ return 0;
 }
