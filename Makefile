@@ -8,7 +8,7 @@ CXX = g++
 CC = gcc
 CXXFLAGS = $(CFLAGS) -DSDL2LIB $(SDL_CFLAGS) -Isrc/ --std=gnu++11
 LIBS = $(SDL_LDFLAGS) --std=c++11 -lexpat -lphysfs \
-	-lboost_filesystem -lboost_system -lpng -lSDL_mng
+	-lboost_filesystem -lpng -lSDL_mng
 
 BTBUILDER_OBJ = src/file.o src/dice.o src/monster.o src/spell.o src/item.o \
 	src/map.o src/main.o src/btconst.o src/game.o src/psuedo3d.o \
